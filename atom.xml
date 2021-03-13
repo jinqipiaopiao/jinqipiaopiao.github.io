@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io</id>
     <title>Gridea</title>
-    <updated>2021-03-13T05:27:42.686Z</updated>
+    <updated>2021-03-13T05:29:47.460Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -97,10 +97,7 @@
 <p>sqlmap -u &quot;http://xxx/?id=1&quot;  --dbs   列取数据库的所有库</p>
 <p>sqlmap -u &quot;http://xxx/?id=1&quot; --current-db     查询出当前库</p>
 <p>sqlmap -u &quot;http://xxx/?id=1&quot; -D xxx --tables  查询某个库的所有表</p>
-<p>sqlmap -u &quot;http://xxx/?id=1&quot; -D xxx -T xxx --columns(-D dbname指定数据库名称、-T tablename：指定某数据表的名称、--columns：列出指定表上的所有列)<br>
-————————————————<br>
-版权声明：本文为CSDN博主「devi1.」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/sun8890446/article/details/80684606</p>
+<p>sqlmap -u &quot;http://xxx/?id=1&quot; -D xxx -T xxx --columns(-D dbname指定数据库名称、-T tablename：指定某数据表的名称、--columns：列出指定表上的所有列)</p>
 ]]></content>
     </entry>
     <entry>
@@ -109,7 +106,7 @@
         <link href="https://jinqipiaopiao.github.io/post/shi-shi-kan-neng-bu-neng-yong/">
         </link>
         <updated>2021-02-21T01:12:00.000Z</updated>
-        <content type="html"><![CDATA[<p>yeah you are right</p>
+        <content type="html"><![CDATA[<p>yeah you are right                         123456789</p>
 ]]></content>
     </entry>
     <entry>
