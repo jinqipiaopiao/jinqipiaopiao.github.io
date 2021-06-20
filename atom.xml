@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-06-20T08:46:24.937Z</updated>
+    <updated>2021-06-20T08:55:04.038Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -50,10 +50,11 @@ die(&quot;success!&quot;);<br>
 考虑到要将一些不可见字符传到服务器，这里使用url编码</p>
 <p>以下脚本均为开头那篇师傅的文章摘抄下<br>
 这个是将hex写入到bin文件的python脚本源码：</p>
-<p>#!coding:utf-8<br>
-hexString1 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa200a8284bf36e8e4b55b35f427593d849676da0d1555d8360fb5f07fea2'<br>
-hexString2 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa202a8284bf36e8e4b55b35f427593d849676da0d1d55d8360fb5f07fea2'</p>
-<pre><code>hexList1 = []
+<p>#!coding:utf-8</p>
+<pre><code>hexString1 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa200a8284bf36e8e4b55b35f427593d849676da0d1555d8360fb5f07fea2'
+hexString2 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa202a8284bf36e8e4b55b35f427593d849676da0d1d55d8360fb5f07fea2'
+
+hexList1 = []
 intList1 = []
 asciiString1 =''
 
