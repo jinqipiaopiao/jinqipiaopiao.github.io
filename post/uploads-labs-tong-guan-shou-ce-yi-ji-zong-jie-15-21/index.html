@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>uploads-labs通关手册以及总结(15-21) | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="uploads-labs通关手册以及总结(15-21) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="uploads-labs通关手册以及总结(15-21) | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -27,8 +27,8 @@ $file = fopen($filename, &quot;rb&quo..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -156,18 +156,18 @@ Linux:cat 1.jpg 1.php &gt; 2.jpg
 <p>其中/b代表二进制文件binary，放在图片后面；/a代表文字文件ascii。</p>
 <p>2.jpg为生成的图片马。</p>
 <p>上传成功，但是.jpg格式无法解析php代码，所以要配合文件包含来进行攻击。题中已经给了我们包含漏洞的文件：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619787733625.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619787733625.png" alt="" loading="lazy"><br>
 在用蚁剑连接我们上传的图片马：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619787825118.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619787825118.png" alt="" loading="lazy"></p>
 <pre><code>.png
 </code></pre>
 <p>同上：emmm，上传的.png图片，上去成了.jpg一脸懵逼<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619787875943.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619787875943.png" alt="" loading="lazy"></p>
 <pre><code>.gif
 </code></pre>
 <p>这里尝试一下构造gif文件头绕过，上传.php文件，burp抓包修改，将文件后缀改为.gif，且构造文件头GIF87a，上传成功。</p>
 <p>还是利用文件包含，蚁剑测试：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619787898545.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619787898545.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-15getimagesize检测">pass-15(getimagesize检测)</h1>
@@ -217,7 +217,7 @@ $msg = &quot;上传出错！&quot;;
 <p>image_type_to_extension(): 根据指定的图像类型返回对应后缀名。</p>
 <p>stripos(): 查找字符串首次出现的位置，不区分大小写。</p>
 <p>绕过姿势同pass14：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788149471.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788149471.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-16exif_imagetype检测">pass-16(exif_imagetype检测)</h1>
@@ -266,7 +266,7 @@ $msg = &quot;上传出错！&quot;;
 </code></pre>
 <p>前分号去掉，重启phpstudy后进行。</p>
 <p>仍是同14关相同：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788282015.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788282015.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-17二次渲染绕过">pass-17(二次渲染绕过)</h1>
@@ -367,14 +367,14 @@ $msg = &quot;只允许上传后缀为.jpg|.png|.gif的图片文件！&quot;;
 还是先上传一个图片马，成功。</p>
 <p>用蚁剑连接发现连接不上。</p>
 <p>将图片下载到本地，查看：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788554806.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788554806.png" alt="" loading="lazy"><br>
 发现我们插入的代码消失了。</p>
 <p>二次渲染会保留一些文件内容不会改变，所以我们可以观察其不变的地方，在将代码写入即可绕过。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788570383.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788570383.png" alt="" loading="lazy"><br>
 经对比发现蓝色部分的内容没有改变，所以我们将代码写入这部分：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788586713.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788586713.png" alt="" loading="lazy"><br>
 蚁剑连接：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788599452.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788599452.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-18条件竞争">pass-18(条件竞争)</h1>
@@ -422,18 +422,18 @@ fputs($b,'&lt;?php @eval($_POST[&quot;hhh&quot;]); ?&gt;');
 </code></pre>
 <p>之后用蚁剑连接，道理一样。</p>
 <p>上传文件，并用burp抓包，跳转到intruder模块：</p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619788709253.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1619788709253.png" alt="" loading="lazy"><br>
 到payloads模块：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788721966.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788721966.png" alt="" loading="lazy"><br>
 开始爆破。</p>
 <p>不断访问http://127.0.0.1/upload-labs-master/upload/18.php直至shell.php文件写入成功(这里就需要一直刷新，狂点)。</p>
 <p>成功后可以去文件夹看看：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788739027.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788739027.png" alt="" loading="lazy"><br>
 发现创建成功。</p>
 <p>访问：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788753188.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788753188.png" alt="" loading="lazy"><br>
 蚁剑连接：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619788770015.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619788770015.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-19条件竞争2">pass-19(条件竞争2)</h1>
@@ -595,20 +595,20 @@ $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
 }
 </code></pre>
 <p>pathinfo():<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789020652.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789020652.png" alt="" loading="lazy"><br>
 $file_name = $_POST['save_name'];<br>
 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>m</mi><msub><mi>g</mi><mi>p</mi></msub><mi>a</mi><mi>t</mi><mi>h</mi><mo>=</mo><mi>U</mi><mi>P</mi><mi>L</mi><mi>O</mi><mi>A</mi><msub><mi>D</mi><mi>P</mi></msub><mi>A</mi><mi>T</mi><mi>H</mi><msup><mi mathvariant="normal">.</mi><mo mathvariant="normal">′</mo></msup><msup><mi mathvariant="normal">/</mi><mo mathvariant="normal">′</mo></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">img_path = UPLOAD_PATH . &#x27;/&#x27; .</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault">A</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord"><span class="mord">.</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord">/</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord">.</span></span></span></span>file_name;<br>
 文件的保存名为拼接构成，可以参数%00截断。</p>
 <p>%00截断： 用burp抓包改包：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789054476.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789060845.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789069494.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789054476.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789060845.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789069494.png" alt="" loading="lazy"><br>
 /.绕过：利用了move_uploaded_file()函数有一特性，会忽略掉文件末尾的/.。而代码中的file_name是用户可控的，所以我们可以在保存名后加上/.绕过：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789083390.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789095698.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789083390.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789095698.png" alt="" loading="lazy"><br>
 大小写绕过：定义了黑名单，save_name参数就是我们保存的文件名称参数。这里并没有对上传的文件类型进行判断，仅仅是对保存的名称做了黑名单处理，黑名单中并没有大写形式，我们可以在保存名直接大小写绕过。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789116165.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789127756.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789116165.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789127756.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="pass-21数组绕过">pass-21(数组绕过)</h1>
@@ -672,9 +672,9 @@ save_name[2]=jpg(一个白名单后缀)
 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mo>[</mo><mi>c</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">file[count(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">[</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">n</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>file) - 1]为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mo>[</mo><mn>2</mn><mo>−</mo><mn>1</mn><mo>]</mo><mo>=</mo></mrow><annotation encoding="application/x-tex">file[2-1]=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">[</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span></span></span>file[1]<br>
 ，得到的拼接为空，得到的文件名为20.php/.</p>
 <p>上传文件，用burp抓包，修改参数：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789350328.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789350328.png" alt="" loading="lazy"><br>
 上传成功，蚁剑连接：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619789367478.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619789367478.png" alt="" loading="lazy"></p>
 
               </div>
               <div class="toc-container">
@@ -697,7 +697,7 @@ save_name[2]=jpg(一个白名单后缀)
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/burpsuite-zhua-bu-dao-ben-di-bao-jie-jue-da-hui-zong/">
+            <a href="https://jinqipiaopiao.github.io/post/burpsuite-zhua-bu-dao-ben-di-bao-jie-jue-da-hui-zong/">
               <h3 class="post-title">
                 BurpSuite抓不到本地包解决大汇总
               </h3>
@@ -709,7 +709,7 @@ save_name[2]=jpg(一个白名单后缀)
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SQL注入实战之盲注篇（布尔、时间盲注） | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="SQL注入实战之盲注篇（布尔、时间盲注） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="SQL注入实战之盲注篇（布尔、时间盲注） | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -24,8 +24,8 @@ columns(table_schema,table_name,..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -137,7 +137,7 @@ select id,name from product where id=1 and sleep(2)</p>
 <p>观察以下语句</p>
 <p>第一个语句：sleep函数设置查询停留3s， sleep函数本身返回值为0，显示查询时间为3s</p>
 <p>第二个语句：语句最后加上and 1=2 形成查询逻辑错误，sleep函数不执行暂停，因此查询时间为0s</p>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617897678773.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1617897678773.png" alt="" loading="lazy"></figure>
 <h1 id="基于时间盲注if函数">基于时间盲注if函数</h1>
 <p><strong>逻辑判断函数if（）</strong></p>
 <pre><code>if（expr1，expr2，expr3） 如果expr1为真，则if函数执行expr2语句，否则if函数执行expr3语句
@@ -178,7 +178,7 @@ select id,name from product where id=1 and sleep(2)</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/mysql-mang-zhu-ji-yu-shi-jian-yan-chi-zhu-ru-sleep-han-shu/">
+            <a href="https://jinqipiaopiao.github.io/post/mysql-mang-zhu-ji-yu-shi-jian-yan-chi-zhu-ru-sleep-han-shu/">
               <h3 class="post-title">
                 MySQL盲注：基于时间延迟注入（Sleep函数）
               </h3>
@@ -190,7 +190,7 @@ select id,name from product where id=1 and sleep(2)</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

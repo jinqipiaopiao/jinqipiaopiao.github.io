@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MySQL盲注：基于时间延迟注入（Sleep函数） | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="MySQL盲注：基于时间延迟注入（Sleep函数） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="MySQL盲注：基于时间延迟注入（Sleep函数） | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -25,8 +25,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -106,9 +106,9 @@
 <pre><code>http://127.0.0.1/sqli-labs/Less-9/?id=1 ' and if(1=0,1, sleep(10)) --+
 </code></pre>
 <p>判断正确，显示you are in.......<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617885524228.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617885524228.png" alt="" loading="lazy"><br>
 判断失败，无显示<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617885527474.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617885527474.png" alt="" loading="lazy"><br>
 二、判断数据库名</p>
 <p>1、查询数据库名长度</p>
 <p>由于是本地测试，我知道数据库长度、名字等这些，所以用的是等号 =，实战中可以用大小于来进行一个判断，缩短时间。</p>
@@ -165,7 +165,7 @@ http://127.0.0.1/sqli-labs/Less-9/?id=1' and if(ascii(substr(database(),1,1))=11
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/php-mysql-zhong-limit-yong-fa-xiang-jie-dai-ma-shi-li/">
+            <a href="https://jinqipiaopiao.github.io/post/php-mysql-zhong-limit-yong-fa-xiang-jie-dai-ma-shi-li/">
               <h3 class="post-title">
                 PHP mysql中limit用法详解（代码示例）
               </h3>
@@ -177,7 +177,7 @@ http://127.0.0.1/sqli-labs/Less-9/?id=1' and if(ascii(substr(database(),1,1))=11
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

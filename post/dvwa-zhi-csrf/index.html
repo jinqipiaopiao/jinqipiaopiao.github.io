@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之CSRF | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之CSRF | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之CSRF | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -21,8 +21,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -124,7 +124,7 @@ https://www.example.com/dir/page.html(不同源，协议不同)<br>
 CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用。</p>
 <pre><code>                                       1.Low
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617197878724.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617197878724.png" alt="" loading="lazy"><br>
 分析：<br>
 服务器收到修改密码的请求后，会检查参数password_new与password_conf是否相同，如果相同，就会修改密码，并没有任何的防CSRF机制，所以我们只需要用户在cookie还有效的时间内在相同的浏览器访问我们给定的url（该操作是服务器对请求的发送者进行了身份验证，检查cookie），就可以实现CSRF攻击，修改用户密码。</p>
 <p>Exploit</p>
@@ -134,7 +134,7 @@ CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用
 <p>当受害者点击了这个链接，密码就会被改成test<br>
 2.使用短链接来隐藏 URL：<br>
 为了更加隐蔽，可以生成短网址链接，点击短链接，会自动跳转到真实网站：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617197935586.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617197935586.jpg" alt="" loading="lazy"><br>
 但是修改密码后还是会出现密码修改的痕迹。</p>
 <p>构建一个页面，诱导用户去点击<br>
 <html><br>
@@ -150,7 +150,7 @@ CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用
 </body><br>
 </html><br>
 当用户点击后，会误认为这是个错误的页面，而不在意，但是密码已经被修改为123。</p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617198060840.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617198060840.png" alt="" loading="lazy"><br>
 <strong>2.medium</strong></p>
 <pre><code>&lt;?php
 
@@ -194,13 +194,13 @@ echo &quot;&lt;pre&gt;That request didn't look correct.&lt;/pre&gt;&quot;;
 </code></pre>
 <p>即用户的请求头中的Referer字段必须包含服务器的名字。<br>
 我们可以将攻击页面名修改为127.0.0.1.html(改为包含主机名)进行绕过。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617198259426.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617198259426.png" alt="" loading="lazy"></p>
 <p>因为增加了对Referer头的检测，所以我们直接访问之前的链接是无法成功的。</p>
 <pre><code>http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617198316932.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617198316932.png" alt="" loading="lazy"><br>
 我们可以用burp抓包，自己增加一个Referer头：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617198362648.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617198362648.png" alt="" loading="lazy"><br>
 成功修改。<br>
 <strong>3.high</strong></p>
 <pre><code>&lt;?php
@@ -335,7 +335,7 @@ generateSessionToken();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-fileinclusion/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zhi-fileinclusion/">
               <h3 class="post-title">
                 DVWA之FileInclusion
               </h3>
@@ -347,7 +347,7 @@ generateSessionToken();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

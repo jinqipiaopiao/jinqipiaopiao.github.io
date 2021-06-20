@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之XSS | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之XSS | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之XSS | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -22,8 +22,8 @@ XSS三种：
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -107,7 +107,7 @@ DOM型xss不会和后台服务器产生交互，而是通过浏览器的dom树�
 <p>payload：</p>
 <pre><code>?default=&lt;script&gt;alert('oh')&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617074204093.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617074204093.png" alt="" loading="lazy"><br>
 2.Medium<br>
 服务器核心代码<br>
 &lt;?php</p>
@@ -126,12 +126,12 @@ exit;}}?&gt;
 <p>1.利用Url截断机制加#号<br>
 url中有一个字符为#，该字符后的数据不会发送到服务器端，从而绕过服务端过滤，构造连接<br>
 payload：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617090131311.png" alt="" loading="lazy"></p>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617075611565.png" alt="" loading="lazy"></figure>
+<img src="https://jinqipiaopiao.github.io//post-images/1617090131311.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1617075611565.png" alt="" loading="lazy"></figure>
 <p>2.用img标签或其他标签的特性去执行js代码，比如img标签的onerror事件，构造连接<br>
 之前用过img的方法，这次使用svg的方法来完成。<br>
 /dvwa/vulnerabilities/xss_d/?default=<em></option></select>&lt;svg onload=alert(&quot;xss&quot;)&gt;</em><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617075713992.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617075713992.png" alt="" loading="lazy"></p>
 <pre><code>        3.High
 </code></pre>
 <p>服务器核心代码<br>
@@ -161,7 +161,7 @@ exit;
 <p>原理：由于form表单提交的数据需要经过js过滤，所以注释部分的JavaScript代码不会被传到服务器端（也就符合了白名单的要求）从而只在客户端显示。</p>
 <pre><code>/dvwa/vulnerabilities/xss_d/?default=English#&lt;/option&gt;&lt;/select&gt;&lt;img src=xss onerror=alert(/xss/)&gt;
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1617075777342.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1617075777342.png" alt="" loading="lazy"></figure>
 <pre><code>    4.Impossible
 </code></pre>
 <p>服务器核心代码</p>
@@ -172,7 +172,7 @@ exit;
 
 ?> 
 <p>后端无任何限制，尝试后居然成了如下图情况。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617075834074.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617075834074.png" alt="" loading="lazy"></p>
 <figure data-type="image" tabindex="3"><a href="https://imgchr.com/i/rpeGlQ"><img src="https://s3.ax1x.com/2020/12/08/rpeGlQ.png" alt="rpeGlQ.png" loading="lazy"></a></figure>
 <p>没有任何东西，保护的代码在客户端里。</p>
 <figure data-type="image" tabindex="4"><a href="https://imgchr.com/i/rpeL7t"><img src="https://s3.ax1x.com/2020/12/08/rpeL7t.md.png" alt="rpeL7t.md.png" loading="lazy"></a></figure>
@@ -269,20 +269,20 @@ mysqli_query(</annotation></semantics></math></span><span class="katex-html" ari
 <p>//mysql_close(); }<br>
 ?&gt;`<br>
 555<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617093072729.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617093072729.png" alt="" loading="lazy"><br>
 <a href="https://imgchr.com/i/rp3Vl6"><img src="https://s3.ax1x.com/2020/12/08/rp3Vl6.png" alt="rp3Vl6.png" loading="lazy"></a><br>
 medium<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617093762773.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617093785920.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617101147858.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617093762773.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617093785920.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617101147858.png" alt="" loading="lazy"></p>
 <pre><code>    图一：
 </code></pre>
 <p><a href="https://imgchr.com/i/rp88UJ"><img src="https://s3.ax1x.com/2020/12/08/rp88UJ.png" alt="rp88UJ.png" loading="lazy"></a><br>
 图二：<br>
 <a href="https://imgchr.com/i/rp8wDO"><img src="https://s3.ax1x.com/2020/12/08/rp8wDO.png" alt="rp8wDO.png" loading="lazy"></a></p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617093859560.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617093889979.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617093926166.png" alt="" loading="lazy"></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617093859560.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617093889979.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617093926166.png" alt="" loading="lazy"></p>
 <p>对name也进行了更加严格的过滤，无法进行name参数注入，还增加了Anti-CSRF token防止CSRF攻击，完全杜绝了XSS漏洞和CSRF漏洞。</p>
 
               </div>
@@ -317,7 +317,7 @@ medium<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-sql-injectionblindsql-mang-zhu/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-sql-injectionblindsql-mang-zhu/">
               <h3 class="post-title">
                 DVWA之SQL Injection(Blind)(SQL盲注)
               </h3>
@@ -329,7 +329,7 @@ medium<br>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

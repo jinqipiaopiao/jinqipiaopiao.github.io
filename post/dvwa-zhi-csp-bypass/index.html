@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之CSP Bypass | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之CSP Bypass | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之CSP Bypass | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -21,8 +21,8 @@ csp 全称是：Content-Security-Policy,内容安全策略。是指HTTP返回报
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -125,7 +125,7 @@ $page[ 'body' ] .= '
 code.jquery.com https://ssl.google-analytics.com ;&quot;; // allows js from self, pastebin.com, hastebin.com, jquery and google analytics.</p>
 <p>允许访问pastebin网站，所以去这个网站看看，emmm打不开，源码中也有现成测试站点：https://pastebin.com/raw/R570EE00和https://hastebin.com/raw/ohulaquzex。第二个可以使用<br>
 ：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617106629060.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617106629060.png" alt="" loading="lazy"><br>
 原理为因为可以访问白名单，所以我们可以在其白名单的网站编辑XSS脚本，然后包含该网站实现XSS攻击。<br>
 <strong>2.medium</strong></p>
 <pre><code>&lt;?php
@@ -159,7 +159,7 @@ unsafe-inline： 允许使用内联资源，如内联&lt;script&gt;元素，java
 <p>这里将所有的安全站点都去掉了，只能使用script元素且脚本块值nonce=TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=。</p>
 <p>构建payload<br>
 <script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert('hhh')</script><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617106815616.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617106815616.png" alt="" loading="lazy"><br>
 <strong>3.high</strong></p>
 <pre><code>&lt;?php
 $headerCSP = &quot;Content-Security-Policy: script-src 'self';&quot;;
@@ -213,7 +213,7 @@ $page[ 'body' ] .= &quot;<br>
 发现还有一个接收include参数，从这里入手：</p>
 <pre><code>include=&lt;script src=&quot;source/jsonp.php?callback=alert('oh');&quot;&gt;&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617107093823.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617107093823.png" alt="" loading="lazy"><br>
 <strong>4.impossible</strong></p>
 <pre><code>&lt;?php
 
@@ -272,7 +272,7 @@ clickButton();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-dom-based-cross-site-scripting-xss/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zhi-dom-based-cross-site-scripting-xss/">
               <h3 class="post-title">
                 DVWA之XSS
               </h3>
@@ -284,7 +284,7 @@ clickButton();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

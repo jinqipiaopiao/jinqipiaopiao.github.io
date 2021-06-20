@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之FileInclusion | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之FileInclusion | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之FileInclusion | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -23,8 +23,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -144,20 +144,20 @@ $file = $_GET[ 'page' ];
 <p>源码没有进行任何过滤。</p>
 <pre><code>?page=include.php/
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617195930653.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617195930653.png" alt="" loading="lazy"><br>
 看报错信息，直接将网站的路径信息给我们暴露出来了：</p>
 <p>第一条warring是找不到我们指定的page，给出警告；</p>
 <p>第二条warring是因为没有找到指定的page，在包含时出错。根据暴露出来的绝对路径：<br>
 /var/www/html/dvwa/vulnerabilities/fi/index.php<br>
 , 通过访问相对路径的方式../ 访问所有的路径，如访问<br>
 ?page=../../phpinfo.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196001428.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196001428.png" alt="" loading="lazy"></p>
 <p>尝试远程文件包含：<br>
 在本地建立一个info.txt文件：（路径：/var/www/html/info.txt）<br>
 <?php phpinfo(); ?><br>
 构造URL：<br>
 ?page=http://127.0.0.1/info.txt<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196066174.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196066174.png" alt="" loading="lazy"><br>
 <strong>2.medium</strong><br>
 &lt;?php</p>
 <pre><code>// The page we wish to display
@@ -172,9 +172,9 @@ $file = str_replace( array( &quot;../&quot;, &quot;..\&quot;&quot; ), &quot;&quo
 <p>可以看到，代码对远程文件包含进行了限制，用str_replace函数将http://、https//、../、..\进行了替换，换为了空字符。</p>
 <p>可以采用双写绕过。</p>
 <p>本地包含：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196143326.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196143326.png" alt="" loading="lazy"><br>
 远程包含：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196148814.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196148814.png" alt="" loading="lazy"><br>
 <strong>3.high</strong><br>
 &lt;?php</p>
 <pre><code>// The page we wish to display
@@ -190,15 +190,15 @@ exit;
 ?&gt; 
 </code></pre>
 <p>fnmatch()：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196216076.jpg" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196216076.jpg" alt="" loading="lazy"></p>
 <p>high级别代码，使用了fnmatch函数检查page参数，要求page参数的开头必须是file的文件或只能为include.php文件服务器才会去包含相应文件。</p>
 <p>使用file协议，以file字符串开头：<br>
 ?page=file:///var/www/html/dvwa/php.ini<br>
 成功读取到服务器配置文件：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196265098.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196265098.png" alt="" loading="lazy"><br>
 file协议简单来说就是我们直接用浏览器打开的本地文件一样。</p>
 <p>如：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617196348465.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617196348465.png" alt="" loading="lazy"></p>
 <pre><code>    **4.impossible**
 &lt;?php
 
@@ -227,7 +227,7 @@ exit;
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/linux-ming-ling-xing/">
+            <a href="https://jinqipiaopiao.github.io/post/linux-ming-ling-xing/">
               <h3 class="post-title">
                 linux命令行
               </h3>
@@ -239,7 +239,7 @@ exit;
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

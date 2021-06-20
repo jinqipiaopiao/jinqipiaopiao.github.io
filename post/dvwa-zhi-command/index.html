@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之Command Injection | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之Command Injection | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之Command Injection | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -23,8 +23,8 @@ command1 &amp; co..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -131,7 +131,7 @@ echo &quot;&lt;pre&gt;{$cmd}&lt;/pre&gt;&quot;;
 <p>因此得出服务器对操作系统执行Linux系统的ping命令，如果不是Windows NT系统则执行Linux系统的ping命令。</p>
 <p>由于未对IP参数做任何过滤，导致有注入漏洞。</p>
 <p>输入 127.0.0.1 &amp;&amp; ipconfig ：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617201105544.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617201105544.png" alt="" loading="lazy"></p>
 <pre><code>    2.medium
 
 &lt;?php
@@ -172,7 +172,7 @@ $substitutions = array(
 <p>设置了黑名单，将 &amp;&amp; 和 ; 替换为空。</p>
 <p>1.因为只有 &amp;&amp; 与 ; 被过滤，所以可以使用 127.0.0.1 &amp; net user</p>
 <p>（net user 查看有哪些用户）<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617201325268.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617201325268.jpg" alt="" loading="lazy"><br>
 2.由于 &amp;&amp; 与 ; 都被替换为空，所有也可以用 127.0.0.1 &amp;;&amp; ipconfig 绕过。</p>
 <pre><code>    3.high
 
@@ -286,7 +286,7 @@ generateSessionToken();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-csrf/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zhi-csrf/">
               <h3 class="post-title">
                 DVWA之CSRF
               </h3>
@@ -298,7 +298,7 @@ generateSessionToken();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

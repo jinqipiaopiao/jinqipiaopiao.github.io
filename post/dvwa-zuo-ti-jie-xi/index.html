@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之Brute Force | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之Brute Force | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之Brute Force | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -23,8 +23,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -93,18 +93,18 @@
               <div class="post-content">
                 <p>burp之intruder模块<br>
 介绍一下攻击类型吧：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617199900460.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617199900460.png" alt="" loading="lazy"><br>
 1.Sniper模式： 狙击手模式，就如其名一样，该种模式每次都只针对一个目标，payload有20个时，就执行20次；假设爆破点有俩个时，如有a, b两个爆破点，词典为1，2，3，3，4，共执行5+5=10次，则执行顺序如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617199914249.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617199914249.jpg" alt="" loading="lazy"><br>
 该类型适合对常见漏洞中的请求参数单独地进行测试。</p>
 <p>2.Batterint ram模式(攻城锤)： 当有一个爆破点时，爆破方式与狙击手模式相同；当有两个爆破点时，同时验证两个爆破点，如a, b两个点，词典为1，2，3，4，5，共执行5次，执行顺序如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617199940986.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617199940986.jpg" alt="" loading="lazy"><br>
 该模式适合需要在请求中把相同的输入放到多个位置的情况。</p>
 <p>3.Pitchfork(草叉模式)： 该模式需要两个爆破点，两个payload，攻击会同步迭代所有的payload组，把payload放入每个定义的位置中。假设两个爆破点分别为a, b，a对应词典a, b对应词典b, 则执行次数为：两个词典中payload小的，下图中执行次数为4，执行顺序如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617199968603.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617199968603.jpg" alt="" loading="lazy"><br>
 该模式适合不同位置需要插入不同但相关的输入的情况。</p>
 <p>4.Cluster bomb(集束炸弹)： 与pitchfork类似，至少两个爆破点，但执行次数会计算两个payload的笛卡儿积。假设两个爆破点分别为a、b，a对应词典a、b对应词典b，则执行次数为连个词典的乘积，执行顺序如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200002746.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200002746.jpg" alt="" loading="lazy"><br>
 这种攻击适用于那种位置中需要不同且不相关或者未知的输入的攻击</p>
 <pre><code>    1.low
 
@@ -151,23 +151,23 @@ MYSQLI_STORE_RESULT (默认)<br>
 <p>可以看到其直接获得了用户输入的账号和密码，密码又进行了MD5加密，排除了从密码注入的可能。这里对输入的账号和密码没有进行任何过滤与检查，所以我们也可以进行SQL注入。</p>
 <p>方法一： 存在SQL注入，所有直接尝试SQL注入。</p>
 <p>payload：admin'# 用#直接注释掉后面的password验证。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200115413.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200115413.png" alt="" loading="lazy"></p>
 <p>方法二：</p>
 <p>采用burp爆破处理：</p>
 <p>1.将浏览器代理设置好，打开burp，设置为拦截模式：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200654889.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200654889.png" alt="" loading="lazy"><br>
 2.在用户输入处输入账号密码，账号：admin，密码随意。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200659206.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200659206.png" alt="" loading="lazy"><br>
 3.点击登陆，burp自会拦截：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200662884.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200662884.png" alt="" loading="lazy"><br>
 4.右键选择send to intruder,也可快捷键 CTRL I<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200678196.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200678196.png" alt="" loading="lazy"><br>
 5.到intruder窗口：选择狙击手模式，爆破密码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200685918.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200685918.png" alt="" loading="lazy"><br>
 6.加载字典，字典就是自己收集的各类账号，密码等，一个强大的字典也是很重要的。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200693501.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200693501.png" alt="" loading="lazy"><br>
 7.长度与其他不同的一般为正确的：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200698669.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200698669.png" alt="" loading="lazy"></p>
 <pre><code>    2.medium
 
 
@@ -212,7 +212,7 @@ echo &quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;/pre&gt
 <p>escapestring 必须，要转义的字符串。编码的字符是null, \n, \r, , ‘, “ 和control-Z</p>
 <p>该级别代码用mysqli_real_escape_string()函数对用户输入的账号密码进行了转义，防止了利用单引号，双引号等参数构造进行SQL注入，还使用了sleep()函数，在登陆失败时延时返回信息，延长了爆破时间，其余正常。</p>
 <p>因为过程与low相同，直接放结果图了，还是根据长度判断即可：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200707813.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200707813.png" alt="" loading="lazy"></p>
 <pre><code>    3.high
 
 &lt;?php
@@ -263,15 +263,15 @@ generateSessionToken();
 <p>stripslashes(string): 删除反斜杠，string必须，规定要检查的字符串。</p>
 <p>由于使用了Anti-CSRF token, 每次服务器返回的登陆页面都会包含一个随机的user_token的值，用户每次登陆时都要将user_token一起提交。服务器收到请求后，会优先做user_token的检查，再进行sql查询。</p>
 <p>1.抓包，放到intruder中，将Attack type设置为pitchfork(草叉模式)，为password和user_token值添加payload标记。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200714807.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200714807.png" alt="" loading="lazy"><br>
 2.线程设置，在option框中，将threads：设置为1。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200768825.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200768825.png" alt="" loading="lazy"><br>
 3.在options栏找到Grep-Extract, 点击add。然后点击refetch response, 进行一个请求，看到响应报文，直接选取需要提取的字符串，上面的会自动填入数据的起始和结束标识，并将此值保存，之后会用到。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200736129.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200736129.png" alt="" loading="lazy"><br>
 4.设置payload，因为这个有两个payload，第一个为password的，步骤和之前一样不说了，第二个，选择参数为Recursive grep,后将options中的token作为一开始的初始值。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200741825.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200741825.png" alt="" loading="lazy"><br>
 5.可以开始爆破了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617200746523.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617200746523.png" alt="" loading="lazy"><br>
 成功。</p>
 <pre><code>    4.impossible
 
@@ -392,7 +392,7 @@ generateSessionToken();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/burpsuite-shi-yong-fang-fa/">
+            <a href="https://jinqipiaopiao.github.io/post/burpsuite-shi-yong-fang-fa/">
               <h3 class="post-title">
                 Burp suite使用方法
               </h3>
@@ -404,7 +404,7 @@ generateSessionToken();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

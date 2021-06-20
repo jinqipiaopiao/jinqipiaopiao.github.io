@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>.user.ini文件构成的PHP后门 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title=".user.ini文件构成的PHP后门 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title=".user.ini文件构成的PHP后门 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -20,8 +20,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -91,7 +91,7 @@
                 <p>.user.ini。他比.htaccess用的更广，不管是nginx/apache/IIS，只要是以fastcgi与逆行的php都可以用这个方法。我的nginx服务器全部都是fpm/fastcgi，我的IIS php5.3以上的全部用的是fastcgi/cgi，我win下的apache上也用的fcgi，可谓很广，不像.htaccess有局限性</p>
 <p>那么什么是.user.ini?<br>
 这得从php.ini说起了，php.ini是php默认的配置文件，其中包括了很多php的配置，则这些配置中，又分为几种:PHP_INI_SYSTEM,PHP_INI_PERDIR,PHP_INI_ALL,PHP_INI_USER<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075227664.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075227664.png" alt="" loading="lazy"><br>
 其中就提到了，模式为PHP_INI_USER的配置项，可以在ini_set()函数中设置、注册表中设置，再就是.user.ini中设置。 这里就提到了.user.ini，那么这是个什么配置文件？那么官方文档在这里又解释了：</p>
 <p>除了主 php.ini 之外，PHP 还会在每个目录下扫描 INI 文件，从被执行的 PHP 文件所在目录开始一直上升到 web 根目录（<code>$_SERVER['DOCUMENT_ROOT']</code> 所指定的）。如果被执行的 PHP 文件在 web 根目录之外，则只扫描该目录。</p>
 <p>在 .user.ini 风格的 INI 文件中只有具有 PHP_INI_PERDIR 和 PHP_INI_USER 模式的 INI 设置可被识别。</p>
@@ -100,21 +100,21 @@
 <p>而且，和php.ini不同的是，.user.ini是一个能被动态加载的ini文件。也就是说我修改了.user.ini后，不需要重启服务器中间件，只需要等待user_ini.cache_ttl所设置的时间（默认为300秒），即可被重新加载。</p>
 <p>然后我们看到php.ini中的配置项，可惜我沮丧地发现，只要稍微敏感的配置项，都是PHP_INI_SYSTEM模式的（甚至是php.ini only的），包括disable_functions、extension_dir、enable_dl等。 不过，我们可以很容易地借助.user.ini文件来构造一个“后门”。</p>
 <p>Php配置项中有两个比较有意思的项（下图第一、四个）：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075273188.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075273188.png" alt="" loading="lazy"><br>
 auto_append_file、auto_prepend_file，点开看看什么意思：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075289853.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075289853.png" alt="" loading="lazy"></p>
 <p>指定一个文件，自动包含在要执行的文件前，类似于在文件前调用了require()函数。而auto_append_file类似，只是在文件后面包含。 使用方法很简单，直接写在.user.ini中：<br>
 auto_prepend_file=01.gif</p>
 <p>01.gif是要包含的文件。</p>
 <p>所以，我们可以借助.user.ini轻松让所有php文件都“自动”包含某个文件，而这个文件可以是一个正常php文件，也可以是一个包含一句话的webshell。</p>
 <p>测试一下，我分别在IIS6.0+Fastcgi+PHP5.3和nginx+fpm+php5.3上测试。 目录下有.user.ini，和包含webshell的01.gif，和正常php文件echo.php：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075364785.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075368008.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075364785.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075368008.png" alt="" loading="lazy"><br>
 访问echo.php即可看到后门：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075388506.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075388506.png" alt="" loading="lazy"><br>
 Nginx下同样：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075413515.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622075417233.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075413515.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622075417233.png" alt="" loading="lazy"><br>
 那么，我们可以猥琐地想一下，在哪些情况下可以用到这个姿势？ 比如，某网站限制不允许上传.php文件，你便可以上传一个.user.ini，再上传一个图片马，包含起来进行getshell。不过前提是含有.user.ini的文件夹下需要有正常的php文件，否则也不能包含了。 再比如，你只是想隐藏个后门，这个方式是最方便的。</p>
 <p>参考文献：</p>
 <p>https://www.cnblogs.com/qianxiao996/p/13574589.html<br>
@@ -134,7 +134,7 @@ http://php.net/manual/zh/configuration.changes.php</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/">
+            <a href="https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/">
               <h3 class="post-title">
                 应用层协议
               </h3>
@@ -146,7 +146,7 @@ http://php.net/manual/zh/configuration.changes.php</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

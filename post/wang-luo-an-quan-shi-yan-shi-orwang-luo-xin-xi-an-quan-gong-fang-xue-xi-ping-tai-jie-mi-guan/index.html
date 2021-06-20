@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>网络安全实验室|网络信息安全攻防学习平台（解密关，综合关） | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="网络安全实验室|网络信息安全攻防学习平台（解密关，综合关） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="网络安全实验室|网络信息安全攻防学习平台（解密关，综合关） | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -23,8 +23,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -95,11 +95,11 @@
 正确答案：yestimeispassword<br>
 解题思路：<br>
 打开链接，既然题目说不需要登录，那么就试试忘记密码，尝试以admin的身份重置密码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051340649.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051340649.png" alt="" loading="lazy"><br>
 只有弹窗，没有任何提示，于是尝试用其他的用户，发现返回不一样<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051387064.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051387064.png" alt="" loading="lazy"><br>
 处于好奇就点开链接<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051405236.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051405236.png" alt="" loading="lazy"><br>
 貌似没有其他的提示，不过不要忘了查看源码，说不定会有收获<br>
 1.一个奇怪的链接地址<br>
 (http://lab1.xseclab.com/password1_dc178aa12e73cfc184676a4100e07dac/reset.php?sukey=########&amp;username=a)<br>
@@ -107,23 +107,23 @@
 由此猜想会不会是伪造一个admin用户重置的链接去访问然后就可以的到flag，因为链接的参数实在是很可疑，而且在开头就有提示admin收到重置链接于是尝试对啊链接下手，用bp抓链接的包，会发现这个sukey的值在不断的变化目前不知道是什么，对各个页面乱抓后，没有发现其他的信息，所以sukey就是关键<br>
 关键<br>
 重点关注产生重置链接的包和Sukey<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051746378.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051746378.png" alt="" loading="lazy"><br>
 会发现这服务器的时间有点毛病啊(难道在国外,咋还差8个小时),数了数Sukey的长度发现32位,就有可能是MD5加密(解密解密肯定是什么加密嘛),于是拿去解密<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051771312.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051771312.png" alt="" loading="lazy"><br>
 然后我就猜不出来这是啥了,有经验的小伙伴就知道这是时间戳进行哈希摘要最后形成的Sukey(其实上面服务器的时间也给出了一点提示)<br>
 这里我们验证一下<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621051805877.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621051805877.png" alt="" loading="lazy"><br>
 发现思考解决问题就是先用admin重置密码进行抓包获取时间（注意时间差八个小时用unix时间戳的时候自己加上八个小时）然后去Unix时间戳转换你获取的时间得到（Unix timestamp）然后再去进行MD5加密（注意是32位小不能是别的不然不会成功）即可，最后构造访问地址（依据除admin重置密码时会产生的链接地址修改对应参数实际也就是sukey和username的值）<br>
 https://www.sojson.com/md5/（MD5加密）<br>
 https://tool.chinaz.com/Tools/unixtime.aspx（时间戳转换工具）<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621052148987.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621052153273.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621052157195.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621052148987.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621052153273.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621052157195.png" alt="" loading="lazy"><br>
 然后构造地址</p>
 <pre><code>http://lab1.xseclab.com/password1_dc178aa12e73cfc184676a4100e07dac/reset.php?sukey=9938760c01713466371366d90d4cbfd2&amp;username=admin
 </code></pre>
 <p>然后就可以获取key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621052209884.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621052209884.png" alt="" loading="lazy"><br>
 <strong>2.邂逅对门的妹纸小明想要认识对门的漂亮妹纸，但又不好意思直接去敲门，但是小明知道妹纸今年(2014年)上大三（提交wifi密码的md5 32位小写）</strong><br>
 正确答案：e1a45d0d24cb87490b9efb2fc2e8a2ba<br>
 解题步骤与思路：<br>
@@ -131,7 +131,7 @@ https://tool.chinaz.com/Tools/unixtime.aspx（时间戳转换工具）<br>
 方法：<br>
 首先你要下载Wifi-Crack.cap文件<br>
 然后打开EWSA导入你刚刚保存的文件选择import data的第一个<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621061369626.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621061369626.jpg" alt="" loading="lazy"><br>
 然后倒入自己的字典这里的字典用的是从1990-2013年所有生日组成的这里用python创建字典dic.txt</p>
 <pre><code>with open(&quot;dic.txt&quot;,&quot;w&quot;) as f:
 for year in range(1990,2014):
@@ -150,21 +150,21 @@ f.write(&quot;%d%02d%02d\n&quot; % (year,month,day))
 20131130<br>
 20131131<br>
 点击Options选择AttackOptions<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621061680784.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621061680784.jpg" alt="" loading="lazy"><br>
 然后导入刚刚生成的dict.txt然后将Passwrod mutation options里面的选项全部取消<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621061828069.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621061828069.png" alt="" loading="lazy"><br>
 然后就可以开始了<br>
 点击Start attack选择第一个Dictionary Attack即可然后就会出现成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621061944884.jpg" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621062127144.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621061944884.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621062127144.png" alt="" loading="lazy"><br>
 然后将数据转成MD5（32位小）即可<br>
 https://www.sojson.com/md5/<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621062185840.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621062185840.png" alt="" loading="lazy"><br>
 <strong>3.万恶的Cisco小明入侵了某企业内网，成功的从一管理员电脑获取了某型号交换机running-config文件，发现以下密码02070D48030F1C294940041801181C0C140D0A0A20253A3B请你帮他破解该密码。</strong><br>
 正确密码是：aishishenmadongxi@Admin<br>
 搜了一下，发现是cisco型密码找到了一个网站直接解密<br>
 http://www.ifm.net.nz/cookbooks/passwordcracker.html<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621062654613.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621062654613.png" alt="" loading="lazy"><br>
 <strong>4.万恶的加密</strong><br>
 提示是某huawei/h3c交换机密码，搜了搜是DES加密，Windows 下跑不了这个脚本，放到 Kali 下，成功拿到 flag。<br>
 正确密码：84432079</p>
@@ -218,23 +218,23 @@ miwen = &quot;aK9Q4I)J'#[Q=^Q`MAF4&lt;1!!&quot;
 print u'明文' + decrypt_password(miwen)
 </code></pre>
 <p>写好之后直接在kali的命令框中输入python 加路径（如python /root/下载/01.py）则答案就会出现<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621065709612.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621065709612.png" alt="" loading="lazy"><br>
 <strong>5.喜欢泡网吧的小明</strong><br>
 正确答案：cardcrack_skill_get!<br>
 点开通关地址发现让下载dump文件要打开dump文件还需下载一个WinHex软件不然一般电脑上所有的文件无法打开dump文件<br>
 然后用winhex打开dump文件仔细观察发现从第八行开始之后都是重复数据，后边的应该没什么用而第一行数据混乱所以有两种方法：</p>
 <p><strong>第一种：</strong><br>
 可以把第行数据都修改成0上传一下试试（因为这里提示显示的是：导致卡片数据产生一个字节的错误，一个字节占8位二进制数字，而一个十六进制数占4个二进制数字所以应该第一行和第二行都是0）发现显示正确有100元<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621067852684.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621067852684.png" alt="" loading="lazy"><br>
 <strong>第二种：</strong><br>
 先修复字节错误，看了提示，错误出现在第一行，文件头应该有始有终，测试后发现是将第一个AA改为8A<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621068014887.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621068014887.png" alt="" loading="lazy"><br>
 然后上传试试发现显示正确<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621068040758.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621068040758.png" alt="" loading="lazy"></p>
 <p>显示余额 100 块，100 转为 16 进制是 64，数据里并没有这样的地方，仔细观察，分别转换几处不一样的数据，发现 2710 转换为十进制是 10000，原来是考虑了两位小数。。。那么把两处 2710 改为4e20 再试试。因为2710写反所以4e20也得写反所以修改成204e<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621068342674.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621068342674.png" alt="" loading="lazy"><br>
 然后上传成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621068382182.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621068382182.png" alt="" loading="lazy"><br>
 <strong>6.异常数据Tips:key就是解密结果</strong><br>
 正确答案：hey!IloveU!<br>
 妹子给了一个谜语序列：AGV5IULSB3ZLVSE=<br>
@@ -267,32 +267,32 @@ continue
 else:
 print (i)
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621075579816.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621075579816.png" alt="" loading="lazy"><br>
 也还可以大小写逐个变化然后进行base64解码，<br>
 最后可以也试出key值：hey!IloveU!</p>
 <h1 id="7md5真的能碰撞嘛">7.md5真的能碰撞嘛</h1>
 <p>正确答案：yesyouareclever!<br>
 解题思路：<br>
 1.打开网址，查看code.txt<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621078754730.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621078754730.png" alt="" loading="lazy"><br>
 然后将rootadmin的值进行MD5加密加密出来是：0e332932043729729062996282883873<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621078942398.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621078942398.png" alt="" loading="lazy"><br>
 这里利用了php的弱类型总结可以在本人其他篇章看到<br>
 然后你就会知道这里MD5加密rootadmin的值最终比较的时候是0<br>
 所以就可以利用经常表示为0的并且MD5加密之后首两位是0e的<br>
 payload为password=240610708或者QNKCDZO<br>
 然后就可以用hackbar用post传值把password传入即可成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621079358023.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621079358023.png" alt="" loading="lazy"><br>
 <strong>8.小明爱上了一个搞硬件的小姑凉</strong><br>
 正确答案：iloveyou,xiaoguniang!<br>
 解题思路<br>
 这道题就是要查看该数据包的内容，所以要下可以打开文件的应用软件<br>
 1、搜索嵌入式逻辑分析仪，发现搜索结果太多<br>
 2、用winhex打开文件，看到一行提示<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621085457531.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621085457531.png" alt="" loading="lazy"><br>
 Saleae Async Serial Analyzer，应该就是下载这个软件了<br>
 3、用软件打开文件，得到<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621085473433.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621085473433.png" alt="" loading="lazy"><br>
 4、注意comma是逗号即可，key为iloveyou,xiaoguniang!</p>
 <p>软件下载链接：https://www.saleae.com/downloads/ ，注意不要下老版本，可能出不来key<br>
 参照：https://blog.csdn.net/qq_40980391/article/details/81257041<br>
@@ -368,58 +368,58 @@ New string: %2fetc%2fhosts%80%00%00%00%00%00%00%00%00%00%00%00%00%00P%01%00%00%0
 下载得到一个exe文件，先运行一下</p>
 <p>提示输入key<br>
 用idea打开找到main()主函数，F5生成伪代码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621131832705.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621131832705.png" alt="" loading="lazy"><br>
 可以看到v19变量用来接收输入，当v18==1时会输出一串字符串，否则输入error，这些字符串应该就是flag了<br>
 <strong>方法一：</strong><br>
 最简单粗暴的方法是将v1到v16的值进行ASCII解码，就是对应的Flag<br>
 0h_No_u_f0und_m3<br>
 <strong>方法二：</strong><br>
 跟进sub_401005()函数<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621136382291.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621136382291.png" alt="" loading="lazy"><br>
 又调用了sub_401020()函数，继续跟进<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621136394565.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621136394565.png" alt="" loading="lazy"><br>
 这个函数获取了传入的参数a1的长度，如果长度大于50就返回1(true)。<br>
 所以只需要输入的字符串长度大于50就行了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621136419617.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621136419617.png" alt="" loading="lazy"></p>
 <h1 id="综合关">综合关</h1>
 <p><strong>1.渗透测试第一期</strong><br>
 正确答案：yesBindphoneErrorGood<br>
 步骤：<br>
 1.点开通关地址然后点击Regist实行注册注册的时候就不能直接用admin注册你可以随便先注册一个例如Username=123456 Passwrod=123456然后会出现regist ok<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146633020.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146633020.png" alt="" loading="lazy"><br>
 2.接下来就是绑定手机了，这里就可以抓包来修改用户名了点击右键会出现你可以用的手机号然后发送验证码，再绑定的时候抓包，就可以改用户名了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146625652.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146641526.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146625652.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146641526.png" alt="" loading="lazy"><br>
 改为<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146649708.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146649708.png" alt="" loading="lazy"><br>
 改完之后重新点开通关地址点开Forget Password，然后输入用户名再用刚刚的电话号码然后获取验证码然后进行重置然后再登录用admin和刚刚跳出的密码即可登陆成功看见key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146672804.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146677902.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621146683151.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146672804.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146677902.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621146683151.png" alt="" loading="lazy"></p>
 <p><strong>2.没有注入到底能不能绕过登录(不是sql注入)</strong><br>
 正确答案：sdfas<sup>%&amp;</sup>kjdsfha<br>
 解题步骤：<br>
 打开通关地址看有没有什么提示，发现啥也没有<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212954370.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212954370.png" alt="" loading="lazy"><br>
 然后看见有爆破，所以用burp suite进行爆破最后得到弱口令账号test，密码test<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212958194.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212958194.png" alt="" loading="lazy"><br>
 然后就用这个登录发现还是没有出现key，反而是告诉你key在admin主页面<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212962943.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212962943.png" alt="" loading="lazy"><br>
 然后我们用御剑扫描一下看这个地址下面有什么然后发现了robots.txt<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212966581.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212966581.png" alt="" loading="lazy"><br>
 robots.txt是一个纯文本文件，在这个文件中网站管理者可以申明该网站中不想被搜索引擎访问的部分，或者指定搜索引擎值收录指定的内容，当一个搜索引擎（又称搜索机器人或蜘蛛程序）访问一个站点时，他会首先检查该站点目录先是否存在robots.txt。如果存在，搜索机器人就会按照该文件中的内容来去认定访问的范围；如果该我呢见不存在，那么搜索机器人就沿着链接抓取<br>
 然后点击robots.txt<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212972406.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212972406.png" alt="" loading="lazy"><br>
 说明让继续访问/myadminroot/(在之前已经用test用户名，和test密码登陆后)然后又出现让用admin登录<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212977289.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212981481.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212977289.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212981481.png" alt="" loading="lazy"><br>
 所以我们就想的用用户名为admin然后密码随便写然后再把地址上加上/myadminroot/即可出现key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212985540.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212993601.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621212997624.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212985540.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212993601.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621212997624.png" alt="" loading="lazy"><br>
 然后在这个页面进行抓包不然出现key值的页面跳转了（试了几次有时会跳有时不会所以还是抓包保险）<br>
 然后发送给repeater点击发送即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621213048801.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621213048801.png" alt="" loading="lazy"></p>
 <p><strong>3.美图闪亮亮交友平台(不咋理解有可能是因为开启服务器端口的原因)</strong><br>
 正确答案：woaimeizhiwozimeizhi@112<br>
 首先按照我的习惯查看了一下源代码，发现有两个提示</p>
@@ -430,7 +430,7 @@ robots.txt是一个纯文本文件，在这个文件中网站管理者可以申�
 <p>然后就是一通操作，发现这个姓名和描述是没有限制的，但是图片url规定了输入的是一个url，类型可以抓包改或者直接改html。尝试了很多输入是可以注入xss的，比如</p>
 <pre><code>https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png&quot; οnclick=&quot;alert(1)&quot; &quot;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621217654415.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1621217654415.png" alt="" loading="lazy"><br>
 不过既然在题目里都说了是没有xss漏洞的，所以就没有再继续了。<br>
 然后就陷入困境了-。-<br>
 后来去网上冲浪，看到了很多文章最后有了解法。<br>
@@ -466,13 +466,13 @@ tcpCliSock.close()
 tcpSerSock.close()
 </code></pre>
 <p>首先在服务器上运行代码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621217659997.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621217659997.png" alt="" loading="lazy"><br>
 然后在图片url中输入服务器地址<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621217663347.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621217663347.png" alt="" loading="lazy"><br>
 接着点提交就会发现服务器上出现了数据包<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621217666576.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621217666576.png" alt="" loading="lazy"><br>
 最后访问这一个网址就可以找到flag了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621217670513.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621217670513.png" alt="" loading="lazy"></p>
 <p>原文链接：https://blog.csdn.net/xzz2333/article/details/109514039</p>
 <p><strong>4.最简单的数字取证1分值</strong><br>
 正确答案：HackingLabHdd1b7c2fb3ff3288bff<br>
@@ -481,7 +481,7 @@ tcpSerSock.close()
 1.用ida打开.exe文件，选项默认即可<br>
 2.Search-&gt;text，输入key，忽略大小写<br>
 3.看到aKeyHackinglabh，那么很显然下面就是密码了。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621218963915.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621218963915.png" alt="" loading="lazy"><br>
 4.右键copy，得到seg000:0000000000052368  aKeyHackinglabh db 'key: HackingLabHdd1b7c2fb3ff3288bff',0<br>
 5.这就是要的答案了 HackingLabHdd1b7c2fb3ff3288bff</p>
 <p><strong>5.最简单的数字取证2</strong><br>
@@ -491,9 +491,9 @@ tcpSerSock.close()
 2.转换思路，题目说资料被黑客删除了，那么想到用磁盘恢复工具DiskGenius</p>
 <p>题目解题过程：</p>
 <p>1.用工具DiskGenius打开文件HackingLab-hdd1.vmdk，（硬盘-&gt;打开虚拟硬盘文件）<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621220205731.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621220205731.png" alt="" loading="lazy"><br>
 2.看到RECYCLER下面有个，Del.txt,单击它，里面就是要的key ，答案为 HackingLabHdd1198812305980ab1<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621220220092.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621220220092.png" alt="" loading="lazy"><br>
 ————————————————<br>
 版权声明：本文为CSDN博主「yangjunguang」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/yangjunguang/article/details/81198781</p>
@@ -557,7 +557,7 @@ break;
 </code></pre>
 <p>跑脚本之前好像先得访问一下重置密码地址让服务器生成 token，还需要安装好 PHP 的 Requests 库。<br>
 得到flag<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621249257299.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621249257299.png" alt="" loading="lazy"><br>
 PassResetSuccess! Your Flag is:NotSecurityRandomNowYouKnown</p>
 
               </div>
@@ -575,7 +575,7 @@ PassResetSuccess! Your Flag is:NotSecurityRandomNowYouKnown</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/wang-luo-an-quan-shi-yan-shi-orwang-luo-xin-xi-an-quan-gong-fang-xue-xi-ping-tai/">
+            <a href="https://jinqipiaopiao.github.io/post/wang-luo-an-quan-shi-yan-shi-orwang-luo-xin-xi-an-quan-gong-fang-xue-xi-ping-tai/">
               <h3 class="post-title">
                  网络安全实验室|网络信息安全攻防学习平台(选择题，基础关，脚本关，注入关，上传关）
               </h3>
@@ -587,7 +587,7 @@ PassResetSuccess! Your Flag is:NotSecurityRandomNowYouKnown</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

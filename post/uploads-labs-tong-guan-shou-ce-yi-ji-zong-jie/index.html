@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>uploads-labs通关手册以及总结(1-14) | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="uploads-labs通关手册以及总结(1-14) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="uploads-labs通关手册以及总结(1-14) | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -27,8 +27,8 @@ eg..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -107,14 +107,14 @@ header(&quot;Content-Type:text/html;charset=utf-8&quot;);
 echo(&quot;iloveyou&quot;)?&gt;即可
 </code></pre>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619235189823.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619235189823.png" alt="" loading="lazy"><br>
 方法一：<br>
 <strong>上传一个php一句话文件，直接弹出不允许上传，尝试前端绕过。</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619228884780.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619228884780.png" alt="" loading="lazy"><br>
 <strong>按F12打开调控台，删除下面这个验证js代码.</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619228794044.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619228794044.png" alt="" loading="lazy"><br>
 <strong>然后就会上传成功，返回图片信息即路径地址.</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619229023115.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619229023115.png" alt="" loading="lazy"><br>
 方法二：<br>
 先创建一个php文件</p>
 <pre><code>&lt;?php
@@ -123,14 +123,14 @@ echo(&quot;iloveyou&quot;)?&gt;
 <p>然后修改后缀名为jpg<br>
 然后用burp suite修改后缀名为php<br>
 然后打开控制台找到这个文件打开成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619238527621.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619238527621.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-2-mime-type验证绕过">Less-2 MIME-TYPE验证绕过</h1>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619235233198.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619235233198.png" alt="" loading="lazy"><br>
 <strong>上传一句话图片木马，用burpsuite抓包，将后缀名改为php。</strong><br>
 <strong>首先新建一个图片文件</strong><br>
 常见的图片格式有BMP（位图）、JPG、JPEG、PNG、GIF等<br>
@@ -140,41 +140,41 @@ echo(&quot;iloveyou&quot;)?&gt;
 然后上传文件jpg<br>
 然后点开burp suite使之出现Intercept is on<br>
 然后点击上传<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619231679918.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619231679918.png" alt="" loading="lazy"><br>
 然后抓包成功修改1.jpg文件为1.php然后点击Intercept is on出现off即可成功（如果抓包不成功请查看我的”Burp suite使用方法“即可完成抓包）<br>
 然后打开控制台就可以发现后缀名已经改为PHP<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619231690244.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619231690244.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-3-黑名单绕过">Less-3 黑名单绕过</h1>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619235276755.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619235276755.png" alt="" loading="lazy"><br>
 <strong>用黑名单不允许上传.asp,.aspx,.php,.jsp后缀的文件</strong><br>
 <strong>但可以上传.phtml .phps .php5 .pht</strong><br>
 前提是apache的httpd.conf中有如下配置代码</p>
 <p>AddType application/x-httpd-php .php .phtml .phps .php5 .pht</p>
 <p>因此抓包修改为1.php5上传，回复包里有上传路径<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619233170624.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619233170624.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-4-htaccess绕过">Less-4 .htaccess绕过</h1>
 <p>查看源码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619237030387.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619237030387.png" alt="" loading="lazy"><br>
 <strong>黑名单拒绝了几乎所有有问题的后缀名，除了.htaccess</strong><br>
 前提条件（1.mod_rewrite模块开启。2.AllowOverride All）<br>
 <strong>方法一：</strong><br>
 先上传一个.htaccess文件，内容如下：</p>
 <p>SetHandler application/x-httpd-php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619237116772.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619237116772.png" alt="" loading="lazy"><br>
 然后再上传<br>
 info.jpg文件：</p>
   <?php phpinfo(); ?>
 </li>
 </ul>
 <p>然后在控制台打开info.jpg则会出现<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619237185948.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619237185948.png" alt="" loading="lazy"><br>
 <strong>方法二：</strong><br>
 新建一个php文件<br>
 如1.php</p>
@@ -201,19 +201,19 @@ echo(&quot;iloveyou&quot;)?&gt;
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240207972.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240207972.png" alt="" loading="lazy"><br>
 <strong>同样黑名单很多，把.htaccess ,.ini也列入到了黑名单，但是发现小写转化没有了，所以我们可以采用大小写绕过</strong>。<br>
 上传.php文件，burp抓包修改后缀：<br>
 PHP,Php,phP都可以最后显示结果<br>
 因为Windows特性，创建文件时忽略大小写，实际保存的文件后缀即为php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240489858.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240489858.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-7-空格绕过">Less-7 空格绕过</h1>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240702322.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240702322.png" alt="" loading="lazy"><br>
 <strong>同上，但是少了尾部去空，所以尝试空格绕过。</strong><br>
 首先创建一个php文件</p>
 <pre><code>&lt;?php
@@ -222,14 +222,14 @@ echo(&quot;iloveyou&quot;)?&gt;
 <p>然后用brute suite抓包然后在后缀名上加上空格<br>
 还是Windows特性，创建文件时，忽略结尾的空格，实际保存的文件名为.php<br>
 则显示成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-8-点绕过">Less-8 点绕过</h1>
 </li>
 </ul>
 <p>源码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619241005889.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619241005889.png" alt="" loading="lazy"><br>
 <strong>缺少了deldot()函数，不会删除文件末尾的点，所以尝试点绕过</strong>。<br>
 首先创建一个php文件</p>
 <pre><code>&lt;?php
@@ -238,7 +238,7 @@ echo(&quot;iloveyou&quot;)?&gt;
 <p>然后用brute suite抓包然后在后缀名上加上点<br>
 还是Windows特性，创建文件时，忽略结尾的.，实际保存的文件名为.php<br>
 则显示成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-9-windows文件流性绕过">Less-9 Windows文件流性绕过</h1>
@@ -260,14 +260,14 @@ echo(&quot;iloveyou&quot;)?&gt;
 <pre><code>::$DATA
 </code></pre>
 <p>则显示成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-10-特殊字符重写绕过">Less-10 特殊字符重写绕过</h1>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619241909128.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619241909128.png" alt="" loading="lazy"><br>
 将filename加入最终路径会带来极大的风险。</p>
 <p>如：</p>
 <pre><code>$img_path = UPLOAD_PATH.'/'.$file_name;
@@ -279,17 +279,17 @@ echo(&quot;iloveyou&quot;)?&gt;
 </code></pre>
 <p>然后用brute suite抓包然后在后缀名上加上. .如<br>
 1.php. .则显示成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
 <ul>
 <li>
 <h1 id="less-11-双写绕过">Less-11 双写绕过</h1>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619242360364.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619242360364.png" alt="" loading="lazy"><br>
 上传.php文件，上传成功。但是查看路径，只有发现文件名，文件后缀木有了。查看提示：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619242544372.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619242580924.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619242544372.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619242580924.png" alt="" loading="lazy"><br>
 其将文件后缀替换为空了<br>
 我们可以后缀名双写绕过，上传文件，<br>
 首先创建一个php文件</p>
@@ -298,7 +298,7 @@ echo(&quot;iloveyou&quot;)?&gt;
 </code></pre>
 <p>用burp抓包修改文件后缀名双写绕过如:1.pphphp<br>
 则显示成功<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619240857559.png" alt="" loading="lazy"></p>
 <h1 id="less-12-白名单get型00截断">Less-12 白名单GET型%00截断</h1>
 <p>%00截断原理:<br>
 %00截断是操作系统层的漏洞，由于操作系统是C语言或汇编语言编写的，这两种语言在定义字符串时，都是以\0(即0x00)作为字符串的结尾。操作系统在识别字符串时，当读取到\0字符时，就认为读取到一个字符串的结尾符号。因此，我们可以通过修改数据包，插入\0字符的方式，达到字符串截断的目的。%00截断通常用来绕过web软waf的白名单限制。<br>
@@ -308,7 +308,7 @@ php版本小于5.3.4，php.ini的magic_quotes_gpc为OFF状态。之后的php版�
 <p>go:<br>
 上传.php文件，提示只允许上传.jpg|.png|.gif类型文件！为白名单验证。</p>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619245973309.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619245973309.png" alt="" loading="lazy"><br>
 从：</p>
 <pre><code>$img_path = $_GET['save_path'].&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;
 </code></pre>
@@ -320,9 +320,9 @@ echo(&quot;iloveyou&quot;)?&gt;
 <p>然后改名为1.png然后<br>
 使用进行%00截断，上传一个.png文件，<br>
 burp抓包进行%00截断：save_path等于../upload/1.php%00<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619246556675.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619246556675.png" alt="" loading="lazy"><br>
 然后打开控制台<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619246639334.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619246639334.png" alt="" loading="lazy"><br>
 然后打开相应路径把1.php后边的字符删去就可正确回显</p>
 <ul>
 <li>
@@ -335,9 +335,9 @@ burp抓包进行%00截断：save_path等于../upload/1.php%00<br>
 <p>这次的save_path是通过post传入的，在进行%00截断时需要在hex中修改。</p>
 <p>go:<br>
 1.修改post参数的值，这里php的后面添加了一个空格和字母a，其实写什么都可以，只是空格的16进制为0x20，比较好记，加个a好找空格的位置。写任意字符都可以，知道其16进制即可。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619247234211.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619247234211.png" alt="" loading="lazy"><br>
 2.打开hex，修改16进制内容，将空格的16进制20改为00<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619247288846.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619247288846.png" alt="" loading="lazy"><br>
 然后打开控制台点击路径<br>
 然后删除.php后面的字符然后打开回显正确</p>
 <ul>
@@ -346,7 +346,7 @@ burp抓包进行%00截断：save_path等于../upload/1.php%00<br>
 </li>
 </ul>
 <p>源码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619252494294.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619252494294.png" alt="" loading="lazy"><br>
 首先创建一个png文件<br>
 里面写入GIF12<br>
 然后创建一个php文件</p>
@@ -359,10 +359,10 @@ echo(iloveyou)?&gt;
 </code></pre>
 <p>可形成一个gif文件<br>
 然后上传这个文件用brute suite抓包然后在inspect 可以发现形成了一个gif文件<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619252883860.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1619252883860.png" alt="" loading="lazy"><br>
 然后打开当前页面给予的文件包含漏洞PHP文件<br>
 然后在该url端输入你形成的file地址如：?file=upload/6820210424161029.gif即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1619253018444.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1619253018444.png" alt="" loading="lazy"></p>
 <p>————————————————<br>
 版权声明：本文为CSDN博主「小白白@」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/weixin_44677409/article/details/92799366</p>
@@ -394,7 +394,7 @@ echo(iloveyou)?&gt;
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/sqli-labs-41-65/">
+            <a href="https://jinqipiaopiao.github.io/post/sqli-labs-41-65/">
               <h3 class="post-title">
                 sqli-labs 41-65
               </h3>
@@ -406,7 +406,7 @@ echo(iloveyou)?&gt;
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

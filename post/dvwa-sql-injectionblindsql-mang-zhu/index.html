@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之SQL Injection(Blind)(SQL盲注) | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之SQL Injection(Blind)(SQL盲注) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之SQL Injection(Blind)(SQL盲注) | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -20,8 +20,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -108,7 +108,7 @@ sleep(n):将程序挂起n秒<br>
 5.猜解数据</p>
 <pre><code>    1.Low：
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617018229917.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617018229917.png" alt="" loading="lazy"><br>
 分析：<br>
 Low级别的代码对参数id没有做任何检查、过滤，存在明显的SQL注入漏洞，同时SQL语句查询返回的结果只有两种：<br>
 User ID exists in the database.‘与‘ User ID is MISSING from the database.<br>
@@ -118,11 +118,11 @@ User ID exists in the database.‘与‘ User ID is MISSING from the database.<b
 <p>1.判断是否存在注入，注入是字符型还是数字型</p>
 <p>当输入的参数为字符串时，称为字符型。字符型和数字型最大的一个区别在于，数字型不需要单引号来闭合，而字符串一般需要通过单引号来闭合的。</p>
 <p>输入1，显示相应用户存在：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
 输入1’ and 1=1 #，显示存在：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
 输入1’ and 1=2 #，显示不存在：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617018392849.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617018392849.png" alt="" loading="lazy"><br>
 2.猜解当前数据库名</p>
 <p>想要猜解数据库名，首先要猜解数据库名的长度，然后挨个猜解字符。</p>
 <pre><code>    输入1’ and length(database())=1 #，显示不存在；
@@ -225,7 +225,7 @@ User ID exists in the database.‘与‘ User ID is MISSING from the database.<b
 <p>5.猜解数据</p>
 <pre><code>    2.Medium:
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617018604104.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1617018604104.png" alt="" loading="lazy"></figure>
 <p>分析：<br>
 Medium级别的代码利用mysql_real_escape_string函数对特殊符号</p>
 <p>\x00,\n,\r,,’,”,\x1a进行转义，同时前端页面设置了下拉选择表单，希望以此来控制用户的输入。</p>
@@ -241,7 +241,7 @@ Medium级别的代码利用mysql_real_escape_string函数对特殊符号</p>
 抓包改参数id为1 and if(length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9,sleep(5),1) #，明显延迟，说明数据中的第一个表名长度为9个字符；<br>
 抓包改参数id为1 and if((select count(column_name) from information_schema.columns where table_name=0×7573657273 )=8,sleep(5),1) #，明显延迟，说明uers表有8个字段。<br>
 3.High：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617018793745.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617018793745.png" alt="" loading="lazy"><br>
 分析：<br>
 High级别的代码利用cookie传递参数id，当SQL查询结果为空时，会执行函数sleep(seconds)，目的是为了扰乱基于时间的盲注。同时在 SQL查询语句中添加了LIMIT 1，希望以此控制只输出一个结果。</p>
 <p>漏洞利用</p>
@@ -265,7 +265,7 @@ High级别的代码利用cookie传递参数id，当SQL查询结果为空时，�
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/sql-zhu-ru-de-san-chong-fang-shi-shi-shi-me/">
+            <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-de-san-chong-fang-shi-shi-shi-me/">
               <h3 class="post-title">
                 sql注入的三种方式是什么？
               </h3>
@@ -277,7 +277,7 @@ High级别的代码利用cookie传递参数id，当SQL查询结果为空时，�
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

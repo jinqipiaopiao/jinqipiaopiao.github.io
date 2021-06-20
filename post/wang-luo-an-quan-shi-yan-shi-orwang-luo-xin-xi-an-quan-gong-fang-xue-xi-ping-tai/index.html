@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title> 网络安全实验室|网络信息安全攻防学习平台(选择题，基础关，脚本关，注入关，上传关） | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title=" 网络安全实验室|网络信息安全攻防学习平台(选择题，基础关，脚本关，注入关，上传关） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title=" 网络安全实验室|网络信息安全攻防学习平台(选择题，基础关，脚本关，注入关，上传关） | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -31,8 +31,8 @@ D. IP欺骗
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -223,32 +223,32 @@ D. FF23：：510：0：0：9C5B<br>
 <strong>6.HAHA浏览器：据说信息安全小组最近出了一款新的浏览器，叫HAHA浏览器，有些题目必须通过HAHA浏览器才能答对。小明同学坚决不要装HAHA浏览器，怕有后门，但是如何才能过这个需要安装HAHA浏览器才能过的题目呢？</strong><br>
 正确答案： meiyouHAHAliulanqi<br>
 用burpsuite抓包然后修改User-Agent中显示浏览器信息的部分，把浏览器修改为HAHA即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620871521375.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620871521375.png" alt="" loading="lazy"><br>
 <strong>7.key究竟在哪里呢？</strong><br>
 正确答案：kjh%#$#%FDjjj<br>
 右键点开检查点击网络然后刷新页面即可在消息头看见key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620870332776.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620870332776.png" alt="" loading="lazy"><br>
 <strong>8. 小明这次可真找不到key去哪里了，你能帮他找到key吗？</strong><br>
 正确答案： ohHTTP302dd<br>
 点击通关地址然后打开burp suite抓包发现不会像之前直接点击的时候，跳转到其他页面，（这里burpsuite可以防止重定向可以看定向前的页面)，然后发送到repeater重新send会发现出现超链接地址</p>
 <pre><code>./key_is_here_now_.php
 </code></pre>
 <p>然后修改url修改为http://lab1.xseclab.com/base8_0abd63aa54bef0464289d6a42465f354/key_is_here_now_.php即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620871774315.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620871778694.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620871782742.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620871774315.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620871778694.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620871782742.png" alt="" loading="lazy"><br>
 **9.冒充登陆用户：小明来到一个网站，还是想要key，但是却怎么逗登陆不了，你能帮他登陆吗？ **<br>
 正确答案：yescookieedit7823789KJ<br>
 通过抓包会看到Login值为0<br>
 然后我们就可以想到把值修改为1即可绕过登录那么就会得到key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620872086788.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620872086788.png" alt="" loading="lazy"><br>
 然后发送到repeater修改login的值为1然后发送就会看到key值是多少<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620872132758.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620872132758.png" alt="" loading="lazy"><br>
 <strong>10.比较大小：只要比服务器上的数字大就可以了!</strong><br>
 正确答案： 768HKyu678567&amp;<em>&amp;K<br>
 输入102发现小输入999还是小所以用burp suite抓包修改输入9999这样就发现出现key值了，因为数据溢出了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620872939243.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620872944049.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620872939243.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620872944049.png" alt="" loading="lazy"><br>
 <strong>11.本地的诱惑：小明扫描了他心爱的小红的电脑，发现开放了一个80端口，但是当小明去访问的时候却发现只允许从本地访问，可他心爱的小红不敢让这个诡异的小明触碰她的电脑，可小明真的想知道小红电脑的80端口到底隐藏着什么秘密(key)？</strong><br>
 方法一：<br>
 直接查看源码就可以找到key值<br>
@@ -258,9 +258,9 @@ D. FF23：：510：0：0：9C5B<br>
 <strong>12.小明设计了一个网站，因为总是遭受黑客攻击后台，所以这次他把后台放到了一个无论是什么人都找不到的地方....可最后还是被黑客找到了，并被放置了一个黑页，写到:find you ,no more than 3 secs!</strong><br>
 正确答案：UIJ%%IOOqweqwsdf<br>
 那就先用御剑工具扫描一下后台：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620875688076.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620875688076.jpg" alt="" loading="lazy"><br>
 发现隐藏的后台信息名字为robots.txt，是robots协议没跑了，打开后页面内容如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620875700394.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620875700394.png" alt="" loading="lazy"><br>
 不是很熟悉robots协议先了解了解：</p>
 <pre><code>    User-agent：指定对哪些爬虫生效
 
@@ -283,16 +283,16 @@ D. FF23：：510：0：0：9C5B<br>
         Crawl-delay: 5    //本次抓取后下一次抓取前需要等待5秒
 </code></pre>
 <p>所以在这道题中，后台屏蔽了目录：/9fb97531fe95594603aff7e794ab2f5f/   那就不妨去看看里面有什么？<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620875779224.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620875779224.jpg" alt="" loading="lazy"><br>
 看到如上图所示的提示，按照他说的转到login page：http://lab1.xseclab.com/base12_44f0d8a96eed21afdc4823a0bf1a316b/9fb97531fe95594603aff7e794ab2f5f/login.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620875820022.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1620875820022.png" alt="" loading="lazy"></p>
 <h1 id="脚本关">脚本关</h1>
 <p><strong>1.key又又找不到了</strong><br>
 分值: 200<br>
 小明这次哭了，key又找不到了！！！ key啊，你究竟藏到了哪里，为什么我看到的页面上都没有啊！！！！！！<br>
 正确答案：yougotit_script_now<br>
 点开通关地址然后打开burpsuite抓包然后发送到repeater然后send就会发现key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620898480886.jpg" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620898480886.jpg" alt="" loading="lazy"><br>
 <strong>2.小明要参加一个高技能比赛，要求每个人都要能够快速口算四则运算，2秒钟之内就能够得到结果，但是小明就是一个小学生没有经过特殊的培训，那小明能否通过快速口算测验呢？</strong><br>
 正确答案：123iohHKHJ%^&amp;*(jkh<br>
 打开pycharm输入以下代码：</p>
@@ -310,14 +310,14 @@ payload = {'v':eval(match[0])}
 print(s.post(url,data=payload).text)
 </code></pre>
 <p>运行之后即可得出<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620901874367.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620901874367.png" alt="" loading="lazy"><br>
 <strong>3.这个题目是空的分值: 100 Tips:这个题目真不是随便设置的。 什么才是空的呢？ 通关地址：没有，请直接提交答案(小写即可)</strong><br>
 正确答案：null</p>
 <p><strong>4.怎么就是不弹出key呢，提交说明：提交前14个字符即可过关</strong><br>
 用burpsuite抓包然后发送到repeater然后send就会出现script代码然后把script代码（除返回值为false的）复制到html页面中使之运行即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907284503.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907291012.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907296069.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907284503.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907291012.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907296069.png" alt="" loading="lazy"><br>
 <strong>5.逗比验证码第一期 逗比的验证码，有没有难道不一样吗？</strong><br>
 真确答案是：LJLJL789sdf#@sd<br>
 首先点开通关地址发现出现提示登陆密码十四位纯数字，第一位不为0<br>
@@ -325,9 +325,9 @@ print(s.post(url,data=payload).text)
 抓包之后就通过暴力破解<br>
 方法一用burpsuite暴力破解<br>
 然后发送到intruder然后确定爆破参数,先clear然后只add密码然后就可以确定爆破范围（1000-9999即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907601638.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907619373.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620907624353.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907601638.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907619373.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620907624353.png" alt="" loading="lazy"><br>
 方法二用python来进行爆破（这样爆破更快）<br>
 首先用burpsuite确定user-agent的值和cookie值</p>
 <pre><code>import requests
@@ -344,21 +344,21 @@ payload = {&quot;username&quot;:&quot;admin&quot;,&quot;pwd&quot;:i,&quot;vcode&
 r = s.post(url,data=payload,headers=headers)
 print(i,r.text)
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620907797107.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620907797107.png" alt="" loading="lazy"><br>
 <strong>6.验证便失效的验证码</strong><br>
 正确密码：LJLJL789ss33fasvxcvsdf#@sd<br>
 和第五关一样都是爆破<br>
 <strong>方法一用burpsuite爆破</strong><br>
 点击通关地址点开发现验证码一次就过期所以用burpsuite抓包发送到repeater<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909239245.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909239245.png" alt="" loading="lazy"><br>
 一次过后就是vcode错误所以试着置空vcode发现出现pwd错误然后就可一进行爆破了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909314087.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909314087.png" alt="" loading="lazy"><br>
 发送到intruder然后选择要爆破pwd参数然后打开payloads修改数据<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909565195.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909565195.png" alt="" loading="lazy"><br>
 然后进行爆破即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909582620.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909582620.png" alt="" loading="lazy"><br>
 然后再把正确的密码填入到pwd中重新在repeater中发送然后就会发现出现了key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909640024.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909640024.png" alt="" loading="lazy"><br>
 <strong>方法二用python爆破</strong><br>
 点击通关地址点开发现验证码一次就过期所以用burpsuite抓包得到cookie值<br>
 然后就可以构造python代码了</p>
@@ -376,9 +376,9 @@ payload = {&quot;username&quot;:&quot;admin&quot;,&quot;pwd&quot;:i,&quot;vcode&
 r = s.post(url,headers=headers,data=payload)
 print(i,r.content)
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620910219167.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620910219167.png" alt="" loading="lazy"><br>
 然后再把正确的密码填入到pwd中重新在repeater中发送然后就会发现出现了key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620909640024.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620909640024.png" alt="" loading="lazy"><br>
 <strong>7.逗比的验证码第三期（SESSION）</strong><br>
 正确答案：LJLJLfuckvcodesdf#@sd<br>
 和第六关原理一样<br>
@@ -389,7 +389,7 @@ http://lab1.xseclab.com/base13_ead1b12e47ec7cc5390303831b779d47/index.php?<sup>%
 即可爆出key值<br>
 查看源码发现有view-source源代码所以打开看一看<br>
 查看源代码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620913838410.JPG" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620913838410.JPG" alt="" loading="lazy"><br>
 这道题属于代码审计题</p>
 <pre><code>&lt;?php  
 header(&quot;Content-type: text/html; charset=utf-8&quot;);
@@ -434,7 +434,7 @@ $_GET['^_^']只能是字符串：(●'◡'●)
 
 http://lab1.xseclab.com/base13_ead1b12e47ec7cc5390303831b779d47/index.php?^%5f^=data:,(●'◡'●)
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620913990568.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620913990568.png" alt="" loading="lazy"><br>
 <strong>9.逗比的手机验证码</strong><br>
 正确答案：LJLJLGod!@@sd<br>
 点击通关地址会发现需要发送验证码然后发送然后将验证码输入登录发现不能登录他说是登录应该用6667的<br>
@@ -444,59 +444,59 @@ http://lab1.xseclab.com/base13_ead1b12e47ec7cc5390303831b779d47/index.php?^%5f^=
 正确答案：LKK8*(!@@sd<br>
 点击通关地址然后就会出现让获取验证码，当你点击之后提示是三位数字第一位不为0随即想到的就是用爆破同样有两种爆破方式<br>
 方法一用burpsuite抓包设置爆破参数然后设置范围（100-999）即可进行爆破<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620916738435.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620916738435.png" alt="" loading="lazy"><br>
 方法二用python爆破<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620916864379.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620916864379.png" alt="" loading="lazy"><br>
 然后用爆破出来的数据进行登录然后就会出现新的电话号码然后继续进行爆破<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620916841696.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620916841696.png" alt="" loading="lazy"><br>
 随即出现答案<br>
 <strong>11.验证码识别&amp;Tips:验证码依然是3位数</strong><br>
 Writeup：<br>
 利用验证码识别工具然后进行爆破<br>
 利用工具：Pkav HTTP Fuzzer</p>
 <p>进入靶场，先获取验证码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995421310.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995421310.png" alt="" loading="lazy"><br>
 输入手机验证码以及图片验证码，然后进行抓包<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995424470.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995424470.png" alt="" loading="lazy"><br>
 复制数据包到Pkav HTTP Fuzzer ，标记需要爆破的值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995428816.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995428816.png" alt="" loading="lazy"><br>
 在Pkav HTTP Fuzzer 右边设置爆破手机验证码的字典规则<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995432045.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995432045.png" alt="" loading="lazy"><br>
 复制图片验证码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995435318.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995435318.png" alt="" loading="lazy"><br>
 选择图片验证码识别<br>
 1.选择图片验证码识别<br>
 2.填入验证码图片地址<br>
 3.设置识别字符<br>
 4.识别图片测试<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995439451.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995439451.png" alt="" loading="lazy"><br>
 选择重放选项，设置发包线程，验证码长度(多线程会失败，大家可以自行测试)<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995442828.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995442828.png" alt="" loading="lazy"><br>
 开始爆破验证码<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995446396.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995446396.png" alt="" loading="lazy"><br>
 有时不会成功，可能在运气不好的时候，正好爆破那个验证码，图片正好识别出错（我就遇到过一次 - -）</p>
 <p>点击长度（和burp suite一样，成功和失败的返回长度是不一样的），查看返回包就可以看到flag了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620995450149.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620995450149.png" alt="" loading="lazy"><br>
 <strong>12. XSS基础关&amp;XSS基础:很容易就可以过关.XSS类题目必须在平台登录才能进行.登录地址请参考左侧&lt;子系统&gt;</strong><br>
 正确答案：myxssteststart!<br>
 首先依据提示点击左侧子系统里面的登录然后再点开通关地址先试试看输入什么代码因为不知道输啥</p>
 <pre><code>&lt;script&gt;alert(55)&lt;/script&gt;
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620996561478.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620996568612.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1620996561478.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620996568612.png" alt="" loading="lazy"><br>
 然后发现让输入的是HackingLab<br>
 所以构造新的script代码</p>
 <pre><code>&lt;script&gt;alert(HackingLab)&lt;/script&gt;
 </code></pre>
 <p>然后就会出现成功并且输出key值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620996573643.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620996573643.png" alt="" loading="lazy"><br>
 <strong>13.XSS基础2:简单绕过</strong><br>
 正确答案是：xss2test2you<br>
 首先我们试试输入script代码</p>
 <pre><code>&lt;script&gt;alert(55)&lt;/script&gt;
 </code></pre>
 <p>然后我们发现出现会提示XSS_SCRIPT_DETECTED!!!<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620996846381.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620996846381.png" alt="" loading="lazy"><br>
 然后就想到可以利用img标签来输入</p>
 <pre><code>&lt;img src=1 onerror=alert(55)&gt;
 </code></pre>
@@ -508,7 +508,7 @@ Writeup：<br>
 Writeup：<br>
 先试着输入test然后查看源码看test被传到了哪里<br>
 查看源代码，我们输入payload的位置在value中<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620997886398.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620997886398.png" alt="" loading="lazy"><br>
 1.输入的内容被包含在 value=’’<br>
 然后试着输入script代码看是否能输出</p>
 <pre><code>&lt;script&gt;alert(5)&lt;/script&gt;
@@ -516,18 +516,18 @@ Writeup：<br>
 <p>然后发现<code>&lt;script&gt;alert(5)&lt;/script&gt;</code>发现啥也没有查看源码发现被过滤，<br>
 所以将payload两旁增加单引号'，alert利用unicode编码绕过<br>
 http://tool.chinaz.com/tools/unicode.aspx<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620998166312.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620998166312.png" alt="" loading="lazy"><br>
 然后构造payload，输入到填写框提交。<br>
 用onmouseover事件并且前面用单引号将前面隔开然后后边写一个id=然后再写单引号将后边value值后边的单引号闭合，不能啥也不写，不然就会失败</p>
 <pre><code>onmouseover=\u0061\u006c\u0065\u0072\u0074(HackingLab) id='
 </code></pre>
 <p>此次用的是onmouseover事件，当鼠标触碰到Welcome旁边的选框时，会触发弹窗<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620998344433.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620998344433.png" alt="" loading="lazy"><br>
 <strong>15.Principle很重要的XSS</strong><br>
 正确答案：xss4isnoteasy<br>
 首先像上一关一样试着先输入test查看这值被引入了哪里<br>
 看源代码，可以看到我们输入的内容会存在a标签中<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620998815515.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620998815515.png" alt="" loading="lazy"><br>
 输入的内容会在a标签的href属性中<br>
 防御了javascript大写也不能绕过，也防御了，alert<br>
 &lt;&gt;被转换成了空<br>
@@ -538,7 +538,7 @@ a标签中href属性中加入javascript这是最常用的调用的办法<br>
 <pre><code>javascri&lt;&gt;pt:aler&lt;&gt;t(HackingLab)
 </code></pre>
 <p>输入payload后提交，点击跳转链接，就能实现弹窗了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1620998971954.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1620998971954.png" alt="" loading="lazy"><br>
 ————————————————<br>
 版权声明：本文为CSDN博主「丶没胡子的猫」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/weixin_41924764/article/details/107053784</p>
@@ -546,14 +546,14 @@ a标签中href属性中加入javascript这是最常用的调用的办法<br>
 <p><strong>第一题：最简单的SQL注入</strong><br>
 正确答案：iamflagsafsfskdf11223<br>
 查看网页源码，获取到提示，要登录admin<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621001538401.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621001538401.png" alt="" loading="lazy"><br>
 所以构造用户名  admin' or 'a'='a'#   密码随便填，</p>
 <p>获取到flag<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621001543556.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621001543556.png" alt="" loading="lazy"><br>
 <strong>第2题：最简单的sql注入（熟悉环境）</strong><br>
 正确答案：HKGGflagdfs56757fsdv<br>
 查看网页源码获得提示参数id=1  是数字型注入<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621001548481.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621001548481.png" alt="" loading="lazy"><br>
 于是构造url    index.php?id=1 or 1=1    获取flag<br>
 payload:</p>
 <p>单引号测试可以看到报错<br>
@@ -579,18 +579,18 @@ payload:</p>
 <p>禁用JS后直接上传php文件获取flag</p>
 <p>还可以通过拦截数据包，修改为php文件</p>
 <p>抓包然后发送到repeater修改对应的值即可<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621002994097.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621002999149.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621002994097.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621002999149.png" alt="" loading="lazy"><br>
 <strong>第二题：请上传一张jpg格式的图片</strong><br>
 和上面最后一种方法差不多也是修改为PHP文件<br>
-正确答案：76tyuhjsdvytig#<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 123: …76tyuh12OKKytig#̲'>%^&amp;
-![](https://https://jinqipiaopiao.github.io//post-images/1621003247814.png)
+正确答案：76tyuhjsdvytig#<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 115: …76tyuh12OKKytig#̲'>%^&amp;
+![](https://jinqipiaopiao.github.io//post-images/1621003247814.png)
 **第三题：请上传一张jpg格式的图片**
 正确答案：76tyuh12OKKytig#</span>%^&amp;<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621003568618.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621003568618.png" alt="" loading="lazy"><br>
 从JS可以看出，上传文件以点分割，第一个点后的如果是jpg就通过</p>
 <p>所以直接传1.jpg.php获取flag<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621003600418.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1621003600418.png" alt="" loading="lazy"></p>
 
               </div>
               <div class="toc-container">
@@ -610,7 +610,7 @@ payload:</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/xin-xi-an-quan-xiang-guan-zhi-shi-dian/">
+            <a href="https://jinqipiaopiao.github.io/post/xin-xi-an-quan-xiang-guan-zhi-shi-dian/">
               <h3 class="post-title">
                 信息安全相关知识点
               </h3>
@@ -622,7 +622,7 @@ payload:</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

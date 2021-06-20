@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之Insecure CAPTCHA | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之Insecure CAPTCHA | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之Insecure CAPTCHA | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -21,8 +21,8 @@ Insecure CAPTCHA意思是不安全的验证码，CAPTCHA是Completely Automated 
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -93,7 +93,7 @@ Insecure CAPTCHA意思是不安全的验证码，CAPTCHA是Completely Automated 
 Insecure CAPTCHA意思是不安全的验证码，CAPTCHA是Completely Automated Public Turing Test to Tell Computers and Humans Apart(全自动区分计算机和人类的图灵测试)的简称。</p>
 <p>reCAPTCHA验证流程：</p>
 <p>这一模块验证码使用的是Google提供的reCAPTCHA服务，下图为验证的具体流程</p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617191822501.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617191822501.png" alt="" loading="lazy"><br>
 服务器通过调用recaptcha_check_answer函数检查用户输入的正确性。</p>
 <p>recaptcha_check_answer($privkey, $challenge, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>p</mi><mi>o</mi><mi>n</mi><mi>s</mi><mi>e</mi><mo>)</mo><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi></mrow><annotation encoding="application/x-tex">response)
 参数</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mclose">)</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span></span></span></span>privkey是服务器申请的private key，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>m</mi><mi>o</mi><mi>t</mi><mi>e</mi><mi>i</mi><mi>p</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">户</mi><mi mathvariant="normal">的</mi><mi>I</mi><mi>P</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">remoteip是用户的IP，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mord mathdefault">i</span><span class="mord mathdefault">p</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">户</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord cjk_fallback">，</span></span></span></span>challenge是recaptcha_challenge_field字段的值，来自前端页面，$response是recaptcha_response_field字段的值。函数返回ReCaptchaResponse class的实列，ReCaptchaResponse类有两个属性：</p>
@@ -177,12 +177,12 @@ $hide_form = false;
 </code></pre>
 <p>服务器将改密码操作分为两步，第一步检查用户输入的验证码，验证通过后，服务器返回表单，第二步客户端提交post请求，服务器完成更改密码的操作。但是，这种存在明显的逻辑漏洞，服务器仅仅通过检查Change、step参数来判断用户是否已经输入了正确的验证码。</p>
 <p>可以通过用burp抓包修改参数来绕过验证：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617192397612.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617192397612.png" alt="" loading="lazy"><br>
 (ps:因为没有翻墙，所以没有成功显示验证码，发送的请求包也就没有recaptcha_challenge_field，recaptcha_response_field两个参数)</p>
 <p>更改step参数绕过验证码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617192442108.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617192442108.png" alt="" loading="lazy"><br>
 修改密码成功：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617192467421.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617192467421.png" alt="" loading="lazy"><br>
 2.medium<br>
 &lt;?php</p>
 <pre><code>if( isset( $_POST[ 'Change' ] ) &amp;&amp; ( $_POST[ 'step' ] == '1' ) ) {
@@ -269,9 +269,9 @@ $hide_form = false;
 </code></pre>
 <p>medium级别的代码在第二步验证时，加入了对参数passed_captcha的检查，如果参数值为true，则认为用户通过了验证码的检查，然而我们依然可以通过伪造参数绕过验证，与low也基本一致。</p>
 <p>通过burp抓包<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617193090891.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617193090891.png" alt="" loading="lazy"><br>
 修改step参数，添加passed_captcha参数，绕过验证<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617193112665.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617193112665.png" alt="" loading="lazy"><br>
 更改成功。<br>
 3.high<br>
 &lt;?php</p>
@@ -332,7 +332,7 @@ generateSessionToken();
 <p>这里服务器验证逻辑是当$resp(这里是指谷歌返回的验证结果)是false时，参数g-recaptcha-response不等于hidd3n_valu3且http包头的User-Agent的参数不等于reCAPTCHA时，就认为验证码输入错误，反之认为已通过验证码的检查。</p>
 <p>仍是使用burp抓包伪造，由于$resp无法控制，所以重心放在参数g-recaptcha-response、User-Agent上。</p>
 <p>修改g-recaptcha-response、User-Agent参数<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617193282591.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617193282591.png" alt="" loading="lazy"><br>
 修改成功。</p>
 <p>impossible<br>
 &lt;?php</p>
@@ -415,7 +415,7 @@ generateSessionToken();
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-javascript/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zhi-javascript/">
               <h3 class="post-title">
                 DVWA之JavaScript
               </h3>
@@ -427,7 +427,7 @@ generateSessionToken();
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

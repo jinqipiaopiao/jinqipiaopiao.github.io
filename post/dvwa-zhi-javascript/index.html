@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DVWA之JavaScript | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="DVWA之JavaScript | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之JavaScript | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -24,8 +24,8 @@ JavaScript
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -99,15 +99,15 @@ JavaScript<br>
 <code>&lt;?php $page[ 'body' ] .= &lt;&lt;&lt;EOF &lt;script&gt; 	function rot13(inp) { return inp.replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c&lt;=&quot;Z&quot;?90:122)&gt;=(c=c.charCodeAt(0)+13)?c:c-26);}); } function generate_token() { var phrase = document.getElementById(&quot;phrase&quot;).value; document.getElementById(&quot;token&quot;).value = md5(rot13(phrase)); } generate_token(); &lt;/script&gt; EOF; ?&gt;</code><br>
 2.1 渗透测试<br>
 说提交success就能成功？试一下，结果说错误！<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190142431.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190142431.png" alt="" loading="lazy"></p>
 <p>检查页面源代码，发现token的值由md5(rot13(phrase))决定的<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190297620.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190297620.png" alt="" loading="lazy"><br>
 通过console 控制台直接拿到token值<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190371038.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190371038.png" alt="" loading="lazy"><br>
 token：38581812b435834ebf84ebcc2c6424d6<br>
 接下来直接post请求提交，即可成功<br>
 token=38581812b435834ebf84ebcc2c6424d6&amp;phrase=success&amp;send=Submit<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190444993.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190444993.png" alt="" loading="lazy"><br>
 3.medium<br>
 核心代码</p>
 <pre><code>&lt;?php
@@ -140,7 +140,7 @@ document.getElementById(&quot;token&quot;).value = do_something(e + document.get
 <p>do_elsesomething(e): 调用do_something(e)函数来设置token值，其中e=XX+phrase+XX</p>
 <p>总体含义：该函数通过将phrase进行字符串拼接，即XX+phrase+XX，最后将该值反转设置为token。</p>
 <p>在输入框输入success，再在控制台输入do_elsesomething(“XX”)执行，提交即可。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190565116.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190565116.png" alt="" loading="lazy"><br>
 4.high<br>
 &lt;?php</p>
 <pre><code>$page[ 'body' ] .= '
@@ -150,10 +150,10 @@ document.getElementById(&quot;token&quot;).value = do_something(e + document.get
 ?&gt;
 </code></pre>
 <p>跟进查看high.js，这里的代码明显被加密混淆了，我们可以使用在线解码工具<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190769905.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190769905.png" alt="" loading="lazy"><br>
 找个JS解密网站，解密: http://deobfuscatejavascript.com/#<br>
 分析：上面SHA加密代码不看，直接看最下方的具体加密过程：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190837712.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190837712.png" alt="" loading="lazy"><br>
 同理将js修改后写入到自定义页面中，SHA加密相关代码要完整拷贝：<br>
 ......省略加密代码<br>
 function do_something(e) {<br>
@@ -177,14 +177,14 @@ token_part_1(&quot;ABCD&quot;, 44);//模拟加载时执行<br>
 token_part_2(&quot;XX&quot;)//模拟过300ms，其实就是页面渲染完成后执行<br>
 token_part_3()//模拟提交时执行<br>
 就在打开的解码工具直接修改之前的代码将上面的代码写入然后点击按钮</p>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617191135359.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617191135359.png" alt="" loading="lazy"><br>
 打开页面，获取token：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617190910149.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617190910149.png" alt="" loading="lazy"><br>
 最后在输入框输入success，再在控制台输入token_part_1(“ABCD”,44)和token_part_2(“XX”)，最后提交即可。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617191247401.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617191247401.png" alt="" loading="lazy"><br>
 5 Impossible<br>
 测试效果：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617191318125.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617191318125.png" alt="" loading="lazy"><br>
 源码分析：直接一锅端，随便你怎么输入，我都不管，反正你就是不安全，我不相信你！！！</p>
 <pre><code>if ( $_COOKIE[ 'security' ] == &quot;impossible&quot; ) {
 $page[ 'body' ] = &lt;&lt;&lt;EOF
@@ -213,7 +213,7 @@ EOF;
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-csp-bypass/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-zhi-csp-bypass/">
               <h3 class="post-title">
                 DVWA之CSP Bypass
               </h3>
@@ -225,7 +225,7 @@ EOF;
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

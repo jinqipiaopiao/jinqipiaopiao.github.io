@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>sql注入的三种方式是什么？ | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="sql注入的三种方式是什么？ | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sql注入的三种方式是什么？ | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -24,8 +24,8 @@ SQ..." />
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -163,7 +163,7 @@ base64注入：注入字符串需要经过 base64 加密<br>
 <p>SQL Server 数据库是一个非常优秀的数据库，它可以准确地定位错误信息，这对攻击者来说是一件十分美好的事情，因为攻击者可以通过错误消息提取自己想要的数据。</p>
 <p>① 枚举当前表或者列</p>
 <p>假设选择存在这样一张表：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011235148.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011235148.png" alt="" loading="lazy"><br>
 查询 root 用户的详细信息，SQL 语句猜测如下：</p>
 <p>SELECT * FROM user WHERE username = 'root' AND password = 'root'</p>
 <p>攻击者可以利用 SQL Server 特性来获取敏感信息，在输入框中输入如下语句：<br>
@@ -171,14 +171,14 @@ base64注入：注入字符串需要经过 base64 加密<br>
 最终执行的 SQL 语句就会变为：<br>
 SELECT * FROM user WHERE username = 'root' AND password = 'root' HAVING 1 = 1 --</p>
 <p>那么 SQL 的执行器可能会抛出一个错误：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011337352.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011337352.png" alt="" loading="lazy"><br>
 攻击者就可以发现当前的表名为 user、而且存在字段 id。</p>
 <p>攻击者可以利用此特性继续得到其他列名，输入如下语句：<br>
 ' GROUP BY users.id HAVING 1 = 1 --<br>
 则 SQL 语句变为：<br>
 SELECT * FROM user WHERE username = 'root' AND password = 'root' GROUP BY users.id HAVING 1 = 1 --</p>
 <p>抛出错误：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011374387.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011374387.png" alt="" loading="lazy"></p>
 <p>由此可以看到包含列名 username。可以一次递归查询，知道没有错误消息返回位置，这样就可以利用 HAVING 字句得到当表的所有列名。<br>
 注：Select指定的每一列都应该出现在Group By子句中，除非对这一列使用了聚合函数</p>
 <p>②. 利用数据类型错误提取数据</p>
@@ -186,7 +186,7 @@ SELECT * FROM user WHERE username = 'root' AND password = 'root' GROUP BY users.
 <p>如下列 SQL 语句：<br>
 SELECT * FROM user WHERE username = 'abc' AND password = 'abc' AND 1 &gt; (SELECT TOP 1 username FROM users)</p>
 <p>执行器错误提示：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011425612.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011425612.png" alt="" loading="lazy"><br>
 这就可以获取到用户的用户名为 root。因为在子查询 SELECT TOP 1 username FROM users 中，将查询到的用户名的第一个返回，返回类型是 varchar 类型，然后要跟 int 类型的 1 比较，两种类型不同的数据无法比较而报错，从而导致了数据泄露。</p>
 <p>利用此方法可以递归推导出所有的账户信息：<br>
 SELECT * FROM users WHERE username = 'abc' AND password = 'abc' AND 1 &gt; (SELECT TOP 1 username FROM users WHERE not in ('root'))。<br>
@@ -199,7 +199,7 @@ SELECT * FROM users WHERE username = 'abc' AND password = 'abc' AND 1 &gt; (SELE
 SELECT *** FROM *** WHERE id = *** UNION SELECT 1, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES<br>
 若当前表的列数为 2，则可以 UNION 语句获取当前数据库表。具体怎么猜测当前表的列数，后面进行描述。</p>
 <p>一些常用的系统数据库视图：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011555320.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011555320.png" alt="" loading="lazy"></p>
 <ol start="3">
 <li>ORDER BY 子句猜测列数</li>
 </ol>
@@ -210,7 +210,7 @@ SELECT *** FROM *** WHERE id = *** UNION SELECT 1, TABLE_NAME FROM INFORMATION_S
 <p>③ SELECT * FROM users WHERE id = 1 ORDER BY 2 (按照第二列排序)——SQL执行正常</p>
 <p>④ SELECT * FROM users WHERE id = 1 ORDER BY 3 (按照第三列排序)——SQL 执行正常</p>
 <p>⑤ SELECT * FROM users WHERE id = 1 ORDER BY 4 (按照第四列排序)——SQL 抛出异常：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011596967.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011596967.png" alt="" loading="lazy"><br>
 由此可以得出，当前表的列数只有 3 列，因为当按照第 4 列排序时报错了。在 Oracle 和 MySql 数据库中同样适用此方法。</p>
 <p>在得知列数后，攻击者通常会配合 UNION 关键字进行下一步的攻击。</p>
 <ol start="4">
@@ -224,7 +224,7 @@ SELECT *** FROM *** WHERE id = *** UNION SELECT 1, TABLE_NAME FROM INFORMATION_S
 <p>在之前假设的 user 表中有 5 列，若我们用 UNION 联合查询：<br>
 SELECT * FROM users WHERE id = 1 UNION SELECT 1<br>
 数据库会发出异常：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011681533.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011681533.png" alt="" loading="lazy"><br>
 可以通过递归查询，直到无错误产生，就可以得知 User 表的查询字段数：<br>
 UNION SELECT 1,2、UNION SELECT 1,2,3</p>
 <p>也可以将 SELECT 后面的数字改为 null、这样不容易出现不兼容的异常。</p>
@@ -252,9 +252,9 @@ SELECT * FROM table WHERE id=1; exec xp_cmdshell 'net user test test /add'<br>
 分号后面的那一段语句就可以为攻击者在对方服务器上新建一个用户名为 test、密码为 test 的用户。<br>
 注：并不是任何数据库用户都可以使用此类存储过程，用户必须持有 CONTROL SERVER 权限。</p>
 <p>常见的危险存储过程如下表：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011726867.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011726867.png" alt="" loading="lazy"></p>
 <p>另外，任何数据库在使用一些特殊的函数或存储过程时，都需要特定的权限。常见的SQL Server 数据库的角色与权限如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011758617.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011758617.png" alt="" loading="lazy"><br>
 7. 动态执行</p>
 <p>SQL Server 支持动态执行语句，用户可以提交一个字符串来执行 SQL 语句。</p>
 <p>如：exec('SELECT username, password FROM users')</p>
@@ -320,21 +320,21 @@ updatexml (XML_document, XPath_string, new_value);<br>
 第三个参数：new_value，String格式，替换查找到的符合条件的数据</p>
 <p>SELECT * FROM message WHERE id = 1 and updatexml(1, (concat(0x7c, (SELECT @@version))), 1)<br>
 其中的concat()函数是将其连成一个字符串，因此不会符合XPATH_string的格式，从而出现格式错误，报错，会显示出无法识别的内容：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011825835.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011825835.png" alt="" loading="lazy"><br>
 ② 通过 extractvalue函数<br>
 SEELCT * FROM message WHERE id= 1 AND extravtvalue(1, concat(0x7c, (SELECT user())))<br>
 同样报错显示出当前用户：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011855299.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011855299.png" alt="" loading="lazy"><br>
 6. 宽字节注入</p>
 <p>宽字节注入是由编码不统一所造成的，这种注入一般出现在 PHP + MySQL中。</p>
 <p>在 PHP 配置文件 php.ini 中存在 magic_quotes_gpc 选项，被称为魔术引号，当此选项被打开时，使用 GET、POST、Cookie 所接受的 单引号(’)、双引号(&quot;)、反斜线() 和 NULL 字符都会自动加上一个反斜线转义。</p>
 <p>如下使用 PHP 代码使用 $_GET 接收参数：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011884584.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011884584.png" alt="" loading="lazy"></p>
 <p>如访问URL：http:/www.xxser.com/Get.php?id='，显示如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011906988.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011906988.png" alt="" loading="lazy"><br>
 单引号'被转义后就变成了'，在 MySQL 中，'是一个合法的字符，也就没办法闭合单引号，所以，注入类型是字符型时无法构成注入。</p>
 <p>但是若是输入：%d5'，访问URL：http:/www.xxser.com/Get.php?id=%d5'，显示如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617011958800.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617011958800.png" alt="" loading="lazy"></p>
 <p>可以发现，这次单引号没有被转义，这样就可以突破 PHP 转义，继续闭合 SQL 语句进行 SQL 注入。</p>
 <ol start="7">
 <li>MySQL 长字符截断</li>
@@ -342,21 +342,21 @@ SEELCT * FROM message WHERE id= 1 AND extravtvalue(1, concat(0x7c, (SELECT user(
 <p>MySQL 超长字符截断又名 “SQL-Column-Truncation”。<br>
 在 MySQL 中的一个设置里有一个 sql_mode 选项，当 sql_mode 设置为 default 时，即没有开启 STRICT——ALL_TABLES 选项时，MySQL 对插入超长的值只会提示 waring，而不是 error。</p>
 <p>假设有一张表如下：</p>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617011983563.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1617011983563.png" alt="" loading="lazy"></figure>
 <p>username 字段的长度为 7。<br>
 分别插入一下 SQL 语句：<br>
 ① 插入正常 SQL 语句：<br>
 INSERT users(id, username, password) VALUES(1, 'admin', 'admin');<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012024230.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012024230.png" alt="" loading="lazy"></p>
 <p>② 插入错误的 SQL 语句，使 username 字段的长度超过7：<br>
 INSERT users(id, username, password) VALUES(2, 'admin ', 'admin');<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012063584.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012063584.png" alt="" loading="lazy"></p>
 <p>③再尝试插入一条错误的 SQL 语句，长度同一超过原有的规定长度：<br>
 INSERT users(id, username, password) VALUES(3, 'admin x), 'admin;<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012106608.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012106608.png" alt="" loading="lazy"><br>
 可以看到，三条数据都被插入到数据库中，但是值发生了变化。在默认情况下，如果数据超出默认长度，MySQL 会将其阶段。</p>
 <p>但是这样怎么攻击呢？通过查询用户名为 admin 的用户：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012133831.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012133831.png" alt="" loading="lazy"></p>
 <p>可以发现，只查询用户名为 admin 的用户，但是另外两个长度不一致的 admin 用户也被查询出，这样就会造成一些安全问题。</p>
 <p>比如有一处管理员登录时这样判断的：<br>
 $sql = &quot;SELECT count(<em>) FROM users WHERE username = 'admin' AND password = '</em>**'&quot;;</p>
@@ -369,7 +369,7 @@ $sql = &quot;SELECT count(<em>) FROM users WHERE username = 'admin' AND password
 SELECT * FROM users WHERE id = 1 AND sleep(3)<br>
 就是将在 3 秒后执行该 SQL 语句。</p>
 <p>可以使用这个函数来判断 URL 是否存在 SQL 注入漏洞，步骤如下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617012176983.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617012176983.png" alt="" loading="lazy"><br>
 通过页面返回的世界可以断定，DBMS 执行了 and sleep(3) 语句，这样一来就可以判断出 URL 存在 SQL 注入漏洞。</p>
 <p>然后通过 sleep() 函数还可以读出数据，但需要其他函数的配合，步骤如下：<br>
 ①查询当前用户，并取得字符串长度<br>
@@ -440,7 +440,7 @@ http://www.aaa.org/new.jsp?id=1 UNION SELECT username, password, null FROM users
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-sql-injection/">
+            <a href="https://jinqipiaopiao.github.io/post/dvwa-sql-injection/">
               <h3 class="post-title">
                 DVWA之SQL Injection
               </h3>
@@ -452,7 +452,7 @@ http://www.aaa.org/new.jsp?id=1 UNION SELECT username, password, null FROM users
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

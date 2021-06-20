@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>从0到1：CTFer成长之路 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="从0到1：CTFer成长之路 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="从0到1：CTFer成长之路 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -23,8 +23,8 @@ SQL注入-1
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -91,7 +91,7 @@ SQL注入-1
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1621427565164.png" alt="" loading="lazy"></figure>
+                <figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1621427565164.png" alt="" loading="lazy"></figure>
 <h1 id="sql注入-1">SQL注入-1</h1>
 <p>进入环境，发现?id=1。我们输入3的时候告诉我们可以获得tips，这里忽略它。<br>
 首先尝试?id=1 and 1=1 和 ?id=1 and 1=2看是否回显页面一样，如果一样就说明不是数字型注入，否则就是字符型注入然后接下里就是构造payload了<br>
@@ -113,8 +113,8 @@ n1book{union_select_is_so_cool}</p>
 如果觉得太难了，可以在url后加入?tips=1 开启mysql错误提示,使用burp发包就可以看到啦。</p>
 <p>我是这么容易屈服的人吗？肯定不是。在坚决不开错误提示的情况下，我尝试了各种办法发现还是不行。这时候我反应过来了，这题不是用闭合单引号的方式直接登录的，是要获得flag的。因此应该是通过注入来获得数据库的相关信息，而不是所谓的靠万能密码，万能用户名进行登录。因此我换了一种思路，按照爆库的方式来注入，发现存在布尔注入：(这里有两种方法一种是在url尾部增加?tips=1然后通过burpsuite抓包来查询数据（报错注入）另外一种是用大佬的脚本自动生成只不过有点时间长)<br>
 该开始方法一样就是看是什么注入方式：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621428759107.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621428763724.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621428759107.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621428763724.png" alt="" loading="lazy"><br>
 <strong>方法一：</strong><br>
 首先给url尾部添加?tips=1(因为如果不添加的话你看不到任何报错这个也是没有办法的办法)burp suite进行抓包然后通过修改name的值在repeater界面来进行查询flag的值这里要用到报错注入</p>
 <p><strong>extractvalue函数</strong></p>
@@ -378,15 +378,15 @@ f12看源码：</p>
 <p>我接下来傻傻的注入：</p>
 <pre><code>?username=&lt;script&gt;alert(1)&lt;/script&gt;
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1621431327787.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1621431327787.png" alt="" loading="lazy"></figure>
 <p>这和外面的<code>&lt;script&gt;</code>的颜色是一样的，难道字符串里的一样可以闭合吗？我在自己的本地试了试，发现报错了：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431332425.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431332425.png" alt="" loading="lazy"><br>
 有些玄学。我上网查了查，实际上并没有查到一个真正可以解释这个的答案。不过有一些想法：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431339457.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431339457.png" alt="" loading="lazy"><br>
 还有一个解决办法：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431343172.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431343172.png" alt="" loading="lazy"><br>
 考虑到这题单引号已经被转义，因此只能&lt;/script&gt;。在本地果然不报错了：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431346852.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431346852.png" alt="" loading="lazy"><br>
 而且我发现我在本地用document.write的话，可以弹窗！<br>
 但是我发现这题还是不能弹窗。。直到我看到了外面已经有一层script。。。。。</p>
 <p>嗯哼。。。。。上面都是自己的nt行为，接下来开始正确解题。直接alert(1)发现不行后，考虑将js动态写入html中，就是用各种on事件，这里直接这样：</p>
@@ -426,14 +426,14 @@ f12看源码：</p>
 </code></pre>
 <p>需要对这段JavaScript代码进行审计。<br>
 首先要知道windows.location对象包含的属性：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431355360.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431355360.png" alt="" loading="lazy"><br>
 注意jumpUrl就是我们要跳转的网页，因此我们要注入的点应该是jumpUrl。<br>
 先一步一步审一下代码。getQueryVariable函数里面的query就是?后面的内容，比如http://localhost:3000/level4?123456，这样的话query就是123456。<br>
 vars是query以&amp;作为分隔符分隔后形成的数组。简单来说就是相当于获得了每个参数。<br>
 然后遍历每个参数。将每个参数以=为分隔符再分隔形成数组，这样<code>pair[0]</code>相当于参数名，<code>pair[1]</code>相当于值。接着进行判断，<code>if(pair[0] == variable){return pair[1];}</code><br>
 因此我们直接构造好参数名，就是控制返回的内容。<br>
 因此这样：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431359714.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431359714.png" alt="" loading="lazy"><br>
 这样jumpUrl的值就是我们要跳转的网页。这时候考虑怎么进行XSS，自然就想到了《从0到1：CTFer成长之路》第109面的伪协议和XSS，这部分是关于链接和跳转进行XSS的。因此可以利用js伪协议实现alert:</p>
 <pre><code>?jumpUrl=javascript:alert(1)
 </code></pre>
@@ -474,13 +474,13 @@ autoForm.action = (getQueryVariable('action') == false) ? location.href : getQue
 <p>成功弹窗。<br>
 <strong>level6</strong><br>
 这题f12看不出来多少东西：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431373371.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431373371.png" alt="" loading="lazy"><br>
 尝试输入<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，发现对左尖括号&lt;进行了html实体编码：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431377554.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431377554.png" alt="" loading="lazy"><br>
 尝试进行编码绕过，但是不行。又尝试了各种办法还是不行。这时候我又去看了一遍书，因为这个环境考的肯定是书上的内容。突然灵机一动，发现《从0到1：CTFer成长之路》第110-111面的二次渲染导致的XSS和这个题目有些像。验证一波：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431382028.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431382028.png" alt="" loading="lazy"><br>
 发现打印出了9，印证了是模板XSS。我们看一下这个环境用的是哪个模板，发现是AngularJS:<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1621431385694.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1621431385694.png" alt="" loading="lazy"><br>
 AngularJS Sandbox Bypasses<br>
 https://xz.aliyun.com/t/4638</p>
 <p>————————————————<br>
@@ -506,7 +506,7 @@ https://xz.aliyun.com/t/4638</p>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/kuang-jia-lou-dong-thinkphp-xi-lie-lou-dong-jie-zhi-2020-07-20/">
+            <a href="https://jinqipiaopiao.github.io/post/kuang-jia-lou-dong-thinkphp-xi-lie-lou-dong-jie-zhi-2020-07-20/">
               <h3 class="post-title">
                 [框架漏洞]Thinkphp系列漏洞【截至2020-07-20】
               </h3>
@@ -518,7 +518,7 @@ https://xz.aliyun.com/t/4638</p>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

