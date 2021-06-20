@@ -1,0 +1,336 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之CSP Bypass | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之CSP Bypass | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="CSP简介
+csp 全称是：Content-Security-Policy,内容安全策略。是指HTTP返回报文头中的标签，浏览器会根据标签中的内容，判断哪些资源可以加载或执行。主要是为了 缓解潜在的跨站脚本问题(XSS) ，浏览器的扩展程序..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之CSP Bypass
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-30
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>CSP简介<br>
+csp 全称是：Content-Security-Policy,内容安全策略。是指HTTP返回报文头中的标签，浏览器会根据标签中的内容，判断哪些资源可以加载或执行。主要是为了 缓解潜在的跨站脚本问题(XSS) ，浏览器的扩展程序系统引入了内容 安全策略 这个概念。原来应对XSS攻击时，主要采用函数过滤转义输入中的同时字符、标签、文本来规避攻击。CSP的实质就是 白名单制度 ，开发人员明确告诉客户端，哪些外部资源可以加载和执行。开发者只需要提供配置，实现和执行全部由浏览器完成。</p>
+<p>说明：</p>
+<p>script-src脚本：只信任当前域名<br>
+object-src：不信任任何URL，即不加载任何资源<br>
+style-src样式表：只信任http://cdn.example.org和http://third-party.org<br>
+<strong>1.Low</strong></p>
+<pre><code>&lt;?php
+$headerCSP = &quot;Content-Security-Policy: script-src 'self' https://pastebin.com hastebin.com example.com code.jquery.com https://ssl.google-analytics.com ;&quot;; // allows js from self, pastebin.com, hastebin.com, jquery and google analytics.
+
+header($headerCSP);
+
+These might work if you can't create your own for some reason
+https://pastebin.com/raw/R570EE00
+https://hastebin.com/raw/ohulaquzex
+
+?&gt;
+&lt;?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= &quot;
+&lt;script src='&quot; . $_POST['include'] . &quot;'&gt;&lt;/script&gt;
+&quot;;
+}
+$page[ 'body' ] .= '
+&lt;form name=&quot;csp&quot; method=&quot;POST&quot;&gt;
+&lt;p&gt;You can include scripts from external sources, examine the Content Security Policy and enter a URL to include here:&lt;/p&gt;
+&lt;input size=&quot;50&quot; type=&quot;text&quot; name=&quot;include&quot; value=&quot;&quot; id=&quot;include&quot; /&gt;
+&lt;input type=&quot;submit&quot; value=&quot;Include&quot; /&gt;
+&lt;/form&gt;
+';
+</code></pre>
+<p>可以看到</p>
+<p>script-src 'self' https://pastebin.com hastebin.com example.com<br>
+code.jquery.com https://ssl.google-analytics.com ;&quot;; // allows js from self, pastebin.com, hastebin.com, jquery and google analytics.</p>
+<p>允许访问pastebin网站，所以去这个网站看看，emmm打不开，源码中也有现成测试站点：https://pastebin.com/raw/R570EE00和https://hastebin.com/raw/ohulaquzex。第二个可以使用<br>
+：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617106629060.png" alt="" loading="lazy"><br>
+原理为因为可以访问白名单，所以我们可以在其白名单的网站编辑XSS脚本，然后包含该网站实现XSS攻击。<br>
+<strong>2.medium</strong></p>
+<pre><code>&lt;?php
+
+$headerCSP = &quot;Content-Security-Policy: script-src 'self' 'unsafe-inline' 'nonce-TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=';&quot;;
+
+header($headerCSP);
+
+/ / Disable XSS protections so that inline alert boxes will work
+header (&quot;X-XSS-Protection: 0&quot;);
+
+# &lt;script nonce=&quot;TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=&quot;&gt;alert(1)&lt;/script&gt;
+
+?&gt;
+&lt;?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= &quot;
+&quot; . $_POST['include'] . &quot;
+&quot;;
+}
+$page[ 'body' ] .= '
+&lt;form name=&quot;csp&quot; method=&quot;POST&quot;&gt;
+&lt;p&gt;Whatever you enter here gets dropped directly into the page, see if you can get an alert box to pop up.&lt;/p&gt;
+&lt;input size=&quot;50&quot; type=&quot;text&quot; name=&quot;include&quot; value=&quot;&quot; id=&quot;include&quot; /&gt;
+&lt;input type=&quot;submit&quot; value=&quot;Include&quot; /&gt;
+&lt;/form&gt;
+' ;
+unsafe-inline： 允许使用内联资源，如内联&lt;script&gt;元素，javascript:URL，内联事件处理程序(如：onclick)和内联&lt;style&gt;元素。必须包括单引号。
+</code></pre>
+<p>nonce-source： 仅允许特定的内联脚本块，nonce=&quot;TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=&quot;</p>
+<p>这里将所有的安全站点都去掉了，只能使用script元素且脚本块值nonce=TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=。</p>
+<p>构建payload<br>
+<script nonce="TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=">alert('hhh')</script><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617106815616.png" alt="" loading="lazy"><br>
+<strong>3.high</strong></p>
+<pre><code>&lt;?php
+$headerCSP = &quot;Content-Security-Policy: script-src 'self';&quot;;
+
+header($headerCSP);
+
+?&gt;
+&lt;?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= &quot;
+&quot; . $_POST['include'] . &quot;
+&quot;;
+}
+$page[ 'body' ] .= '
+&lt;form name=&quot;csp&quot; method=&quot;POST&quot;&gt;
+&lt;p&gt;The page makes a call to ' . DVWA_WEB_PAGE_TO_ROOT . '/vulnerabilities/csp/source/jsonp.php to load some code. Modify that page to run your own code.&lt;/p&gt;
+&lt;p&gt;1+2+3+4+5=&lt;span id=&quot;answer&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;input type=&quot;button&quot; id=&quot;solve&quot; value=&quot;Solve the sum&quot; /&gt;
+&lt;/form&gt;
+
+&lt;script src=&quot;source/high.js&quot;&gt;&lt;/script&gt;
+';
+</code></pre>
+<p>&quot;Content-Security-Policy: script-src ‘self’;”; 只允许代码只能从本地运行，最后会运行一个JavaScript代码<br>
+function clickButton() {<br>
+var s = document.createElement(&quot;script&quot;);<br>
+s.src = &quot;source/jsonp.php?callback=solveSum&quot;;<br>
+document.body.appendChild(s);<br>
+}</p>
+<pre><code>function solveSum(obj) {
+if (&quot;answer&quot; in obj) {
+document.getElementById(&quot;answer&quot;).innerHTML = obj['answer'];
+}
+}
+
+var solve_button = document.getElementById (&quot;solve&quot;);
+
+if (solve_button) {
+solve_button.addEventListener(&quot;click&quot;, function() {
+clickButton();
+});
+}
+</code></pre>
+<p>在点击网页的按钮使js生成一个script标签(src 指向source/jsonp.php?callback=solveSum)，document对象使我们可以从脚本中对HTML页面中的所有元素进行访问，createElement()方法通过指定名称创建一个元素，body属性提供对<body>元素的直接访问，对于定义了框架集的文档将引用最外层的<frameset>。appendChild()方法可向结点的子节点列表的末尾添加新的子节点，也就是网页会把”source/jsonp.php?callback=solveSum”加入到DOM中。源码定义了solveSum的函数，函数传入参数obj，如果字符串”answer”在obj中就会执行。getElementById()方法可返回对拥有指定ID的第一个对象的引用，innerHTML属性设置或返回表格行的开始和结束标签之间的HTML。这里的script标签会把远程加载的solveSum（“answer”:”15”})当作js代码执行，然后这个函数就会在页面显示答案。</p>
+<p>返回上方源码：<br>
+if (isset ($_POST['include'])) {<br>
+$page[ 'body' ] .= &quot;<br>
+&quot; . $_POST['include'] . &quot;<br>
+&quot;;<br>
+}<br>
+发现还有一个接收include参数，从这里入手：</p>
+<pre><code>include=&lt;script src=&quot;source/jsonp.php?callback=alert('oh');&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617107093823.png" alt="" loading="lazy"><br>
+<strong>4.impossible</strong></p>
+<pre><code>&lt;?php
+
+$headerCSP = &quot;Content-Security-Policy: script-src 'self';&quot;;
+
+header($headerCSP);
+
+?&gt;
+&lt;?php
+if (isset ($_POST['include'])) {
+$page[ 'body' ] .= &quot;
+&quot; . $_POST['include'] . &quot;
+&quot;;
+}
+$page[ 'body' ] .= '
+&lt;form name=&quot;csp&quot; method=&quot;POST&quot;&gt;
+&lt;p&gt;Unlike the high level, this does a JSONP call but does not use a callback, instead it hardcodes the function to call.&lt;/p&gt;&lt;p&gt;The CSP settings only allow external JavaScript on the local server and no inline code.&lt;/p&gt;
+&lt;p&gt;1+2+3+4+5=&lt;span id=&quot;answer&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;input type=&quot;button&quot; id=&quot;solve&quot; value=&quot;Solve the sum&quot; /&gt;
+&lt;/form&gt;
+
+&lt;script src=&quot;source/impossible.js&quot;&gt;&lt;/script&gt;
+';
+js代码：
+
+function clickButton() {
+var s = document.createElement(&quot;script&quot;);
+s.src = &quot;source/jsonp_impossible.php&quot;;
+document.body.appendChild(s);
+}
+
+function solveSum(obj) {
+if (&quot;answer&quot; in obj) {
+document.getElementById(&quot;answer&quot;).innerHTML = obj['answer'];
+}
+}
+
+var solve_button = document.getElementById (&quot;solve&quot;);
+
+if (solve_button) {
+solve_button.addEventListener(&quot;click&quot;, function() {
+clickButton();
+});
+}
+</code></pre>
+<p>impossible级别代码中，仍然调用了jsonp但不使用callback参数无法从这里入手了，无法攻击。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-dom-based-cross-site-scripting-xss/">
+              <h3 class="post-title">
+                DVWA之XSS
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

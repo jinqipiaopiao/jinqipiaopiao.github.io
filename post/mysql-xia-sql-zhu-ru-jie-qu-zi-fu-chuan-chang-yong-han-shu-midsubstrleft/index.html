@@ -1,0 +1,214 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mysql下SQL注入截取字符串常用函数mid(),substr(),left() | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="mysql下SQL注入截取字符串常用函数mid(),substr(),left() | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在sql注入中，往往会用到截取字符串的问题，例如不回显的情况下进行的注入，也成为盲注，这种情况下往往需要一个一个字符的去猜解，过程中需要用到截取字符串
+mid函数
+此函数为截取字符串一部分。MID(column_name,start[,le..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              mysql下SQL注入截取字符串常用函数mid(),substr(),left()
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-08
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><em>在sql注入中，往往会用到截取字符串的问题，例如不回显的情况下进行的注入，也成为盲注，这种情况下往往需要一个一个字符的去猜解，过程中需要用到截取字符串</em><br>
+<strong>mid函数</strong></p>
+<pre><code>此函数为截取字符串一部分。MID(column_name,start[,length])
+</code></pre>
+<p><strong>参数	描述</strong></p>
+<pre><code>column_name	必需。要提取字符的字段。
+start	必需。规定开始位置（起始值是 1）。
+length	可选。要返回的字符数。如果省略，则 MID() 函数返回剩余文本。
+例：str=“123456” mid(str,2,1) 结果为2
+</code></pre>
+<p><strong>Sql用例：</strong></p>
+<pre><code>MID(DATABASE(),1,1)&gt;’a’,查看数据库名第一位，MID(DATABASE(),2,1)查看数据库名第二位，依次查看各位字符。
+MID((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xxxxxxx LIMIT 0,1),1,1)&gt;’a’此处column_name参数可以为sql语句，可自行构造sql语句进行注入。
+substr()函数
+Substr()和substring()函数实现的功能是一样的，均为截取字符串。
+
+string substring(string, start, length)
+string substr(string, start, length)
+参数描述同mid()函数，第一个参数为要处理的字符串，start为开始位置，length为截取的长度。
+</code></pre>
+<p><strong>Sql用例：</strong></p>
+<pre><code>substr(DATABASE(),1,1)&gt;’a’,查看数据库名第一位，substr(DATABASE(),2,1)查看数据库名第二位，依次查看各位字符。
+substr((SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE T table_schema=0xxxxxxx LIMIT 0,1),1,1)&gt;’a’此处string参数可以为sql语句，可自行构造sql语句进行注入。
+Left()函数
+Left()得到字符串左部指定个数的字符
+
+Left ( string, n ) string为要截取的字符串，n为长度。
+</code></pre>
+<p><strong>Sql用例：</strong></p>
+<pre><code>left(database(),1)&gt;’a’,查看数据库名第一位， left(database(),2)&gt;’ab’,查看数据库名前二位。
+同样的string可以为自行构造的sql语句。
+</code></pre>
+<p><strong>ORD()函数</strong></p>
+<pre><code>此函数为返回第一个字符的ASCII码，经常与上面的函数进行组合使用。
+
+ORD(MID(DATABASE(),1,1))&gt;114 意为检测database()的第一位ASCII码是否大于114，也即是‘r’
+</code></pre>
+<p><strong>基于时间盲注if函数</strong><br>
+逻辑判断函数if（）</p>
+<pre><code>if（expr1，expr2，expr3） 如果expr1为真，则if函数执行expr2语句，否则if函数执行expr3语句
+
+-select user from users where uer_id=1 and1=if(ascii(substr(database(),1,1))&gt;1,sleep(5),1);
+
+此处 如果条件ascii(substr(database(),1,1))&gt;1成立则执行sleep（5），否则执行1
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「yusakul」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/yusakul/article/details/84438110</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/sqli-labs-1-22-chuang-guan-ao-li-gei/">
+              <h3 class="post-title">
+                sqli-labs 1-22
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

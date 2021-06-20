@@ -1,0 +1,346 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>php 弱类型总结 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="php 弱类型总结 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="知识介绍：
+php中有两种比较的符号==与===
+&lt;?php
+$a == $b;
+$a  === $b;
+?&gt;
+
+===在进行比较的时候，会先判断两种字符传类型是否相等，再比较
+1、和=
+为弱相等，也就是说12&quot;12&..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              php 弱类型总结
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-15
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="知识介绍">知识介绍：</h1>
+<p><strong>php中有两种比较的符号<code>==</code>与<code>===</code></strong></p>
+<pre><code>&lt;?php
+$a == $b;
+$a  === $b;
+?&gt;
+</code></pre>
+<p>===在进行比较的时候，会先判断两种字符传类型是否相等，再比较<br>
+1、<mark>和</mark>=</p>
+<p><mark>为弱相等，也就是说12</mark>&quot;12&quot; --&gt; true，而且12==&quot;12cdf&quot; --&gt; true，只取字符串中开头的整数部分，但是1e3dgf这样的字符串在比较时，取的是符合科学计数法的部分：1e3，也就是1000.</p>
+<p><strong>而且bool类型的true和任意字符串的弱类型相等</strong></p>
+<p>===为完全相等，数据类型和值都相等时返回true。</p>
+<p>==在进行比较的时候，会先将字符串类型转化成相同，再比较（如何比较一个数字和字符串或者比较涉及到数字内容的字符串，则字符串会被转换成数值，并且按照数值来进行）<br>
+这里明确说明一个数值和字符串进行比较的时候，会将字符串转换成数值</p>
+<pre><code>&lt;?php
+var_dump(&quot;admin&quot;==0);  //true
+var_dump(&quot;1admin&quot;==1); //true
+var_dump(&quot;admin1&quot;==1) //false
+var_dump(&quot;admin1&quot;==0) //true
+var_dump(&quot;0e123456&quot;==&quot;0e4456789&quot;); //true 
+?&gt;  //上述代码可自行测试
+</code></pre>
+<p>1.观察上述代码，&quot;admin&quot;<code>==</code>0 比较的时候，会将admin转化成数值，强制转化，由于admin是字符串，转化的结果是0自然和0相等<br>
+2.&quot;1admin&quot;<code>==</code>1 比较的时候会将1admin转化成数值，结果为1，而&quot;admin1&quot;<code>==</code>1 却等于错误，也就是&quot;admin1&quot;被转化成了0，为什么呢？？<br>
+3.&quot;0e123456&quot;<code>==</code>&quot;0e456789&quot;相互比较的时候，会将0e这类字符串识别为科学计数法的数字，0的无论多少次方都是0，所以相等</p>
+<p><strong>对于上述问题我查了PHP手册</strong><br>
+当一个字符串当作一个数值来取直，其结果和类型如下：如果该字符串没有包含'.','e','E'并且其数值再整形的范围之内该字符串被当作int来取值，其他所有情况下都被作为float来取值，该字符串的开始部分决定了他的值，如果该字符串以合法的数值开始，则使用该数值，否则其值为0</p>
+<pre><code>&lt;?php
+$test=1 + &quot;10.5&quot;; // $test=11.5(float)
+$test=1+&quot;-1.3e3&quot;; //$test=-1299(float)
+$test=1+&quot;bob-1.3e3&quot;;//$test=1(int)
+$test=1+&quot;2admin&quot;;//$test=3(int)
+$test=1+&quot;admin2&quot;;//$test=1(int)
+?&gt;
+</code></pre>
+<p>所以就解释了&quot;admin1&quot;==1=&gt;False 的原因</p>
+<p><strong>md5绕过(Hash比较缺陷)</strong></p>
+<pre><code>&lt;?php
+if (isset($_GET['Username']) &amp;&amp; isset($_GET['password'])) {
+$logined = true;
+$Username = $_GET['Username'];
+$password = $_GET['password'];
+
+if (!ctype_alpha($Username)) {$logined = false;}
+if (!is_numeric($password) ) {$logined = false;}
+if (md5($Username) != md5($password)) {$logined = false;}
+if ($logined){
+echo &quot;successful&quot;;
+}else{
+echo &quot;login failed!&quot;;
+}
+}
+?&gt;    
+</code></pre>
+<p>题目大意是要输入一个字符串和数字类型，并且他们的md5值相等，就可以成功执行下一步语句</p>
+<p>介绍一批md5开头是0e的字符串 上文提到过，0e在比较的时候会将其视作为科学计数法，所以无论0e后面是什么，0的多少次方还是0。md5('240610708') == md5('QNKCDZO')成功绕过!</p>
+<pre><code>    QNKCDZO
+    0e830400451993494058024219903391
+
+    s878926199a
+    0e545993274517709034328855841020
+    
+    s155964671a
+    0e342768416822451524974117254469
+    
+    s214587387a
+    0e848240448830537924465865611904
+    
+    s214587387a
+    0e848240448830537924465865611904
+    
+    s878926199a
+    0e545993274517709034328855841020
+    
+    s1091221200a
+    0e940624217856561557816327384675
+    
+    s1885207154a
+    0e509367213418206700842008763514
+</code></pre>
+<p><strong>json绕过</strong></p>
+<pre><code>&lt;?php
+if (isset($_POST['message'])) {
+$message = json_decode($_POST['message']);
+$key =&quot;*********&quot;;
+if ($message-&gt;key == $key) {
+echo &quot;flag&quot;;
+} 
+else {
+echo &quot;fail&quot;;
+}
+}
+else{
+echo &quot;~~~~&quot;;
+}
+?&gt;
+</code></pre>
+<p>输入一个json类型的字符串，json_decode函数解密成一个数组，判断数组中key的值是否等于 <code>$key</code>的值，但是<code>$key</code>的值我们不知道，但是可以利用0<code>==</code>&quot;admin&quot;这种形式绕过<br>
+最终<code>payload message={&quot;key&quot;:0}</code></p>
+<p><strong>array_search is_array绕过</strong></p>
+<pre><code>&lt;?php
+if(!is_array($_GET['test'])){exit();}
+$test=$_GET['test'];
+for($i=0;$i&lt;count($test);$i++){
+if($test[$i]===&quot;admin&quot;){
+echo &quot;error&quot;;
+exit();
+}
+$test[$i]=intval($test[$i]);
+}
+if(array_search(&quot;admin&quot;,$test)===0){
+echo &quot;flag&quot;;
+}
+else{
+echo &quot;false&quot;;
+}
+?&gt;
+</code></pre>
+<p>上面是自己写的一个，先判断传入的是不是数组，然后循环遍历数组中的每个值，并且数组中的每个值不能和admin相等，并且将每个值转化为int类型，再判断传入的数组是否有admin，有则返回flag</p>
+<p>payload test[]=0可以绕过<br>
+mixed array_search ( mixed $needle , array $haystack [, bool $strict = false ] )<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>e</mi><mi>e</mi><mi>d</mi><mi>l</mi><mi>e</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">needle，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord mathdefault">e</span><span class="mord mathdefault">d</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">，</span></span></span></span>haystack必需，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">选</mi><mi mathvariant="normal">函</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">判</mi><mi mathvariant="normal">断</mi></mrow><annotation encoding="application/x-tex">strict可选  函数判断</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">i</span><span class="mord mathdefault">c</span><span class="mord mathdefault">t</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">选</span><span class="mord cjk_fallback">函</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">判</span><span class="mord cjk_fallback">断</span></span></span></span>haystack中的值是存在$needle，存在则返回该值的键值 第三个参数默认为false，如果设置为true则会进行严格过滤</p>
+<pre><code>&lt;?php
+$a=array(0,1);
+var_dump(array_search(&quot;admin&quot;,$a)); // int(0) =&gt; 返回键值0
+var_dump(array_seach(&quot;1admin&quot;,$a));  // int(1) ==&gt;返回键值1
+?&gt;
+</code></pre>
+<p>array_search函数 类似于<code>==</code>也就是<code>$a==&quot;admin&quot;</code>当然是$a=0  当然如果第三个参数为true则就不能绕过<br>
+strcmp漏洞绕过 <code>php -v &lt;5.3</code></p>
+<pre><code>&lt;?php
+$password=&quot;***************&quot;
+if(isset($_POST['password'])){
+
+if (strcmp($_POST['password'], $password) == 0) {
+echo &quot;Right!!!login success&quot;;n
+exit();
+} else {
+echo &quot;Wrong password..&quot;;
+}
+?&gt;
+</code></pre>
+<p>strcmp是比较两个字符串，如果<code>str1&lt;str2</code>则返回<code>&lt;0</code>如果, <code>str1&gt;str2</code>返回<code>&gt;0</code>如果两者相等 返回0</p>
+<p>我们是不知道<code>$password</code>的值的，题目要求strcmp判断的接受的值和<code>$password</code>必需相等，strcmp传入的期望类型是字符串类型，如果传入的是个数组会怎么样呢</p>
+<p>我们传入 password[]=xxx 可以绕过 是因为函数接受到了不符合的类型，将发生错误，但是还是判断其相等</p>
+<p>payload: password[]=xxx<br>
+<strong>switch绕过</strong></p>
+<pre><code>&lt;?php
+$a=&quot;4admin&quot;;
+switch ($a) {
+case 1:
+echo &quot;fail1&quot;;
+break;
+case 2:
+echo &quot;fail2&quot;;
+break;
+case 3:
+echo &quot;fail3&quot;;
+break;
+case 4:
+echo &quot;sucess&quot;;  //结果输出success;
+break;
+default:
+echo &quot;failall&quot;;
+break;
+}
+?&gt;
+</code></pre>
+<p>这种原理和前面的类似，就不详细解释了</p>
+<p>参照https://www.cnblogs.com/Mrsm1th/p/6745532.html</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%9F%A5%E8%AF%86%E4%BB%8B%E7%BB%8D">知识介绍：</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/wang-luo-an-quan-shi-yan-shi-orwang-luo-xin-xi-an-quan-gong-fang-xue-xi-ping-tai-jie-mi-guan/">
+              <h3 class="post-title">
+                网络安全实验室|网络信息安全攻防学习平台（解密关，综合关）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

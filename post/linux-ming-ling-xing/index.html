@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>linux命令行 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="linux命令行 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1.打开指定文件
+cd后跟文件名如：
+cd /var/www/html
+2.查询文件下有什么文件
+用：ls
+3、在文件夹里添加（就是创建 一个文件 例如a.txt)；输入【touch test/a.txt】回车；
+　　删除；输入【rm -r..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              linux命令行
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-31
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>1.打开指定文件<br>
+cd后跟文件名如：<br>
+<code>cd /var/www/html</code><br>
+2.查询文件下有什么文件<br>
+<code>用：ls</code><br>
+3、在文件夹里添加（就是创建 一个文件 例如a.txt)；输入【touch test/a.txt】回车；<br>
+　　删除；输入【rm -rf test/】回车。<br>
+4.如何在新建的文件里添加内容<br>
+方法一：vi编辑法<br>
+　　打开终端，输入<br>
+<code>vi test.txt 回车，按a或i进入编辑模式，输入 I am a boy，然后按esc键退出编辑模式，输入:wq保存并退出。</code></p>
+<p>方法二：echo命令法<br>
+<code>打开终端，输入 echo ‘I am a boy’ &gt;&gt; ./test.txt 注：追加单行文本法</code></p>
+<p>方法三：cat命令法<br>
+<code>cat &gt;&gt; ./test.txt &lt;&lt;EOF I am a boy EOF</code><br>
+注：结尾的EOF要顶格，成对出现，可以其它字符代替。</p>
+<p>方法四：cat编辑法<br>
+<code>cat &gt;&gt; ./test.txt （回车后开始编辑输入内容） I am a boy. 按cntl+d组合键结束编辑。</code></p>
+<p>Linux下重命名文件或文件夹(mv命令与rename命令)<br>
+在Linux下重命名文件或目录，可以使用mv命令或rename命令，这里分享下二者的使用方法。</p>
+<p>mv命令既可以重命名，又可以移动文件或文件夹。</p>
+<p>例子：将目录A重命名为B</p>
+<p>mv A B</p>
+<p>例子：将/a目录移动到/b下，并重命名为c</p>
+<p>mv /a /b/c</p>
+<p>其实在文本模式中要重命名文件或目录，只需要使用mv命令就可以了，比如说要将一个名为abc的文件重命名为1234：</p>
+<p>mv abc 1234</p>
+<p>注意，如果当前目录下也有个1234的文件的话，这个文件是会将它覆盖的。</p>
+<p>下面介绍Linux系统中另一个重命名命令 rename命令的用法。</p>
+<p>批量创建那些规格差不多的文件名。【测试的第一步】</p>
+<p>[root@linuxidc net]# for i in <code>seq -w 10</code></p>
+<blockquote>
+<p>do touch stu_$i_linux.jpg<br>
+done<br>
+[root@linuxidc net]# sl<br>
+total 0<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_01_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_02_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_03_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_04_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_05_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_06_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_07_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_08_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_09_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_10_linux.jpg</p>
+</blockquote>
+<p>然后,使用rename进行修改</p>
+<p>[root@linuxidc net]# rename _linux '' *.jpg<br>
+[root@linuxidc net]# sl<br>
+total 0<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_01.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_02.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_03.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_04.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_05.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_06.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_07.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_08.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_09.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:22 stu_10.jpg</p>
+<p>注意，如果想要替换掉下划线，那么你不能加任何引号。</p>
+<p>创建一些测试文件：</p>
+<p>[root@linuxidc net]# for i in <code>seq -w 10</code>; do touch stu_$i_linux.jpg; done<br>
+[root@linuxidc net]# sl<br>
+total 0<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_01_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_02_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_03_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_04_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_05_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_06_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_07_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_08_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_09_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:58 stu_10_linux.jpg<br>
+[root@linuxidc net]# rename '_linux' '' *.jpg<br>
+[root@linuxidc net]# sl<br>
+total 0<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_01_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_02_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_03_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_04_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_05_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_06_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_07_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_08_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_09_linux.jpg<br>
+-rw-r--r-- 1 root root 0 Oct 9 21:27 stu_10_linux.jpg</p>
+<p>rename版本如果是perl版本的，那rename命令是支持正则的；因此在perl版本的rename下，执行上述命令就可以成功，如果rename版本是c版本的，那么上述命令是不成功的。</p>
+<p>这个是版本支持的问题，所以不必深究。有关二个版本的比较，请参考：linux下rename命令批量重命名中的详细介绍。</p>
+<p>之前的问题可能是因为他的rename版本不支持导致的。so，这里重点说的就是rename，虽然这个命令不是很重要。但是它其实还是很有用的，不是吗？</p>
+<p>当然，有人会说，你这个都是在一个目录下，那我要是在不同的目录下呢？<br>
+用两个命令。一个find先把要修改的文件找出来，再接一个管道，一个rename不就完了吗？<br>
+是的，上述办法可以说是一种思路，其实有很多种思路。</p>
+<p>附，查看rename版本的信息</p>
+<p>[root@linuxidc net]# man rename | head -1<br>
+RENAME(1) Linux Programmer’s Manual RENAME(1)</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-insecure-captcha/">
+              <h3 class="post-title">
+                DVWA之Insecure CAPTCHA
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

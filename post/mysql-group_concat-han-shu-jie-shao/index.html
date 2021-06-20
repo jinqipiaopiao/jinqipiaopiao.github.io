@@ -1,0 +1,368 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MySQL GROUP_CONCAT函数介绍 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="MySQL GROUP_CONCAT函数介绍 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="MySQL GROUP_CONCAT()函数将组中的字符串连接成为具有各种选项的单个字符串。
+下面说明了GROUP_CONCAT()函数的语法：
+GROUP_CONCAT(DISTINCT expression
+ORDER BY expre..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MySQL GROUP_CONCAT函数介绍
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-10
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>MySQL GROUP_CONCAT()函数将组中的字符串连接成为具有各种选项的单个字符串。<br>
+下面说明了GROUP_CONCAT()函数的语法：<br>
+GROUP_CONCAT(DISTINCT expression<br>
+ORDER BY expression<br>
+SEPARATOR sep);<br>
+SQL<br>
+以下是演示GROUP_CONCAT()函数如何工作的一个示例。<br>
+USE testdb;<br>
+CREATE TABLE t (<br>
+v CHAR<br>
+);</p>
+<pre><code>INSERT INTO t(v) VALUES('A'),('B'),('C'),('B');
+
+SELECT 
+GROUP_CONCAT(DISTINCT v
+ORDER BY v ASC
+SEPARATOR ';')
+FROM
+t;
+-- SELECT v FROM t GROUP BY v;
+</code></pre>
+<p>SQL<br>
+执行上面查询语句，得到以下结果 -<br>
++---------------------------------------------------------------------+<br>
+| GROUP_CONCAT(DISTINCT v<br>
+ORDER BY v ASC<br>
+SEPARATOR ';') |<br>
++---------------------------------------------------------------------+<br>
+| A;B;C                                                               |<br>
++---------------------------------------------------------------------+<br>
+1 row in set<br>
+SQL</p>
+<p>注：上面语句类似于把SELECT v FROM t GROUP BY v;语句的结果串接起来。<br>
+参考以下图解 -<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1618023529444.png" alt="" loading="lazy"></p>
+<p>DISTINCT子句用于在连接分组之前消除组中的重复值。<br>
+ORDER BY子句允许您在连接之前按升序或降序排序值。 默认情况下，它按升序排序值。 如果要按降序对值进行排序，则需要明确指定DESC选项。<br>
+SEPARATOR指定在组中的值之间插入的文字值。如果不指定分隔符，则GROUP_CONCAT函数使用逗号(，)作为默认分隔符。<br>
+GROUP_CONCAT函数忽略NULL值，如果找不到匹配的行，或者所有参数都为NULL值，则返回NULL。<br>
+GROUP_CONCAT函数返回二进制或非二进制字符串，这取决于参数。 默认情况下，返回字符串的最大长度为1024。如果您需要更多的长度，可以通过在SESSION或GLOBAL级别设置group_concat_max_len系统变量来扩展最大长度。<br>
+MySQL GROUP_CONCAT示例让我们来看看示例数据库(yiibaidb)中的customers表，其表结构如下所示 -<br>
+mysql&gt; desc customers;<br>
++------------------------+---------------+------+-----+---------+-------+<br>
+| Field                  | Type          | Null | Key | Default | Extra |<br>
++------------------------+---------------+------+-----+---------+-------+<br>
+| customerNumber         | int(11)       | NO   | PRI | NULL    |       |<br>
+| customerName           | varchar(50)   | NO   |     | NULL    |       |<br>
+| contactLastName        | varchar(50)   | NO   |     | NULL    |       |<br>
+| contactFirstName       | varchar(50)   | NO   |     | NULL    |       |<br>
+| phone                  | varchar(50)   | NO   |     | NULL    |       |<br>
+| addressLine1           | varchar(50)   | NO   |     | NULL    |       |<br>
+| addressLine2           | varchar(50)   | YES  |     | NULL    |       |<br>
+| city                   | varchar(50)   | NO   |     | NULL    |       |<br>
+| state                  | varchar(50)   | YES  |     | NULL    |       |<br>
+| postalCode             | varchar(15)   | YES  |     | NULL    |       |<br>
+| country                | varchar(50)   | NO   |     | NULL    |       |<br>
+| salesRepEmployeeNumber | int(11)       | YES  | MUL | NULL    |       |<br>
+| creditLimit            | decimal(10,2) | YES  |     | NULL    |       |<br>
++------------------------+---------------+------+-----+---------+-------+<br>
+13 rows in set<br>
+SQL<br>
+要获取客户所在的国家/地区，以逗号分隔的字符串，您可以使用GROUP_CONCAT函数，如下所示：<br>
+SELECT<br>
+GROUP_CONCAT(country)<br>
+FROM<br>
+customers;<br>
+SQL<br>
+执行上面查询语句，得到以下结果 -</p>
+<p>然而，一些客户位于同一个国家。要删除重复的国家/地区名称，请将DISTINCT子句添加到函数，如下查询：<br>
+mysql&gt; SELECT<br>
+GROUP_CONCAT(DISTINCT country)<br>
+FROM<br>
+customers;<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| GROUP_CONCAT(DISTINCT country)                                                                                                                                                                                                |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| France,USA,Australia,Norway,Poland,Germany,Spain,Sweden,Denmark,Singapore,Portugal,Japan,Finland,UK,Ireland,Canada,Hong Kong,Italy,Switzerland,Netherlands,Belgium,New Zealand,South Africa,Austria,Philippines,Russia,Israel |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+1 row in set<br>
+SQL<br>
+如果国家的名称按升序排列，则可读性更高。要在连接之前排序国家的名称，请使用ORDER BY子句如下：<br>
+SELECT<br>
+GROUP_CONCAT(DISTINCT country<br>
+ORDER BY country)<br>
+FROM<br>
+customers;<br>
+SQL<br>
+执行上面查询语句，得到以下结果 -<br>
+mysql&gt; SELECT<br>
+GROUP_CONCAT(DISTINCT country<br>
+ORDER BY country)<br>
+FROM<br>
+customers;<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| GROUP_CONCAT(DISTINCT country<br>
+ORDER BY country)                                                                                                                                                                        |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| Australia,Austria,Belgium,Canada,Denmark,Finland,France,Germany,Hong Kong,Ireland,Israel,Italy,Japan,Netherlands,New Zealand,Norway,Philippines,Poland,Portugal,Russia,Singapore,South Africa,Spain,Sweden,Switzerland,UK,USA |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+1 row in set<br>
+SQL<br>
+要将返回的字符串的默认分隔符从逗号(，)更改为分号(😉，请使用SEPARATOR子句作为以下查询：<br>
+SELECT<br>
+GROUP_CONCAT(DISTINCT country<br>
+ORDER BY country<br>
+SEPARATOR ';')<br>
+FROM<br>
+customers;<br>
+SQL<br>
+执行上面查询语句，得到以下结果 -<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| GROUP_CONCAT(DISTINCT country<br>
+ORDER BY country<br>
+SEPARATOR ';')                                                                                                                                                   |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+| Australia;Austria;Belgium;Canada;Denmark;Finland;France;Germany;Hong Kong;Ireland;Israel;Italy;Japan;Netherlands;New Zealand;Norway;Philippines;Poland;Portugal;Russia;Singapore;South Africa;Spain;Sweden;Switzerland;UK;USA |<br>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br>
+1 row in set<br>
+SQL<br>
+经过上面几个简单示例，现在您应该知道GROUP_CONCAT函数是如何工作，现在把它应用在一个实际的例子中。<br>
+每个客户都有一个或多个销售代表。 换句话说，每个销售人员都负责一个或多个客户。 要了解谁负责哪些客户，使用inner join子句如下：<br>
+SELECT<br>
+employeeNumber, firstname, lastname, customername<br>
+FROM<br>
+employees<br>
+INNER JOIN<br>
+customers ON customers.salesRepEmployeeNumber = employees.employeeNumber<br>
+ORDER BY firstname , lastname;<br>
+SQL<br>
+执行上面查询语句，得到以下结果 -<br>
++----------------+-----------+-----------+------------------------------------+<br>
+| employeeNumber | firstname | lastname  | customername                       |<br>
++----------------+-----------+-----------+------------------------------------+<br>
+|           1611 | Andy      | Fixter    | Souveniers And Things Co.          |<br>
+|           1611 | Andy      | Fixter    | Australian Collectables, Ltd       |<br>
+|           1611 | Andy      | Fixter    | Australian Gift Network, Co        |<br>
+|           1611 | Andy      | Fixter    | Australian Collectors, Co.         |<br>
+|           1611 | Andy      | Fixter    | Anna's Decorations, Ltd            |<br>
+|           1504 | Barry     | Jones     | Baane Mini Imports                 |<br>
+|           1504 | Barry     | Jones     | Toms Spezialitten, Ltd             |<br>
+************* 此处省略了一大波数据 *********************************************<br>
+|           1216 | Steve     | Patterson | Auto-Moto Classics Inc.            |<br>
+|           1216 | Steve     | Patterson | Gifts4AllAges.com                  |<br>
+|           1216 | Steve     | Patterson | FunGiftIdeas.com                   |<br>
+|           1216 | Steve     | Patterson | Diecast Classics Inc.              |<br>
+|           1216 | Steve     | Patterson | Online Diecast Creations Co.       |<br>
++----------------+-----------+-----------+------------------------------------+<br>
+122 rows in set<br>
+SQL<br>
+现在，我们可以按员工编号对结果集进行分组，并使用GROUP_CONCAT函数连接正在负责员工的所有员工，如下所示：<br>
+SELECT<br>
+employeeNumber,<br>
+firstName,<br>
+lastName,<br>
+GROUP_CONCAT(DISTINCT customername<br>
+ORDER BY customerName)<br>
+FROM<br>
+employees<br>
+INNER JOIN<br>
+customers ON customers.salesRepEmployeeNumber = employeeNumber<br>
+GROUP BY employeeNumber<br>
+ORDER BY firstName , lastname;<br>
+上面查询语句，执行结果如下 -<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1618023719128.jpg" alt="" loading="lazy"><br>
+SQL<br>
+具有CONCAT_WS函数的MySQL GROUP_CONCAT函数的示例有时，GROUP_CONCAT函数可以与CONCAT_WS函数相结合，使查询结果更有用。<br>
+例如，制作客户分号分隔值列表：</p>
+<p>首先，使用CONCAT_WS函数连接每个客户联系人的姓氏和名字，结果是联系人的全名。然后，使用GROUP_CONCAT函数来创建列表。<br>
+以下查询使客户的分号分隔值列表。<br>
+SELECT<br>
+GROUP_CONCAT(CONCAT_WS(', ', contactLastName, contactFirstName)<br>
+SEPARATOR ';')<br>
+FROM<br>
+customers;<br>
+SQL<br>
+请注意，GROUP_CONCAT函数将字符串值连接在不同的行中，而CONCAT_WS或CONCAT函数将不同列中的两个或多个字符串值连接起来。<br>
+MySQL GROUP_CONCAT函数：常见错误GROUP_CONCAT函数返回单个字符串，而不是值列表。 这意味着您不能在IN操作符中使用GROUP_CONCAT函数的结果，例如在子查询中使用。<br>
+例如，GROUP_CONCAT函数返回值的结果：1, 2和3连接成为字符串：1,2,3 。<br>
+如果将此结果提供给IN运算符，则查询不能正常工作。因此，查询可能不返回任何结果。例如，以下查询将无法正常工作。<br>
+因为IN运算符接受诸如(1,2,3)的值的列表，而不是由值列表('1,2,3')组成的字符串。 因此，以下查询将无法正常工作。<br>
+SELECT<br>
+id, name<br>
+FROM<br>
+table_name<br>
+WHERE<br>
+id IN GROUP_CONCAT(id);<br>
+SQL<br>
+因为GROUP_CONCAT函数是一个聚合函数，要对值进行排序，必须在函数内使用ORDER BY子句，而不是SELECT语句中的ORDER BY。<br>
+以下示例演示了在使用GROUP_CONCAT函数的上下文中ORDER BY子句的不正确使用：<br>
+SELECT<br>
+GROUP_CONCAT(DISTINCT country<br>
+SEPARATOR ';')<br>
+FROM<br>
+customers<br>
+ORDER BY country;<br>
+SQL<br>
+SELECT子句返回一个字符串值，因此ORDER BY子句在此语句中不起作用。<br>
+MySQL GROUP_CONCAT应用程序在许多情况下，您可以应用GROUP_CONCAT函数来产生有用的结果。 以下列表是使用GROUP_CONCAT函数的一些常见示例。</p>
+<p>用逗号分隔的用户角色，如“管理员，作者，编辑人员”。生成逗号分隔的用户的爱好，如“设计，编程，阅读”。为博客帖子，文章或产品创建标签，例如“mysql，mysql聚合函数，mysql教程”。<br>
+在本教程中，我们介绍了MySQL GROUP_CONCAT函数，将非空值从一组字符串连接到具有各种选项的字符串中</p>
+<p>//原文出自【易百教程】，商业转载请联系作者获得授权，非商业请保留原文链接：https://www.yiibai.com/mysql/group_concat.html</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/sql-zhu-ru-shi-zhan-zhi-mang-zhu-pian-bu-er-shi-jian-mang-zhu/">
+              <h3 class="post-title">
+                SQL注入实战之盲注篇（布尔、时间盲注）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

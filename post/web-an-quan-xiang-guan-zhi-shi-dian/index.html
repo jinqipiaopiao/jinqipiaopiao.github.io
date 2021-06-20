@@ -1,0 +1,384 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>web安全相关知识点 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="web安全相关知识点 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="HTTP 请求头各参数具体含义
+Header	解释	示例
+Accept	指定客户端能够接收的内容类型	Accept: text/plain, text/html
+Accept-Charset	浏览器可以接受的字符编码集。	Accept-Ch..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              web安全相关知识点
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-30
+              </span>
+              <span>
+                27 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="http-请求头各参数具体含义">HTTP 请求头各参数具体含义</h1>
+<p>Header	解释	示例<br>
+Accept	指定客户端能够接收的内容类型	Accept: text/plain, text/html<br>
+Accept-Charset	浏览器可以接受的字符编码集。	Accept-Charset: iso-8859-5<br>
+Accept-Encoding	指定浏览器可以支持的web服务器返回内容压缩编码类型。	Accept-Encoding: compress, gzip<br>
+Accept-Language	浏览器可接受的语言	Accept-Language: en,zh<br>
+Accept-Ranges	可以请求网页实体的一个或者多个子范围字段	Accept-Ranges: bytes<br>
+Authorization	HTTP授权的授权证书	Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==<br>
+Cache-Control	指定请求和响应遵循的缓存机制	Cache-Control: no-cache<br>
+Connection	表示是否需要持久连接。（HTTP 1.1默认进行持久连接）	Connection: close<br>
+Cookie	HTTP请求发送时，会把保存在该请求域名下的所有cookie值一起发送给web服务器。	Cookie: $Version=1; Skin=new;<br>
+Content-Length	请求的内容长度	Content-Length: 348<br>
+Content-Type	请求的与实体对应的MIME信息	Content-Type: application/x-www-form-urlencoded<br>
+Date	请求发送的日期和时间	Date: Tue, 15 Nov 2010 08:12:31 GMT<br>
+Expect	请求的特定的服务器行为	Expect: 100-continue<br>
+From	发出请求的用户的Email	From: user@email.com<br>
+Host	指定请求的服务器的域名和端口号	Host: www.zcmhi.com<br>
+If-Match	只有请求内容与实体相匹配才有效	If-Match: “737060cd8c284d8af7ad3082f209582d”<br>
+If-Modified-Since	如果请求的部分在指定时间之后被修改则请求成功，未被修改则返回304代码	If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT<br>
+If-None-Match	如果内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变	If-None-Match: “737060cd8c284d8af7ad3082f209582d”<br>
+If-Range	如果实体未改变，服务器发送客户端丢失的部分，否则发送整个实体。参数也为Etag	If-Range: “737060cd8c284d8af7ad3082f209582d”<br>
+If-Unmodified-Since	只在实体在指定时间之后未被修改才请求成功	If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT<br>
+Max-Forwards	限制信息通过代理和网关传送的时间	Max-Forwards: 10<br>
+Pragma	用来包含实现特定的指令	Pragma: no-cache<br>
+Proxy-Authorization	连接到代理的授权证书	Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==<br>
+Range	只请求实体的一部分，指定范围	Range: bytes=500-999<br>
+Referer	先前网页的地址，当前请求网页紧随其后,即来路	Referer: http://www.zcmhi.com/archives/71.html<br>
+TE	客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息	TE: trailers,deflate;q=0.5<br>
+Upgrade	向服务器指定某种传输协议以便服务器进行转换（如果支持）	Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11<br>
+User-Agent	User-Agent的内容包含发出请求的用户信息	User-Agent: Mozilla/5.0 (Linux; X11)<br>
+Via	通知中间网关或代理服务器地址，通信协议	Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)<br>
+Warning	关于消息实体的警告信息	Warn: 199 Miscellaneous warning</p>
+<h1 id="responses-部分-http-header">Responses 部分 | Http Header</h1>
+<p>Header	解释	示例<br>
+Accept-Ranges	表明服务器是否支持指定范围请求及哪种类型的分段请求	Accept-Ranges: bytes<br>
+Age	从原始服务器到代理缓存形成的估算时间（以秒计，非负）	Age: 12<br>
+Allow	对某网络资源的有效的请求行为，不允许则返回405	Allow: GET, HEAD<br>
+Cache-Control	告诉所有的缓存机制是否可以缓存及哪种类型	Cache-Control: no-cache<br>
+Content-Encoding	web服务器支持的返回内容压缩编码类型。	Content-Encoding: gzip<br>
+Content-Language	响应体的语言	Content-Language: en,zh<br>
+Content-Length	响应体的长度	Content-Length: 348<br>
+Content-Location	请求资源可替代的备用的另一地址	Content-Location: /index.htm<br>
+Content-MD5	返回资源的MD5校验值	Content-MD5: Q2hlY2sgSW50ZWdyaXR5IQ==<br>
+Content-Range	在整个返回体中本部分的字节位置	Content-Range: bytes 21010-47021/47022<br>
+Content-Type	返回内容的MIME类型	Content-Type: text/html; charset=utf-8<br>
+Date	原始服务器消息发出的时间	Date: Tue, 15 Nov 2010 08:12:31 GMT<br>
+ETag	请求变量的实体标签的当前值	ETag: “737060cd8c284d8af7ad3082f209582d”<br>
+Expires	响应过期的日期和时间	Expires: Thu, 01 Dec 2010 16:00:00 GMT<br>
+Last-Modified	请求资源的最后修改时间	Last-Modified: Tue, 15 Nov 2010 12:45:26 GMT<br>
+Location	用来重定向接收方到非请求URL的位置来完成请求或标识新的资源	Location: http://www.zcmhi.com/archives/94.html<br>
+Pragma	包括实现特定的指令，它可应用到响应链上的任何接收方	Pragma: no-cache<br>
+Proxy-Authenticate	它指出认证方案和可应用到代理的该URL上的参数	Proxy-Authenticate: Basic<br>
+refresh	应用于重定向或一个新的资源被创造，在5秒之后重定向（由网景提出，被大部分浏览器支持）	Refresh: 5; url=http://www.atool.org/httptest.php<br>
+Retry-After	如果实体暂时不可取，通知客户端在指定时间之后再次尝试	Retry-After: 120<br>
+Server	web服务器软件名称	Server: Apache/1.3.27 (Unix) (Red-Hat/Linux)<br>
+Set-Cookie	设置Http Cookie	Set-Cookie: UserID=JohnDoe; Max-Age=3600; Version=1<br>
+Trailer	指出头域在分块传输编码的尾部存在	Trailer: Max-Forwards<br>
+Transfer-Encoding	文件传输编码	Transfer-Encoding:chunked<br>
+Vary	告诉下游代理是使用缓存响应还是从原始服务器请求	Vary: *<br>
+Via	告知代理客户端响应是通过哪里发送的	Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)<br>
+Warning	警告实体可能存在的问题	Warning: 199 Miscellaneous warning<br>
+WWW-Authenticate	表明客户端请求实体应该使用的授权方案	WWW-Authenticate: Basic<br>
+X-Forwarded-For:简称XFF头，它代表客户端，也就是HTTP的请求端真实的IP，只有在通过了HTTP 代理或者负载均衡服务器时才会添加该项<br>
+————————————————<br>
+版权声明：本文为CSDN博主「xiaochengyihe」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/xiaochengyihe/article/details/80910913</p>
+<h1 id="一文详解webshell">一文详解Webshell</h1>
+<p>Webshell是黑客经常使用的一种恶意脚本，其目的是获得对服务器的执行操作权限，比如执行系统命令、窃取用户数据、删除web页面、修改主页等，其危害不言而喻。黑客通常利用常见的漏洞，如SQL注入、远程文件包含(RFI)、FTP，甚至使用跨站点脚本攻击(XSS)等方式作为社会工程攻击的一部分，最终达到控制网站服务器的目的。</p>
+<p>常见的webshell编写语言为asp、jsp和php。本文将以php Webshell为示例，详细解释Webshell的常用函数、工作方式以及常用隐藏技术。</p>
+<p>一、Webshell为何备受黑客青睐<br>
+黑客使用Webshell的第一步通常是将其上传到可以访问的服务器中，例如利用用户CMS系统的第三方插件中的漏洞上传一个简单的php Webshell。当然，Webshell类型和作用也不完全相同，一些简单的Webshell只起到连接外界的作用，允许黑客插入更加精准的恶意脚本，执行他们所需要的指令；另外一些则可能更加复杂，带有数据库或文件浏览器，让黑客能够从数千英里之外的地方查看入侵系统的代码和数据。无论何种设计，Webshell都极其危险，是网络罪犯和高级持续威胁(APTs)的常用工具。Webshell常见的攻击特点主要有以下几点：</p>
+<p>持久化远程访问</p>
+<p>Webshell脚本通常会包含后门，黑客上传Webshell之后，就可以充分利用Webshell的后门实现远程访问并控制服务器，从而达到长期控制网站服务器的目的。此外，在上传完Webshell之后，黑客会选择自己修复漏洞，以确保没有其他人会利用该漏洞。通过这种方式，黑客就可以一种低调的姿态，避免与管理员进行任何交互，同时仍然获得相同的结果。</p>
+<p>提权</p>
+<p>在服务器没有配置错误的情况下，Webshell将在web服务器的用户权限下运行，而用户权限是有限的。通过Webshell，黑客可以利用系统上的本地漏洞来实现权限提升，从而获得Root权限，这样黑客基本上可以在系统上做任何事情，包括安装软件、更改权限、添加和删除用户、窃取密码、阅读电子邮件等等。</p>
+<p>隐蔽性极强</p>
+<p>Webshell可以嵌套在正常网页中运行，且不容易被查杀。它还可以穿越服务器防火墙，由于与被控制的服务器或远程主机交互的数据都是通过80端口传递，因此不会被防火墙拦截，在没有记录流量的情况下，Webshell使用post包发送，也不会被记录在系统日志中，只会在Web日志中记录一些数据提交的记录。</p>
+<p>二、Webshell常用的PHP函数<br>
+Webshell几乎适用于所有Web编程语言。之所以关注PHP，是因为它是web上使用最广泛的编程语言。下面是PHP中一些执行shell命令最常用的函数。</p>
+<p>system() exec() shell_exec() shell_exec() proc_open() 倒引号</p>
+<p>很多PHP开发人员并没有意识到这一点，但是PHP会首先执行shell命令中倒引号（<code>）内的内容。请注意，倒引号（</code>）和单引号（’）不同。</p>
+<p>三、黑客如何隐藏Webshell<br>
+修改报头</p>
+<p>黑客使用用户代理字符串而不是通过$_POST 请求参数来传递命令的。</p>
+<pre><code>&lt;?php system($_SERVER['HTTP_USER_AGENT']);?&gt;
+</code></pre>
+<p>然后，黑客可以通过将命令放在User-Agent HTTP报头中来制作特定的HTTP请求。<br>
+在服务器日志中可以看到这一行为的效果，其中第二个请求中的HTTP User-Agent被cat /etc/passwd命令替换了。<br>
+上述方法会产生很大噪声，可以很容易地提示管理员查看服务器日志。但采用下列方法，管理员这很难发现。</p>
+<pre><code>&lt;?php system($_SERVER['HTTP_ACCEPT_LANGUAGE']);?&gt;
+</code></pre>
+<p>这种方法没有留下关于执行命令的任何可见轨迹（至少在访问日志中是这样）。</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622358978210.png" alt="" loading="lazy"><br>
+注意：黑客通常会在函数前使用@运算符，以防发生任何错误，写入错误日志。<br>
+混淆</p>
+<p>黑客使用各种混淆技术，以避免被管理员检测到。他们不断提出新的更复杂的方法来隐藏其代码并绕过安全系统。下面是我们看到的一些最常用的技术。</p>
+<p>（1）删除空格换行符</p>
+<p>通过从代码块中删除空格换行符，代码看起来像一个大字符串，这就使得代码的可读性降低并且更难识别脚本要实现什么目的。<br>
+（2）加密技术</p>
+<p>该技术可以对代码进行加密，降低代码的可读性，并且充分利用运行时可以重建代码的各种函数。<br>
+(3）使用Hex进行混淆</p>
+<p>ASCII字符的十六进制值也可以用于进一步混淆Webshell命令，下面的例子可以很好地说明混淆技术在Webshell中的应用。<br>
+（4）通过可控输入实现混淆</p>
+<p>PHP常用的可控输入包括: $_GET, $_POST, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>R</mi></msub><mi>E</mi><mi>Q</mi><mi>U</mi><mi>E</mi><mi>S</mi><mi>T</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">_REQUEST,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mpunct">,</span></span></span></span>_FILES,$_SERVER $_COOKIE等，是PHP预定义的变量，可以将黑客自定义的值传递给浏览器中。</p>
+<p>以下示例很简单，但很实用。虽然未对代码进行编码或加密，但由于它没有使用任何可疑的函数名（例如eval()或assert()）、冗长的编码字符串、复杂的代码，因此与之前的代码相比，可检测性仍然较低。最重要的是，当管理员查看日志时，它不会引起任何危险。<br>
+预防</p>
+<p>通常，黑客会利用Web服务器软件中存在的漏洞来安装Webshell。因此，消除这些漏洞对于避免失陷Web服务器的潜在风险很重要。以下是一些与Webshell相关的预防措施。</p>
+<p>如果不使用，要禁用危险的PHP函数，例如exec()、shell_exec()、passthru()、system()、show_source()、proc_open()、pcntl_exec()、eval()与assert()。</p>
+<p>如果必须要启用这些命令，请确保未授权用户无法访问这些脚本。此外，使用escapeshellarg()和escapeshellcmd()可以确保不能将用户输入注入到shell命令中，从而导致命令执行漏洞。</p>
+<p>如果Web应用程序正在使用上传表单，请确保上传的表单是安全的，并且仅允许上传白名单所允许的文件类型。</p>
+<p>不要相信用户输入的信息。</p>
+<p>不要盲目使用在线论坛或网站上的代码。</p>
+<p>对于WordPress，如果不需要，要避免安装第三方插件。如果需要使用插件，请确保插接件其信誉良好且经常更新。</p>
+<p>在敏感目录（如图片或上传）中禁用PHP执行。</p>
+<p>锁定Web服务器用户权限。</p>
+<p>上面给出的是一些简单的Webshell检测和预防措施。面对较为复杂的Webshell攻击，则需要采用一些专业的Webshell检测工具来实现了。</p>
+<p>六、总结<br>
+Webshell编码简单，使用方便，但由于许多Web服务器的设置方式问题，即使是一个简单的脚本也足以造成严重的破坏。这就是为什么有成千上万的公开Webshell的原因所在。Webshell存在如此多的变种，导致入侵检测和入侵防御系统（IDS/IPS）很难检测到它们，尤其是当使用签名来检测此类Webshell时。有些Webshell非常复杂，即使进行行为分析，也几乎无法检测到。</p>
+<p>话虽如此，但Webshell只是漏洞利用后的实施工具，这就意味着首先要尽早检测出Webshell，防止其上传后进行漏洞利用。<br>
+参考网址：https://www.freebuf.com/articles/web/235651.html</p>
+<p>你听说过“ 0day漏洞 ”吗？这个词让人联想到世界末日的景像，其中的技术要么达到了出神入化甚至疯狂的状态，要么又回到了CRT显示器和绿屏时代。</p>
+<p>说实话，0day没有那么不祥的征兆。但是就是非常严重。实际上，在所有已知的漏洞中，0day通常是能够造成最大的风险。这是为什么？原因在于定义。</p>
+<p>什么是0day漏洞？<br>
+0day漏洞是指负责应用程序的程序员或供应商所未知的软件缺陷。因为该漏洞未知，所以没有可用的补丁程序。</p>
+<p>换句话说，该漏洞是由不直接参与项目的人员发现的。术语“0day”是指从发现漏洞到对其进行首次攻击之间的天数。0day漏洞公开后，便称为nday漏洞。</p>
+<p>0day时间表的工作原理如下：</p>
+<p>一个人或一个公司创建了一个软件，其中包含一个漏洞，但涉及编程或发行的人员却不知道。<br>
+在开发人员有机会定位或解决问题之前，有人（除负责软件的人员之外）发现了漏洞。<br>
+发现该漏洞的人会创建恶意代码来利用该漏洞。<br>
+该漏洞被释放。<br>
+负责人员将被告知漏洞利用并打补丁。<br>
+该漏洞不再被视为0day。<br>
+补丁发布。<br>
+大多数情况下，针对0day漏洞的攻击很少立即被发现。发现这些缺陷通常可能需要几天或几个月的时间，这才使这类漏洞如此危险。</p>
+<p>如何处理0day漏洞？<br>
+作为管理员或用户，可能无能为力。最好的情况是永远不要使用未打补丁版本的软件。这在 Linux 社区中通常很常见，在 Linux 社区中，许多用户不会安装.0发行版。相反，他们将等待.1版本（例如Ubuntu 19.10.1）。通过避免最初发布的版本，可能会免受第一批产品中至少任何未发现的0day漏洞的影响。这并不意味着.1版本将修补所有的0day漏洞。如果有的话，甚至在下一个主要版本之前，它们都可能未被发现。经常在新闻中看到存在一段时间的软件中发现的新漏洞。</p>
+<p>作为开发人员，最好的办法是招募尽可能多的版本测试人员。这是开源软件比专有软件更具优势的地方。在源代码公开的情况下，任何人都可以审查和测试代码。而且，Beta开源软件通常面向公众发布，因此任何人都可以进行测试。另一方面，付费软件通常不会向公众发布Beta（当然，也有例外）。当应用程序的beta测试人员数量有限时，发现的bug较少，从而导致0day漏洞的可能性更高。</p>
+<p>因此，最终用户应该推迟采用全新的发行版本，而开发人员需要先进行测试、测试和测试，然后再发布给公众。</p>
+<p>最后，你可以做的一件事就是确保将错误报告提交给开发人员和公司。错误报告是程序员解决软件问题的一种有效方法。而且，你永远都不会知道，你提交的BUG很可能导致0day漏洞的发现和后续修补。</p>
+<p>01 注入漏洞<br>
+1）SQL注入（SQL Injection）<br>
+由于程序对SQL相关的一些敏感字符缺少过滤or转换，攻击者把SQL命令插入到用户提交的数据中，欺骗服务器执行恶意的SQL命令，非法获取到内部权限和数据。<br>
+风险：读取or篡改数据库的数据，获取服务器or管理员权限<br>
+类型：<br>
+a.数据型<br>
+b.字符型<br>
+其他注入方式<br>
+c.伪静态注入<br>
+d.GET &amp; POST注入<br>
+e.Cookie注入</p>
+<p>2）SQL盲注（SQL Blind Injection）<br>
+a.基于布尔的盲注<br>
+SQL注入过程中，应用程序仅仅返回True页面和False页面，无法根据应用程序的返回页面得到数据库信息，但可通过构造逻辑条件（如比较大小）向服务端请求后的返回页面来分析判断我们所需要的数据库信息。<br>
+b.基于时间的盲注<br>
+注入的SQL代码影响后台数据库的功能，但此时Web的前端页面始终显示True页面，知识页面返回的响应时间有差异，可以根据时间差来推断注入语句中的判断条件真假，继而获取数据库相关的信息。</p>
+<p>3）OS命令注入<br>
+OS Command Injection，当应用程序使用外部输入的字符串，or使用受外部影响的字符串来组装命令时，若没有进行安全过滤防范，可能产生OS命令的注入攻击，甚至操作服务器相关的权限。</p>
+<p>4）Xpath注入<br>
+利用XPath解析器的松散输入和容错特性，能够在URL、表单或其它信息上附带恶意的XPath查询代码，以获得权限信息的访问权并更改这些信息。</p>
+<p>......</p>
+<p>02 失效的身份认证和会话管理<br>
+用户身份认证和会话管理是一个应用程序中最关键的过程，有缺陷的设计会严重破坏这个过程。在开发Web应用程序时，开发人员往往只关注Web应用程序所需的功能，通常会建立自定义的认证和会话管理方案。但要正确实现这些方案却很难，结果这些自定义的方案往往在如下方面存在漏洞：退出、密码管理、超时、记住我、密码问题、帐户更新等。</p>
+<p>03 敏感信息泄露<br>
+在最近几年，这是最常见的、最具影响力的攻击。这个领域最常见的漏洞是不对敏感信息进行加密。在数据加密过程中，常见的问题是不安全的密钥生成和管理以及使用弱加密算法、弱协议和弱密码。特别是使用弱的哈希算法来保护密码。<br>
+攻击者不是直接攻击密码，而是在传输过程中或从客户端（例如：浏览器）窃取密钥、发起中间人攻击，或从服务器端窃取明文数据。</p>
+<p>04 XML外部实体（XXE）<br>
+默认情况下，许多旧的XML处理器能够对外部实体、XML进程中被引用和评估的URI进行规范。如果攻击者可以上传XML文档或者在XML文档中添加恶意内容，通过易受攻击的代码、依赖项或集成，他们就能够攻击含有缺陷的XML处理器。<br>
+XXE缺陷可用于提取数据、执行远程服务器请求、扫描内部系统、执行拒绝服务攻击和其他攻击。</p>
+<p>05 失效的访问控制<br>
+由于缺乏自动化的检测和应用程序开发人员缺乏有效的功能测试，因而访问控制缺陷很常见。访问控制检测通常不适用于自动化的静态或动态测试。手动测试是检测访问控制缺失或失效的最佳方法，包括：HTTP方法（如：GET和PUT）、控制器、直接对象引用。<br>
+攻击者可以冒充用户、管理员或拥有特权的用户，或者创建、访问、更新或删除任何记录。</p>
+<p>06 安全配置错误<br>
+安全配置错误可以发生在一个应用程序堆栈的任何层面，包括网络服务、平台、Web服务器、应用服务器、数据库、框架、自定义代码和预安装的虚拟机、容器和存储。自动扫描器可用于检测错误的安全配置、默认帐户的使用或配置、不必要的服务、遗留选项等。<br>
+通常，攻击者能够通过未修复的漏洞、访问默认账户、不再使用的页面、未受保护的文件和目录等来取得对系统的未授权的访问或了解。</p>
+<p>07 跨站脚本（XSS）<br>
+XSS是OWASP Top10中第二普遍的安全问题，存在于近三分之二的应用中。由于程序缺少对某些敏感字符的过滤or转换，攻击者对在url或输入框中输入HTML/JS恶意代码提交成功后并被执行，获取用户or程序敏感信息。<br>
+XSS对于反射和DOM的影响是中等的，而对于存储的XSS，XSS的影响更为严重，譬如在受攻击者的浏览器上执行远程代码，例如：窃取凭证和会话或传递恶意软件等。</p>
+<p>08 不安全的反序列化<br>
+反序列化漏洞有十年的历史，存在于不同的编程语言中，最为明显的当属Java、PHP、Python、Ruby。漏洞的本质就是反序列化机制打破了数据和对象的边界，导致攻击者注入的恶意序列化数据在反序列化过程中被还原成对象，控制了对象就可能在目标系统上面执行攻击代码。</p>
+<p>09 使用含有已知漏洞的组件<br>
+这种安全漏洞普遍存在。基于组件开发的模式使得多数开发团队不了解其应用或API中使用的组件，更谈不上及时更新这些组件了。如Retire.js之类的扫描器可以帮助发现此类漏洞，但这类漏洞是否可以被利用还需花费额外的时间去研究。</p>
+<p>10 不足的日志记录和监控<br>
+对不足的日志记录及监控的利用几乎是每一个重大安全事件的温床。攻击者依靠监控的不足和响应的不及时来达成他们的目标而不被知晓。<br>
+根据行业调查的结果，此问题被列入了Top10。判断你是否有足够监控的一个策略是在渗透测试后检查日志。测试者的活动应被充分的记录下来，能够反映出他们造成了什么样的影响。<br>
+多数成功的攻击往往从漏洞探测开始。允许这种探测会将攻击成功的可能性提高到近100%；据统计，在2016年确定一起数据泄露事件平均需要花191天时间，这么长时间里损害早已发生。</p>
+<p>11 跨站请求伪造（CSRF）<br>
+CSRF是利用某些web应用程序允许攻击者预测一个特定操作的所有细节。由于浏览器自动发送会话cookie等认证凭证，攻击者能创建恶意web页面产生伪造请求。这些伪造请求很难与合法请求区分开。<br>
+攻击者能欺骗受害用户完成该受害者所允许的任意状态改变的操作，比如：更新帐号细节，完成购物，注销甚至登录等操作。</p>
+<p>12 未验证的重定向和转发<br>
+应用程序经常将用户重定向到其他网页，或以类似的方式进行内部转发。有时，目标网页是通过一个未经验证的参数来指定的，这就允许攻击者选择目标页面。<br>
+攻击者链接到未验证的重定向并诱使受害者去点击。由于是链接到有效的网站，受害者很有可能去点击。攻击者利用不安全的转发绕过安全检测。<br>
+这种重定向可能试图安装恶意软件或者诱使受害者泄露密码或其他敏感信息。不安全的转发可能允许绕过访问控制。</p>
+<p>12 弱口令漏洞<br>
+弱口令(weak password) ，没有严格和准确的定义，通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令，如：生日、名字、简单的顺序数字or字符。</p>
+<p>13 文件上传漏洞<br>
+文件上传漏洞是指网络攻击者上传了一个可执行的文件到服务器并执行。这里上传的文件可以是木马，病毒，恶意脚本或者WebShell等。大多数的上传漏洞被利用后攻击者都会留下WebShell以方便后续进入系统。攻击者在受影响系统放置或者插入WebShell后，可通过该WebShell更轻松，更隐蔽的在服务中为所欲为。<br>
+WebShell就是以asp、php、jsp或者cgi等网页文件形式存在的一种命令执行环境，也可以将其称之为一种网页后门。攻击者在入侵了一个网站后，通常会将这些asp或php后门文件与网站服务器web目录下正常的网页文件混在一起，然后使用浏览器来访问这些后门，得到一个命令执行环境，以达到控制网站服务器的目的（可以上传下载或者修改文件，操作数据库，执行任意命令等）。</p>
+<p>14 缓冲区溢出<br>
+在计算机内部，输入数据通常被存放在一个临时空间内，这个临时存放的空间就被称为缓冲区，缓冲区的长度事先已经被程序或者操作系统定义好了。向缓冲区内填充数据，如果数据的长度很长，超过了缓冲区本身的容量，那么数据就会溢出存储空间，而这些溢出的数据还会覆盖在合法的数据上。<br>
+操作系统所使用的缓冲区又被称为堆栈，在各个操作进程之间，指令被临时存储在堆栈当中，堆栈也会出现缓冲区溢出。 当一个超长的数据进入到缓冲区时，超出部分就会被写入其他缓冲区，其他缓冲区存放的可能是数据、下一条指令的指针，或者是其他程序的输出内容，这些内容都被覆盖或者破坏掉。</p>
+<p>15 业务逻辑漏洞<br>
+业务逻辑问题是一种设计缺陷，逻辑缺陷表现为设计者或开发者在思考过程中做出的特殊假设存在明显或隐含的错误。攻击者会特别注意目标应用程序采用的逻辑方式，设法了解设计者与开发者做出的可能假设，然后考虑如何攻破这些假设。攻击者挖掘逻辑漏洞有两个重点：业务流程、http/https请求篡改。<br>
+业务逻辑漏洞经常出现的场景为：账户（注册/登录/密码找回）、交易、支付、个人信息修改。<br>
+作者：Fighting_001<br>
+链接：https://www.jianshu.com/p/184863b67bb1<br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p>本地包含时如果想要打开的是一个数组最好用file打开如file(&quot;flag.php&quot;)<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623834341248.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623834380453.png" alt="" loading="lazy"><br>
+file() 函数把整个文件读入一个数组中。<br>
+与 file_get_contents() 类似，不同的是 file() 将文件作为一个数组返回。数组中的每个单元都是文件中相应的一行，包括换行符在内。如果失败，则返回 false。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#http-%E8%AF%B7%E6%B1%82%E5%A4%B4%E5%90%84%E5%8F%82%E6%95%B0%E5%85%B7%E4%BD%93%E5%90%AB%E4%B9%89">HTTP 请求头各参数具体含义</a></li>
+<li><a href="#responses-%E9%83%A8%E5%88%86-http-header">Responses 部分 | Http Header</a></li>
+<li><a href="#%E4%B8%80%E6%96%87%E8%AF%A6%E8%A7%A3webshell">一文详解Webshell</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/userini-wen-jian-gou-cheng-de-php-hou-men/">
+              <h3 class="post-title">
+                .user.ini文件构成的PHP后门
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

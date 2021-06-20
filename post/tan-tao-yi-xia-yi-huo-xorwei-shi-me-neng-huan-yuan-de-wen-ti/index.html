@@ -1,0 +1,217 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>探讨一下异或(xor)为什么能还原的问题 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="探讨一下异或(xor)为什么能还原的问题 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="数学表示：
+        a ^ a ^ b = b;
+        a ^ b ^ a = b;
+        b ^ a ^ a = b;
+
+原理：
+可用穷举法证明：
+异或运算：1 ^ 1 = 0；1 ^ 0 = 1;  0 ^ ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              探讨一下异或(xor)为什么能还原的问题
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-22
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>数学表示：<br>
+        a ^ a ^ b = b;<br>
+        a ^ b ^ a = b;<br>
+        b ^ a ^ a = b;</p>
+<p></p>
+<p>原理：</p>
+<p>可用穷举法证明：</p>
+<p>异或运算：1 ^ 1 = 0；1 ^ 0 = 1;  0 ^ 1 = 1;  0 ^ 0 = 0;</p>
+<p>穷举：</p>
+<p>1 ^ 1 ^ 1 = 1；</p>
+<p>1 ^ 1 ^ 0 = 0；</p>
+<p>1 ^ 0 ^ 1 = 0；</p>
+<p>0 ^ 1 ^ 1 = 0；</p>
+<p>1 ^ 0 ^ 0 = 1；</p>
+<p>0 ^ 1 ^ 0 = 1；</p>
+<p>0 ^ 0 ^ 1 = 1；</p>
+<p>0 ^ 0 ^ 0 = 0；</p>
+<p>可知任意1或0出现两次，即可抵消。</p>
+<p>从而推广至多个位（bit）。</p>
+<p>一个数异或同一个数两次,结果还是那个数。  且异或的顺序可变。<br>
+————————————————<br>
+版权声明：本文为CSDN博主「Wilson_act」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/wilsonact/article/details/87075380</p>
+<p><strong>如何证明这个结论呢？</strong><br>
+观察xor的运算， 我们可以得出一个结论， 其实xor相当于不进位的加法。<br>
+举个例子:<br>
+num1: .byte 0b0<br>
+num2: .byte 0b1</p>
+<p>情况1<br>
+xorb 0, num1 #结果 num1 ＝ 0b0  相当于 0 ＋ 0 ＝ 0<br>
+xorb 1，num1 #结果 num1 ＝ 0b1  相当于 1 ＋ 0 ＝ 1</p>
+<p>情况2<br>
+xorb 0, num2 #结果 num2 ＝ 0b1 相当于 0 ＋ 1 ＝ 1<br>
+xorb 1，num2 #结果 num2 ＝ 0b0 相当于 1 ＋ 1 ＝ 0b10, 进位被直接舍弃， 最后num2 = 0b0<br>
+所以上述 a xor b xor b ＝＝ a， 可以先理解成 a ＋ b ＋ b == a 这个等式</p>
+<p>假如 a 和 b 就是单纯的 一个bit位<br>
+那么在这两次的连加中， 不管有没有进位，最后连加的结果的最低位一定等于a (这其中b是可以 ＝＝ a的)</p>
+<p>这是二进制加法的特性，但是要注意的是连加的次数一定要是2的倍数，而且连加的被加数b一定要不变 (这其中b是可以 ＝＝ a的)</p>
+<p>有了这个特性我们回过头去看xor</p>
+<p>上面说了xor相当于不进位的加法，所以 a＋b＋b 最后计算的结果所有的进位全被舍弃，自然而然保留的结果一定 ＝＝ a</p>
+<p>现在将a和b括展到多个bit位，那么原理是一样的， a xor b xor b， 还是相当于 a ＋ b ＋ b， xor会将每个对应的 bit位 都做 连续的加法，由于是不进位的，所以每次对应的bit位的连加是互不影响的，所以最后整个结果 所有的二进制bit位都相没有变， 所以最后的结果一定是a</p>
+<p>xor上述这样的运算特性，可以做一些简单的加密</p>
+<p>作者：聽歌的大肥豬<br>
+链接：https://www.jianshu.com/p/0027bb0cfdec<br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/ctfshowweb/">
+              <h3 class="post-title">
+                CTF.Show:WEB
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

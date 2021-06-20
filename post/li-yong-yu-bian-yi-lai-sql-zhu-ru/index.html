@@ -1,0 +1,197 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>利用预编译来SQL注入 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="利用预编译来SQL注入 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在做CTF时遇到这样一个题目，注入点过滤了SELECT和.还有WHERE等关键词，但是支持多语句查询，这样是可以看到库名列名的，利用如下的方式:
+id=1';show tables;%23
+
+但是没法查询字段，于是就可以利用构建预编译语句来..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              利用预编译来SQL注入
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-05
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>在做CTF时遇到这样一个题目，注入点过滤了SELECT和.还有WHERE等关键词，但是支持多语句查询，这样是可以看到库名列名的，利用如下的方式:</p>
+<pre><code>id=1';show tables;%23
+</code></pre>
+<p>但是没法查询字段，于是就可以利用构建预编译语句来绕过过滤。</p>
+<p>利用此方法的前提是支持多语句查询。</p>
+<p>先来谈谈什么叫预编译，实际上它经常被用来防止SQL注入，介于SQL注入的根本原理是未将数据与代码有效区分开，预编译的目的就在于解决这一点。</p>
+<p>我们常见的有关防止SQL注入的预编译手段都是基于后端代码的，即PHP或Java的PDO，而这次的用法就是使用SQL命令直接预编译语句。</p>
+<p>MySQL的预编译语法为：</p>
+<p>//定义预编译语句</p>
+<pre><code>PREPARE stmt_name FROM preparable_stmt;
+</code></pre>
+<p>//执行预编译语句</p>
+<pre><code>EXECUTE stmt_name [USING @var_name [, @var_name] ...];
+</code></pre>
+<p>解释一下，定义的时候，preparable_stmt代表的是预留数据位置的SQL语句，而stmt_name是类似变量名，代表这个SQL语句，下面举个例子：</p>
+<pre><code>PREPARE test FROM 'SELECT (? + ?)';
+</code></pre>
+<p>//即定义了一个两数相加的SQL预编译语句<br>
+执行时，@var_name即变量，可以带入语句中进行执行，如：</p>
+<pre><code>SET @a = 1;
+SET @b = 2; //给变量赋值
+
+EXECUTE test USING @a,@b;//执行
+</code></pre>
+<p>这道题目主要就是利用此方法来绕过黑名单，其具体方法也不止一种，可以利用concat()将关键词分开处理，也可以将整个语句使用char()处理后执行。<br>
+原文地址为：https://eviladan0s.github.io/2020/03/08/sql_trick/</p>
+<p>未经授权禁止转载<br>
+作者：白袍大人<br>
+https://www.bilibili.com/read/cv5071554/<br>
+出处： bilibili</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">
+              <h3 class="post-title">
+                Python-模板注入
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

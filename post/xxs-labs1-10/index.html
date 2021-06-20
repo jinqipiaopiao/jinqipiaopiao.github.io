@@ -1,0 +1,371 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>xss-labs(1-10) | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="xss-labs(1-10) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="首先还是要有phpstudy，这个就不说了。
+然后下载靶场：
+地址：https://github.com/do0dl3/xss-labs
+将靶场解压到phpstudy的www目录下，访问就好了。
+
+
+xss-labs 1~10
+
+
+leve..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              xss-labs(1-10)
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-30
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先还是要有phpstudy，这个就不说了。</p>
+<p>然后下载靶场：</p>
+<p>地址：https://github.com/do0dl3/xss-labs</p>
+<p>将靶场解压到phpstudy的www目录下，访问就好了。</p>
+<ul>
+<li>
+<h1 id="xss-labs-1~10">xss-labs 1~10</h1>
+</li>
+</ul>
+<p><strong>level-01</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791047974.png" alt="" loading="lazy"><br>
+根据图标点击进入xss之旅：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791052844.png" alt="" loading="lazy"><br>
+可以看到有get请求，参数为name，可进行输入，并将输入内容显示于页面。</p>
+<pre><code>http://127.0.0.1/xss-labs-master/level1.php?name=test
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619791056615.png" alt="" loading="lazy"><br>
+可以看到这里的输入内容直接插入到了<code>&lt;h2&gt;</code>标签中，没有任何的过滤。</p>
+<p>直接在URL中输入payload：</p>
+<pre><code>http://127.0.0.1/xss-labs-master/level1.php?name=test&lt;script&gt;alert('hhh');&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619791060029.png" alt="" loading="lazy"><br>
+事后看看后端代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791063528.png" alt="" loading="lazy"></p>
+<pre><code>通过源码可以看到，服务器通过get发送传递name参数的值赋值给了
+$str变量，后直接将$str变量插入到了&lt;h2&gt;标签。没有对name参数进行任何的处理，且name完全由我们控制，所以我们可以直接插入反射型的XSS漏洞。
+</code></pre>
+<p><strong>level-02</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791233904.png" alt="" loading="lazy"><br>
+依然是get传参，首先我们直接尝试payload：</p>
+<pre><code>&lt;script&gt;alert('hhh');&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619791270055.png" alt="" loading="lazy"><br>
+可以看到我们构造的payload直接出现在了页面上，没有执行。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791290250.png" alt="" loading="lazy"><br>
+查看源码，我们的payload在<code>&lt;h2&gt;</code>标签中被编码了。&lt;&gt;被编码成立HTML字符实体。猜测在服务端用了htmlspecialchars()函数对keyword参数值进行了处理。而value中的js代码不能被执行。</p>
+<p>由于payload在<code>&lt;h2&gt;</code>中是已被htmlspecialchars()函数过滤过的，所以我们尝试从value绕过，用 “&gt; 将前方的value标签闭合，构造payload：</p>
+<pre><code>&quot;&gt;&lt;script&gt;alert('hhh');&lt;/script&gt;
+</code></pre>
+<p>成功：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791363338.png" alt="" loading="lazy"><br>
+再看看后端：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791374449.png" alt="" loading="lazy"></p>
+<pre><code>可以看到还是以get方式传递keyword参数的值给$str变量。且在&lt;h2&gt;处用htmlspecialchars()函数对变量$str进行了处理，才显示的。但是在&lt;input&gt;标签的value属性值中是直接插入的，所以我们在这里进行XSS攻击。
+</code></pre>
+<p><strong>level-03</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791458347.png" alt="" loading="lazy"><br>
+随便输入看看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791462730.png" alt="" loading="lazy"><br>
+现在看来是和第二关没什么区别，无法确定服务器端是否对敏感字符进行了过滤，编码等操作。尝试构造payload探探虚实：</p>
+<pre><code>&lt;script&gt;alert('hhh');&lt;/script&gt;
+</code></pre>
+<p>没有弹窗，看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791467363.png" alt="" loading="lazy"><br>
+可以看到这次对h2和value处都用htmlspecialchars()函数进行了处理：</p>
+<pre><code>字符	10进制	文字
+”	&amp;#34	&amp;quot;
+’	&amp;#39	&amp;apos;
+&amp;	&amp;#38	&amp;amp;
+&lt;	&amp;#60	&amp;lt;    &gt;	&amp;#62	&amp;gt;
+</code></pre>
+<p>所以我们通过<code>&lt;input&gt;</code>标签的一些特殊事件来执行js代码，所以可以构造：</p>
+<pre><code>1' onclick='alert(1)   //点击输入框
+1' onmouseover='alert(1)    //鼠标移动到1上
+1' oninput='alert(1)   //输入
+</code></pre>
+<p>属性	值	描述<br>
+oninput	script	当元素获得用户输入时运行的脚本。<br>
+onclick	script	当元素被点击时发生。<br>
+onmouseover	script	当鼠标移动到元素时发生。<br>
+以上代码可以构成：</p>
+<pre><code>&lt;input name=keyword value='1' onclick='alert(1)'&gt;
+&lt;input name=keyword value='1' onmouseover='alert(1)'&gt;
+&lt;input name=keyword value='1' oninput='alert(1)'&gt;
+</code></pre>
+<p>以上方法都可以实现：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791472427.png" alt="" loading="lazy"><br>
+不看源码的情况下，判断value属性使用的是单引号还是双引号：<br>
+输入’ “ &gt;三个字符测试闭合，来判断。</p>
+<p>输入’“&gt;文本框无内容，为’闭合显示为：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791476969.png" alt="" loading="lazy"><br>
+输入ohh’”&gt;，显示为：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791480707.png" alt="" loading="lazy"><br>
+看看后端代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791484573.png" alt="" loading="lazy"><br>
+确实对h2和value处都用htmlspecialchars()函数进行了处理。<br>
+<strong>level-04</strong><br>
+和第三关方法相同，变为了 “ 闭合。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791710581.png" alt="" loading="lazy"><br>
+看看后端：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791726909.png" alt="" loading="lazy"><br>
+可以看到先是用str_replace()函数进行了对&lt;&gt;的转化，后<code>&lt;h2&gt;</code>处进行了htmlspecialchars()函数处理，value处之后直接拼接赋值。<br>
+<strong>level-05</strong><br>
+尝试直接弹窗，看看页面反应：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791770407.png" alt="" loading="lazy"></p>
+<pre><code>可以看到依然是在`&lt;h2&gt;`处进行了htmlspecialchars()函数处理，而在value处可以看到第一个&lt;script&gt;标签中插入了一个_。现在看来我们之前的触发条件依然可以，试试看：
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619791775145.png" alt="" loading="lazy"><br>
+我们之前的事件触发也被防范了。</p>
+<p>尝试换个其他标签：</p>
+<pre><code>&quot;&gt; &lt;a href=javascript:alert('hhh')&gt;不要点&lt;/a&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619791779031.png" alt="" loading="lazy"><br>
+看看后端：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619791782704.png" alt="" loading="lazy"></p>
+<pre><code>可以看到先是将传过来的keyword用strtolower()函数将其转化为小数，后用str_replace()函数对&lt;script和on进行了处理，最后在&lt;h2&gt;处用htmlspecialchars()函数处理后显示，在value处直接插入。
+</code></pre>
+<p><strong>level-06</strong><br>
+还是先基本测试看看，看不出什么。然后直接上一个<code>&lt;scriptOnon&gt;</code>，一步到位查看JS代码变换：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792033054.png" alt="" loading="lazy"></p>
+<pre><code>可以看到在value处script、on关键字已被加上_，&lt;&gt;也在&lt;h2&gt;处被处理，但是这里可以看到value处没有进行小写转化，所以我们可以尝试大小写绕过：
+
+&quot;&gt;&lt;scRipt&gt;alert(1);&lt;/script&gt;
+&quot;&gt;&lt;a Href=javascript: alert(1)&gt;ohh&lt;/a&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792036910.png" alt="" loading="lazy"><br>
+日常看代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792040526.png" alt="" loading="lazy"><br>
+可以看到服务端做的措施还挺多，将<br>
+&lt;script, on, src, data, href，都做了替换破坏原有语义。也提示了我们第五关的其他方法(虽然来的比较晚)。其他的xss攻击举例：</p>
+<pre><code>&lt;img src=100 onerror=alert(1)&gt;
+</code></pre>
+<p>data，emmm不了解，看看其他大佬→里面有点data构造的xss讲解，这里搬过来了：</p>
+<p>data:text/html;base64,PHNjcmlwdD5hbGVydCgieHNzIik8L3NjcmlwdD4=<br>
+这条语句和<code>javascript:alert(1)</code>或<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>的作用是一样的。</p>
+<p>data:的语法从上面的语句中已经可以看得很清楚了，base64为编码方式，可以任意改，可以UTF-8可以UTF-7，只要将后面编码后的内容做相应的更改就可以了。</p>
+<p>利用可以参考下面的演示：</p>
+<pre><code>http://www.bj.com/xss/level1.php?name=&lt;a href=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgieHNzIik8L3NjcmlwdD4=&quot;&gt;oh&lt;/a&gt;
+</code></pre>
+<p><strong>level-07</strong><br>
+还是先进行测试：</p>
+<pre><code>&lt;scriptonOn&gt;oh&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792211900.png" alt="" loading="lazy"><br>
+可以看到在<code>&lt;h2&gt;</code>处&lt;&gt;被处理了，value处直接将我们&lt;&gt;里的script和on，On都去掉了，所以大小写绕过应该也是不行了。既然删除了我们的代码试试双写绕过：</p>
+<pre><code>&quot;&gt; &lt;scrscriptipt&gt;alert(1);&lt;/scscriptript&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792216736.png" alt="" loading="lazy"><br>
+看代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792220033.png" alt="" loading="lazy"><br>
+可以看到先是将我们的输入进行了小写转换，后又对关键字进行了空替换。但是这个替换只进行了一次，所以我们可以双写绕过。<br>
+<strong>level-08</strong><br>
+输入普通的XSS攻击看看：</p>
+<pre><code>&lt;script&gt;alert('hhh');&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792326918.png" alt="" loading="lazy"><br>
+可以看到value中的值被编码成了字符实体，而在href中的script字符被插入了_字符破坏语义。</p>
+<p>再看看事件触发和大小写绕过：</p>
+<pre><code>&quot; onclick=&quot;alert(1)
+javaSCRipt:alert(1)
+</code></pre>
+<p>也不行。</p>
+<p>将我们要提交的js代码进行编码来绕过，不要全部转换，不然无法识别(我把t转化了)：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792331091.png" alt="" loading="lazy"><br>
+成功：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792334577.png" alt="" loading="lazy"><br>
+看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792338942.png" alt="" loading="lazy"><br>
+可以看到对参数进行了小写转化，后对常见的关键字进行了过滤处理，最后还将&quot;进行了字符实体替换。<br>
+<strong>level-09</strong><br>
+尝试普通XSS攻击：</p>
+<pre><code>&lt;script&gt;alert('hhh')&lt;/script&gt;
+</code></pre>
+<p>查看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792411112.png" alt="" loading="lazy"><br>
+可以看到我们的值插入到了value中，当然是进行了编码，而href处显示我们的链接不合法，没有将我们的值插入进去。</p>
+<p>我们插入一个合法的链接看看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792415637.png" alt="" loading="lazy"><br>
+可以看到成功插入进去。所以我们将攻击语句带入到带有url地址中看看，看能否插入进去：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792419178.png" alt="" loading="lazy"><br>
+可以看到确实插入成功，但是我们的javascript字符被插入了_。在试试大小写绕过，也不行，被转化为了小写后插入_。</p>
+<p>我们还是同上一关一样对关键字进行编码绕过看看，没有成功。然后看到大佬博客还要求在alert()与http之间加上//，否则不会成功。所以我们加上//，成功：</p>
+<pre><code>javascrip&amp;#116;:alert(1)//http://www.baidu.com
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792421919.png" alt="" loading="lazy"><br>
+看看源码了：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792424943.png" alt="" loading="lazy"><br>
+<strong>level-10</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792597089.png" alt="" loading="lazy"><br>
+输入框消失了，响应页面上只有一个显示位。先看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792608959.png" alt="" loading="lazy"><br>
+可以看到有一个隐藏的表单，里面偶三个隐藏的<code>&lt;input&gt;</code>标签，这里我们先测试一下显示位看看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792621211.png" alt="" loading="lazy"><br>
+果然关键字符被编码了。</p>
+<p>去隐藏的标签看看，先构造语句看看哪个标签可以突破：</p>
+<pre><code>1&amp;t_link=&quot; type=&quot;text&quot;&amp;t_history=&quot; type=&quot;text&quot;&amp;t_sort=&quot; type=&quot;text&quot;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792637213.png" alt="" loading="lazy"><br>
+可以看到标签名为t_sort的<code>&lt;input&gt;</code>标签可以被改变。所以我们从这里入手，构造语句：</p>
+<pre><code>1&amp;t_sort=&quot; type=&quot;text&quot; onclick=&quot;alert(1)
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1619792654090.png" alt="" loading="lazy"><br>
+看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1619792670665.png" alt="" loading="lazy"><br>
+可以看到服务器是接收t_sort参数的，再将&lt;、&gt;去除后插入到<code>&lt;input&gt;</code>标签中。所以我们不能通过闭合<code>&lt;input&gt;</code>标签来引入新标签攻击。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#xss-labs-1~10">xss-labs 1~10</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/uploads-labs-tong-guan-shou-ce-yi-ji-zong-jie-15-21/">
+              <h3 class="post-title">
+                uploads-labs通关手册以及总结(15-21)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

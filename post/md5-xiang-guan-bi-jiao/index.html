@@ -1,0 +1,273 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>md5相关比较 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="md5相关比较 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="弱比较
+if($_POST['a']!=$_POST['b']&amp;&amp; md5($_POST['a'])==md5($_POST['b'])){
+die(&quot;success!&quot;);
+}
+
+在这样的弱比较里，0e..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              md5相关比较
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-19
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>弱比较</p>
+<pre><code>if($_POST['a']!=$_POST['b']&amp;&amp; md5($_POST['a'])==md5($_POST['b'])){
+die(&quot;success!&quot;);
+}
+</code></pre>
+<p>在这样的弱比较里，0e开头的会被识别成科学计数法，结果均为0，比较时0=0为true绕过<br>
+payload：</p>
+<pre><code>a=QNKCDZO&amp;b=s878926199a
+</code></pre>
+<p>常用md5加密后为0的字符串：<br>
+240610708，aabg7XSs，aabC9RqS<br>
+s878926199a</p>
+<p>强比较</p>
+<pre><code>if($_POST['a']!==$_POST['b']&amp;&amp; md5($_POST['a'])===md5($_POST['b'])){
+die(&quot;success!&quot;);
+}
+</code></pre>
+<p>像这样的强比较，上面的方法就失效了，但是如果传入的不是字符串而是数组，不但md5()函数不会报错，结果还会返回null，在强比较里面null=null为true绕过<br>
+payload：</p>
+<pre><code>a[]=1&amp;b[]=2
+</code></pre>
+<p>强碰撞<br>
+if((string)<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>P</mi></msub><mi>O</mi><mi>S</mi><mi>T</mi><msup><mo>[</mo><mo mathvariant="normal">′</mo></msup><msup><mi>a</mi><mo mathvariant="normal">′</mo></msup><mo>]</mo><mo>!</mo><mo>=</mo><mo>=</mo><mo>(</mo><mi>s</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>n</mi><mi>g</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">_POST[&#x27;a&#x27;]!==(string)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mopen"><span class="mopen">[</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">]</span><span class="mclose">!</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span></span></span></span>_POST['b'] &amp;&amp; md5(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>P</mi></msub><mi>O</mi><mi>S</mi><mi>T</mi><msup><mo>[</mo><mo mathvariant="normal">′</mo></msup><msup><mi>a</mi><mo mathvariant="normal">′</mo></msup><mo>]</mo><mo>)</mo><mo>=</mo><mo>=</mo><mo>=</mo><mi>m</mi><mi>d</mi><mn>5</mn><mo>(</mo></mrow><annotation encoding="application/x-tex">_POST[&#x27;a&#x27;])===md5(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mopen"><span class="mopen">[</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">]</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">d</span><span class="mord">5</span><span class="mopen">(</span></span></span></span>_POST['b'])){<br>
+die(&quot;success!&quot;);<br>
+}</p>
+<p>到强碰撞这里，它用string强行转换成字符串，从而限制了数组绕过这方法，只能输入字符串<br>
+先上payload：</p>
+<pre><code>a=M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%00%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1U%5D%83%60%FB_%07%FE%A2
+&amp;b=M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%02%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1%D5%5D%83%60%FB_%07%FE%A2
+</code></pre>
+<p>这一大长串的编码，他们的md5值是相等的，原理是将hex字符串转化为ascii字符串，并写入到bin文件<br>
+考虑到要将一些不可见字符传到服务器，这里使用url编码</p>
+<p>以下脚本均为开头那篇师傅的文章摘抄下<br>
+这个是将hex写入到bin文件的python脚本源码：</p>
+<p>#!coding:utf-8<br>
+hexString1 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa200a8284bf36e8e4b55b35f427593d849676da0d1555d8360fb5f07fea2'<br>
+hexString2 = '4dc968ff0ee35c209572d4777b721587d36fa7b21bdc56b74a3dc0783e7b9518afbfa202a8284bf36e8e4b55b35f427593d849676da0d1d55d8360fb5f07fea2'</p>
+<pre><code>hexList1 = []
+intList1 = []
+asciiString1 =''
+
+while True:
+intString1 = hexString1[0:2]
+hexString1 = hexString1[2:]
+hexList1.append(intString1)
+if (hexString1 == ''):
+break
+
+for i in hexList1:
+intList1.append(int(i,16))
+for j in intList1:
+asciiString1 += chr(int(j))
+
+f = open('1.bin','w')
+f.write(asciiString1)
+f.close()
+
+hexList2 = []
+intList2 = []
+asciiString2 =''
+
+while True:
+intString2 = hexString2[0:2]
+hexString2 = hexString2[2:]
+hexList2.append(intString2)
+if (hexString2 == ''):
+break
+
+for i in hexList2:
+intList2.append(int(i,16))
+for j in intList2:
+asciiString2 += chr(int(j))
+
+f = open('2.bin','w')
+f.write(asciiString2)
+f.close()
+</code></pre>
+<p>这个是将bin文件内容再次url编码的python脚本源码：</p>
+<p>#!coding:utf-8<br>
+import urllib</p>
+<pre><code>urlString1=''
+urlString2 = ''
+
+for line in open('1.bin'):
+urlString1 +=  urllib.quote(line)
+
+for line in open('2.bin'):
+urlString2 +=  urllib.quote(line)
+
+print urlString1
+print urlString2
+</code></pre>
+<p>这题也可以直接用python调用open并读取文件来传参：</p>
+<pre><code>import requests
+p1 = open('1.bin')
+p2 = open('2.bin')
+data = {'param1':p1,'param2':p2}
+r = S.post(url,data = data)
+print r.text
+</code></pre>
+<p>我看了师傅的文章后还是很迷，因为不管怎么样，他们的字符串一直都是相同的，甚至连payload的参数都是一样的，但就是能绕过比较，如果有懂这方面的师傅，请务必要教教我(｡･ω･｡)<br>
+————————————————<br>
+版权声明：本文为CSDN博主「小 白 萝 卜」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/EC_Carrot/article/details/109525162</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/buuctf/">
+              <h3 class="post-title">
+                BUUCTF
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

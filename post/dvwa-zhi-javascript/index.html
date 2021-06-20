@@ -1,0 +1,277 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之JavaScript | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之JavaScript | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1 基础知识
+JavaScript
+一种常用于页面代码中，用来实现动态效果的脚本语言。由于JS是存储在客户端，所以过分依赖JS代码逻辑，容易被攻击者获取代码后，进行数据伪造。
+2.Low
+&lt;?php $page[ 'body' ] ...." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之JavaScript
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-31
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>1 基础知识<br>
+JavaScript<br>
+一种常用于页面代码中，用来实现动态效果的脚本语言。由于JS是存储在客户端，所以过分依赖JS代码逻辑，容易被攻击者获取代码后，进行数据伪造。</p>
+<p>2.Low<br>
+<code>&lt;?php $page[ 'body' ] .= &lt;&lt;&lt;EOF &lt;script&gt; 	function rot13(inp) { return inp.replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c&lt;=&quot;Z&quot;?90:122)&gt;=(c=c.charCodeAt(0)+13)?c:c-26);}); } function generate_token() { var phrase = document.getElementById(&quot;phrase&quot;).value; document.getElementById(&quot;token&quot;).value = md5(rot13(phrase)); } generate_token(); &lt;/script&gt; EOF; ?&gt;</code><br>
+2.1 渗透测试<br>
+说提交success就能成功？试一下，结果说错误！<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190142431.png" alt="" loading="lazy"></p>
+<p>检查页面源代码，发现token的值由md5(rot13(phrase))决定的<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190297620.png" alt="" loading="lazy"><br>
+通过console 控制台直接拿到token值<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190371038.png" alt="" loading="lazy"><br>
+token：38581812b435834ebf84ebcc2c6424d6<br>
+接下来直接post请求提交，即可成功<br>
+token=38581812b435834ebf84ebcc2c6424d6&amp;phrase=success&amp;send=Submit<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190444993.png" alt="" loading="lazy"><br>
+3.medium<br>
+核心代码</p>
+<pre><code>&lt;?php
+
+$page[ 'body' ] .= '&lt;script 
+src=&quot;' . DVWA_WEB_PAGE_TO_ROOT . 'vulnerabilities/javascript/source/    medium.js&quot;&gt;
+&lt;/script&gt;';
+
+?&gt;
+</code></pre>
+<p>我们继续跟进查看medium.js</p>
+<pre><code>function do_something(e) {
+for (var t = &quot;&quot;, n = e.length - 1; n &gt;= 0; n--) t += e[n];
+return t
+
+}
+
+setTimeout(function () {
+do_elsesomething(&quot;XX&quot;)
+
+}, 300);
+
+function do_elsesomething(e) {
+document.getElementById(&quot;token&quot;).value = do_something(e + document.getElementById(&quot;phrase&quot;).value + &quot;XX&quot;)
+
+}
+</code></pre>
+<p>do_elsesomething(e)： 将一个字符串翻转，就是倒放。</p>
+<p>setTimeout(function(){do_elsesomething(“XX”)},300): 每300毫秒执行一次do_elsesomething(“XX”)</p>
+<p>do_elsesomething(e): 调用do_something(e)函数来设置token值，其中e=XX+phrase+XX</p>
+<p>总体含义：该函数通过将phrase进行字符串拼接，即XX+phrase+XX，最后将该值反转设置为token。</p>
+<p>在输入框输入success，再在控制台输入do_elsesomething(“XX”)执行，提交即可。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190565116.png" alt="" loading="lazy"><br>
+4.high<br>
+&lt;?php</p>
+<pre><code>$page[ 'body' ] .= '
+&lt;script src=&quot;' . DVWA_WEB_PAGE_TO_ROOT . 'vulnerabilities/javascript/source/high.js&quot;&gt;
+&lt;/script&gt;';
+
+?&gt;
+</code></pre>
+<p>跟进查看high.js，这里的代码明显被加密混淆了，我们可以使用在线解码工具<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190769905.png" alt="" loading="lazy"><br>
+找个JS解密网站，解密: http://deobfuscatejavascript.com/#<br>
+分析：上面SHA加密代码不看，直接看最下方的具体加密过程：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190837712.png" alt="" loading="lazy"><br>
+同理将js修改后写入到自定义页面中，SHA加密相关代码要完整拷贝：<br>
+......省略加密代码<br>
+function do_something(e) {<br>
+for (var t = &quot;&quot;, n = e.length - 1; n &gt;= 0; n--) t += e[n];<br>
+return t<br>
+}<br>
+var token;<br>
+function token_part_3(t, y = &quot;ZZ&quot;) {<br>
+token = sha256(token + y);<br>
+alert('token_part_3_final-----'+token);<br>
+}<br>
+function token_part_2(e) {<br>
+token = sha256(e + token);<br>
+alert('token_part_2-----'+token);<br>
+}<br>
+function token_part_1(a, b) {<br>
+token= do_something(&quot;success&quot;);<br>
+alert('token_part_1-----'+token);<br>
+}<br>
+token_part_1(&quot;ABCD&quot;, 44);//模拟加载时执行<br>
+token_part_2(&quot;XX&quot;)//模拟过300ms，其实就是页面渲染完成后执行<br>
+token_part_3()//模拟提交时执行<br>
+就在打开的解码工具直接修改之前的代码将上面的代码写入然后点击按钮</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617191135359.png" alt="" loading="lazy"><br>
+打开页面，获取token：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617190910149.png" alt="" loading="lazy"><br>
+最后在输入框输入success，再在控制台输入token_part_1(“ABCD”,44)和token_part_2(“XX”)，最后提交即可。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617191247401.png" alt="" loading="lazy"><br>
+5 Impossible<br>
+测试效果：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617191318125.png" alt="" loading="lazy"><br>
+源码分析：直接一锅端，随便你怎么输入，我都不管，反正你就是不安全，我不相信你！！！</p>
+<pre><code>if ( $_COOKIE[ 'security' ] == &quot;impossible&quot; ) {
+$page[ 'body' ] = &lt;&lt;&lt;EOF
+&lt;div class=&quot;body_padded&quot;&gt;
+&lt;h1&gt;Vulnerability: JavaScript Attacks&lt;/h1&gt;
+
+&lt;div class=&quot;vulnerable_code_area&quot;&gt;
+&lt;p&gt;
+	You can never trust anything that comes from the user or prevent them from messing with it and so there is no impossible level.
+&lt;/p&gt;
+EOF;
+}
+</code></pre>
+<p>6 总结<br>
+前端所有输入都不能相信！<br>
+但是呢？后台要全部验证，代码逻辑太多，写不过来！所以，可被利用的漏洞还是很多的！</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-csp-bypass/">
+              <h3 class="post-title">
+                DVWA之CSP Bypass
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

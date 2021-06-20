@@ -1,0 +1,203 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>局域网交换机安全 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="局域网交换机安全 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="写于2021.5.53（学习了第一章）
+1.安全的三要素：保密性（确保数据处于隐秘状态），完整性（仅允许被授权的人员变更数据），可用性（数据必须随时可以访问，随时准备就绪）。
+2.保密性：确保机密状态的能力，完整性：确保有价值的信息、数据部..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              局域网交换机安全
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-23
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="写于2021553学习了第一章">写于2021.5.53（学习了第一章）</h1>
+<p>1.安全的三要素：保密性（确保数据处于隐秘状态），完整性（仅允许被授权的人员变更数据），可用性（数据必须随时可以访问，随时准备就绪）。</p>
+<p>2.保密性：确保机密状态的能力，完整性：确保有价值的信息、数据部被篡改的能力，可用性：业务和数据的可用性</p>
+<p>保密性：确保机密状态的能力<br>
+确保保密性的常见技术手段如下所示：0️⃣防护箱（只有知道密码或有权使用该箱特定人士访问）1️⃣加密保护（任何人都可以访问该信息的无效形式，但是只有期望的接受值可以访问该信息的有效形式）<br>
+针对保密性的攻击（也称信息揭露）就是破坏信息的隐密状态，许多人错误的认为信息在跨网络发送时收到保密性的保护，事实并非如此，攻击者（或网络故障的排查者）经常使用数据包嗅探工具（sniffer）来查看网络流量，从不提供保密性的协议中（例如telnet协议或pop协议）提取用户的通行证（包括用户名密码）</p>
+<p>完整性：确保有价值的信息、数据部被篡改的能力<br>
+完整性被定义为数据（或其他有价值的信息）所具有的可变必知（数据只要被修改，就可以检测到）的能力<br>
+在网络方面，一个适用于完整性的例子是对一台交换机进行配置：除非持有正确的通行证，任何人都不能修改该交换机的配置，而且即便获得授权的人员对配置做出修改也会通过一条syslog消息留下痕迹（一个攻击者可以蓄意删除i相关的syslog消息）</p>
+<p>可用性：数据必须随时可以访问随时准备就绪<br>
+最后一个安全原则就是数据和服务的可用性，若数据不可用，机密而又未被篡改的数据又有何用，针对可用性的攻击称为中断攻击，在网络界中则被称作拒绝服务攻击（DOS）攻击<br>
+3.逆向安全三要素<br>
+就是与安全相对应，泄密（机密的泄露），篡改（数据被随意修改），中断（业务或者数据不可再用）</p>
+<p>4.风险管理<br>
+分为风险分析（脆弱性，威胁，风险，暴露）<br>
+风险控制（降低，转移，接受，忽略）</p>
+<p>5.访问控制和身份管理<br>
+在网络中，最典型的控制就是访问控制，当行为主体（主动实体，比如一个用户，工作站，程序，IP地址）发起访问一个对象（被动实体，比如一个以太网vlan，文件，服务器，internet）时，必须检查其安全策略并强制执行<br>
+访问控制可以入cisco ios访问控制列表（acl）般简单，也可以更为复杂并基于一个用户的身份<br>
+身份管理依赖于身份，认证，授权，审计</p>
+<p>6.对称加密系统和非对称加密系统<br>
+对称加密系统对于加密和解密操作使用一个相同的密钥，对称加密系统包括堆成加密以及哈希运算辅助下的消息认证<br>
+1.对称加密（是指当加密和解密的时候，使用同一密钥）该密钥被称为共享密钥和会话密钥<br>
+密钥分发可以又两种方式进行：<br>
+带外（秘密的经由实际数据通信方式之外的渠道来发送）带内（秘密的与被其加密的数据使用相同的信道来传递）<br>
+2.哈希函数<br>
+对称加密系统的目的并非仅仅只是加密，他还兼具检查数据来源的功能。<br>
+例如对称加密系统：加密哈希函数（有两个属性一个时单个比特的改变一定会得到一个完全不同的哈希输出，另外一个就是不能逆向计算原始输入）<br>
+7.哈希消息认证码<br>
+当加密的哈希函数与共享密钥结合使用的时候可以被用来证实消息数据的起源（因为只有知道共享密钥的唯一实体才可以生成该hmac（是一个对称加密系统--一个共享密钥证明了一个该密钥的拥有者生成了该消息），绝无其他实体可以生成，这证明该消息一定是被拥有该共享密钥使用权的实体生成）<br>
+非对称加密系统，在认证和密钥分发方面，加密和解密分别使用了一个不同的密钥，两个密钥形成了一个密钥对，一为公钥一为私钥，一个单独的实体拥有并使用私钥，所有其他实体使用公钥（公私钥可以提供数据的保密性，完整性，和数字签名）<br>
+1.用途辅之以加密，可实现保密性，2.辅之以签名，可实现完整性认证<br>
+8.针对加密系统的攻击<br>
+强力攻击，字典攻击，密码分析，中间人攻击，Dos攻击</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%86%99%E4%BA%8E2021553%E5%AD%A6%E4%B9%A0%E4%BA%86%E7%AC%AC%E4%B8%80%E7%AB%A0">写于2021.5.53（学习了第一章）</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/tan-tao-yi-xia-yi-huo-xorwei-shi-me-neng-huan-yuan-de-wen-ti/">
+              <h3 class="post-title">
+                探讨一下异或(xor)为什么能还原的问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

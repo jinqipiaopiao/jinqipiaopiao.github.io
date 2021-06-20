@@ -1,0 +1,199 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PHP mysql中limit用法详解（代码示例） | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="PHP mysql中limit用法详解（代码示例） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在MySQL中，LIMIT子句与SELECT语句一起使用，以限制结果集中的行数。LIMIT子句接受一个或两个offset和count的参数。这两个参数的值都可以是零或正整数。
+offset:用于指定要返回的第一行的偏移量。
+Count:用于..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              PHP mysql中limit用法详解（代码示例）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-08
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>在MySQL中，LIMIT子句与SELECT语句一起使用，以限制结果集中的行数。LIMIT子句接受一个或两个offset和count的参数。这两个参数的值都可以是零或正整数。</p>
+<p>offset:用于指定要返回的第一行的偏移量。</p>
+<p>Count:用于指定要返回的最大行数。</p>
+<p>Limit子句接受一个或两个参数，当指定两个参数时，第一个参数是偏移量，第二个参数表示计数，而当只指定一个参数时，它表示从结果集开始返回的行数。<br>
+<strong>LIMIT语法：</strong></p>
+<pre><code>SELECT column1, column2, ...
+FROM table_name
+LIMIT offset, count;
+</code></pre>
+<p>如下表“Data”，其中包含三列“Firstname”、“Lastname”和“Age”。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617884893097.png" alt="" loading="lazy"><br>
+要从“Data”表中检索前三行，我们将使用以下查询:</p>
+<pre><code>SELECT * FROM Data LIMIT 3;
+</code></pre>
+<p>要从“Data”表中检索第2-3行(包括)，我们将使用以下查询:</p>
+<pre><code>SELECT * FROM Data LIMIT 1, 2;          意思就是从第二行开始，因为是偏移量就算下标从0行开始，然后后面跟着的数字是数目意思是从第二行开始两条数据就是第二，三行
+</code></pre>
+<p>下面是PHP mysql实现查询的代码示例:<br>
+<strong>示例1：Limit条件</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885075400.png" alt="" loading="lazy"><br>
+输出：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885101317.png" alt="" loading="lazy"><br>
+注：“res”变量存储函数mysql_query()返回的数据。</p>
+<p>每次调用mysqli_fetch_array()时，它都会从res()集中返回下一行。</p>
+<p>while循环用于遍历表“data”的所有行。<br>
+<strong>示例2：使用面向对象方法的Limit子句</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885252723.png" alt="" loading="lazy"><br>
+输出：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885263933.png" alt="" loading="lazy"><br>
+<strong>示例3：使用PDO方法的Limit子句</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885304098.png" alt="" loading="lazy"><br>
+输出：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617885313923.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/mysql-xia-sql-zhu-ru-jie-qu-zi-fu-chuan-chang-yong-han-shu-midsubstrleft/">
+              <h3 class="post-title">
+                mysql下SQL注入截取字符串常用函数mid(),substr(),left()
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

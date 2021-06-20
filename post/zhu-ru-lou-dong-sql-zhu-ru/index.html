@@ -1,0 +1,320 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>注入漏洞-sql注入 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="注入漏洞-sql注入 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+注入漏洞
+数字型判断
+当输入的参 x 为整型时，通常 abc.php 中 Sql 语句类型大致如下：
+
+select * from &lt;表名&gt; where id = x
+
+这种类型可以使用经典的 and 1=1 和 and 1=..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              注入漏洞-sql注入
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-13
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><img src="https://https://jinqipiaopiao.github.io//post-images/1615613021795.png" alt="" loading="lazy"><br>
+注入漏洞</p>
+<p><strong>数字型判断</strong></p>
+<pre><code>当输入的参 x 为整型时，通常 abc.php 中 Sql 语句类型大致如下：
+
+select * from &lt;表名&gt; where id = x
+
+这种类型可以使用经典的 and 1=1 和 and 1=2 来判断：
+
+Url 地址中输入 www.xxx.com/abc.php?id= x and 1=1
+
+页面依旧运行正常，继续进行下一步。
+
+Url 地址中继续输入 www.xxx.com/abc.php?id= x and 1=2
+
+页面运行错误，则说明此 Sql 注入为数字型注入。
+
+原因如下：
+
+当输入 and 1=1时，后台执行 Sql 语句：
+
+select * from &lt;表名&gt; where id = x and 1=1
+
+没有语法错误且逻辑判断为正确，所以返回正常。
+
+当输入 and 1=2时，后台执行 Sql 语句：
+
+select * from &lt;表名&gt; where id = x and 1=2
+
+没有语法错误但是逻辑判断为假，所以返回错误。
+
+我们再使用假设法：
+
+如果这是字符型注入的话，我们输入以上语句之后应该出现如下情况：
+
+select * from &lt;表名&gt; where id = 'x and 1=1'select * from &lt;表名&gt; where id = 'x and 1=2'
+
+查询语句将 and 语句全部转换为了字符串，并没有进行 and 的逻辑判断，所以不会出现以上结果，故假设是不成立的。
+</code></pre>
+<p><strong>字符型判断</strong></p>
+<pre><code>当输入的参 x 为字符型时，通常 abc.php 中 SQL 语句类型大致如下
+
+select * from &lt;表名&gt; where id = 'x'
+
+这种类型我们同样可以使用 and '1'='1 和 and '1'='2来判断：
+
+Url 地址中输入 www.xxx.com/abc.php?id= x' and '1'='1
+
+页面运行正常，继续进行下一步。
+
+Url 地址中继续输入 www.xxx.com/abc.php?id= x' and '1'='2
+
+页面运行错误，则说明此 Sql 注入为字符型注入。
+
+原因如下：
+
+当输入 and '1'='1时，后台执行 Sql 语句：
+
+select * from &lt;表名&gt; where id = 'x' and '1'='1'
+
+语法正确，逻辑判断正确，所以返回正确。
+
+当输入 and '1'='2时，后台执行 Sql 语句：
+
+select * from where id = 'x' and '1'='2'
+
+语法正确，但逻辑判断错误，所以返回正确。
+</code></pre>
+<p>转载于:https://www.cnblogs.com/zztac/p/11355622.html</p>
+<p>1 SQL注入</p>
+<p>所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行指定的SQL语句。具体来说，它是利用现有应用程序，将SQL语句注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入SQL语句得到一个存在安全漏洞的网站上的数据，而不是按照设计者意图去执行SQL语句。</p>
+<p>1.1 SQL注入的概念<br>
+（1）SQL注入漏洞原理</p>
+<p>SQL注入攻击指的是通过构建特殊的输入作为参数传入Web应用程序，而这些输入大都是SQL语法里的一些组合，通过执行SQL语句进而执行攻击者所要的操作，其主要原因是程序没有细致地过滤用户输入的数据，致使非法数据侵入系统。</p>
+<p>根据相关技术原理，SQL注入可以分为平台层注入和代码层注入。前者由不安全的数据库配置或数据库平台的漏洞所致；后者主要是由于程序员对输入未进行细致地过滤，从而执行了非法的数据查询。基于此，SQL注入的产生原因通常表现在以下几方面：①不当的类型处理；②不安全的数据库配置；③不合理的查询集处理；④不当的错误处理；⑤转义字符处理不合适；⑥多个提交处理不当。</p>
+<p>（2）SQL注入漏洞对于数据安全的影响</p>
+<p>数据库信息泄漏：数据库中存放的用户的隐私信息的泄露。<br>
+网页篡改：通过操作数据库对特定网页进行篡改。<br>
+网站被挂马，传播恶意软件：修改数据库一些字段的值，嵌入网马链接，进行挂马攻击。<br>
+数据库被恶意操作：数据库服务器被攻击，数据库的系统管理员帐户被窜改。<br>
+服务器被远程控制，被安装后门。经由数据库服务器提供的操作系统支持，让黑客得以修改或控制操作系统。<br>
+破坏硬盘数据，瘫痪全系统。<br>
+一些类型的数据库系统能够让SQL指令操作文件系统，这使得SQL注入的危害被进一步放大。</p>
+<p>（3）SQL注入漏洞的方法</p>
+<p>1.数字注入</p>
+<p>在浏览器地址栏输入：learn.me/sql/article.php?id=1，这是一个get型接口，发送这个请求相当于调用一个查询语句：</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>q</mi><mi>l</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi><mi>S</mi><mi>E</mi><mi>L</mi><mi>E</mi><mi>C</mi><mi>T</mi><mo>∗</mo><mi>F</mi><mi>R</mi><mi>O</mi><mi>M</mi><mi>a</mi><mi>r</mi><mi>t</mi><mi>i</mi><mi>c</mi><mi>l</mi><mi>e</mi><mi>W</mi><mi>H</mi><mi>E</mi><mi>R</mi><mi>E</mi><mi>i</mi><mi>d</mi><mo>=</mo><mi mathvariant="normal">&quot;</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">sql = &quot;SELECT * FROM article WHERE id =&quot;,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">c</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">&quot;</span><span class="mpunct">,</span></span></span></span>id<br>
+   正常情况下，应该返回一个id=1的文章信息。那么，如果在浏览器地址栏输入：learn.me/sql/article.php?id=-1 OR 1 =1，这就是一个SQL注入攻击了，可能会返回所有文章的相关信息。为什么会这样呢？</p>
+<p>这是因为，id = -1永远是false，1=1永远是true，所有整个where语句永远是ture，所以where条件相当于没有加where条件，那么查询的结果相当于整张表的内容</p>
+<p>2.字符串注入</p>
+<p>有这样一个用户登录场景：登录界面包括用户名和密码输入框，以及提交按钮。输入用户名和密码，提交。</p>
+<p>这是一个post请求，登录时调用接口learn.me/sql/login.html，首先连接数据库，然后后台对post请求参数中携带的用户名、密码进行参数校验，即sql的查询过程。假设正确的用户名和密码为user和pwd123，输入正确的用户名和密码、提交，相当于调用了以下的SQL语句：</p>
+<p>SELECT * FROM user WHERE username = 'user' AND password = 'pwd123'<br>
+ <br>
+       由于用户名和密码都是字符串，SQL注入方法即把参数携带的数据变成mysql中注释的字符串。mysql中有2种注释的方法：</p>
+<p>1）'#'：'#'后所有的字符串都会被当成注释来处理</p>
+<p>用户名输入：user'#（单引号闭合user左边的单引号），密码随意输入，如：111，然后点击提交按钮。等价于SQL语句：</p>
+<p>SELECT * FROM user WHERE username = 'user'#'AND password = '111'<br>
+ <br>
+   '#'后面都被注释掉了，相当于：</p>
+<p>SELECT * FROM user WHERE username = 'user'</p>
+<p>2）'-- ' （--后面有个空格）：'-- '后面的字符串都会被当成注释来处理</p>
+<p>用户名输入：user'-- （注意--后面有个空格，单引号闭合user左边的单引号），密码随意输入，如：111，然后点击提交按钮。等价于SQL语句：</p>
+<pre><code>    SELECT * FROM user WHERE username = 'user'-- 'AND password = '111'
+    SELECT * FROM user WHERE username = 'user'-- 'AND password = '1111'
+</code></pre>
+<p>'-- '后面都被注释掉了，相当于：</p>
+<pre><code>    SELECT * FROM user WHERE username = 'user'
+</code></pre>
+<p>因此，以上两种情况可能输入一个错误的密码或者不输入密码就可登录用户名为'user'的账号，这是十分危险的事情。</p>
+<p>1.2 SQL注入的安全防护<br>
+（1）掌握SQL注入漏洞修复和防范方法</p>
+<p>此内容为转</p>
+<p>1、 普通用户与系统管理员用户的权限要有严格的区分。<br>
+　　如果一个普通用户在使用查询语句中嵌入另一个Drop Table语句，那么是否允许执行呢?由于Drop语句关系到数据库的基本对象，故要操作这个语句用户必须有相关的权限。在权限设计中，对于终端用户，即应用软件的使用者，没有必要给他们数据库对象的建立、删除等权限。那么即使在他们使用SQL语句中带有嵌入式的恶意代码，由于其用户权限的限制，这些代码也将无法被执行。故应用程序在设计的时候，最好把系统管理员的用户与普通用户区分开来。如此可以最大限度的减少注入式攻击对数据库带来的危害。<br>
+2、 强迫使用参数化语句。<br>
+　　如果在编写SQL语句的时候，用户输入的变量不是直接嵌入到SQL语句。而是通过参数来传递这个变量的话，那么就可以有效的防治SQL注入式攻击。也就是说，用户的输入绝对不能够直接被嵌入到SQL语句中。与此相反，用户的输入的内容必须进行过滤，或者使用参数化的语句来传递用户输入的变量。参数化的语句使用参数而不是将用户输入变量嵌入到SQL语句中。采用这种措施，可以杜绝大部分的SQL注入式攻击。不过可惜的是，现在支持参数化语句的数据库引擎并不多。不过数据库工程师在开发产品的时候要尽量采用参数化语句。</p>
+<p>3、 加强对用户输入的验证。</p>
+<p>总体来说，防治SQL注入式攻击可以采用两种方法，一是加强对用户输入内容的检查与验证;二是强迫使用参数化语句来传递用户输入的内容。在SQLServer数据库中，有比较多的用户输入内容验证工具，可以帮助管理员来对付SQL注入式攻击。测试字符串变量的内容，只接受所需的值。拒绝包含二进制数据、转义序列和注释字符的输入内容。这有助于防止脚本注入，防止某些缓冲区溢出攻击。测试用户输入内容的大小和数据类型，强制执行适当的限制与转换。这即有助于防止有意造成的缓冲区溢出，对于防治注入式攻击有比较明显的效果。<br>
+　　如可以使用存储过程来验证用户的输入。利用存储过程可以实现对用户输入变量的过滤，如拒绝一些特殊的符号。如以上那个恶意代码中，只要存储过程把那个分号过滤掉，那么这个恶意代码也就没有用武之地了。在执行SQL语句之前，可以通过数据库的存储过程，来拒绝接纳一些特殊的符号。在不影响数据库应用的前提下，应该让数据库拒绝包含以下字符的输入。如分号分隔符，它是SQL注入式攻击的主要帮凶。如注释分隔符。注释只有在数据设计的时候用的到。一般用户的查询语句中没有必要注释的内容，故可以直接把他拒绝掉，通常情况下这么做不会发生意外损失。把以上这些特殊符号拒绝掉，那么即使在SQL语句中嵌入了恶意代码，他们也将毫无作为。<br>
+　　故始终通过测试类型、长度、格式和范围来验证用户输入，过滤用户输入的内容。这是防止SQL注入式攻击的常见并且行之有效的措施。</p>
+<p>4、 多多使用SQL Server数据库自带的安全参数。<br>
+　　为了减少注入式攻击对于SQL Server数据库的不良影响，在SQLServer数据库专门设计了相对安全的SQL参数。在数据库设计过程中，工程师要尽量采用这些参数来杜绝恶意的SQL注入式攻击。<br>
+　　如在SQL Server数据库中提供了Parameters集合。这个集合提供了类型检查和长度验证的功能。如果管理员采用了Parameters这个集合的话，则用户输入的内容将被视为字符值而不是可执行代码。即使用户输入的内容中含有可执行代码，则数据库也会过滤掉。因为此时数据库只把它当作普通的字符来处理。使用Parameters集合的另外一个优点是可以强制执行类型和长度检查，范围以外的值将触发异常。如果用户输入的值不符合指定的类型与长度约束，就会发生异常，并报告给管理员。如上面这个案例中，如果员工编号定义的数据类型为字符串型，长度为10个字符。而用户输入的内容虽然也是字符类型的数据，但是其长度达到了20个字符。则此时就会引发异常，因为用户输入的内容长度超过了数据库字段长度的限制。<br>
+5、 多层环境如何防治SQL注入式攻击?<br>
+　　在多层应用环境中，用户输入的所有数据都应该在验证之后才能被允许进入到可信区域。未通过验证过程的数据应被数据库拒绝，并向上一层返回一个错误信息。实现多层验证。对无目的的恶意用户采取的预防措施，对坚定的攻击者可能无效。更好的做法是在用户界面和所有跨信任边界的后续点上验证输入。如在客户端应用程序中验证数据可以防止简单的脚本注入。但是，如果下一层认为其输入已通过验证，则任何可以绕过客户端的恶意用户就可以不受限制地访问系统。故对于多层应用环境，在防止注入式攻击的时候，需要各层一起努力，在客户端与数据库端都要采用相应的措施来防治SQL语句的注入式攻击。<br>
+6、 必要的情况下使用专业的漏洞扫描工具来寻找可能被攻击的点。<br>
+　　使用专业的漏洞扫描工具，可以帮助管理员来寻找可能被SQL注入式攻击的点。不过漏洞扫描工具只能发现攻击点，而不能够主动起到防御SQL注入攻击的作用。当然这个工具也经常被攻击者拿来使用。如攻击者可以利用这个工具自动搜索攻击目标并实施攻击。为此在必要的情况下，企业应当投资于一些专业的漏洞扫描工具。一个完善的漏洞扫描程序不同于网络扫描程序，它专门查找数据库中的SQL注入式漏洞。最新的漏洞扫描程序可以查找最新发现的漏洞。所以凭借专业的工具，可以帮助管理员发现SQL注入式漏洞，并提醒管理员采取积极的措施来预防SQL注入式攻击。如果攻击者能够发现的SQL注入式漏洞数据库管理员都发现了并采取了积极的措施堵住漏洞，那么攻击者也就无从下手了。</p>
+<p>7、设置陷阱账号：</p>
+<p>设置两个帐号，一个是普通管理员帐号，一个是防注入的帐号。将防注入的账号设置的很象管理员，如 admin，以制造假象吸引软件的检测，而密码是大于千字以上的中文字符，迫使软件分析账号的时候进入全负荷状态甚至资源耗尽而死机。</p>
+<p>（2）掌握一些SQL注入漏洞检测工具的使用方法</p>
+<p>Sqlmap 使用方法：<br>
+--is-dba 当前用户权限（是否为root权限，mssql下最高权限为sa）<br>
+--dbs 所有数据库<br>
+--current-db 网站当前数据库<br>
+--users 所有数据库用户<br>
+--current-user 当前数据库用户<br>
+--random-agent 构造随机user-agent<br>
+--passwords 数据库密码<br>
+--proxy http://local:8080 –threads 10 (可以自定义线程加速) 代理<br>
+--time-sec=TIMESEC DBMS响应的延迟时间（默认为5秒）<br>
+--threads=  使用多少线程<br>
+--batch    选择默认选项</p>
+<p>百度很多sqlmap教程，此处举例：</p>
+<p>sqlmap  -u &quot;http://xxx/?id=1&quot; (-u参数指定目标注入地址)检测出存在可利用漏洞</p>
+<p>sqlmap -u &quot;http://xxx/?id=1&quot;  --dbs   列取数据库的所有库</p>
+<p>sqlmap -u &quot;http://xxx/?id=1&quot; --current-db     查询出当前库</p>
+<p>sqlmap -u &quot;http://xxx/?id=1&quot; -D xxx --tables  查询某个库的所有表</p>
+<p>sqlmap -u &quot;http://xxx/?id=1&quot; -D xxx -T xxx --columns(-D dbname指定数据库名称、-T tablename：指定某数据表的名称、--columns：列出指定表上的所有列)</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/hello-gridea/">
+              <h3 class="post-title">
+                Hello Gridea
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

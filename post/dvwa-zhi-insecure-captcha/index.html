@@ -1,0 +1,479 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DVWA之Insecure CAPTCHA | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="DVWA之Insecure CAPTCHA | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Insecure CAPTCHA
+Insecure CAPTCHA意思是不安全的验证码，CAPTCHA是Completely Automated Public Turing Test to Tell Computers and Humans..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              DVWA之Insecure CAPTCHA
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-31
+              </span>
+              <span>
+                12 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Insecure CAPTCHA<br>
+Insecure CAPTCHA意思是不安全的验证码，CAPTCHA是Completely Automated Public Turing Test to Tell Computers and Humans Apart(全自动区分计算机和人类的图灵测试)的简称。</p>
+<p>reCAPTCHA验证流程：</p>
+<p>这一模块验证码使用的是Google提供的reCAPTCHA服务，下图为验证的具体流程</p>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1617191822501.png" alt="" loading="lazy"><br>
+服务器通过调用recaptcha_check_answer函数检查用户输入的正确性。</p>
+<p>recaptcha_check_answer($privkey, $challenge, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>p</mi><mi>o</mi><mi>n</mi><mi>s</mi><mi>e</mi><mo>)</mo><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi></mrow><annotation encoding="application/x-tex">response)
+参数</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mclose">)</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span></span></span></span>privkey是服务器申请的private key，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>m</mi><mi>o</mi><mi>t</mi><mi>e</mi><mi>i</mi><mi>p</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">户</mi><mi mathvariant="normal">的</mi><mi>I</mi><mi>P</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">remoteip是用户的IP，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">m</span><span class="mord mathdefault">o</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mord mathdefault">i</span><span class="mord mathdefault">p</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">户</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord cjk_fallback">，</span></span></span></span>challenge是recaptcha_challenge_field字段的值，来自前端页面，$response是recaptcha_response_field字段的值。函数返回ReCaptchaResponse class的实列，ReCaptchaResponse类有两个属性：</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><msub><mi>s</mi><mi>v</mi></msub><mi>a</mi><mi>l</mi><mi>i</mi><mi>d</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">布</mi><mi mathvariant="normal">尔</mi><mi mathvariant="normal">型</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">表</mi><mi mathvariant="normal">示</mi><mi mathvariant="normal">校</mi><mi mathvariant="normal">验</mi><mi mathvariant="normal">是</mi><mi mathvariant="normal">否</mi><mi mathvariant="normal">有</mi><mi mathvariant="normal">效</mi><mi mathvariant="normal">。</mi></mrow><annotation encoding="application/x-tex">is_valid是布尔型的，表示校验是否有效。
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord mathdefault">i</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">布</span><span class="mord cjk_fallback">尔</span><span class="mord cjk_fallback">型</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">表</span><span class="mord cjk_fallback">示</span><span class="mord cjk_fallback">校</span><span class="mord cjk_fallback">验</span><span class="mord cjk_fallback">是</span><span class="mord cjk_fallback">否</span><span class="mord cjk_fallback">有</span><span class="mord cjk_fallback">效</span><span class="mord cjk_fallback">。</span></span></span></span>error是返回的错误代码。<br>
+1.low<br>
+&lt;?php</p>
+<pre><code>if( isset( $_POST[ 'Change' ] ) &amp;&amp; ( $_POST[ 'step' ] == '1' ) ) {
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_conf = $_POST[ 'password_conf' ];
+
+// Check CAPTCHA from 3rd party
+$resp = recaptcha_check_answer(
+$_DVWA[ 'recaptcha_private_key'],
+$_POST['g-recaptcha-response']
+);
+
+// Did the CAPTCHA fail?
+if( !$resp ) {
+// What happens when the CAPTCHA was entered incorrectly
+$html     .= &quot;&lt;pre&gt;&lt;br /&gt;The CAPTCHA was incorrect. Please try again.&lt;/pre&gt;&quot;;
+$hide_form = false;
+return;
+}
+else {
+// CAPTCHA was correct. Do both new passwords match?
+if( $pass_new == $pass_conf ) {
+// Show next stage for the user
+echo &quot;
+&lt;pre&gt;&lt;br /&gt;You passed the CAPTCHA! Click the button to confirm your changes.&lt;br /&gt;&lt;/pre&gt;
+&lt;form action=\&quot;#\&quot; method=\&quot;POST\&quot;&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;step\&quot; value=\&quot;2\&quot; /&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;password_new\&quot; value=\&quot;{$pass_new}\&quot; /&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;password_conf\&quot; value=\&quot;{$pass_conf}\&quot; /&gt;
+&lt;input type=\&quot;submit\&quot; name=\&quot;Change\&quot; value=\&quot;Change\&quot; /&gt;
+&lt;/form&gt;&quot;;
+}
+else {
+// Both new passwords do not match.
+$html     .= &quot;&lt;pre&gt;Both passwords must match.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+}
+}
+
+if( isset( $_POST[ 'Change' ] ) &amp;&amp; ( $_POST[ 'step' ] == '2' ) ) {
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_conf = $_POST[ 'password_conf' ];
+
+// Check to see if both password match
+if( $pass_new == $pass_conf ) {
+// They do!
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update database
+$insert = &quot;UPDATE `users` SET password = '$pass_new' WHERE user = '&quot; . dvwaCurrentUser() . &quot;';&quot;;
+$result = mysqli_query($GLOBALS[&quot;___mysqli_ston&quot;],  $insert ) or die( '&lt;pre&gt;' . ((is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error($GLOBALS[&quot;___mysqli_ston&quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '&lt;/pre&gt;' );
+
+// Feedback for the end user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Issue with the passwords matching
+echo &quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+
+((is_null($___mysqli_res = mysqli_close($GLOBALS[&quot;___mysqli_ston&quot;]))) ? false : $___mysqli_res);
+}
+
+?&gt; 
+</code></pre>
+<p>服务器将改密码操作分为两步，第一步检查用户输入的验证码，验证通过后，服务器返回表单，第二步客户端提交post请求，服务器完成更改密码的操作。但是，这种存在明显的逻辑漏洞，服务器仅仅通过检查Change、step参数来判断用户是否已经输入了正确的验证码。</p>
+<p>可以通过用burp抓包修改参数来绕过验证：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617192397612.png" alt="" loading="lazy"><br>
+(ps:因为没有翻墙，所以没有成功显示验证码，发送的请求包也就没有recaptcha_challenge_field，recaptcha_response_field两个参数)</p>
+<p>更改step参数绕过验证码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617192442108.png" alt="" loading="lazy"><br>
+修改密码成功：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617192467421.png" alt="" loading="lazy"><br>
+2.medium<br>
+&lt;?php</p>
+<pre><code>if( isset( $_POST[ 'Change' ] ) &amp;&amp; ( $_POST[ 'step' ] == '1' ) ) {
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_conf = $_POST[ 'password_conf' ];
+
+// Check CAPTCHA from 3rd party
+$resp = recaptcha_check_answer(
+$_DVWA[ 'recaptcha_private_key' ],
+$_POST['g-recaptcha-response']
+);
+
+// Did the CAPTCHA fail?
+if( !$resp ) {
+// What happens when the CAPTCHA was entered incorrectly
+$html     .= &quot;&lt;pre&gt;&lt;br /&gt;The CAPTCHA was incorrect. Please try again.&lt;/pre&gt;&quot;;
+$hide_form = false;
+return;
+}
+else {
+// CAPTCHA was correct. Do both new passwords match?
+if( $pass_new == $pass_conf ) {
+// Show next stage for the user
+echo &quot;
+&lt;pre&gt;&lt;br /&gt;You passed the CAPTCHA! Click the button to confirm your changes.&lt;br /&gt;&lt;/pre&gt;
+&lt;form action=\&quot;#\&quot; method=\&quot;POST\&quot;&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;step\&quot; value=\&quot;2\&quot; /&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;password_new\&quot; value=\&quot;{$pass_new}\&quot; /&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;password_conf\&quot; value=\&quot;{$pass_conf}\&quot; /&gt;
+&lt;input type=\&quot;hidden\&quot; name=\&quot;passed_captcha\&quot; value=\&quot;true\&quot; /&gt;
+&lt;input type=\&quot;submit\&quot; name=\&quot;Change\&quot; value=\&quot;Change\&quot; /&gt;
+&lt;/form&gt;&quot;;
+}
+else {
+// Both new passwords do not match.
+$html     .= &quot;&lt;pre&gt;Both passwords must match.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+}
+}
+
+if( isset( $_POST[ 'Change' ] ) &amp;&amp; ( $_POST[ 'step' ] == '2' ) ) {
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_conf = $_POST[ 'password_conf' ];
+
+// Check to see if they did stage 1
+if( !$_POST[ 'passed_captcha' ] ) {
+$html     .= &quot;&lt;pre&gt;&lt;br /&gt;You have not passed the CAPTCHA.&lt;/pre&gt;&quot;;
+$hide_form = false;
+return;
+}
+
+// Check to see if both password match
+if( $pass_new == $pass_conf ) {
+// They do!
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update database
+$insert = &quot;UPDATE `users` SET password = '$pass_new' WHERE user = '&quot; . dvwaCurrentUser() . &quot;';&quot;;
+$result = mysqli_query($GLOBALS[&quot;___mysqli_ston&quot;],  $insert ) or die( '&lt;pre&gt;' . ((is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error($GLOBALS[&quot;___mysqli_ston&quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '&lt;/pre&gt;' );
+
+// Feedback for the end user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Issue with the passwords matching
+echo &quot;&lt;pre&gt;Passwords did not match.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+
+((is_null($___mysqli_res = mysqli_close($GLOBALS[&quot;___mysqli_ston&quot;]))) ? false : $___mysqli_res);
+}
+
+?&gt; 
+</code></pre>
+<p>medium级别的代码在第二步验证时，加入了对参数passed_captcha的检查，如果参数值为true，则认为用户通过了验证码的检查，然而我们依然可以通过伪造参数绕过验证，与low也基本一致。</p>
+<p>通过burp抓包<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617193090891.png" alt="" loading="lazy"><br>
+修改step参数，添加passed_captcha参数，绕过验证<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617193112665.png" alt="" loading="lazy"><br>
+更改成功。<br>
+3.high<br>
+&lt;?php</p>
+<pre><code>if( isset( $_POST[ 'Change' ] ) ) {
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_conf = $_POST[ 'password_conf' ];
+
+// Check CAPTCHA from 3rd party
+$resp = recaptcha_check_answer(
+$_DVWA[ 'recaptcha_private_key' ],
+$_POST['g-recaptcha-response']
+);
+
+if (
+$resp || 
+(
+$_POST[ 'g-recaptcha-response' ] == 'hidd3n_valu3'
+&amp;&amp; $_SERVER[ 'HTTP_USER_AGENT' ] == 'reCAPTCHA'
+)
+){
+// CAPTCHA was correct. Do both new passwords match?
+if ($pass_new == $pass_conf) {
+$pass_new = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new = md5( $pass_new );
+
+// Update database
+$insert = &quot;UPDATE `users` SET password = '$pass_new' WHERE user = '&quot; . dvwaCurrentUser() . &quot;' LIMIT 1;&quot;;
+$result = mysqli_query($GLOBALS[&quot;___mysqli_ston&quot;],  $insert ) or die( '&lt;pre&gt;' . ((is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_error($GLOBALS[&quot;___mysqli_ston&quot;]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '&lt;/pre&gt;' );
+
+// Feedback for user
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+
+} else {
+// Ops. Password mismatch
+$html     .= &quot;&lt;pre&gt;Both passwords must match.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+
+} else {
+// What happens when the CAPTCHA was entered incorrectly
+$html     .= &quot;&lt;pre&gt;&lt;br /&gt;The CAPTCHA was incorrect. Please try again.&lt;/pre&gt;&quot;;
+$hide_form = false;
+return;
+}
+
+((is_null($___mysqli_res = mysqli_close($GLOBALS[&quot;___mysqli_ston&quot;]))) ? false : $___mysqli_res);
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?&gt; 
+</code></pre>
+<p>这里服务器验证逻辑是当$resp(这里是指谷歌返回的验证结果)是false时，参数g-recaptcha-response不等于hidd3n_valu3且http包头的User-Agent的参数不等于reCAPTCHA时，就认为验证码输入错误，反之认为已通过验证码的检查。</p>
+<p>仍是使用burp抓包伪造，由于$resp无法控制，所以重心放在参数g-recaptcha-response、User-Agent上。</p>
+<p>修改g-recaptcha-response、User-Agent参数<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1617193282591.png" alt="" loading="lazy"><br>
+修改成功。</p>
+<p>impossible<br>
+&lt;?php</p>
+<pre><code>if( isset( $_POST[ 'Change' ] ) ) {
+// Check Anti-CSRF token
+checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+// Hide the CAPTCHA form
+$hide_form = true;
+
+// Get input
+$pass_new  = $_POST[ 'password_new' ];
+$pass_new  = stripslashes( $pass_new );
+$pass_new  = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_new ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_new  = md5( $pass_new );
+
+$pass_conf = $_POST[ 'password_conf' ];
+$pass_conf = stripslashes( $pass_conf );
+$pass_conf = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_conf ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_conf = md5( $pass_conf );
+
+$pass_curr = $_POST[ 'password_current' ];
+$pass_curr = stripslashes( $pass_curr );
+$pass_curr = ((isset($GLOBALS[&quot;___mysqli_ston&quot;]) &amp;&amp; is_object($GLOBALS[&quot;___mysqli_ston&quot;])) ? mysqli_real_escape_string($GLOBALS[&quot;___mysqli_ston&quot;],  $pass_curr ) : ((trigger_error(&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;, E_USER_ERROR)) ? &quot;&quot; : &quot;&quot;));
+$pass_curr = md5( $pass_curr );
+
+// Check CAPTCHA from 3rd party
+$resp = recaptcha_check_answer(
+$_DVWA[ 'recaptcha_private_key' ],
+$_POST['g-recaptcha-response']
+);
+
+// Did the CAPTCHA fail?
+if( !$resp ) {
+// What happens when the CAPTCHA was entered incorrectly
+echo &quot;&lt;pre&gt;&lt;br /&gt;The CAPTCHA was incorrect. Please try again.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+else {
+// Check that the current password is correct
+$data = $db-&gt;prepare( 'SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
+$data-&gt;bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+$data-&gt;bindParam( ':password', $pass_curr, PDO::PARAM_STR );
+$data-&gt;execute();
+
+// Do both new password match and was the current password correct?
+if( ( $pass_new == $pass_conf) &amp;&amp; ( $data-&gt;rowCount() == 1 ) ) {
+// Update the database
+$data = $db-&gt;prepare( 'UPDATE users SET password = (:password) WHERE user = (:user);' );
+$data-&gt;bindParam( ':password', $pass_new, PDO::PARAM_STR );
+$data-&gt;bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+$data-&gt;execute();
+
+// Feedback for the end user - success!
+echo &quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;;
+}
+else {
+// Feedback for the end user - failed!
+echo &quot;&lt;pre&gt;Either your current password is incorrect or the new passwords did not match.&lt;br /&gt;Please try again.&lt;/pre&gt;&quot;;
+$hide_form = false;
+}
+}
+}
+
+// Generate Anti-CSRF token
+generateSessionToken();
+
+?&gt; 
+</code></pre>
+<p>impossible级别代码增加了Anti-CSRF token机制防御CSRF攻击，利用PDO结束防御SQL注入，验证过程不在分成两部分，验证码无法绕过，同时要求用户输入之前的密码，进一步加强了身份认证。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-javascript/">
+              <h3 class="post-title">
+                DVWA之JavaScript
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

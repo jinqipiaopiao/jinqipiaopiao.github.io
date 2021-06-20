@@ -1,0 +1,348 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>xss-labs(11-20) | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="xss-labs(11-20) | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="level-11
+同第十关一样，页面上只有一个显示位，再看看源码：
+
+可以看到有隐藏表单比第十关多了一个t_ref的&lt;input&gt;标签
+而且t_ref的value的值为一个地址，那么我们可以通过抓包修改这个值来攻击。将refer..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              xss-labs(11-20)
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-05
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>level-11</strong><br>
+同第十关一样，页面上只有一个显示位，再看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620177177492.png" alt="" loading="lazy"><br>
+可以看到有隐藏表单比第十关多了一个t_ref的<code>&lt;input&gt;</code>标签<br>
+而且t_ref的value的值为一个地址，那么我们可以通过抓包修改这个值来攻击。将referer的值内容修改为</p>
+<pre><code>&quot; type=&quot;text&quot; onclick=&quot;alert(1)
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620177477787.png" alt="" loading="lazy"><br>
+成功插入，然后点击空白框即可：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620177552278.png" alt="" loading="lazy"><br>
+查看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620177804203.png" alt="" loading="lazy"><br>
+<code>$_SERVER[‘HTTP_REFERER’]</code>: 得到链接到当前页面的前一页面的地址。</p>
+<p>可以看到将我们前页面的地址进行了去&lt;、&gt;处理后插入到了t_ref中。t_sort接收的值进行了htmlspecialchars()处理。<br>
+11-14关卡原理一样都是用burp suite找能输出值的地方然后再闭合前面的value，再给后面添加&quot; type=&quot;text&quot; onclick=&quot;alert(1) 即可成功<br>
+<strong>level-12</strong><br>
+先看看源代码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620180413006.png" alt="" loading="lazy"><br>
+多了一个名字为t_ua的<code>&lt;input&gt;</code>标签，而其value值看起来很像User-Agent头部，而上一关就是修改referer，所以我们可以联想到还是要burp抓包，先看看<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620180418202.png" alt="" loading="lazy"><br>
+可以看到其value值确实为数据包中的User-Agent头的值，让我们修改它<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620180423491.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620180427883.png" alt="" loading="lazy"><br>
+来看看后端代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620180433807.png" alt="" loading="lazy"><br>
+可以看到<code>$str</code>与$str00分别接收了keyword,t_sort的值并将其用htmlspecialchars()函数处理后分别拼接到<code>&lt;h2&gt;</code>和名字为t_sort的<code>&lt;input&gt;</code>标签处</p>
+<p>$str11接受了请求中的User-Agent头的值，后去掉了其中的&lt;,&gt;后插入到了名字为t_ua的<code>&lt;input&gt;</code>标签中，所以我们从这里入手.<br>
+<strong>less-13</strong><br>
+还是一样的套路，来看看源码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182062793.png" alt="" loading="lazy"><br>
+这里多出了名为t_cook的<code>&lt;input&gt;</code>标签，这个名字很容易让我们想到cookie啊，结合前面的思路，我们burp抓包：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182067246.png" alt="" loading="lazy"><br>
+看到cookie确实一样，修改内容</p>
+<pre><code>&quot; type=&quot;text&quot; onclick=&quot;alert(1)
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620182070206.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182076558.png" alt="" loading="lazy"><br>
+源码也没什么新奇的东西：看懂怎么传递值即可<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182081646.png" alt="" loading="lazy"><br>
+<strong>level-14</strong><br>
+这一关我们无法访问，所以参考博客https://www.zhaosimeng.cn/writeup/117.html<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182084607.png" alt="" loading="lazy"><br>
+查看源码发现通过iframe标签引入了一个http://exofvoewer.org<br>
+这一关涉及到了exif xss漏洞，exif是可交换图像文件格式(Exchangeable image file format,简称Exif)，是专门为数码相机的照片设定的，可以记录数码照片的属性信息和拍摄数据。</p>
+<p>上传一个含有xss代码的图片来触发xss：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182089153.png" alt="" loading="lazy"><br>
+将刚才的图片上传后再去访问，出发弹窗：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182092154.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182095588.png" alt="" loading="lazy"><br>
+自己复现一下：<br>
+准备一个文件：</p>
+<pre><code>&lt;?php
+$exif = exif_read_data('oh.jpg');
+var_dump($exif);
+?&gt;
+</code></pre>
+<p>使用exif_read_data()函数需要先修改PHP配置，在其配置文件php.ini中找到php_exif.dll将其加载顺序替换到php_mbstring.dll的后面，哦还要把前面的;去掉，重启apache后即可。</p>
+<p>在当前文件夹下放一个名为oh.jpg的图片。</p>
+<p>然后我们访问这个文件：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182100578.png" alt="" loading="lazy"><br>
+可以看到将图片的exif信息都打印出来了。如果我们将图片的exif信息改为触发xss的payload呢？<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182105526.png" alt="" loading="lazy"><br>
+修改一个即可，然后我们再次访问看看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620182110105.png" alt="" loading="lazy"><br>
+可以看到成功了<br>
+<strong>level-15</strong><br>
+页面是干净的，url处只有src这个参数<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620214889888.png" alt="" loading="lazy"><br>
+所以我们看看源码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620214902981.png" alt="" loading="lazy"><br>
+看到我们提交的src参数的值被插入到了<code>&lt;span&gt;</code>标签的class属性值中，且前面还有ng-include：，ng-include是angular.js中的东西，相当于php中的include函数，这里就是将这个文件给包含进来。<br>
+首先尝试看看能不能直接闭合标签来触发弹窗：</p>
+<pre><code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620214907867.png" alt="" loading="lazy"><br>
+发现&lt;,&gt;被编码，然后查看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620214913118.png" alt="" loading="lazy"><br>
+可以看到src的值赋给了str变量，后通过htmlspecialchars()函数将其赋给了<code>&lt;span&gt;</code>标签的class属性值中<br>
+现在让我们先了解一些ng-include的具体用法：</p>
+<pre><code>ng-include指令用于包含外部的html文件
+包含的内容将作为指定元素的子节点
+ng-include属性的值可以是一个表达式，返回一个文件名
+默认情况下，包含的文件需要包含在同一个域名下
+</code></pre>
+<p><strong>特别注意：</strong></p>
+<pre><code>ng-include，如果单纯指定地址，必须要加引号
+ng-include，加载外部html，&lt;script&gt;标签中的内容不执行。
+ng-include，加载外部html中含有style标签样式可以识别。
+</code></pre>
+<p>既然这里可以包含html文件，那么我们就可以包含之前有过xss漏洞的源文件了比如：</p>
+<pre><code>src='level1.php?name=&lt;img src=1 onerror=alert(1)&gt;'
+</code></pre>
+<p>因为这里参数值算是一个地址，所以我们需要添加引号。有的小伙伴就可能有疑惑了，之前那不是说<br>
+是包含html文件吗？,但是level1.php不是一个php文件吗?,这是因为我们不是单纯的去包含level1.php，而是在后面添加了参数值的。这就有点像是在访问了该参数值中的地址响应再浏览器端的html文件给包含进来的意思。<br>
+让我们看看效果：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620214921409.png" alt="" loading="lazy"><br>
+可以看到成功了，且level1的页面也出现在了下方。</p>
+<p>这里可能还会有小伙伴有疑惑，我们的值不是先进行了htmlspecialchars()函数处理了吗，怎么这次我们的&lt;、&gt;就没有被转义呢? 这里是因为一开始我们的&lt;、&gt;是会被转义成实体字符的，但是因为又要模拟去访问level1.php，所以这里后端会构造隐藏请求。在后端php构造请求的顺序一般是执行<code>urldecode(htmlspecialchars_decode($request))</code>。所以明显可以知道虽然被转义成了字符实体，但是在请求的时候会先还原然后在url编码。<br>
+<strong>less-16</strong><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294129884.png" alt="" loading="lazy"><br>
+可以看到页面有一显示位，先来试试普通弹窗：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294133833.png" alt="" loading="lazy"><br>
+可以看到外面的script字符与/都被编码成了空格字符实体。所以，闭合前面标签的方法也不行了。来看看后端代码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294138300.png" alt="" loading="lazy"><br>
+可以看到依次对我们输入的参数值中的script，空格，/，空格被替换成了&amp;nbsp(空格字符实体)。因此也这里无法使用空格来讲字符分隔进行语义的区分，但是我们还可以用回车来替代。而且我们需要一个不需要闭合的标签，如<code>&lt;img&gt;</code>标签。构造如下语句：</p>
+<pre><code>&lt;img
+src=1
+onerror=alert(1)
+&gt;
+</code></pre>
+<p>但是这样浏览器并没有将字符分隔开（已试过）.所以我们要用回车的url编码格式(%01)<br>
+来表示代替。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294145030.png" alt="" loading="lazy"><br>
+<strong>level-17</strong></p>
+<p>1.做这关的时候需要下载chrome低版本我下载的是chrome66.0.3359.139<br>
+https://www.chromedownloads.net/chrome64win-stable/763.html<br>
+下载之后解压到当前文件夹两次，然后点开文件夹就会有exe文件运行即可<br>
+然后打开设置页面找到显示高级设置找到隐私设置，然后点击内容设置钮找到弹出内容设置信息框，找到flash那一栏点击允许网站运行flash，点击完成即可<br>
+2.然后需要下载Adobe Flash Player然后选择自定义下载选择<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620295575698.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294149217.png" alt="" loading="lazy"><br>
+这一关显示这么简陋是因为中间有一个flash无法正常显示出来<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294152559.png" alt="" loading="lazy"><br>
+可以看到我们url处的参数值出现在了&lt;<code>embed&gt;</code>标签的src属性值中。所以从这里入手，先来个普通弹窗探探底：</p>
+<pre><code>&gt;&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620294156391.png" alt="" loading="lazy"><br>
+可以看到代码中的瓜纳金字符都被编码了，不用想又是htmlspecialchars()函数处理的。这里src属性值并没有添加引号，且两个变量是相互拼接起来的，所以我们可以在后面直接添加onclick事件来试试，在b后面加个空格然后加入onclick事件，这样浏览器解析到b后悔停止判断，然后将onclick事件看作另外一个属性。</p>
+<pre><code>?arg01=a&amp;arg02=b onclick=alert(1)
+</code></pre>
+<p>emmm,火狐不显示图片也触发不到，这里就用谷歌看一下：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294160459.png" alt="" loading="lazy"><br>
+看看后端：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294163927.png" alt="" loading="lazy"><br>
+可以看到服务器端对于上传的两个参数值都用htmlspecialchars()函数进行了处理。<br>
+<strong>level-18</strong><br>
+同17关。</p>
+<pre><code>http://127.0.0.1/xss-labs-master/level18.php?arg01=a&amp;arg02=b onmouseover=alert(1)
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1620294447065.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294452310.png" alt="" loading="lazy"><br>
+<strong>level-19</strong><br>
+还是看看源码先：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294457429.png" alt="" loading="lazy"><br>
+可以看到其与上两关不同的地方为src的值使用了双引号括起来，这样我们想要成功执行js代码就要先闭合标签，但是其还用了htmlspecialchars()函数进行处理，所以无法闭合。<br>
+接下来就涉及到了一种xss攻击手段，flashxss，flashxss就是flash有可以调用js的函数，也就是可以和js进行通信。因此这些如果使用不当也是会造成xss的，常见的可触发xss的危险函数有：<br>
+getURL,navigate ToURL,Externallnterface.call,htmlText,loadMovie等。<br>
+这里需要对引用的swf文件进行反编译然后进行源码分析。这里用到的对此类文件进行反编译的攻击是jpexs-decompiler.项目地址：http://github.com/jindrapetrik/jpexs-decompiler/releases.<br>
+安装后导入源文件引用xsf03.swf文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294462995.png" alt="" loading="lazy"><br>
+从上图中脚本代码可以看到，在右侧箭头处是一个getURL函数。该函数可以获取一些参数值。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294468010.png" alt="" loading="lazy"><br>
+可以看到如果构造version参数的话，其值能够传入loc4变量中，也就是sIFR的内容中。但是前面getURL函数中已经指明了只有在内容为link时才会打开。那么什么才算是link啊，继续看：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294472238.png" alt="" loading="lazy"><br>
+有一个contentIsLink函数就是专门定义用来判断内容是不是link的。通过分析其中的代码可以找到这里所谓的link就是一个<code>&lt;a&gt;&lt;/a&gt;</code>这样标签包含起来的内容。</p>
+<p>因此我们可以构造如下代码进行测试：</p>
+<pre><code>http://127.0.0.1/xss-labs-master/level19.php?arg01=version&amp;arg02=&lt;a%20href=&quot;javascript:alert(1)&quot;&gt;oh&lt;/a&gt;
+</code></pre>
+<p>这里就要先把我的flash更新一下了，不然实在做不了了。可以看到更新后的显示：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294477123.png" alt="" loading="lazy"><br>
+将构造的payload加入：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294481532.png" alt="" loading="lazy"><br>
+可以看到我们前一个参数的值写成了version，后一个参数的值就是一个由<code>&lt;a&gt;&lt;/a&gt;</code>标签触发的XSS的payload，并且我们提交的恶意代码在页面响应的flash中已经体现出来了，点击链接：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294485760.png" alt="" loading="lazy"><br>
+成功，看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294490288.png" alt="" loading="lazy"><br>
+可以看到虽然浏览器处关键字符被编码了，但是对于xsf03.swf来说依然是正常访问的。<br>
+<strong>level-20</strong><br>
+好了，进入20关，这看起来还真是空空如也。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294494955.png" alt="" loading="lazy"><br>
+让我们看看源码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294500329.png" alt="" loading="lazy"><br>
+可以看到依然是将我们提交的两个参数插入到了<code>&lt;embed&gt;</code>标签的scr属性值中，并且还是引用了swf文件，但是没有显示出来。</p>
+<p>还是用jpexs对xsf04.swf文件进行反编译：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1620294505422.png" alt="" loading="lazy"><br>
+可以看到Externalinterface.call的第二个参数传回来的id没有进行正确过滤，这就可能导致xss。</p>
+<p>这里参考大佬的payload：</p>
+<pre><code>arg01=id&amp;arg02=xss\&quot;))}catch(e){alert(/xss/)}//%26width=123%26height=123
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1620294509443.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/xxs-labs1-10/">
+              <h3 class="post-title">
+                xss-labs(1-10)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

