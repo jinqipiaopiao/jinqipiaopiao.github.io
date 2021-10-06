@@ -7,7 +7,7 @@
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1627392642729">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1633486821567">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -3595,6 +3595,849 @@ user节点下name的属性名为id，且为1的节点<br>
 ————————————————<br>
 版权声明：本文为CSDN博主「baynk」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/u014029795/article/details/105459096</p>
+<h1 id="2021-08-07">2021-08-07</h1>
+<p>OWASP TOP 10-2010<br>
+开放式Web应用程序安全项目（OWASP，Open Web Application Security Project）是一个组织，它提供有关计算机和互联网应用程序的公正、实际、有成本效益的信息。其目的是协助个人、企业和机构来发现和使用可信赖软件。<br>
+OWASP发布了最新的Web应用脆弱性的top 10，这是继2007年OWASP对TOP10进行修订后进行的又一次更改，该版本暂定为OWASP TOP 10 - 2010。新版本的OWASP TOP10中主要有以下变化：<br>
+1.Top10的命名发生了变化。<br>
+原先的Top10全称为“The top 10 most critical web application security vulnerabilities”，即“Web应用的十大关键脆弱性”，现在Top10的全称为“The top 10 most critical web application security risks”，即“Web应用的十大关键风险”。<br>
+2.OWASP Top 10的风险评估方法<br>
+此次Top 10的评估是依据OWASP的风险评估方法来对OWASP TOP10排序的。<br>
+3.替换了2个风险<br>
+此次Top 10与2007年的Top 10相比，　在内容上去掉了“Malicious File Execution”(恶意文件执行)和“Information leakage and improper error handling”(信息泄露及不恰当的错误处理)，增加了“Security misconfiguration”(错误安全配置)和“Unvalidated redirects and forwards”(未验证的重定向和传递)。</p>
+<p>** OWASP TOP10 2007	 OWASP TOP10 2010**<br>
+A2-注入	 A1-注入<br>
+A1-跨站脚本（XSS）	 A2-跨站脚本（XSS）<br>
+A7-错误的认证和会话管理	 A3-错误的认证和会话管理<br>
+A4-不正确的直接对象引用	 A4-不正确的直接对象引用<br>
+A5-伪造跨站请求（CSRF）	 A5-伪造跨站请求（CSRF）<br>
+A6-安全性误配置<br>
+A10-限制远程访问失败	 A7-限制远程访问失败<br>
+A8-未验证的重定向和传递<br>
+A8-不安全的加密存储	 A9-不安全的加密存储<br>
+A9-不足的传输层保护	 A10-不足的传输层保护<br>
+A3-恶意文件执行	<br>
+A6-不安全的通讯</p>
+<p><strong>OWASP风险评估方法</strong><br>
+OWASP所选取的10大风险是依据OWASP的风险评估方法，我们从标准的风险模型开始，即风险=可能性*后果，下面我们以以下步骤来说明某个风险的严重程度：<br>
+第一步：识别风险<br>
+识别风险作为评估的第一步，我们必须找到与这个风险相关的威胁、相应的攻击方法、隐含在里面的脆弱性以及最终可能造成的后果，当然可能存在多种攻击方法和多种后果，在评估时我们往往会采用最坏选择，这样就能更客观的反应该风险的最终评级；<br>
+第二步：考虑影响可能性的因素<br>
+通常，我们不可能很精准的说出某个风险的可能性数值，所以我们一般用高、中、低来表示，而且影响某个风险的可能性的因素有很多，对于每个因素我们用0到9的数值来表示。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303620083.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303650868.png" alt="" loading="lazy"><br>
+第三步：考虑影响后果的因素<br>
+在考虑攻击后果的时候，我们会考虑两种后果，一种是应用的“技术后果”，它所使用的数据，提供的功能等等，另一种就是它的“商业后果”，显然后者则更为重要，但往往后者难以估量，所以我们需要尽可能从技术上去考虑，进而来估计后者的数据。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303676539.png" alt="" loading="lazy"><br>
+<strong>A1-注入</strong><br>
+注入往往是应用程序缺少对输入进行安全性检查所引起的，攻击者把一些包含指令的数据发送给解释器，解释器会把收到的数据转换成指令执行。常见的注入包括SQL注入，OS Shell，LDAP，XPath，Hibernate等等，其中SQL注入尤为常见。这种攻击所造成的后果往往很大，一般整个数据库的信息都能被读取或篡改，通过SQL注入，攻击者甚至能够获得更多的包括管理员的权限。<br>
+防范SQL注入——编程篇<br>
+SQL注入往往是在程序员编写包含用户输入的动态数据库查询时产生的，但其实防范SQL注入的方法非常简单。程序员只要a）不再写动态查询，或b）防止用户输入包含能够破坏查询逻辑的恶意SQL语句，就能够防范SQL注入。在这篇文章中，我们将会说明一些非常简单的防止SQL注入的方法。<br>
+　　我们用以下Java代码作为示例：</p>
+<pre><code>String query =＂SELECT account_balance FROM user_data WHERE user_name =＂
++request.getParameter(＂customerName＂);
+
+try {
+Statement statement = connection.createStatement( …);
+ResultSet results = Statement.executeQuery(query);
+}
+</code></pre>
+<p>在以上代码中，我们可以看到并未对变量customerName做验证，customerName的值可以直接附在query语句的后面传送到数据库执行，则攻击者可以将任意的SQL语句注入。<br>
+　**　防范方法1：参数化查询**<br>
+　　参数化查询是所有开发人员在做数据库查询时首先需要学习的，参数化查询迫使所有开发者首先要定义好所有的SQL代码，然后再将每个参数逐个传入，这种编码风格就能够让数据库辨明代码和数据。<br>
+　　参数化查询能够确保攻击者无法改变查询的内容，在下面修正过的例子中，如果攻击者输入了UsrID是    “’or ‘1 ‘=’1”，参数化查询会去查找一个完全满足名字为‘or ‘1 ‘=’ 1的用户。<br>
+　　对于不同编程语言，有一些不同的建议：<br>
+　　Java EE——使用带绑定变量的PreparedStatement()；<br>
+　　.Net——使用带绑定变量的诸如SqlCommand()或OleDbCommand()的参数化查询；<br>
+　　PHP——使用带强类型的参数化查询PDO（使用bindParam()）；<br>
+　　Hibernate——使用带绑定变量的createQuery()。<br>
+　　<br>
+Java示例：<br>
+String custname = request.getParameter(＂customerName＂);<br>
+String query =＂SELECT account_balance FROM user_data WHERE user_name= ?＂;</p>
+<pre><code>PreparedStatement pstmt = connection.prepareStatement(query);
+Pstmt.setString(1,custname);
+ResultSet results = pstmt.executeQuery();
+　　C# .Net示例：
+String query =＂SELECT account_balance FROM user_data WHERE user_name = ?＂;
+Try {    
+　　　OleDbCommand command = new OleDbCommand(query,connection);
+　　　command.Parameters.Add(new OleDbParameter(＂customerName＂,CustomerName.Text));
+　　　OleDbDataReader reader = command.ExecuteReader();
+　　} catch (OleDbException se){
+　　//error handling
+}
+</code></pre>
+<p><strong>防范方法2：存储过程</strong><br>
+　　存储过程和参数化查询的作用是一样的，唯一的不同在于存储过程是预先定义并存放在数据库中，从而被应用程序调用的。<br>
+　　Java存储过程示例：</p>
+<pre><code>String custname = request.getParameter(＂customerName＂);
+try {
+CallableStatement cs = connection.prepareCall(＂call sp_getAccountBalance(?)}＂);
+cs.setString(1,custname);
+Result results = cs.executeQuery();
+}catch(SQLException se){
+//error handling
+}
+</code></pre>
+<p>VB .Net存储过程示例：</p>
+<pre><code>Try
+Dim command As SqlCommand = new SqlCommand(＂sp_getAccountBalance＂,connection)
+command.CommandType = CommandType.StoredProcedure
+command.Parameters.Add(new SqlParameter(＂@CustomerName＂,CustomerName.Text))
+Dim reader As SqlDataReader = command.ExecuteReader()
+‘…
+Catch se As SqlException
+‘error handling
+End Try
+</code></pre>
+<p><strong>防范方法3：对所有用户输入进行转义</strong><br>
+　　我们知道每个DBMS都有一个字符转义机制来告知DBMS输入的是数据而不是代码，如果我们将所有用户的输入都进行转义，那么DBMS就不会混淆数据和代码，也就不会出现SQL注入了。<br>
+　　当然，如果要采用这种方法，那么你就需要对所使用的数据库转义机制，也可以使用现存的诸如OWASP ESAPI的escaping routines。ESAPI目前是基于MySQL和Oracle的转义机制的，使用起来也很方便。一个Oracle的ESAPI的使用示例如下：<br>
+ESAPI.encoder().encodeForSQL(new OracleCodec(),queryparam);<br>
+　　那么，假设你有一个要访问Oracle数据库的动态查询代码如下：</p>
+<pre><code>String query =＂SELECT user_id FROM user_data WHERE user_name = ‘＂+req.getParameter(＂userID＂)+＂’ and user_password = ‘＂+req.getParameter(＂pwd＂)+＂’＂;
+try {
+Statement statement = connection.createStatement(…);
+ResultSet results = statement.executeQuery(query) ;
+}
+</code></pre>
+<p>那么，你就必须重写你的动态查询的第一行如下：</p>
+<pre><code>Codec ORACLE_CODEC = new OracleCodec();
+String query =＂SELECT user_id FROM user_data WHERE user_name = ‘＂+
+ESAPI.encoder().encodeForSQL(ORACLE_CODEC,req.getParameter(＂userID＂))+＂’ and user_password = ‘＂+
+ESAPI.encoder().encodeForSQL(ORACLE_CODEC,req.getParameter(＂pwd＂))+＂’＂;
+　　当然，为了保证自己代码的可读性，我们也可以构建自己的OracleEncoder：
+Encoder e = new OracleEncoder();
+String query =＂SELECT user_id FROM user_data WHERE user_name = ‘＂
++oe.encode(req.getParameter(＂userID＂)) +＂’ and user_password = ‘＂   +oe.encode(req.getParameter(＂pwd＂))+＂’＂;
+</code></pre>
+<p>除了上面所说的三种防范方法以外，我们还建议可以用以下两种附加的方法来防范SQL注入：最小权限法、输入验证白名单法。<br>
+　　最小权限法：<br>
+　　为了避免注入攻击对数据库造成的损害，我们可以把每个数据库用户的权限尽可能缩小，不要把DBA或管理员的权限赋予你应用程序账户，在给用户权限时是基于用户需要什么样的权限，而不是用户不需要什么样的权限。当一个用户只需要读的权限时，我们就只给他读的权限，当用户只需要一张表的部分数据时，我们宁愿另建一个视图让他访问。<br>
+　　如果你的策略是都是用存储过程的话，那么仅允许应用程序的账户执行这些查询，而不给他们直接访问数据库表的权限。诸如此类的最小权限法能够在很大程度上保证我们数据库的安全。<br>
+　　输入验证白名单法：<br>
+　　输入验证能够在数据传递到SQL查询前就察觉到输入是否正确合法，采用白名单而不是黑名单则能在更大程度上保证数据的合法性。<br>
+防范SQL注入——测试篇<br>
+对于测试人员来说，如何测试SQL注入漏洞是否存在呢？<br>
+　　首先，我们将SQL注入攻击能分为以下三种类型：<br>
+　　Inband：数据经由SQL代码注入的通道取出，这是最直接的一种攻击，通过SQL注入获取的信息直接反映到应用程序的Web页面上；<br>
+　　Out-of-band：数据通过不同于SQL代码注入的方式获得（譬如通过邮件等）<br>
+　　推理：这种攻击是说并没有真正的数据传输，但攻击者可以通过发送特定的请求，重组返回的结果从而得到一些信息。<br>
+　　不论是哪种SQL注入，攻击者都需要构造一个语法正确的SQL查询，如果应用程序对一个不正确的查询返回了一个错误消息，那么就和容易重新构造初始的查询语句的逻辑，进而也就能更容易的进行注入；如果应用程序隐藏了错误信息，那么攻击者就必须对查询逻辑进行反向工程，即我们所谓的“盲SQL注入”<br>
+　　黑盒测试及示例：<br>
+　　这个测试的第一步是理解我们的应用程序在什么时候需要访问数据库，典型的需要访问数据库的时机是：<br>
+　　认证表单：输入用户名和密码以检查是否有权限<br>
+　　搜索引擎：提交字符串以从数据库中获取相应的记录<br>
+　　电子商务站点：获取某类商品的价格等信息<br>
+　　作为测试人员，我们需要列对所有输入域的值可能用于查询的字段做一个表单，包括那些POST请求的隐含字段，然后截取查询语句并产生错误信息。第一个测试往往是用一个单引号“‘”或是分号“；”，前者在SQL中是字符串终结符，如果应用程序没有过滤，则会产生一条错误信息；后者在SQL中是一条SQL语句的终结符，同样如果没有过滤，也会产生错误信息。在Microsoft SQL Server中，返回的错误信息一般是这样：</p>
+<pre><code>Microsoft OLE DB Provider for ODBC Drivers error ‘80040e14’
+[Microsoft][ODBC SQL Server Driver][SQL Server]Unclosed quotation mark before the character string ‘’.
+/target/target.asp, line 113
+　　同样可用于测试的还有“--”以及SQL中的一些诸如“AND”的关键字，通常很常见的一种测试是在要求输入为数字的输入框中输入字符串，会返回如下的错误信息：
+Microsoft OLE DB Provider for ODBC Drivers error ‘80040e07’
+[Microsoft][ODBC SQL Server Driver][SQL Server]Syntax error converting the varchar value ‘tester’ to a column of data type int.
+/target/target.asp, line 113
+</code></pre>
+<p>类似上面这样的出错返回信息能让我们知道很多数据库的信息，通常不会返回那么多信息，会返回诸如“500 Server Error”的信息，那就需要“盲SQL注入”了。注意，我们需要对所有可能存在SQL注入漏洞的输入域进行测试，并且在每个测试用例时只变化一个域的值，从而才能找到真正存在漏洞的输入域。</p>
+<p>下面我们看一下标准的SQL注入测试是怎样的。<br>
+　　我们以下面的SQL查询为例：<br>
+SELECT * FROM Users WHERE Username='<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mi>s</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>a</mi><mi>m</mi><msup><mi>e</mi><mo mathvariant="normal">′</mo></msup><mi>A</mi><mi>N</mi><mi>D</mi><mi>P</mi><mi>a</mi><mi>s</mi><mi>s</mi><mi>w</mi><mi>o</mi><mi>r</mi><mi>d</mi><msup><mo>=</mo><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">username&#x27; AND Password=&#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord mathdefault">u</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mrel">=</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>password'<br>
+　　如果我们在页面上输入以下的用户名和密码：<br>
+$username = 1' or '1' = '1<br>
+$password = 1' or '1' = '1<br>
+　　那么整个查询语句就变为：</p>
+<pre><code>SELECT * FROM Users WHERE Username='1' OR '1' = '1' AND Password='1' OR '1' = '1'
+</code></pre>
+<p>假设参数值是通过GET方法传递到服务器的，且域名为www.example.com，那么我们的访问请求就是：</p>
+<pre><code>http://www.example.com/index.php?username=1'%20or%20'1'%20=%20'1&amp;password=1'%20or%20'1'%20=%20'1
+</code></pre>
+<p>对上面的SQL语句作简单分析后我们就知道由于该语句永远为真，所以肯定会返回一些数据，在这种情况下实际上并未验证用户名和密码，并且在某些系统中，用户表的第一行记录是管理员，那这样造成的后果则更为严重。<br>
+　　另外一个查询的例子如下：</p>
+<pre><code>SELECT * FROM Users WHERE ((Username='$username') AND (Password=MD5('$password')))
+</code></pre>
+<p>在这个例子中，存在两个问题，一个是括号的用法，还有一个是MD5哈希函数的用法。对于第一个问题，我们可以很容易找到缺失的右括号解决，对于第二个问题，我们可以想办法使第二个条件失效。我们在查询语句的最后加上一个注释符以表示后面的都是注释，常见的注释起始符是/*（在Oracle中是--），也就是说，我们用如下的用户名和密码：<br>
+　　<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mi>s</mi><mi>e</mi><mi>r</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>=</mo><msup><mn>1</mn><mo mathvariant="normal">′</mo></msup><mi>o</mi><msup><mi>r</mi><mo mathvariant="normal">′</mo></msup><msup><mn>1</mn><mo mathvariant="normal">′</mo></msup><msup><mo>=</mo><mo mathvariant="normal">′</mo></msup><msup><mn>1</mn><mo mathvariant="normal">′</mo></msup><mo>)</mo><mo>)</mo><mi mathvariant="normal">/</mi><mo>∗</mo><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi></mrow><annotation encoding="application/x-tex">username = 1&#x27; or &#x27;1&#x27; = &#x27;1&#x27;))/*
+　　</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">u</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">n</span><span class="mord mathdefault">a</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord mathdefault">o</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mrel">=</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose">)</span><span class="mord">/</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span></span></span></span>password = foo<br>
+　　那么整条SQL语句就变为：</p>
+<pre><code>SELECT * FROM Users WHERE ((Username='1' or '1' = '1'))/*') AND (Password=MD5('$password')))
+</code></pre>
+<p>我们的URL请求就变为：</p>
+<pre><code>http://www.example.com/index.php?username=1'%20or%20'1'%20=%20'1'))/*&amp;password=foo
+</code></pre>
+<p>Union查询SQL注入测试<br>
+　　还有一种测试是利用Union的，利用Union可以连接查询，从而从其他表中得到信息，假设我们有如下的查询：<br>
+　　SELECT Name, Phone, Address FROM Users WHERE Id=<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>d</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">然</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">设</mi><mi mathvariant="normal">置</mi><mi>i</mi><mi>d</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">值</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi></mrow><annotation encoding="application/x-tex">id
+　　然后我们设置id的值为：
+　　</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">然</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">设</span><span class="mord cjk_fallback">置</span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">值</span><span class="mord cjk_fallback">为</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span></span></span></span>id=1 UNION ALL SELECT creditCardNumber,1,1 FROM CreditCarTable<br>
+　　那么整体的查询就变为：<br>
+　　SELECT Name, Phone, Address FROM Users WHERE Id=1 UNION ALL SELECT creditCardNumber,1,1 FROM CreditCarTable<br>
+　　显然这样就能得到所有信用卡用户的信息。<br>
+　　盲SQL注入测试<br>
+　　在上面我们提到过盲SQL注入，即blind SQL injection，它意味着对于某个操作我们得不到任何信息，通常这是由于程序员已经编写了特定的出错返回页面，从而隐藏了数据库结构的信息。<br>
+　　利用推理方法，有时候我们能够恢复特定字段的值。这种方法通常采用一组对服务器的布尔查询，依据返回的结果来推断结果的含义。仍然延续上面的www.example.com，有一个参数名为id，那么我们输入以下url请求：</p>
+<pre><code>http://www.example.com/index.php?id=1'
+</code></pre>
+<p>显然由于语法错误，我们会得到一个预先定义好的出错页面，假设服务器上的查询语句为SELECT field1, field2, field3 FROM Users WHERE Id='<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><msup><mi>d</mi><mo mathvariant="normal">′</mo></msup><mi mathvariant="normal">，</mi><mi mathvariant="normal">假</mi><mi mathvariant="normal">设</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">想</mi><mi mathvariant="normal">要</mi><mi mathvariant="normal">得</mi><mi mathvariant="normal">到</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">户</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">段</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">值</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">那</mi><mi mathvariant="normal">么</mi><mi mathvariant="normal">通</mi><mi mathvariant="normal">过</mi><mi mathvariant="normal">一</mi><mi mathvariant="normal">些</mi><mi mathvariant="normal">函</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">就</mi><mi mathvariant="normal">可</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">逐</mi><mi mathvariant="normal">字</mi><mi mathvariant="normal">符</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">读</mi><mi mathvariant="normal">取</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">户</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">值</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">在</mi><mi mathvariant="normal">这</mi><mi mathvariant="normal">里</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">使</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">以</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">函</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi><mi>S</mi><mi>U</mi><mi>B</mi><mi>S</mi><mi>T</mi><mi>R</mi><mi>I</mi><mi>N</mi><mi>G</mi><mo>(</mo><mi>t</mi><mi>e</mi><mi>x</mi><mi>t</mi><mo separator="true">,</mo><mi>s</mi><mi>t</mi><mi>a</mi><mi>r</mi><mi>t</mi><mo separator="true">,</mo><mi>l</mi><mi>e</mi><mi>n</mi><mi>g</mi><mi>t</mi><mi>h</mi><mo>)</mo><mi mathvariant="normal">，</mi><mi>A</mi><mi>S</mi><mi>C</mi><mi>I</mi><mi>I</mi><mo>(</mo><mi>c</mi><mi>h</mi><mi>a</mi><mi>r</mi><mo>)</mo><mi mathvariant="normal">，</mi><mi>L</mi><mi>E</mi><mi>N</mi><mi>G</mi><mi>T</mi><mi>H</mi><mo>(</mo><mi>t</mi><mi>e</mi><mi>x</mi><mi>t</mi><mo>)</mo><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">我</mi><mi mathvariant="normal">们</mi><mi mathvariant="normal">定</mi><mi mathvariant="normal">义</mi><mi>i</mi><mi>d</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">　</mi><mi mathvariant="normal">　</mi></mrow><annotation encoding="application/x-tex">Id&#x27;，假设我们想要得到用户名字段的值，那么通过一些函数，我们就可以逐字符的读取用户名的值。在这里我们使用以下的函数：
+　　SUBSTRING (text, start, length)，ASCII (char)，LENGTH (text)
+　　我们定义id为：
+　　</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">假</span><span class="mord cjk_fallback">设</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">想</span><span class="mord cjk_fallback">要</span><span class="mord cjk_fallback">得</span><span class="mord cjk_fallback">到</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">户</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">段</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">值</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">那</span><span class="mord cjk_fallback">么</span><span class="mord cjk_fallback">通</span><span class="mord cjk_fallback">过</span><span class="mord cjk_fallback">一</span><span class="mord cjk_fallback">些</span><span class="mord cjk_fallback">函</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">就</span><span class="mord cjk_fallback">可</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">逐</span><span class="mord cjk_fallback">字</span><span class="mord cjk_fallback">符</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">读</span><span class="mord cjk_fallback">取</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">户</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">值</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">在</span><span class="mord cjk_fallback">这</span><span class="mord cjk_fallback">里</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">使</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">以</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">函</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">G</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mclose">)</span><span class="mord cjk_fallback">，</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mord mathdefault">h</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mord cjk_fallback">，</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">G</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">t</span><span class="mclose">)</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">我</span><span class="mord cjk_fallback">们</span><span class="mord cjk_fallback">定</span><span class="mord cjk_fallback">义</span><span class="mord mathdefault">i</span><span class="mord mathdefault">d</span><span class="mord cjk_fallback">为</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">　</span><span class="mord cjk_fallback">　</span></span></span></span>Id=1' AND ASCII(SUBSTRING(username,1,1))=97 AND '1'='1<br>
+　　那么最终的SQL查询语句为：<br>
+　　SELECT field1, field2, field3 FROM Users WHERE Id='1' AND ASCII(SUBSTRING(username,1,1))=97 AND '1'='1'<br>
+　　那么，如果在数据库中有用户名的第一个字符的ASCII码为97的话，那么我们就能得到一个真值，那么我们就继续寻找该用户名的下一个字符；如果没有的话，那么我们就递增猜测第一个字符的ASCII码为98的用户名，这样反复下去就能判断出合法的用户名。<br>
+　　那么，什么时候我们可以结束推理呢，我们假设id的值为：<br>
+　　$Id=1' AND LENGTH(username)=N AND '1' = '1<br>
+　　其中N是我们到目前为止已经分析的字符数目，那么整体的sql查询为：<br>
+　　SELECT field1, field2, field3 FROM Users WHERE Id='1' AND LENGTH(username)=N AND '1' = '1'<br>
+　　这个查询的返回值如果是真，那我们就已经完成了推理并且我们已经得到了想要的数值，如果为假，则表示我们还要继续分析。<br>
+　　这种盲SQL注入会要求我们输入大量的sql尝试，有一些自动化的工具能够帮我们实现，SqlDumper就是这样的一种工具，对MySQL数据库进行GET访问请求。</p>
+<p>存储过程注入<br>
+　　在上一篇《如何防范SQL注入—编程篇》中，我们提到使用存储过程是能够防范SQL注入的，但同时也要注意，存储过程如果使用不得当，使用存储过程的动态查询事实上也会造成一定的SQL注入漏洞。<br>
+　　以下面的SQL存储过程为例：<br>
+　　Create procedure user_login @username varchar(20), @passwd varchar(20) As<br>
+　　Declare @sqlstring varchar(250)<br>
+　　Set @sqlstring = ‘<br>
+　　Select 1 from users<br>
+　　Where username = ‘ + @username + ‘ and passwd = ‘ + @passwd<br>
+　　exec(@sqlstring)<br>
+　　Go<br>
+　　用户的输入如下：<br>
+　　anyusername or 1=1'<br>
+　　anypassword<br>
+　　如果我们没有对输入进行验证，那么上面的语句就会返回数据库中的一条记录。<br>
+　　我们再看下面的一条：<br>
+　　Create procedure get_report @columnamelist varchar(7900) As<br>
+　　Declare @sqlstring varchar(8000)<br>
+　　Set @sqlstring = ‘<br>
+　　Select ‘ + @columnamelist + ‘ from ReportTable‘<br>
+　　exec(@sqlstring)<br>
+　　Go<br>
+　　如果用户输入是：<br>
+　　1 from users; update users set password = 'password'; select *<br>
+　　后面则显而易见，用户的所有密码都被更改且得到了报表信息。<br>
+<strong>A2-跨站脚本（XSS）</strong><br>
+排在OWASP TOP10第2位的是Cross Site Scripting（XSS），翻译成中文即“跨站脚本攻击”。它指的是恶意攻击者往Web页面里插入恶意html代码，当用户浏览该页之时，嵌入其中Web里面的html代码会被执行，从而达到恶意用户的特殊目的。XSS属于被动式的攻击，因为其被动且不好利用，所以许多人常忽略其危害性。<br>
+以下内容转自百度空间的一篇关于OWASP的文章，个人觉得基本已经把跨站脚本攻击的内容阐述的比较清楚。<br>
+如何寻找XSS漏洞，XSS攻击分成两类，一类是来自内部的攻击，主要指的是利用程序自身的漏洞，构造跨站语句，如:dvbbs的showerror.asp存在的跨站漏洞。另一类则是来来自外部的攻击，主要指的自己构造XSS跨站漏洞网页或者寻找非目标机以外的有跨站漏洞的网页。如当我们要渗透一个站点，我们自己构造一个有跨站漏洞的网页，然后构造跨站语句，通过结合其它技术，如社会工程学等，欺骗目标服务器的管理员打开，然后利用下面的技术得到一个shell。<br>
+如何利用<br>
+传统的跨站利用方式一般都是攻击者先构造一个跨站网页，然后在另一空间里放一个收集cookie的页面，接着结合其它技术让用户打开跨站页面以盗取用户的cookie，以便进一步的攻击。这种方式太过于落后，对于弊端大家可能都知道，因为即便你收集到了cookie你也未必能进一步渗透进去，多数的cookie里面的密码都是经过加密的，如果想要cookie欺骗的话，同样也要受到其它的条件的限约。而另一种思路，则从一定程度上解决上述的问题。比较成熟的方法是通过跨站构造一个表单，表单的内容则为利用程序的备份功能或者加管理员等功能得到一个高权限。下面将详细的介绍这种技术。<br>
+寻找跨站漏洞<br>
+如果有代码的话比较好办，我们主要看代码里对用户输入的地方和变量有没有做长度和对”&lt;”,”&gt;”,”;”,”’”等字符是否做过滤。还有要注意的是对于标签的闭合，像测试QQ群跨站漏洞的时候，你在标题处输入<script>alert(‘test’)</script>，代码是不会被执行的，因为在源代码里，有其它的标签未闭合，如少了一个</script>，这个时候，你只要闭合一个</script>，代码就会执行，如：你在标题处输入</script><script>alert(‘test’)</script>，这样就可以弹出一个test的框。<br>
+如何利用<br>
+跨站脚本(Cross-site scripting，XSS)漏洞是Web应用程序中最常见的漏洞之一。如果您的站点没有预防XSS漏洞的固定方法，那么就存在XSS漏洞。这个利用XSS漏洞的病毒之所以具有重要意义是因为，通常难以看到XSS漏洞的威胁，而该病毒则将其发挥得淋漓尽致。<br>
+这个利用XSS漏洞的蠕虫病毒的特别之处在于它能够自我传播。myspace.com上的一个用户希望自己能够在网站的友人列表上更“受欢迎”。但是该用户不是通过普通的方法来结交新朋友，而是在自己的个人信息中添加了一些代码，导致其他人在访问他的页面时，会不知不觉地利用XSS漏洞将他加为好友。更恶劣的是，它会修改这些人的个人信息，使其他人在访问这些被感染的个人信息时，也会被感染。由于这种呈指数传播的方式，这种病毒才很快就被发现。<br>
+很难预防站点中的XSS。因此一定要认真检查您的应用程序是否存在XSS漏洞。此外，WebLogic Server的encodeXSS()也可以有所帮助。可以试着针对所有牵涉到使用encodeXSS()或其他某个筛选方法的输出找出一种编码模式——找出对一种编码模式来说不正确的应用程序往往要比找出XSS漏洞要容易的多。更重要的是，不要认为，就因为XSS漏洞是一个常见问题，所以它危害不大。<br>
+之所以出现XSS漏洞有两个原因。首先，HTML没有明确区分代码和数据。无法确定指出“这个字符串表示的是数据”。您可以将其放入引号中，但是数据是否包含引号呢？……其次，程序在将用户数据发送回浏览器时没有进行有效的转义。这导致包含有（例如说）引号的数据被放入页面中，从而引发了问题。而AJAX要提供的好处是，它包含一个专用渠道XML链接，其中全是数据而没有代码。这样，就有可能让客户端AJAX引擎负责对字符串进行转义、检测不正确的值，等等。说是这么说，直到AJAX更为成熟（可能也更为标准化）之前，它只会导致错误的编程和安全漏洞。<br>
+XSS漏洞可能造成的后果包括窃取用户会话，窃取敏感信息，重写Web页面，重定向用户到钓鱼网站等，尤为严重的是，XSS漏洞可能使得攻击者能够安装XSS代理，从而攻击者能够观察到该网站上所有用户的行为，并能操控用户访问其他的恶意网站。<br>
+对于XSS漏洞，我们有两种常见的措施，第一种就是消除漏洞，简而言之就是在输出页面上不提供任何用户的输入信息；另外一种就是想办法来抵御这种漏洞，可以采用对所有用户的输入编码后再输出（可以用OWASP的ESAPI），也可以对所有用户输入进行“白名单”验证，另外，OWASP还提供了AntiSamy对HTML页面做优化以消除这个漏洞。<br>
+防范XSS跨站脚本攻击——测试篇<br>
+XSS也是一种对浏览器的解释器的代码注入攻击，这些攻击能够通过HTML，JavaScript，VBScript，ActiveX，Flash等其他客户端语言执行，同时，这些攻击也可能造成用户信息泄露，配置更改，cookie窃取等造成危害，甚至能够用于对Web服务器进行DOS攻击。<br>
+　　与大部分攻击不同的是，大部分攻击往往只涉及2方（攻击者和网站，攻击者和受害者），而XSS则涉及3方，攻击者、客户端、网站，XSS的目的就是窃取客户端的cookie或是其他信息以冒充客户在网站上进行认证，进而在网站上操作任何想进行的操作。<br>
+　　下面我们看看到底有哪些类型的XSS攻击：<br>
+　　Stored XSS（存储式跨站脚本攻击）<br>
+　　这是最强大的一种XSS攻击，所谓存储跨站攻击是指用户提交给Web应用程序的数据首先就被永久的保存在服务器的数据库，文件系统或其他地方，后面且未做任何编码就能显示到Web页面，最典型的就是2005年在MySpace发现的XSS漏洞以及利用该漏洞的Samy MySpace Worm。<br>
+　　举例，假设我们的网站允许我们给其他用户留言，但事实上我们没有留言而是写入了一段代码：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303366228.png" alt="" loading="lazy"><br>
+那么服务器将会存储这些信息，当用户点击我们伪造的留言时，他的浏览器就会执行我们的脚本。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303359847.png" alt="" loading="lazy"><br>
+Reflected XSS（反射跨站脚本攻击）<br>
+　　这是最常见也是最知名的XSS攻击，当Web客户端提交数据后，服务器端立刻为这个客户生成结果页面，如果结果页面中包含未验证的客户端输入数据，那么就会允许客户端的脚本直接注入到动态页面中。传统的例子是站点搜索引擎，如果我们搜索一个包含特殊HTML字符的字符串时，通常在返回页面上仍然会有这个字符串来告知我们搜索的是什么，如果这些返回的字符串未被编码，那么，就会存在XSS漏洞了。<br>
+　　初看上去，由于用户只能在自己的页面上注入代码，所以似乎这个漏洞并不严重，但是，只需一点点社会工程的方法，攻击者就能诱使用户访问一个在结果页面中注入了代码的URL，这就给了攻击者整个页面的权限。由于这种攻击往往会需要一些社会工程方法，所以研发人员往往不会太过看重，但是我们看如下的例子，在服务器上有如下代码：</p>
+<pre><code>article.php?title=&lt;meta%20http-equiv=&quot;refresh&quot;%20content=&quot;0;&quot;&gt;
+</code></pre>
+<p>这就使得浏览器每3秒就刷新一次页面，而且是一个死循环的状态，这就形成了DOS攻击，导致Web服务器挂掉。<br>
+　　DOM-Based XSS（基于DOM的XSS）<br>
+　　这个漏洞往往存在于客户端脚本，如果一个Javascript脚本访问需要参数的URL，且需要将该信息用于写入自己的页面，且信息未被编码，那么就有可能存在这个漏洞。<br>
+　　黑盒测试和示例：<br>
+　　比较简单的测试是否存在XSS漏洞的方法是验证Web应用是否会对一个包含了HTTP响应的简单脚本的访问请求，例如，Sambar服务器（5.3）包含一个众所周知的XSS漏洞，我们向服务器发送如下的请求，从服务器端能够产生一个响应从而在Web浏览器中执行</p>
+<pre><code>http://server/cgi-bin/testcgi.exe?&lt;SCRIPT&gt;alert(“Cookie”+document.cookie)&lt;/SCRIPT&gt;
+</code></pre>
+<p>这个脚本会在客户浏览器端被执行。<br>
+　　我们再举个例子：<br>
+　　由于Javascript是区分大小写的，有些人会尝试将所有字符转换为大写字符来避免XSS漏洞，在这时，我们最好还是使用VBScript，因为它是大小写不区分的：</p>
+<pre><code>JavaScript.
+&lt;script&gt;alert(document.cookie);&lt;/script&gt;
+VBScript.
+&lt;script. type=&quot;text/vbscript&quot;&gt;alert(DOCUMENT.COOKIE)&lt;/script&gt;
+如果我们已经过滤了”&lt;”，或者是&lt;script，/script&gt;，那么我们就需要尝试各种编码方法了
+&lt;script. src=http://www.example.com/malicious-code.js&gt;&lt;/script&gt;
+%3cscript. src=http://www.example.com/malicious-code.js%3e%3c/script%3e
+\x3cscript. src=http://www.example.com/malicious-code.js\x3e\x3c/script\x3e
+</code></pre>
+<p><strong>A3-错误的认证和会话管理</strong><br>
+OWASP TOP10排名第3的威胁“遭破坏的认证和会话管理”，简而言之，就是攻击者窃听了我们访问HTTP时的用户名和密码，或者是我们的会话，从而得到sessionID，进而冒充用户进行Http访问的过程。<br>
+由于HTTP本身是无状态的，也就是说HTTP的每次访问请求都是带有个人凭证的，而SessionID就是为了跟踪状态的，而sessionID本身是很容易在网络上被监听的到，所以攻击者往往通过监听sessionID来达到进一步攻击的目的。<br>
+这些漏洞往往会存在于Web页面的“更改我的密码”、“记住我的密码”、“忘记密码”、“安全提问”、“注销登录”、“邮件地址”等环节上。<br>
+那么，一般来说，如何来防范这种漏洞呢？<br>
+第一，  我们要整体审视我们的架构<br>
+        认证机制本身必须是简单、集中和标准化的；<br>
+        使用容器提供给我们的标准session id；<br>
+        确保在任何时候用SSL来保护我们的密码和session id<br>
+第二，  验证认证的实现机制<br>
+        检查SSL的实现方法<br>
+        验证所有与认证相关的函数<br>
+        确保“注销登录”的动作能够关闭所有的会话<br>
+        使用OWASP的WebScrab来测试你的应用<br>
+如何进行验证测试<br>
+所谓认证，就是建立确信某物或某人是真实的这么一个过程，authentication来自于希腊语αυθεντικός，即真实的，可信的。认证本身依赖于多个认证因子，在计算机安全领域，认证意味着验证通讯发起者的数字身份，常见的认证过程就是用户登录认证，所谓认证测试就是理解系统中的认证机制并找到方法绕过该认证机制。<br>
+认证测试需要考虑的点有很多，下面我们逐一来进行解释说明<br>
+        在加密通道上传递密码<br>
+原则上，用户的认证必须通过加密信道进行传输，我们在这里的目的不是要验证诸如HTTPS是否安全，我们要验证的仅仅是用户的认证信息是否已经被加密了。<br>
+在用户登录时，最常见的方式是用户输入用户名和密码后，通过POST方法传输，一般来说，认证信息或者是通过不安全的HTTP传递，或者是通过加密的HTTPS传递。我们注意到，甚至有些网站在登录页面显示给我们的是HTTPS，但事实上却仍然是用HTTP的，最简单的方法就是用网络监听工具，如SnifferPro或Ethereal来判断是否是真实加密了。<br>
+下面，我们用OWASP的WebScrab截取一些信息来做个例子<br>
+假设，登录页面要求用户输入用户名和密码，然后有一个“提交”按钮，那么在WebScrab中我们得到如下的请求数据：</p>
+<pre><code>POST http://www.example.com/AuthenticationServlet HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.14) Gecko/20080404
+Accept: text/xml,application/xml,application/xhtml+xml
+Accept-Language: it-it,it;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Referer: http://www.example.com/index.jsp
+Cookie: JSESSIONID=LVrRRQQXgwyWpW7QMnS49vtW1yBdqn98CGlkP4jTvVCGdyPkmn3S!
+Content-Type: application/x-www-form-urlencoded
+Content-length: 64
+delegated_service=218&amp;User=test&amp;Pass=test&amp;Submit=SUBMIT
+</code></pre>
+<p>在上面的数据中，我们可以看到，POST方法通过HTTP协议把数据发送到http://www.example.com/AuthenticationServlet，那么显然在这时，传送的数据没有进行加密，恶意用户通过监听网络就很容易得到用户名和密码。<br>
+再看下一个例子，假设是用HTTPS协议，那么请求的头数据如下：</p>
+<pre><code>POST https://www.example.com:443/cgi-bin/login.cgi HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.14) Gecko/20080404
+Accept: text/xml,application/xml,application/xhtml+xml,text/html
+Accept-Language: it-it,it;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Referer: https://www.example.com/cgi-bin/login.cgi
+Cookie: language=English;
+Content-Type: application/x-www-form-urlencoded
+Content-length: 50
+Command=Login&amp;User=test&amp;Pass=test
+</code></pre>
+<p>可见，上述例子中的数据经加密后被传送到https://www.example.com:443/cgi-bin/login.cgi，这就确保了数据是加密的而不被其他人所窃取。<br>
+再看下面的一个例子，我们在一个可以通过HTTP协议访问到的页面上通过HTTPS协议来发送数据</p>
+<pre><code>POST https://www.example.com:443/login.do HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.14) Gecko/20080404
+Accept: text/xml,application/xml,application/xhtml+xml,text/html
+Accept-Language: it-it,it;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Referer: http://www.example.com/homepage.do
+Cookie: SERVTIMSESSIONID=s2JyLkvDJ9ZhX3yr5BJ3DFLkdphH0QNSJ3VQB6pLhjkW6F
+Content-Type: application/x-www-form-urlencoded
+Content-length: 45
+User=test&amp;Pass=test&amp;portal=ExamplePortal
+</code></pre>
+<p>如上，我们看到，我们的请求通过HTTPS引向了https://www.example.com:443/login.do，但如果我们再看Referer的值，就发现我们是从HTTP页http://www.example.com/homepage.do过来的。在这种情况下，我们的浏览器窗口中并不会告诉我们现在使用的安全连接，而事实上我们却正在使用安全连接。<br>
+在上面的例子中，如果我们用Get方法，那么所输入的用户名和密码将会以明文的方式显示在URL中，这显然是不可取的。那么，如果我们经由Get方法通过HTTPS来传递数据是否可行呢，看下面的数据</p>
+<pre><code>GET https://www.example.com/success.html?user=test&amp;pass=test HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.14) Gecko/20080404
+Accept: text/xml,application/xml,application/xhtml+xml,text/html
+Accept-Language: it-it,it;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Referer: https://www.example.com/form.html
+If-Modified-Since: Mon, 30 Jun 2008 07:55:11 GMT
+If-None-Match: &quot;43a01-5b-4868915f&quot;
+</code></pre>
+<p>从上面的例子可以看到，用户名和密码都以明文的方式在URL里存在，而不像上面的几个例子中都在消息体中，但并不是说攻击者就可以很容易看到这些信息，TLS/SSL毕竟是安全性很高的协议，整个HTTP数据包是加密的，但仍然要注意的是这些用户名和密码在传输过程中会被存储在代理和服务器上，这也就有可能会泄露用户信息。<br>
+        用户列举测试法<br>
+这种测试，简而言之是通过与应用的认证机制的交互，尝试能否获得一些正确的用户名，这对后面我们会讲到的暴力破解很有效，确认了正确的用户名就能用暴力破解去尝试密码了。<br>
+通常，WEB应用对于用户名正确的输入会有一些信息反馈，例如，如果我们输错了密码，那么有时会反馈告知我们系统存在该用户，或密码错误。所以，作为测试人员，就要尝试不同的请求来判断系统是否会有不同的返回。<br>
+对于HTTP的响应消息测试：<br>
+        输入正确的用户名和密码<br>
+期望结果：使用WebScrab抓取服务器的返回信息（HTTP 200 Response,消息的长度）<br>
+        输入正确的用户名/错误的密码<br>
+期望结果：从浏览器我们往往会得到如下的返回<br>
+或者是如下返回<br>
+甚至是如下的返回<br>
+Login for User foo: invalid password<br>
+        输入不存在的用户名<br>
+期望结果：返回可能如下<br>
+或者是如下的消息<br>
+Login failed for User foo: invalid Account<br>
+通常情况下，对于不同的出错信息，服务器往往返回的消息是一样的，但如果不同，测试人员就要去尝试在什么情况下不同，如下：<br>
+客户请求：正确用户/错误密码——&gt;服务器返回：密码错误<br>
+客户请求：错误用户/错误密码——&gt;服务器返回：用户不存在。<br>
+那么显然第一条就告诉我们我们输入的是正确的用户名，通过这种方式我们就可以获得一些正确的用户名信息。<br>
+还有其他一些尝试列举的方法：<br>
+        有些应用程序会返回一些特定的出错信息；<br>
+        分析URL以及重定向URL<br>
+如下面的URL：<br>
+http://www.foo.com/err.jsp?User=baduser&amp;Error=0<br>
+http://www.foo.com/err.jsp?User=gooduser&amp;Error=2<br>
+上面两个URL都告诉我们到了错误页面，但上一条是Error值为0，下一条Error值为2，那么我们可以猜测我们获得了一个正确的用户名。<br>
+        URI探测<br>
+有时候，Web服务器在接受一个对目录访问请求时，根据目录是否存在会有不同的返回信息，例如在某些网站会给每个用户设定一个目录，那么我们如果尝试访问某个已存在的目录时，它可能的返回页面如下：<br>
+403 Forbidden error code<br>
+404 Not found error code<br>
+举例：<br>
+http://www.foo.com/account1-返回的出错信息: 403 Forbidden<br>
+http://www.foo.com/account2-返回的出错信息: 404 file Not Found<br>
+那么显然，account1是现实存在的。<br>
+        探测性用户账户测试法<br>
+众所周知，在系统中往往会有默认账户或者很容易被猜到的常用账户，而且往往很多用户会使用默认的密码，同样，有些应用系统的测试账户研发人员有时也会忘记删除。这个问题事实上是一个漏洞，而这种漏洞往往是由于以下原因造成的：<br>
+        没有经验的IT工程师，他们往往不会更改安装的架构组件的缺省密码；<br>
+        编程人员在应用中留有后门以便测试，但在发布时忘记删除；<br>
+        系统的管理员和用户采用了很简单的密码；<br>
+        系统有内嵌的，无法删除的内部用户名和密码<br>
+        ……<br>
+对于注入Cisco路由器或WebLogic等，他们都有一些默认的用户名和密码，我们可以直接尝试，对于一些我们根本不了解的应用，我们可以做如下尝试：<br>
+        尝试以下系统管理员的常用账号——&quot;admin&quot;, &quot;administrator&quot;, &quot;root&quot;, &quot;system&quot;, &quot;guest&quot;, &quot;operator&quot;, &quot;super&quot;，&quot;qa&quot;, &quot;test&quot;, &quot;test1&quot;, &quot;testing&quot;，针对用户名和密码组合尝试，也可以尝试诸如&quot;password&quot;, &quot;pass123&quot;, &quot;password123&quot;, &quot;admin&quot;,或guest&quot;这些密码。如果这些都无法成功，我们可以写一些脚本来尝试类似的用户名和密码组合。<br>
+        管理员的密码有时会与系统名字相关，如我们测试的应用系统叫“Obscurity”，那么可以尝试用户名/密码组合Obscurity/obscurity。<br>
+        利用注册页面我们也可以猜测用户名和密码的格式和长度。<br>
+        尝试上述提到的所有用户名和空密码。<br>
+        查看页面的源文件，尝试找到所有引用到用户名和密码的信息，比如&quot;If username='admin' then starturl=/admin.asp else /index.asp&quot;<br>
+        寻找那些源文件中注释中可能含有的用户名和密码信息；<br>
+        …….<br>
+        强力测试（暴力测试）<br>
+任何一种技术，在不同的人手里运用所达到的效果是不同的，正如暴力测试，也叫暴力破解，安全服务人员和测试人员利用这种技术来验证是否存在漏洞，而攻击者则利用其来寻找漏洞。<br>
+Web应用系统通常会有一些用户认证方式，这些方式包括证书、指纹、一次性令牌等等，但更多的，往往是用户名和密码的组合，这就使得暴力破解成为可能。<br>
+在对Web应用系统做暴力测试时，首先我们需要了解的是系统的认证机制，通常Web系统会采用以下两种机制：<br>
+        HTTP认证——包含基本存取认证和数字存取认证。<br>
+        基于HTML表单的认证。<br>
+我们下面对这些认证方式做一下简单介绍：<br>
+基本存取认证<br>
+基本存取认证假设假定用户会以用户名和密码的组合来表明自己的身份，当用户浏览器使用这种机制访问站点时，web服务器将会返回一个包含“WWW-Authenticate”头的401响应，且包含了一个“Basic”值，以及被保护的域名（例如，WWW-Authenticate: Basic realm=”wwwProtectedSite”）客户端会弹出一个需要用户输入该域用户名和密码的提示框。然后，客户端浏览器返回给服务器一个响应，响应包含“Authorization”头，还包含“Basic”值以及连接了用户名，冒号，密码的基于64位的编码（例如，Authorization: Basic b3dhc3A6cGFzc3dvcmQ=），但可惜的是，这个回复只要被攻击者监听到就很容易被解码。<br>
+我们来看一下这个过程：<br>
+1.客户端发送一个标准的HTTP请求<br>
+GET /members/docs/file.pdf HTTP/1.1<br>
+Host: target</p>
+<ol>
+<li>web服务器定位到访问的这个资源是在一个受保护的目录；<br>
+3.服务器发送一个HTTP 401的认证请求；<br>
+HTTP/1.1 401 Authorization Required<br>
+Date: Sat, 04 Nov 2006 12:52:40 GMT<br>
+WWW-Authenticate: Basic realm=&quot;User Realm&quot;<br>
+Content-Length: 401<br>
+Keep-Alive: timeout=15, max=100<br>
+Connection: Keep-Alive<br>
+Content-Type: text/html; charset=iso-8859-1<br>
+4.浏览器弹出要求输入用户名和密码的数据窗口；<br>
+5.用户输入用户名和密码后，包含以下数据后再次提交；<br>
+GET /members/docs/file.pdf HTTP/1.1<br>
+Host: target<br>
+Authorization: Basic b3dhc3A6cGFzc3dvcmQ=<br>
+6.服务器把客户信息和存储的信息进行比较；<br>
+7.如果身份验证正确，服务器发回被请求的内容，如果失败，服务器将会返回HTTP<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303347049.png" alt="" loading="lazy"><br>
+www.owasp.org_Image-basm-sessid.jpg_Basm-sessid<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303343493.png" alt="" loading="lazy"><br>
+www.owasp.org_Image-basm-sessid2.jpg_Basm-sessid2<br>
+A4-不安全的直接对象引用<br>
+所谓“不安全的对象直接引用”，即Insecure direct object references，意指一个已经授权的用户，通过更改访问时的一个参数，从而访问到了原本其并没有得到授权的对象。Web应用往往在生成Web页面时会用它的真实名字，且并不会对所有的目标对象访问时来检查用户权限，所以这就造成了不安全的对象直接引用的漏洞。<br>
+我们看如下的一个示例，也许这样就更容易理解什么是不安全的对象直接引用<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303337959.png" alt="" loading="lazy"><br>
+攻击者发现他自己的参数是6065，即?acct=6065；<br>
+他可以直接更改参数为6066，即?acct=6066；<br>
+这样他就可以直接看到6066用户的账户信息了。</li>
+</ol>
+<p>一般来说，防止不安全的直接对象引用的方法有以下两种：<br>
+使用非直接的对象引用——这防止了攻击者直接访问其并未授权的对象，通过一种mapping或是其他的方法让攻击者无法直接访问。<br>
+检查访问——对每一个来自于不信任的源的直接对象引用都必须包含访问控制检查，从而确信该用户对该对象拥有访问权。</p>
+<p><strong>A5-伪造跨站请求（CSRF）</strong><br>
+跨站请求伪造，也被称成为“one click attack”或者session riding，通常缩写为CSRF或者XSRF，是一种对网站的恶意利用。尽管听起来像跨站脚本（XSS），但它与XSS非常不同，并且攻击方式几乎相左。XSS利用站点内的信任用户，而CSRF则通过伪装来自受信任用户的请求来利用受信任的网站。与XSS攻击相比，CSRF攻击往往不大流行（因此对其进行防范的资源也相当稀少）和难以防范，所以被认为比XSS更具危险性。<br>
+CSRF攻击通过在授权用户访问的页面中包含链接或者脚本的方式工作。例如：一个网站用户Bob可能正在浏览聊天论坛，而同时另一个用户Alice也在此论坛中，并且后刚刚发布了一个具有Bob银行链接的图片消息。设想一下，Alice编写了一个在Bob的银行站点上进行取款的form提交的链接，并将此链接作为图片tag。如果Bob的银行在cookie中保存他的授权信息，并且此cookie没有过期，那么当Bob的浏览器尝试装载图片时将提交这个取款form和他的cookie，这样在没经Bob同意的情况下便授权了这次事务。<br>
+CSRF是一种依赖web浏览器的、被混淆过的代理人攻击（deputy attack）。在上面银行示例中的代理人是Bob的web浏览器，它被混淆后误将Bob的授权直接交给了Alice使用。<br>
+下面是CSRF的常见特性：<br>
+        依靠用户标识危害网站<br>
+        利用网站对用户标识的信任<br>
+        欺骗用户的浏览器发送HTTP请求给目标站点<br>
+风险在于那些通过基于受信任的输入form和对特定行为无需授权的已认证的用户来执行某些行为的web应用。已经通过被保存在用户浏览器中的cookie进行认证的用户将在完全无知的情况下发送HTTP请求到那个信任他的站点，进而进行用户不愿做的行为。<br>
+使用图片的CSRF攻击常常出现在网络论坛中，因为那里允许用户发布图片而不能使用JavaScript。<br>
+防范措施<br>
+对于web站点，将持久化的授权方法（例如cookie或者HTTP授权）切换为瞬时的授权方法（在每个form中提供隐藏field），这将帮助网站防止这些攻击。一种类似的方式是在form中包含秘密信息、用户指定的代号作为cookie之外的验证。<br>
+另一个可选的方法是“双提交”cookie。此方法只工作于Ajax请求，但它能够作为无需改变大量form的全局修正方法。如果某个授权的cookie在form. post之前正被JavaScript代码读取，那么限制跨域规则将被应用。如果服务器需要在Post请求体或者URL中包含授权cookie的请求，那么这个请求必须来自于受信任的域，因为其它域是不能从信任域读取cookie的。<br>
+与通常的信任想法相反，使用Post代替Get方法并不能提供卓有成效的保护。因为JavaScript能使用伪造的POST请求。尽管如此，那些导致对安全产生“副作用”的请求应该总使用Post方式发送。Post方式不会在web服务器和代理服务器日志中留下数据尾巴，然而Get方式却会留下数据尾巴。<br>
+尽管CSRF是web应用的基本问题，而不是用户的问题，但用户能够在缺乏安全设计的网站上保护他们的帐户：通过在浏览其它站点前登出站点或者在浏览器会话结束后清理浏览器的cookie。<br>
+影响CSRF的因素<br>
+CSRF攻击依赖下面的假定：<br>
+        攻击者了解受害者所在的站点<br>
+        攻击者的目标站点具有持久化授权cookie或者受害者具有当前会话cookie<br>
+        目标站点没有对用户在网站行为的第二授权</p>
+<p>防范CSRF漏洞——测试篇<br>
+CSRF（Cross Site Request Forgey）跨站点伪造请求，是排在OWASP Top10第5位的漏洞，它迫使已被认证的用户在Web系统上执行其所不欲的操作。这种攻击依赖于以下：<br>
+1） Web浏览器对会话相关信息的处理方式（如cookie或Http认证信息）<br>
+　　2） 攻击者对正确的Web系统的URL的了解；<br>
+　　3） 应用会话管理仅依赖于浏览器所了解的信息；<br>
+　　4） 一些HTML的tag会导致对http(s)资源的直接访问其中，前3点是确认系统是否存在该漏洞的主要前提，第4点则是用来帮助攻击者利用该漏洞的。<br>
+　　第1点：浏览器自动发送用于识别用户会话的信息，假设site是一个Web应用站点，victim是一个已经在该系统上经过认证的用户。在server的响应中，site发送一个带有代表victim身份的cookie给victim，原则上，一旦浏览器接收到了服务器发送的cookie，就会在后面对站点的访问中都带上这个cookie；<br>
+　　第2点：如果应用在URL中没有使用会话相关的信息，那就意味着应用的URL，它们的参数，相应的值可以被识别。<br>
+　　第3点：是指诸如cookie、或者是基于http的认证信息，存放在浏览器中后，就会包含在后面的每次请求中。<br>
+　　下面，我们用Get方法在做个例子，如果用户已经通过了认证，那么在他做下一次请求时，请求数据中会自动加上cookie<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303330206.png" alt="" loading="lazy"><br>
+GET请求一般会有多种原因产生，<br>
+　　* 用户真正在访问Web系统；<br>
+　　* 用户在访问地址栏中切实敲入了URL；<br>
+　　* 用户点击了一个连接指向了这个URL；<br>
+　　这些调用对于系统来说是无法区别的，特别的，第三种方式相对来说是极为危险的，有很多种方法可以用来仿造连接的真实属性，连接可以被嵌入到一封邮件中，或者在某个恶意网站上，看上去这个连接好像是在访问另一个网站，而事实上却是被引到了Web系统的访问上。如果用户点击了连接，由于它已经被系统认证通过了，浏览器就会对系统提交一个待用认证信息的GET请求。这就在系统上完成了一个操作（尽管这个操作不是用户本身所期望做的）。<br>
+攻击者还可以通过Web的一些标记，注入img来达到这个目的。举个例子，假设攻击者发给用户一封邮件，引诱用户访问了一个URL，而这个URL的页面含有下面的HTML：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303326048.png" alt="" loading="lazy"><br>
+　那么用户在点击这个URL时，浏览器将会做什么呢，它将会尝试显示一个宽度为0的图片，而事实上这是访问了www.company.example/action，显然如果浏览器并没有阻断下载img的图片，那么该动作就会执行了。<br>
+　　该问题的存在是基于以下一些事实：<br>
+　　* 有一些HTML的tags可能会执行一些脚本（如img）<br>
+　　* 浏览器本身并不能识别img这个tag里的值是否是真实合法的图片<br>
+　　* 不管图片是否是在网站本地或是其他网站，图片都会被下载<br>
+　　举个例子：<br>
+　　假设用户要登录到某个防火墙web管理系统，登录时，用户必须对系统进行身份验证，所以用户的会话信息会保存在cookie中。假设我们的防火墙管理系统允许认证过的用户根据防火墙规则的排号来删除规则（甚至允许用户输入“*”来删除所有的规则），那么下一步显示的就是删除页面，假定表单下面就会提交一个GET请求，是以如下的格式：</p>
+<pre><code>　　https://[target]/fwmgt/delete?rule=1
+　　或https://[target]/fwmgt/delete?rule=*
+</code></pre>
+<p>我们举的例子很简单，仅仅是为了说明CSRF的存在<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303320855.png" alt="" loading="lazy"><br>
+那么，如果用户输入了“<em>”，然后按取了Delete键，那么就提交了如下的GET请求，<br>
+　　https://www.company.example/fwmgt/delete?rule=</em><br>
+　　同时就删除了所有的防火墙规则。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303316792.png" alt="" loading="lazy"><br>
+显然，如果用户直接在地址栏中输入<code>https://[target]/fwmgt/delete?rule=*</code>，或者通过某个链接转接到这个url，或者如上面所说，把链接隐藏在img这个tag后面，诸如此种方法，如果用户在点击这个连接的时候，已经登录进了防火墙管理系统，显然这个访问就能成功奏效，从而达到了删除所有规则的目的。<br>
+　　让我们想象一下，如果这样的攻击用于一些敏感系统，竞拍系统，或者是银行转账等等，所造成的后果将会多大。<br>
+　　应对方法：<br>
+　　对于用户来说，由于CSRF漏洞极为普遍，所以在我们的日常使用中要注意以下几点：<br>
+　　* 保证系统使用完就注销登录的习惯；<br>
+　　* 不要使用浏览器的保存用户名/密码的功能，不要使用网站的“记住我”功能<br>
+　　* 不要使用同一个浏览器浏览普通网页和你的关键性Web系统<br>
+　　对于开发人员来说，如上所述，由于将会话相关的信息放入了URL才造成了上述的问题，那么如果我们在URL层面增加会话特定的信息，那么对攻击者来说就增加了了解URL结构的难度。另外，我们还可以尽可能的使用POST，而不是GET；尽可能多的增加一些诸如“你确定要这样做吗？”的页面等……<br>
+　　说到这，想必大家都已明白CSRF是什么了，下面我们来看下针对这个漏洞，作为测试人员该如何去测试。<br>
+　　一般的测试用例应该如下构建：<br>
+　　1假设u是需要被测试的URL，例如u =http://www.example.com/action；<br>
+　　2构建一个包含了访问上述URL信息的html页面；<br>
+　　3确保合法用户已经登录了系统；<br>
+　　4诱使该用户在自己不知情的情况下访问上述URL；<br>
+　　5确认是否执行了该操作。<br>
+<strong>A6-安全误配置（Security Misconfiguration）</strong><br>
+排在第六位的是不当的安全配置，事实上，这个问题可能存在于Web应用的各个层次，譬如平台、Web服务器、应用服务器，系统框架，甚至是代码中。开发人员需要和网络管理人员共同确保所有层次都合理配置，有很多自动化的工具可以用于查找是否缺少补丁，错误的安全配置，缺省用户是否存在，不必要的服务等等。<br>
+这个漏洞往往使得攻击者能够访问未被授权的系统数据和功能，甚至有时，会导致整个系统被破坏。<br>
+其实说这个漏洞该怎么防范并没有什么实际的措施，唯一的方法就是尽可能的对你的系统的所有方面都做好安全配置。<br>
+         验证你的系统的安全配置<br>
+         可使用自动化的安全配置向导；<br>
+         必须覆盖整个平台和系统；<br>
+         对所有组件都必须保证安装了最新的补丁；<br>
+         完善分析变更带来的安全影响<br>
+         对所有你做的安全配置进行记录<br>
+         使用自动化扫描工具对你的系统进行验证。</p>
+<p><strong>A7-限制远程访问失败</strong><br>
+排在第7位的是“Failure to Restrict URL Access”，这个漏洞事实上也是与认证相关的，与我们前面提到的Top4不安全的直接对象引用也是类似的，不同在于这个漏洞是说系统已经对URL的访问做了限制，但这种限制却实际并没有生效。常见的错误是，我们在用户认证后只显示给用户认证过的页面和菜单选项，而实际上这些仅仅是表示层的访问控制而不能真正生效，攻击者能够很容易的就伪造请求直接访问未被授权的页面。<br>
+我们举个例子来说明这个过程：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1628303302497.png" alt="" loading="lazy"><br>
+1攻击者发现他自己的访问地址为/user/getAccounts；<br>
+2他修改他的目录为/admin/getAccounts或/manager/getAccounts；<br>
+3这样攻击者就能够查看到更多的账户信息了。<br>
+那么，该如何防范出现这个漏洞呢？<br>
+        对每个URL，我们必须做三件事<br>
+        如果这个URL不是公开的，那么必须限制能够访问他的授权用户；<br>
+        加强基于用户或角色的访问控制；<br>
+        完全禁止访问未被授权的页面类型（如配置文件、日志文件、源文件等）<br>
+        验证你的构架<br>
+        在每一个层次都使用简单肯定的模型；<br>
+        确保每一层都有一个访问机制<br>
+        验证你的实现<br>
+        不要使用自动化的分析工具<br>
+        确保每个URL都被外部过滤器或其他机制保护<br>
+        确保服务器的配置不允许对非授权页面的访问<br>
+<strong>A8-未验证的重定向和传递</strong><br>
+在Web应用中重定向是极为普遍的，并且通常重定向所引向的目的是带有用户输入参数的目的URL，而如果这些重定向未被验证，那么攻击者就可以引导用户访问他们所要用户访问的站点。<br>
+同样，转发也是极为普遍的，本质上转发是在同一个应用中对一个新页面发送请求，并且有时是用参数来定义目标页面的。同样，如果参数未被验证，那么攻击者就可以利用其来绕过认证或是授权检查。<br>
+而最终造成的后果，重定向会使得用户访问钓鱼网站或是恶意网站，而转发则会让攻击者利用先前安全检查过的请求来绕过认证或是授权。<br>
+对于这个漏洞，常用的防范方式包括：<br>
+         尽可能的避免使用重定向和转发机制；<br>
+         如果使用了，那么在定义目标url的时候不要包含用户参数；<br>
+         如果一定要包含用户的参数，那么，<br>
+         对每个参数都必须进行验证以确保它的正确性和合法性；或是<br>
+         在服务器端提供映射机制，将用户的选择参数转变为真正的目标页面；<br>
+<strong>A9-不安全的加密存储</strong><br>
+我们常说数据的安全性是极为重要的，而在程序人员的编程过程中，由于有些需求或是设计的问题，往往会造成特别是机密数据的安全性得不到保证，常见的不安全的数据存储包括：<br>
+        未能识别全部的机密数据；<br>
+        对某个机密数据未能识别其所有的存放地；（数据库、文件、目录、日志文件……）<br>
+        未对数据的每个存放地进行合理的保护<br>
+那么显然，这样造成的后果是极为严重的：<br>
+        攻击者能够取得或是篡改机密的或是私有的信息；<br>
+        攻击者通过这些秘密的窃取从而进行进一步的攻击；<br>
+        造成企业形象破损，用户满意度下降，甚至会有法律诉讼等；<br>
+一般来说，我们采用以下的方法来避免这个漏洞的存在：<br>
+        验证你的结构<br>
+        识别所有的敏感数据；<br>
+        识别这些数据存放的所有位置；<br>
+        确保所应用的威胁模型能够应付这些攻击；<br>
+        使用加密手段来应对威胁<br>
+        使用一定的机制来进行保护<br>
+        文件加密；数据库加密；数据元素加密<br>
+        正确的使用这些机制<br>
+        使用标准的强算法；<br>
+        合理的生成，分发和保护密钥；<br>
+        准备密钥的变更<br>
+        验证实现方法<br>
+        确保使用了标准的强算法；<br>
+        确保所有的证书、密钥和密码都得到了安全的存放；<br>
+        有一个安全的密钥分发和应急处理的方案；<br>
+<strong>A10-不足的传输层保护</strong><br>
+最后一个漏洞事实上也是与上一个漏洞有所相似，都是一种缺少了对敏感数据保护的漏洞。不同在于这种漏洞更多关注的是数据在网络上的传输，造成这个漏洞的原因往往如下：<br>
+         未能识别所有的敏感数据；<br>
+         未能识别敏感数据发送的所有位置；<br>
+         未能在每个位置对敏感数据提供合理的保护<br>
+这个漏洞造成的后果和排在第9位的类似，这里不做赘述。<br>
+但是防范方法却和第9位的方法有一定的区别，主要的方法包括：<br>
+         提供合理的保护机制<br>
+         对于敏感数据的传输，对所有连接都要使用TLS；<br>
+         在传输前对单个数据都要进行加密；（如XML-Encryption）<br>
+         在传说前对信息进行签名；（如XML-Signature）<br>
+         正确的使用这些机制<br>
+         使用标准的强算法<br>
+         合理管理密钥和证书；<br>
+         在使用前验证SSL证书</p>
+<p>1 Web 应用程序布署环境测试<br>
+用来架构Web 网站的UNIX、LINUX、WINDOWS 等服务器端操作系统和服务器软件都可能存在漏洞（如前不久被发现的LINUX 系统内核漏洞），这些漏洞都会对Web 应用程序造成安全威胁。因此，在布署Web 应用程序前，应对Web 应用程序的布署环境进行严格的测试，检查一切已知的漏洞，发现新的漏洞，将应用程序环境带来的安全威胁降底到最低程度。</p>
+<p>1.1HTTP 请求引发漏洞的测试<br>
+超长URL 的HTTP 请求，特殊格式字符的HTTP 请求，某些不存在文件的HTTP 请求，COM Internet Services (CIS)– RPC over HTTP 漏洞，从而引发拒绝服务，源代码显示，站点物理路径泄露，执行任意命令及命令注入等安全问题。因此，对非常规URL 的HTTP 请求要做全面的测试，以发现这方面的漏洞。测试工作以人工方式为主，并配以Tripwire和AIDE 的完整性检查工具检查系统文件，对于发现的漏洞，可采取关闭所有不必要的服务和安装系统补丁加固系统。另外要保持对最新补丁和安全公告的追踪，在实验环境进行测试后正式安装在布署Web 应用程序的主机上。</p>
+<p>1.2 操作系统目录安全性及Web 应用程序布署环境目录遍历问题测试<br>
+目录权限和目录安全性直接影响着Web 的安全性。测试中要检查Web 应用程序布署环境的目录权限和安全性，不给恶意用户任何可用的权限。目录遍历可能导致用户从客户端<br>
+看到或下载、删除Web 服务器文件。因此，要测试Web 应用程序及布署环境是否存在目录遍历问题；若存在该漏洞，可通过在各级目录中存放默认文档或及时升级系统来避免。</p>
+<p>1.3 系统中危险组件的测试<br>
+系统中危险组件的存在，会给恶意用户留下非常危险的“ 后门”。如恶意用户可利用Windows 系统中存在的FileSystemObject 组件篡改、下载或删除服务器中的任何文件。因此，若系统中需要使用这些组件，可将这些组件更名；否则将其删除。</p>
+<p>1.4 TCP 端口测试<br>
+开放非必要的端口，会给Web 应用程序带来安全威胁。因此，在布署Web 应用程序前，要用端口扫描软件对布署环境进行TCP 端口测试，禁止UDP，只开启必要的TCP 端口。另<br>
+外，在系统运行过程中要不断测试，在服务器端使用lsof 工具(For Unix)或者Inzider 工具(For windows)扫描端口使用情况，必要时从远程使用Nmap 工具进行异常端口占用检测。如果发现有未知的进程占用端口，要关闭端口或杀掉进程。</p>
+<p>2 应用程序测试<br>
+应用程序中存在的漏洞是影响Web 安全的主要方面，程序员编写的软件都可能有漏洞，有些漏洞可能要经过许多年后才会被发现。特别是不断新加的功能，这些改动，都会带<br>
+来安全方面的问题。因此，应用程序测试要伴随着系统开发、布署和运行的全过程。</p>
+<p>2.1 SQL 注入漏洞测试<br>
+2.1.1 SQL注入漏洞攻击实现原理<br>
+SQL（Structured Query Language）是一种用来和数据库交互的语言文本。SQL注入的攻击原理就是攻击者通过Web应用程序利用SQL语句或字符串将非法的数据插入到服务器端数据库中，获取数据库的管理用户权限，然后将数据库管理用户权限提升至操作系统管理用户权限，控制服务器操作系统，获取重要信息及机密文件。<br>
+SQL注入利用的是正常的HTTP服务端口，表面上看来和正常的web访问没有区别，隐蔽性极强，不易被发现。<br>
+SQL注入过程</p>
+<p>如上图所示，SQL注入攻击过程分为五个步骤：<br>
+第一步：判断Web环境是否可以SQL注入。如果URL仅是对网页的访问，不存在SQL注入问题，如：http://news.xxx.com.cn/162414739931.shtml就是普通的网页访问。只有对数据库进行动态查询的业务才可能存在SQL注入，如：http://www.google.cn/webhp?id＝39，其中?id＝39表示数据库查询变量，这种语句会在数据库中执行，因此可能会给数据库带来威胁。<br>
+第二步：寻找SQL注入点。完成上一步的片断后，就要寻找可利用的注入漏洞，通过输入一些特殊语句，可以根据浏览器返回信息，判断数据库类型，从而构建数据库查询语句找到注入点。<br>
+第三步：猜解用户名和密码。数据库中存放的表名、字段名都是有规律可言的。通过构建特殊数据库语句在数据库中依次查找表名、字段名、用户名和密码的长度，以及内容。这个猜测过程可以通过网上大量注入工具快速实现，并借助破解网站轻易破译用户密码。<br>
+第四步：寻找WEB管理后台入口。通常WEB后台管理的界面不面向普通用户<br>
+开放，要寻找到后台的登陆路径，可以利用扫描工具快速搜索到可能的登陆地址，依次进行尝试，就可以试出管理台的入口地址。<br>
+第五步：入侵和破坏。成功登陆后台管理后，接下来就可以任意进行破坏行为，如篡改网页、上传木马、修改、泄漏用户信息等，并进一步入侵数据库服务器。</p>
+<p>2.1.2 SQL注入漏洞防范措施<br>
+SQL注入漏洞攻击的防范方法有很多种，现阶段总结起来有以下方法：<br>
+（1）数据有效性校验<br>
+如果一个输入框只可能包括数字，那么要通过校验确保用户输入的都是数字。如果可以接受字母，那就要检查是不是存在不可接受的字符，最好的方法是增加字符复杂度自动验证功能。确保应用程序要检查以下字符：分号、等号、破折号、括号以及SQL关键字。另外限制表单数据输入和查询字符串输入的长度也是一个好方法。如果用户的登录名最多只有10个字符，那么不要认可表单中输入10个以上的字符，这将大大增加攻击者在SQL命令中插入有害代码的难度。<br>
+（2）封装数据信息<br>
+对客户端提交的数据进行封装，不要将数据直接存入cookie中，方法就是在编程的代码中，插入session、if、try、else，这样可以有效地防止攻击者获取cookie中的重要信息。<br>
+（3）去除代码中的敏感信息<br>
+将在代码中存在的用户名、口令信息等敏感字段删除，替换成输入框。<br>
+如：SQL=&quot; select from users where username = ’admin’and password= ’1234567’ &quot;这样显然会暴露管理员的用户名、口令信息。可以将其修改成SQL= &quot; select * from users where username='&quot; +Txtuser.Text + &quot;' and userpwd='&quot; + Textpwd.Text + &quot;'&quot;，这样就安全了很多，入侵者也是不会轻易的就获取到用户名、口令信息。<br>
+（4）替换或删除单引号<br>
+使用双引号替换掉所有用户输入的单引号，这个简单的预防措施将在很大程度上预防SQL注入漏洞攻击，单引号时常会无法约束插入数据的Value，可能给予输入者不必要的权限。用双引号替换掉单引号可以使大部分SQL注入漏洞攻击失败。<br>
+如：“select* from users where username='&quot; + admin + &quot;' and userpwd='&quot; + 1234567+ &quot;'”显然会得到与“select * from users where username='admin' and password= '1234567'”相同的结果。<br>
+（5）指定错误返回页面<br>
+攻击者有时从客户端尝试提交有害代码和攻击字符串，根据Web Service给出的错误提示信息来收集程序及服务器的信息，从而获取想得到的资料。应在Web Service中指定一个不包含任何信息的错误提示页面。<br>
+（6）限制SQL字符串连接的配置文件<br>
+使用SQL变量，因为变量不是可以执行的脚本，即在Web页面中将连接数据库的SQL字符串替换成指定的Value，然后将Web.config文件进行加密，拒绝访问。<br>
+（7）设置Web目录的访问权限<br>
+将虚拟站点的文件目录禁止游客用户（如：Guest用户等）访问，将User用户权限修改成只读权限，切勿将管理权限的用户添加到访问列表。<br>
+（8）最小服务原则<br>
+Web服务器应以最小权限进行配置，只提供Web服务，这样可以有效地阻止系统的危险命令，如ftp、cmd、vbscript等。<br>
+（9）鉴别信息加密存储<br>
+将保存在数据库users表中的用户名、口令信息以密文形式保存，也可以对users表进行加密处理，这样可以大大增加对鉴别信息访问的安全级别。<br>
+（10）用户权限分离<br>
+应尽可能的禁止或删除数据库中sa权限用户的访问，对不同的数据库划分不同的用户权限，这样不同的用户只能对授权给自己的数据库执行查询、插入、更新、删除操作，就可以防止不同用户对非授权的数据库进行访问。</p>
+<p>2.1.3 SQL注入漏洞检测方法<br>
+SQL注入漏洞攻击检测分为入侵前的检测和入侵后的检测。入侵前的检测，可以通过手工方式，也可以使用SQL注入漏洞扫描工具软件。检测的目的是为预防SQL注入漏洞攻击，而对于SQL注入漏洞攻击后的检测，主要是针对审计日志的查看，SQL注入漏洞攻击成功后，会在Web Service和数据库的审计日志中留下“痕迹”。检测方法如下：</p>
+<p>（1）动态SQL检查<br>
+动态的SQL语句是一个进行数据库查询的强大的工具，但把它和用户输入混合在一起就使SQL注入成为了可能。将动态的SQL语句替换成预编译的SQL或者存储过程对大多数应用程序是可行的。预编译的SQL或者存储过程可以将用户的输入作为参数而不是命令来执行，这样就限制了入侵者的行动。当然，它不适用于存储过程中利用用户输入来生成SQL命令的情况。在这种情况下，用户输入的SQL命令仍可能得到执行，数据库仍然存在SQL注入漏洞攻击的危险。</p>
+<p>（2）有效性校验<br>
+如果一个输入框只可能包括数字，那么要通过验证确保用户输入的都是数字。如果可以接受字母，检查是不是存在不可接受的字符，那就需要设置字符串检查功能。确保应用程序要检查以下字符：分号、等号、破折号、括号以及SQL关键字。</p>
+<p>（3）数据表检查<br>
+使用SQL注入漏洞攻击工具软件进行SQL注入漏洞攻击后，都会在数据库中生成一些临时表。通过查看数据库中最近新建的表的结构和内容，可以判断是否曾经发生过SQL注入漏洞攻击。</p>
+<p>（4）审计日志检查<br>
+在Web服务器中如果启用了审计日志功能，则Web Service审计日志会记录访问者的IP地址、访问时间、访问文件等信息，SQL注入漏洞攻击往往会大量访问某一个页面文件（存在SQL注入点的动态网页），审计日志文件会急剧增加，通过查看审计日志文件的大小以及审计日志文件中的内容，可以判断是否发生过SQL注入漏洞攻击事件；另外还可以通过查看数据库审计日志，查询某个时间段是否有非法的插入、修改、删除操作。</p>
+<p>（5）其他<br>
+SQL注入漏洞攻击成功后，入侵者往往会添加特权用户（如：administrator、root、sa等）、开放非法的远程服务以及安装木马后门程序等，可以通过查看用户帐户列表、远程服务开启情况、系统最近日期产生的一些文件等信息来判断是否发生过入侵。<br>
+SQL 注入攻击源于英文“SQL Injection Attack”。微软技术中心从两个方面对SQL 注入攻击进行了描述：一是脚本注入式的攻击；二是恶意用户输入用来影响被执行的SQL脚本。Stephen Kost 对这种攻击形式的描述是“从一个数据库获得未经授权的访问和直接检索”。<br>
+SQL 注入就其本质而言，是利用SQL 语法，对应用程序中的漏洞的攻击。当攻击者能够操纵数据，在应用程序中插入一些SQL 语句时，SQL 注入攻击就发生了。理论上，这种攻击对于所有基于SQL 语言标准的数据库软件都是有效的，包括MS SQL Server，Oracle，DB2，Sybase，MySQL等。特别是现在一些AQL 注入攻击工具的出现，使得Web应用更易遭到SQL 注入攻击。原始的手工测试不适用于大型Web 应用程序，可使用N-Stealth、WebInspect、Wikto WebScarab、Nikto 等工具进行扫描，测试系统是否存在SQL 注入的安全漏洞。为防止SQL 注入，程序员编写代码时，要对客户端和服务端进行两级检查。检查数据类型、数据长度和敏感字符的合法性。客户端检查可减少网络流量，降低服务器负荷，将一般误操作、低等级攻击与高等级攻击行为区分开来。对于绕开客户端检查的攻击，提交的数据被直接发往服务端，服务端检查到的提交异常基本可以认定为恶意攻击行为所致，就应中止提交信息的处理，进行攻击备案，并对客户端给出出错或警告提示。另外，在构造查询时，应根据用户输入的内容设置参数值来创建参数化查询，从而避免SQL 注入及由此带来的安全问题。</p>
+<p>2.2 表单漏洞测试<br>
+2.2.1 表单漏洞实现原理<br>
+表单提交是当前Web应用中的重要内容，用户可以通过这种方式与服务器进行数据传递。在通常情况下，会在提交表单之前在服务器上进行表单数据的验证，这样可以节省服务器资源，但同时也为服务器带来了安全漏洞。<br>
+表单提交的数据的验证和服务端数据接收的方法直接影响到Web 的安全。随着大量的支持参数的“模糊化”（“fuzzing”）、腐朽（corruption）、以及野蛮强制增长工具的出现，使用非校验输入进行攻击造成的安全问题越来越多。因此，表单漏洞测试是Web 安全所必需的。</p>
+<p>2.2.2 表单漏洞防范措施<br>
+为防止表单漏洞的攻击，编程时应有一个中心化的、强大的验证机制来对所有HTTP 请求的输入进行验证，过滤可能危及后台数据库的特殊字符、脚本语言和命令。<br>
+为防止攻击者绕过客户端的安全机制，对这些字符的检测应在Web 服务端实现，采用清除或者强制替换的方法避免服务器端的安全，并且使用MD5 哈希(hash)函数或者时间戳数字签名技术对客户端敏感数据必须进行完整性保护。<br>
+解决这种漏洞的方法为在提交表单页面进行校验的同时，在接收表单的处理页面也进行校验，这样即使用户使用非法方式提交的非法数据通过了页面验证也无法通过服务器上的验证。</p>
+<p>2.2.3 表单漏洞检测方法<br>
+⑴ 表单数据提交测试。<br>
+	对表单数据提交的测试，主要检查程序中是否对表单所提交数据的完整性、正确性进行了验证（如果在页面部分进行验证的话），如：查询条件输入一些特殊字符，比如“--”，“‘，，’”，““”等会使查询的SQL语句出错<br>
+	检查程序中是否屏蔽了表单提交的html 语句、VBScript 和Jscript 等客户端脚本语句<br>
+	检查是否会出现“脚本利用”问题<br>
+	检查程序是否对表单域长度进行了真正的限制<br>
+	检查是否存在重复提交数据的问题<br>
+	检查这些验证是否在服务器端进行<br>
+对表单提交数据的测试，可以采用手工和编写可重复使用的脚本代码相结合的方法，进行边界值测试、等价类测试，以及异常类测试。编写的脚本代码可以在测试、回归测试时运行。<br>
+若在测试中发现数据完整性、正确性验证只是在客户端进行，应在服务器端增加对表单提交数据的验证，防止出现本地提交表单的漏洞。<br>
+⑵ 本地提交表单的漏洞测试。<br>
+本地提交表单的漏洞容易受到参数篡改的攻击。这类测试可用手工的方式进行。<br>
+对于如下用户注册页面：</p>
+<pre><code>&lt;script&gt;  
+function checkUser(){  
+if(document.getElementById(&quot;userName&quot;).value==&quot;&quot;){  
+document.getElementById(&quot;button&quot;).disabled=true;  
+alert(&quot;用户名不可以为空&quot;);  
+return false;  
+}else{  
+document.getElementById(&quot;button&quot;).disabled=false;  
+}  
+}  
+function checkPsw(){  
+if(document.getElementById(&quot;password&quot;).value==&quot;&quot;){  
+document.getElementById(&quot;button&quot;).disabled=true;  
+alert(&quot;密码不可以为空&quot;);  
+return false;  
+}else{  
+document.getElementById(&quot;button&quot;).disabled=false;  
+}  
+}  
+&lt;/script&gt;  
+&lt;form action=&quot;regist.php&quot; method=&quot;POST&quot;&gt;  
+&lt;input type=&quot;text&quot; name=&quot;userName&quot; onblur=&quot;checkUser()&quot;/&gt;  
+&lt;input type=&quot;password&quot; name=&quot;password&quot; onblur=&quot;checkPsw()&quot;/&gt;  
+&lt;input type=&quot;submit&quot; name=&quot;button&quot; value=&quot;提交&quot;/&gt;  
+&lt;/form&gt; 
+</code></pre>
+<p>此页面中的JavaScript对表单中用户名和密码是否为空进行了判断，如果用户名或密码有一者为空时就会将&quot;提交&quot;按钮设置为不可用，这样可以阻止用户的提交。<br>
+但是这个页面的内容可以完全通过查看页面源代码的方式看到，用户可以通过查看源代码的方式将其中的JavaScript部分去掉，同时将表单action请求指向此页面原来的地址，然后将修改后的页面保存为一个静态HTML页面，这样就可以完成一个非法的数据提交。修改之后的页面代码如下：</p>
+<pre><code>&lt;form action=&quot;http://www.abcdefg.com/testbug/regist.php&quot; method=&quot;POST&quot;&gt;  
+&lt;input type=&quot;text&quot; name=&quot;userName&quot; onblur=&quot;checkUser()&quot;/&gt;  
+&lt;input type=&quot;password&quot; name=&quot;password&quot; onblur=&quot;checkPsw()&quot;/&gt;  
+&lt;input type=&quot;submit&quot; name=&quot;button&quot; value=&quot;提交&quot;/&gt;  
+&lt;/form&gt; 
+</code></pre>
+<p>如此一个页面，完全允许用户提交任何一种数据，包括空的用户名和密码。</p>
+<p>2.3 Cookie欺骗漏洞测试</p>
+<p>2.3.1 Cookie欺骗实现原理<br>
+Cookie最先是由Netscape（网景）公司提出的，Netscape官方文档中对Cookie的定义是这样的：Cookie是在HTTP协议下，服务器或脚本可以维护客户工作站上信息的一种方式。<br>
+Cookie的用途非常广泛，在网络中经常可以见到Cookie的身影。它通常被用来辨别用户身份、进行session跟踪，最典型的应用就是保存用户的账号和密码用来自动登录网站和电子商务网站中的“购物车”。<br>
+Cookie注入简单来说就是利用Cookie而发起的注入攻击。从本质上来讲，Cookie注入与传统的SQL注入并无不同，两者都是针对数据库的注入，只是表现形式上略有不同罢了。</p>
+<p>2.3.2 Cookie欺骗防范措施<br>
+（1）删除Cookie记录<br>
+在IE浏览器【工具】【Internet选项】中删除Cookie，也可借助相应安全软件来实现。<br>
+（2）更改Cookie文件的保存位置<br>
+在【Internet选项】对话框中单击【设置】按钮，在设置页面单击【移动文件夹】出现如下图，在其中设置相应保存位置（如F:\），即可成功更改Cookie文件的保存位置。<br>
+（3）添加防注入代码</p>
+<p>2.3.3 Cookie欺骗监测方法<br>
+如果系统使用了cookie，就要对cookie 的使用情况进行检测。检查Cookies 在生存期内能否正常工作而且对这些信息是否加密，是否按预定的时间进行保存，是否存在cookie 可被伪造提交的问题，刷新对Cookie 有什么影响及过期处理等。</p>
+<p>2.4 用户身份验证测试</p>
+<p>2.4.1 用户身份验证漏洞防范措施<br>
+	限制用户名、密码最大字符数、字符类型<br>
+	限制登录次数，超出允许次数后给出友好提示<br>
+	限制用户权限<br>
+用户身份验证，客户端提交的密码需加密，服务端验证密码使用MD5，若在测试中发现问题，应及时修改代码，使用加密码算法对密码加密。</p>
+<p>2.4.2 用户身份验证检测方法<br>
+	测试有效和无效的用户名和密码，测试是否大小写敏感，是否有最大字符数的限制规则等。<br>
+	测试重试次数的限制，如果登录失败的次数超过允许值，应用程序将会做出何种反应 （譬如拒绝此IP地址在短时间内的登录）。<br>
+	测试是否可以利用历史登录信息或以前的URL来绕开登录程序。<br>
+	测试执行添加、删除、修改等动作中是否需要登录操作，退出系统之后的操作是否仍可继续等。<br>
+	测试用户密码是否符合指定要求（字符、长度），如果不符合，对有什么影响，新用户自己修改密码后，创建时分配的密码是否会失效。<br>
+	测试用户账户过期后，是否完全、正确的删除其信息或使其失效。<br>
+	是否存在不验证而直接进入Web 应用系统的问题，是否存在不登录就可查看非会员页面和权限问题。<br>
+用户身份验证测试一般使用手工和测试工具相结法的方法，若在测试中发现问题，应及时修改代码，使用加密码算法对密码加密，采用Session 对象进行登录验证。</p>
+<p>2.5 文件操作漏洞测试</p>
+<p>2.5.1 文件操作漏洞实现原理<br>
+上存漏洞常见有，文件名检测漏洞，还有就是文件格式检查漏洞。 另外还有一个，就是保存文件存在漏洞。这类漏洞，主要是可以读取用户传入路径名称，采用不正确的过滤方法，导致恶意用户，将文件上存到非预期的地方，带来安全隐患。</p>
+<p>2.5.2 文件操作漏洞防范措施<br>
+抓住几个地方即可，先来分析下，既然用户要上存文件，而且文件将是多种多样格式；可能有的文件内容与用户传入格式不一致，有的文件内容还夹杂木马代码。 那么，我们让用户上存文件，跟站点文件做一个分别授权，做隔离。<br>
+	让保存上存目录独立开来，目录权限只读不能执行<br>
+这一步从系统设计加以授权，无论你上次什么文件，都不可能执行到。就算我不做任何检测，你的文件都上存到这里了，也不会对我系统构成安全。（如果有用户上存一些反动言语的图片，那另外需要处理的）<br>
+	不直接使用服务器传入值，所有都要进行检测<br>
+这类跟我们做一切输入都是有害原则一样，对于客户端传入的：type, name ，都要进行判断，不直接使用。对于要生成到某个目录，某个文件名。<br>
+文件名最好方法是：自己写死目录（不要读取传入目录），文件名，最好自己随机生成，不读取用户文件名。文件扩展名，可以取最右边”.”后面字符。<br>
+以上2个方法，刚好从2个方面对上存做了整体约束。<br>
+方法1：只要保证文件写对了位置，然后从配置上，对写入目录进行权限控制，这个是治本。可以做到，你无论上存什么文件，都让你没有权限跳出去可以运行。<br>
+方法2 ： 保存上存文件名，按照自己指定目录写入，并且文件名自己生成的。<br>
+以上2个方法，一起使用，可以保证文件正确存到地方，然后，权限可以控制。 这里顺便说明下， 判断用户上存文件是否满足要求类型，就直接检查文件扩展名，只要满足扩展名就让上存。 反正，做了执行权限限制，你不按要求上存内容，也无妨。 反正，不能执行，也不会有多大危害性的。<br>
+正确步骤：<br>
+1.读取文件名，验证扩展名是不是在范围内<br>
+2.自己定义生成的文件名，目录，扩展名可以来自文件名扩展名。 其它值，都自己配置，不读取上存中内容<br>
+3.将文件 移到新目录(这个目录权限设置只读)</p>
+<p>2.5.3 文件操作漏洞检测方法<br>
+	测试系统是否允许上传脚本文件、可执行文件等有可能给系统带来危害的文件。<br>
+	若有下载功能，可供下载的文件是否与系统的程序分别存放，是否存在数据库文件、包含文件和页面文件下载的可能。<br>
+文件操作漏洞测试一般使用手工测试的方法，若发现问题，应及时修改代码并将可供下载的文件重新布署。</p>
+<p>2.6 Session 测试<br>
+2.6.1 客户端对服务器端的欺骗攻击</p>
+<p>2.6.1.1 攻击原理<br>
+在用户访问并登录了某个网站后，该网站的服务器就会给该用户机子上分配一个sessionid，此信息是通过客户机的cookies存放在某一文件夹里面的。session本身并不是长期有效，每一个session在客户端关闭浏览器后sessionid都会自动撤销，但服务端默认保存20分钟。正是有这20分钟的时间，给欺骗带来了可能。 服务器端对不同用户的识别，只能通过sessionid进行，也就是说网站服务器端是“只认id不认人”，只要id符合，就认为是合法用户，所以攻击者只要得到了被攻击对象的sessionid就可以以被攻击对象的身份合法登录，而20分钟的默认保留值，也使得攻击者即使在被攻击对象关闭浏览器后依然有一定的时间成功登录。<br>
+当前利用此原理进行攻击的常用手法是利用网站本身的xss漏洞或者是诱骗被攻击者点击相应链接，以使其隐蔽访问攻击者事先假设好的网站并执行恶意代码，获取被攻击者的cookies信息从而得到sessionid。最后用可以修改sessionid的浏览器或其它可以提交数据的工具伪装成被攻击者的id合法登录。</p>
+<p>2.6.1.2 防范措施<br>
+此类攻击过程较为隐蔽，但也有其局限性。因为session本身有时间限制，特别是用户在关闭浏览器后，留给攻击者的时间也只有20分钟。另外，在触发机制上，盗窃cookies代码的执行必须是用户自己触发，也就是说，用户什么时候触发代码，攻击者是不知道的，从用户触发恶意代码到session失效，攻击者只有很短的时间进行非法活动。<br>
+所以，要对此类攻击进行防范，客户端本身应对陌生人给出的超级链接保持警惕，特别是对比较长的超链接更要小心。每次登录网站后应该及时利用网站的退出功能退出和清除本机的cookies。另外登录密码的设置不要过于简单，尽量使用字母与数字组合，密码长度应该在8位以上。网站管理员在开发网站时要注意检查网站的xss漏洞，要注意session有效期的设置，一般不要把有效期设置太长，这样即使真的被攻击也能让其非法活动时间大大缩短。</p>
+<p>2.6.2直接对服务器端的欺骗攻击</p>
+<p>2.6.2.1 攻击原理<br>
+与客户端欺骗不同，此类攻击是对服务器端的直接欺骗。网站开发者在管理员管理页面通常都会有session验证，目的是为了验证当前登录者是否为合法用户。<br>
+但如果攻击者能够在登录管理页面前，使用某种手段使得session（”admin”）被赋值（不一定是网站开发者所赋予的值）则验证代码则无法拦截此类非法登录。从而达到了直接欺骗服务器而以管理员身份直接登录的目的。<br>
+当前利用此原理进行攻击的常用手法是都是在取得了某网站域名下的某个webshell进行的。如许多免费空间网站都会在主域名下允许用户有自己的二级域名，而此域名的目录又和网站主目录在同一站点下，这样就为欺骗攻击提供了条件。而其它一些网站由于自身的xss等漏洞，使得用户拿下某个webshell，从而也使欺骗攻击成为了可能。在具备了欺骗必备条件后，攻击者还必须知道session验证的源码，从而才能编写恶意代码绕过系统原有的验证。当然，如果验证源码是上文所列的情况，则攻击者只需知道session所用变量即可，因为其并没有给出具体的赋值，只是简单的验证是否为空。攻击者只要赋任意值即可通过此验证。</p>
+<p>2.6.2.2 防范措施<br>
+此类攻击手法也相当隐蔽，危害极大。因为攻击一旦成功，则攻击者即可以管理员身份非法登录。从此类欺骗攻击的原理我们知道，此攻击要成功必须具备多个先决条件：获得该域名下的一个webshell或者攻击网站与被欺骗网站在同一主站的同一目录下；被攻击主站采取了session验证管理页面；获得被攻击站点的session验证源码；知道被攻击主站的管理页面地址。<br>
+所以我们要防范此类攻击，就只能从几个限制条件考虑。网站开发者应该尽量避免各种漏洞，站点在使用前应该经过周密而详尽的测试，从而降低被发现漏洞的可能。对于网站源码不能轻易泄露，特别是在公开场合。如果是使用公开源码假设的网站，更要把源码关键部位更改。本攻击欺骗的关键源码部位即session验证源码。</p>
+<p>2.6.3 Session漏洞检测方法<br>
+（1）Session互窜<br>
+Session互窜即是用户A的操作被用户B执行了。<br>
+验证Session互窜，其原理还是基于权限控制，如某笔订单只能是A进行操作，或者只能是A才能看到的页面，但是B的session窜进来却能够获得A的订单详情等。   Session互窜方法：   多TAB浏览器，在两个TAB页中都保留的是用户A的session记录，然后在其中一个TAB页执行退出操作，登陆用户B， 此时两个TAB页都是B的session，然后在另一个A的页面执行操作，查看是否能成功。 预期结果：有权限控制的操作，B不能执行A页面的操作，应该报错，没有权限控制的操作，B执行了A页面 操作后，数据记录是B的而不是A的。<br>
+（2）Session超时<br>
+基于Session原理，需要验证系统session是否有超时机制，还需要验证session超时后功能是否还能继续走下去。   测试方法：<br>
+1、打开一个页面，等着10分钟session超时时间到了，然后对页面进行操作，查看效果。<br>
+2、多TAB浏览器，在两个TAB页中都保留的是用户A的session记录，然后在其中一个TAB页执行退出操作，马上在另外一个页面进行要验证的操作，查看是能继续到下一步还是到登录页面。<br>
+Session 测试主要检查Web 应用系统是否有超时的限制，也就是检查用户登录后在一定时间内没有点击任何页面，是否需要重新登录才能正常使用，检查超时后能否自动退出，退出之后，浏览器回退按钮是否可以回到登录页面。Session 测试一般使用手工测试和工具测试相结合的方法，若发现问题，应及时修改代码。</p>
+<p>2.7 跨网站脚本(XSS)漏洞测试<br>
+2.7.1 跨网站脚本（XSS）漏洞实现原理<br>
+跨站脚本漏洞（Cross Site Scripting，常简写作XSS）是Web应用程序在将数据输出到网页的时候存在问题，导致攻击者可以将构造的恶意数据显示在页面的漏洞。因为跨站脚本攻击都是向网页内容中写入一段恶意的脚本或者HTML代码，故跨站脚本漏洞也被叫做HTML注入漏洞（HTML Injection）。 与SQL注入攻击数据库服务器的方式不同，跨站脚本漏洞是在客户端发动造成攻击，也就是说，利用跨站脚本漏洞注入的恶意代码是在用户电脑上的浏览器中运行的。</p>
+<p>2.7.2 跨网站脚本（XSS）漏洞防范措施<br>
+下列规则旨在防止所有发生在应用程序的XSS攻击，虽然这些规则不允许任意向HTML文档放入不可信数据，不过基本上也涵盖了绝大多数常见的情况。你不需要采用所有规则，很多企业可能会发现第一条和第二条就已经足以满足需求了。请根据自己的需求选择规则。<br>
+（1）	不要在允许位置插入不可信数据<br>
+第一条规则就是拒绝所有数据，不要将不可信数据放入HTML文档，除非是下列定义的插槽。这样做的理由是在理列有解码规则的HTML中有很多奇怪的context，让事情变得很复杂，因此没有理由将不可信数据放在这些context中。<br>
+（2）	在向HTML元素内容插入不可信数据前对HTML解码<br>
+这条规则适用于当你想把不可信数据直接插入HTML正文某处时，这包括内部正常标签(div、p、b、td等)。大多数网站框架都有HTML解码的方法且能够躲开下列字符。但是，这对于其他HTML context是远远不够的，你需要部署其他规则。<br>
+（3）	 在向HTML常见属性插入不可信数据前进行属性解码<br>
+这条规则是将不可信数据转化为典型属性值(如宽度、名称、值等)，这不能用于复杂属性(如href、src、style或者其他事件处理程序)。这是及其重要的规则，事件处理器属性(为HTML JavaScript Data Values)必须遵守该规则。</p>
+<p>2.7.3 跨网站脚本（XSS）漏洞测试方法<br>
+对于呈增长趋势的跨站脚本（XSS）攻击，可使用内嵌检测的方式进行处理。使用WebInspect 工具识别所有的假造参数，使用DevInspect 工具通过特定代码关联在页面上发现安全缺陷，对于显示代码，采用CSE HTML Validator工具进行测试。若在检测中发现系统存在跨站脚本(X SS)漏洞，使用输出数据编码也就是将任何数据返回给用户前均采用HTML 编码，可以有效防止跨站点脚本攻击。因为通过HTML 编码，可将大多数脚本命令自动转换为无害文本。</p>
+<p>2.8 命令注射漏洞测试<br>
+命令注射漏洞测试主要检查所有调用外部资源(例如system、exec、fork，或者所有的发出请求的语法的源代码，查找那些来自于HTTP 请求的输入可能发起调用的所有地方。使用相同功能的专门的库函数来代替shell 命令和一些系统调用，可以抵御命令注射的攻击，另外一种避免命令注射的保护措施就是确保Web 应用程序只是根据它所要执行某个功能时所需的最小权限来实现这个功能。如果必须使用外部命令的话，任何被插入命令的用户信息必须仔细地审查，设立一定的机制来处理可能出现的错误、超时、或者在调用过程中出现的阻塞。</p>
+<p>2.9 日志文件测试<br>
+日志文件测试主要检查Web 运行的相关信息是否写进了日志文件、是否可追踪，是否记录了系统运行中发生的所有错误，是否记录了用户的详细信息，包括用户的浏览器、用户停留的时间、用户IP 等。记录了用户的IP，就能通过追捕查出用户的具体地点。错误作为日志保留下来，可供技术人员分析错误是由系统实现漏洞引起的还是由于黑客攻击引起的。</p>
+<p>2.10 访问控制策略测试<br>
+访问控制策略是网络安全防范和保护的主要策略，其任务是保证网络资源不被非法使用和非法访问。各种网络安全策略必须相互配合才能真正起到保护作用，而访问控制是保证网络安全最重要的核心策略之一。访问控制策略包括入网访问控制策略、操作权限控制策略、目录安全控制策略、属性安全控制策略、网络服务器安全控制策略、网络监测、锁定控制策略和防火墙控制策略等7个方面的内容。</p>
+<p>2.10.1 访问控制策略测试方法<br>
+	主要检查管理接口是否只有授权的管理员才允许进行访问（对于支持多种管理角色的网站接口往往是内部或者外部攻击者的攻击目标）<br>
+	是否有完善的访问控制策略文档（如果该文档不存在的话，这个网站很可能存在着漏洞），文档中是否精确定义了每类用户可以访问的功能和内容<br>
+	检查是否只有授权的数据可被访问（如果存在着不同类型或不同组别的数据可以通过接口被访问到）。<br>
+主要用于需要验证用户身份以及权限的页面，复制该页面的url地址，关闭该页面以后，查看是否可以直接进入该复制好的地址；<br>
+例：从一个页面链到另一个页面的间隙可以看到URL地址，直接输入该地址，可以看到自己没有权限的页面信息；</p>
+<p>3 数据库问题测试<br>
+在Web 应用中，数据库起着重要的作用，数据库为Web应用系统的管理、运行、查询和实现用户对数据存储的请求等提供空间。因此，Web 应用系统中数据库安全测试是一个重要的方面。与数据库相关的应用级漏洞如SQL 注入和跨站点脚本攻击等问题前面已提及，在此只讨论数据库本身及数据库使用方面的漏洞。</p>
+<p>3.1 数据库名称和存放位置安全检测<br>
+一个常规的数据库名称，并且存放在与Web 应用程序文件相同或相关的位置，很容易被下载。若在程序代码中包含有数据库名称和数据库文件绝对位置，一旦代码丢失，同样存在暴库的危险。因此，在布署数据库和编写相关的代码时，要避免问题的发生。</p>
+<p>3.2 数据库本身的安全检测<br>
+对数据库本身的安全检测主要检查数据库是否配置了不同的存取权限，所有操作是否都可以审计追踪，敏感数据是否加密等。为了保证数据库的安全，不同权限的用户定义不同的视图，以限制用户的访问范围；不同的敏感数据采取不同的加密算法，重要的数据分开存储。</p>
+<p>3.3 数据使用时的一致性和完整性测试<br>
+Web 应用系统中，使用数据库时，可能发生数据的一致性和完整性错误，因此，要检测系统中是否有事务管理和故障恢复功能，确认事务数据是否正确保存，检测系统是否有定期数据备份功能。</p>
+<p>4 容错测试<br>
+正常操作时，Web 应用程序也总会有错误出现，如内存溢出、空指针异常、系统调用失败、数据库不可用、网络超时等。不当的出错处理可能给网站带来各种各样的安全问题，因此，要对Web 应用程序的错误处理进行测试，以保证为用户提供一份有意义的出错信息，为网站维护人员提供诊断信息，而不是为攻击者提供有用的信息。</p>
+<p>4.1 容错方案及方案一致性测试<br>
+出错处理应该在整个网站中保持一致性，并且每一个出32错处理片断都应该是一个整体设计方案中的一部分。通过代码检查，测试系统差错处理方案是否合理，方案是否可以处理所有可能发生的错误，方案中是否存在泄漏设计细节的问题，是否存在不同的差错处理方案。</p>
+<p>4.2 接口容错测试<br>
+检测浏览器与服务器的接口是否正确，中断用户到服务器的网络连接时，系统是否能够正确处理数据；对于有外部接口的Web 系统，如网上商店可能要实时验证信用卡数据以减少欺诈行为的发生，中断Web 服务器到信用卡验证服务器的连接，检测系统是否能够正确处理这些错误，是否对信用卡进行收费。另外，还要测试系统是否能够处理外部服务器返回的所有可能的消息。</p>
+<p>4.3 压力测试<br>
+压力测试是实际破坏一个Web 应用系统，也就是测试Web应用系统会不会崩溃，在什么情况下会崩溃。黑客常常提供错误的数据负载，直到Web 应用系统崩溃，接着当系统重新<br>
+启动时获得存取权。压力测试的区域包括表单、登录和其他信息传输页面，可以采用ab（Apache 的测试工具）和OpenSTA（开发系统测试架构）等相应的工具进行自动化测试。</p>
+<h1 id="2021-08-10">2021-08-10</h1>
+<p>静态和动态sql语句<br>
+所谓的sql的动态的和静态的语句，是指sql语句在何时被编译和执行，二者都是用在sql嵌入式编程中的<br>
+静态sql ：静态SQL语句一般用于嵌入式sql应用中，在程序运行前，sql 语句必须是确定的例如sql语句中涉及的列名和表名必须是存在的，静态sql语句的编译是在应用程序执行前进行的，编译的结果会存储在数据库内部，而后程序运行的时候，数据库将直接执行比那一号的SQL语句，从而降低与形式的开销</p>
+<p>静态SQL在编译的时候就已经生成好了执行计划，所以执行效率会更高</p>
+<p>动态sql ：动态SQL语句是在应用程序执行时被编译和执行的，例如使用DB2的交互式工具CLP访问数据库时，用户输入的SQL语句时不确定的，因此SQL语句只能被动态的编译，动态SQL的应用比较多，常见的CLI和JDBC应用程序都使用动态SQL</p>
 
             </div>
           </article>
@@ -3618,7 +4461,7 @@ user节点下name的属性名为id，且为1的节点<br>
 
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1627392642729" class="no-responsive avatar">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1633486821567" class="no-responsive avatar">
     <div class="text-muted">温故而知新</div>
     <div class="social-container">
       
@@ -3640,6 +4483,12 @@ user节点下name的属性名为id，且为1的节点<br>
     </div>
     <div class="row">
       <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
         
           
             <li>
@@ -3695,10 +4544,6 @@ user节点下name的属性名为id，且为1的节点<br>
             </li>
           
         
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/ju-yu-wang-jiao-huan-ji-an-quan/">局域网交换机安全</a>
-            </li>
           
         
           
