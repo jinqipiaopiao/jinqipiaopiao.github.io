@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>浅谈文件上传漏洞 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1634041184749">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>浅谈文件上传漏洞</h1>
+            <p class="article-meta">
+              2021-10-10
+              
+            </p>
+            
+            <div class="post-content">
+              <h1 id="0x00-文件上传漏洞描述">0x00 文件上传漏洞描述</h1>
+<p><strong>漏洞原理：</strong><br>
+由于程序员在编写代码时候在对用户文件上传功能实现代码上没有严格限制用户上传的文件后缀以及文件类型或者处理缺陷,而导致用户可以越过其本身权限向服务器上上传可执行的动态脚本文件，简单的来说就是服务器端没有对客户端上传的文件进行严格验证或过滤,用户可以上传一个可执行的脚本文件,并通过此脚本获得了执行服务器端命令的能力而引发危害。<br>
+<strong>漏洞危害：</strong><br>
+1.针对上传功能的Dos攻击<br>
+2.使上传文件在服务器上作为脚本执行<br>
+3.诱使用户下载恶意文件<br>
+4.越权下载文件</p>
+<p>一切可以上传文件的位置皆可能存在文件上传漏洞！</p>
+<p><strong>0x01 漏洞的绕过技术总结</strong><br>
+首先将绕过分为前端绕过与后端绕过</p>
+<p>1）前端绕过：</p>
+<p>指数据上传后为提交到服务器，而是由于网站页面的js对其进行过滤，确认是否可以上传,删除限制上传js规则即可</p>
+<p>2）后端绕过：</p>
+<p><strong>黑名单：</strong></p>
+<p>1.特殊解析后缀绕过</p>
+<p>2.htaccess解析绕过</p>
+<p>3.大小写绕过</p>
+<p>4.点绕过</p>
+<p>5.空格绕过</p>
+<p>6.::$$DATA数据流绕过</p>
+<p>7.配合解析绕过</p>
+<p>8.双后缀解析绕过</p>
+<p><strong>白名单：</strong><br>
+1.MIME绕过<br>
+2.%00截断<br>
+3.0x00截断<br>
+4.0x0a截断</p>
+<p><strong>其他类型：</strong></p>
+<p>1.条件头检测</p>
+<p>2.二次渲染</p>
+<p>3.条件竞争</p>
+<p>4.突破getimagesize</p>
+<p>5.突破exif_imagetype</p>
+<p><strong>0x02 黑名单，白名单漏洞绕过技术案例</strong><br>
+<strong>黑名单绕过</strong><br>
+<strong>1）黑名单-特殊解析后缀绕过-upload-labs-03</strong><br>
+黑名单限制php上传，但apache对php3.php5.phtml等也可以直接解析为php，故可将php后缀改为php3等，如果上传成功.php3,如果Apache不能解析，在Apache的配置文件httpd.conf文件中添语句php3即可</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633828436455.png" alt="" loading="lazy"><br>
+上传即可，若解析不超过可能是apache版本过高</p>
+<p><strong>2)黑名单-.htaccess解析绕过-upload-labs-04</strong><br>
+htaccess文件一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。<br>
+.htaccess：apache拓展配置文件，可以与解析文件在同一个目录</p>
+<p>故我们可以先上传htaccess文件，重新命名解析规则，只针对当前目录下<br>
+首先上传htaccess内容为</p>
+<pre><code>none
+&lt;IfModule mime_module&gt;
+SetHandler application/x-httpd-php    #在当前目录下，所有文件都会被解析成php代码执行
+&lt;/IfModule&gt;
+</code></pre>
+<p>或<br>
+AddType application/x-httpd-php .jpg  #将当前目录下jpg文件当作php运行<br>
+再上传写入php的图片即可</p>
+<p><strong>3）黑名单-大小写绕过-upload-labs-05</strong><br>
+代码未过滤大小写，导致Php可上传后任可解析为php</p>
+<p>** 4）黑名单-加点绕过-upload-labs-07**<br>
+在windows中一个文件的后缀加上一个点与原来的后缀没有区别，从而用来文件上传绕过</p>
+<p><strong>5）黑名单-空格绕过-upload-labs-06</strong><br>
+由于没有对文件后缀名进行去空，因此可以在后缀名加空格绕过，文件属性不会变</p>
+<p><strong>6）黑名单- ::$$DATA数据流绕过-upload-labs-08</strong><br>
+在php+windows的情况下：如果文件名+”::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">“</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">把</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA“会把::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord">“</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">把</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">“</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">前</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">例</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">：</mi><mn>1.</mn><mi>p</mi><mi>h</mi><mi>p</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA“之前的文件名。
+例如：1.php::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord">“</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">前</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">例</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">：</span><span class="mord">1</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>$DATA<br>
+<strong>1) 黑名单-配合解析绕过 upload-labs-9</strong><br>
+由于代码对文件名最后是进行拼接的，可以伪造文件名<br>
+代码先是去除文件名前后的空格，再去除文件名最后所有的.，再通过strrchar函数来寻找.来确认文件名的后缀，但是最后保存文件的时候没有重命名而使用的原始的文件名，导致可以利用1.php. .（点+空格+点）来绕过或者为</p>
+<p><strong>8）黑名单-双后缀解析 upload-labs-10</strong><br>
+由于代码函数逻辑原因，1.pphphp 最后经过函数过滤完又恢复为1.php从而绕过。具体还是要代码审计，查找配合解析漏洞</p>
+<p><strong>白名单绕过</strong></p>
+<p><strong>1）白名单-MIME绕过-uplod-labs-02</strong><br>
+MIME即为Content-Type: image/gif 在有些时候对MIME有过滤，即可将允许上传文件MIMEcopy给要上传的文件属性，从而实现绕过</p>
+<p><strong>2）白名单-%00截断-upload-labs–11</strong><br>
+截断条件：php版本小于5.3.4，php的magic_quotes_gpc为OFF状态<br>
+%00截断用在数据包的文件url地址上面，在url地址文件地址后加上阶段即可</p>
+<p>例：/upload/1.php%00 使拼接无法实现 原来图片包含文件内容将写入1.php ，访问1.php即可</p>
+<p><strong>3）白名单-0x00截断-upload-labs-12</strong><br>
+save_path参数通过POST方式传递，还是利用00截断，因为POST不会像GET对%00进行自动解码，所以需要在二进制中进行修改。<br>
+由于get请求会对一些字符自动解码，而在post传递，不会对字符解码，故需要我们自己转换<br>
+这种截断不同于%00，它是在数据包中间的文件地址，文件名后截断</p>
+<p><strong>4）白名单-0x0a截断-</strong><br>
+换行 代码：LF ASCII码：/ n ，十六进制，0x0a，换行至下一行行首起始位置</p>
+<p><strong>0x03 其他类型绕过</strong><br>
+1）文件头检测绕过<br>
+图片文件以字符展示出来时候，每一种格式的图片的前几个字符是固定，或者是数据包里面的Content-Type类型修改，从而绕过上传</p>
+<p><strong>2）二次渲染上传绕过-upload-labs-16</strong><br>
+在我们将文件上传到服务器，有一些服务器会对上传的文件进行二次修改，以服务器的类型储存起来，但是文件的外表不会变化，文件的hex值会发生一些变化，在upload-16关，发现服务器对我们上传的问价进行二次渲染，当我们之前将一句话木马插入经过服务器储存后再次查看hex值发现很多地方的值发生改变，我们经过原图片hex值对比，发现会有不会改变的值，我们将木马插入到这一串不会改变的值的位置里面，从而实现上传webshell</p>
+<p><strong>3）条件竞争绕过-upload-labs-17</strong><br>
+竞争条件发生在多个线程同时访问同一个共享代码、变量、文件等没有进行锁操作或者同步操作的场景中。开发者在进行代码开发时常常倾向于认为代码会以线性的方式执行，而且他们忽视了并行服务器会并发执行多个线程，这就会导致意想不到的结果。思路是首先上传一个php文件，当然这个文件会被立马删掉，所以我们使用多线程并发的访问上传的文件，总会有一次在上传文件到删除文件这个时间段内访问到上传的php文件，一旦我们成功访问到了上传的文件，那么它就会向服务器写一个shell。</p>
+<p><strong>4）突破getimagesize 绕过-upload-labs-14</strong><br>
+getimagesize这个函数功能会对目标文件的16进制去进行一个读取，去读取头几个字符串是不是符合图片的要求的<br>
+上传图片马，写入代码到图片，使用文件包含漏洞，访问该图片地址 http://127.0.0.1/include.php?file=upload/5220200729141211.jpeg，查看到 phpinfo</p>
+<p><strong>5）突破exif_imagetype绕过-upload-labs-15</strong><br>
+exif_imagetype() 读取一个图像的第一个字节并检查其签名。如果发现了恰当的签名则返回一个对应的常量，否则返回 FALSE。返回值跟getimagesize() 返回的数组中的索引 2 的值是一样的，但exif_imagetype函数快得多，同getimagesize函数一样，也是修改文件头信息，配合文件包含漏洞上传</p>
+<p>来源: 我就是告白<br>
+文章作者: Hsy.Sec<br>
+文章链接: http://kxsy.work/2021/07/13/wen-jian-shang-chuan-lou-dong/<br>
+本文章著作权归作者所有，任何形式的转载都请注明出处。</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">
+                <h3 class="post-title">
+                  常见的解析漏洞总结
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1634041184749" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">利用预编译来SQL注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">Python-模板注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">web安全相关知识点</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge secondary">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

