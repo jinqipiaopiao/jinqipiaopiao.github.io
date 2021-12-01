@@ -7,7 +7,7 @@
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1636253538702">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1638358535496">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -348,114 +348,7 @@ echo &quot;&lt;h2&gt;Query Fail&lt;/h2&gt;&quot;;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<p>sql_waf_test.py</p>
-<pre><code>import requests
-
-sql_char = ['select',
-		'union',
-		'and',
-		'or',
-		'sleep',
-		'where',
-		'from',
-		'limit',
-		'group',
-		'by',
-		'like',
-		'prepare',
-		'as',
-		'if',
-		'char',
-		'ascii',
-		'mid',
-		'left',
-		'right',
-		'substring',
-		'handler',
-		'updatexml',
-		'extractvalue',
-		'benchmark',
-		'insert',
-		'update',
-		'all',
-		'@',
-		'#',
-		'^',
-		'&amp;',
-		'*',
-		'\'',
-		'&quot;',
-		'~',
-		'`',
-		'(',
-		')',
-		'--',
-		'=',
-		'/',
-		'\\',
-		' ']
-url = &quot;http://127.0.0.1/get.php&quot;
-header = {
-'Host':'127.0.0.1',
-'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0',
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-'Accept-Language':'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-'Accept-Encoding':'gzip, deflate',
-'Content-Type':'application/x-www-form-urlencoded'
-}
-for char in sql_char:
-post_data = &quot;query=test&quot;+char+&quot;&amp;submit2=sbumit&quot;
-res = requests.post(url,data=post_data,headers=header)
-if 'Illegal Char' in res.text:
-	print(&quot;该字符是非法字符: {0}&quot;.format(char))
-else:
-	print(&quot;通过: {0}&quot;.format(char))
-</code></pre>
-<p>PS C:\Users\Administrator\Desktop&gt; python .\sql_waf_test.py<br>
-该字符是非法字符: select<br>
-该字符是非法字符: union<br>
-该字符是非法字符: and<br>
-该字符是非法字符: or<br>
-通过: sleep<br>
-通过: where<br>
-通过: from<br>
-该字符是非法字符: limit<br>
-通过: group<br>
-通过: by<br>
-通过: like<br>
-通过: prepare<br>
-通过: as<br>
-通过: if<br>
-通过: char<br>
-通过: ascii<br>
-通过: mid<br>
-通过: left<br>
-通过: right<br>
-通过: substring<br>
-该字符是非法字符: handler<br>
-通过: updatexml<br>
-通过: extractvalue<br>
-通过: benchmark<br>
-通过: insert<br>
-通过: update<br>
-通过: all<br>
-通过: @<br>
-通过: #<br>
-通过: ^<br>
-通过: &amp;<br>
-通过: *<br>
-通过: '<br>
-通过: &quot;<br>
-通过: ~<br>
-通过: `<br>
-通过: (<br>
-通过: )<br>
-通过: --<br>
-通过: =<br>
-通过: /<br>
-通过: <br>
-通过:<br>
-————————————————<br>
+<p>————————————————<br>
 版权声明：本文为CSDN博主「末 初」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/mochu7777777/article/details/108073359</p>
 
@@ -481,7 +374,7 @@ else:
 
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1636253538702" class="no-responsive avatar">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1638358535496" class="no-responsive avatar">
     <div class="text-muted">温故而知新</div>
     <div class="social-container">
       
@@ -503,6 +396,24 @@ else:
     </div>
     <div class="row">
       <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/mian-shi/">面试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">永恒之蓝利用</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/owasp/">OWASP</a>
+            </li>
+          
         
           
             <li>
@@ -547,21 +458,9 @@ else:
           
         
           
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
-            </li>
-          
         
           
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
-            </li>
-          
         
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
-            </li>
           
         
           
@@ -673,7 +572,7 @@ else:
     </div>
     <div class="row">
       
-        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge success">
           Gridea
         </a>
       

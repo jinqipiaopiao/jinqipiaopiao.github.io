@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>永恒之蓝利用 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1638358535496">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+  </head>
+  <body>
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>永恒之蓝利用</h1>
+            <p class="article-meta">
+              2021-11-21
+              
+            </p>
+            
+            <div class="post-content">
+              <p>是什么？<br>
+永恒之蓝（Eternal Blue）爆发于2017年4月14日晚，是一种利用Windows系统的SMB协议漏洞来获取系统的最高权限，以此来控制被入侵的计算机。甚至于2017年5月12日， 不法分子通过改造“永恒之蓝”制作了wannacry勒索病毒，使全世界大范围内遭受了该勒索病毒，甚至波及到学校、大型企业、政府等机构，只能通过支付高额的赎金才能恢复出文件。不过在该病毒出来不久就被微软通过打补丁修复。</p>
+<p>攻击机：192.168.80.128（kali安装Metaploit工具）<br>
+靶机：192.168.80.129</p>
+<p>Metasploit框架（简称MSF）是一个开源工具，旨在方便渗透测试，它是由Ruby程序语言编 写的模板化框架，具有很好的扩展性，便于渗透测试人员开发，使用定制的工具模板。</p>
+<p>该工具有六个模块，分别为辅助模块(auxiliary)、渗透攻击模块<br>
+(exploits）、后渗透攻击模块(post)、攻击载荷模块(payloads)、空指令模<br>
+块(nops）、编码器模块(encoders)，其中msf为总模块，其他均为分支模<br>
+块。</p>
+<p>首先扫描靶机的系统以及有什么漏洞（用nmap在一般扫描端口的后边添加--script=vuln）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460510357.png" alt="" loading="lazy"><br>
+扫描出来的在VULNERABLE<br>
+ms17-010<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460513795.png" alt="" loading="lazy"><br>
+然后启动msf<br>
+msfconsole<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460506427.png" alt="" loading="lazy"><br>
+查找有没有ms17-010<br>
+search ms17-010<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460501665.png" alt="" loading="lazy"><br>
+然后利用第二个可以直接use2或者把全名都写上<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460495844.png" alt="" loading="lazy"><br>
+然后用show options查看需要配置什么<br>
+设置payload<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460491818.png" alt="" loading="lazy"><br>
+设置RHOST<br>
+设置LHOST<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460487113.png" alt="" loading="lazy"><br>
+然后就可以run进行攻击了</p>
+<p>如果出现target相关的则需要设置相关的target<br>
+可以先showtargets然后再set target<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460478202.png" alt="" loading="lazy"></p>
+<p>最后一条龙利用<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637475239222.png" alt="" loading="lazy"><br>
+<strong>报错解决：</strong></p>
+<p>关闭防火墙<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637461856816.png" alt="" loading="lazy"><br>
+win+r打开service.msc关闭firewall服务</p>
+<p>如果出现错误<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1637460483339.png" alt="" loading="lazy"><br>
+则需要<br>
+set FORCEEXPLOIT true</p>
+
+            </div>
+          </article>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://jinqipiaopiao.github.io/post/owasp/">
+                <h3 class="post-title">
+                  OWASP
+                </h3>
+              </a>
+            </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1638358535496" class="no-responsive avatar">
+    <div class="text-muted">温故而知新</div>
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/mian-shi/">面试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">永恒之蓝利用</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/owasp/">OWASP</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/wpscan/">wpscan</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">汇编语言</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+          Gridea
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+  </div>
+</div>
+
+
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+</script>
+
+
+
+
+  </body>
+</html>

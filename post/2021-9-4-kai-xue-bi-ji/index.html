@@ -7,7 +7,7 @@
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1636253538702">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1638358535496">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -3670,6 +3670,168 @@ RCE<br>
 ————————————————<br>
 版权声明：本文为CSDN博主「进击的网安攻城狮」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/weixin_41665162/article/details/119827651</p>
+<h1 id="2021-11-08">2021-11-08</h1>
+<h1 id="代码审计-php无框架项目sql注入挖掘技巧">代码审计-php无框架项目sql注入挖掘技巧</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636335937027.png" alt="" loading="lazy"><br>
+<strong>代码审计</strong><br>
+1.教学计划：审计项目漏洞Demo-》审计思路-》完整源码框架-》验证并利用漏洞<br>
+2.教学内容：php，java网站应用，引入框架类开发源码，相关审计工具以及插件使用<br>
+3.必备知识顶啊：环境安装搭建使用，相关工具插件安装使用，掌握前期使用各种原理以及利用<br>
+4.开始前准备：审计目标的的程序名，版本，当前环境（系统，中间件，脚本语言等信息）各种插件等<br>
+5.挖掘漏洞跟本：可控变量以及特定函数，不存在过滤不严谨存在绕过导致的安全漏洞<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636335933373.png" alt="" loading="lazy"><br>
+<strong>代码审计思路</strong><br>
+<strong>1.定点挖掘关键字：</strong><br>
+可控变量-变量接受get，post，接受关键字<code>$_GET</code><br>
+特定函数-输出print，数据库操作等<br>
+特定关键字<br>
+sql注入漏洞-》搜索 select\insert\update\sql执行语句<br>
+xss漏洞--&gt;搜索echo\print等<br>
+安全漏洞--&gt;搜索<code>$_GET$POST</code>等<br>
+<strong>2.定点挖掘功能点</strong><br>
+如果挖掘文件上传，会员中心存在文件上传的操作地址，抓包分析找到源码中的特定文件代码段，进行文件上传代码分析挖掘<br>
+<strong>3.挖掘，视漏洞而定：举例</strong><br>
+SQL注入 数据库监控-监控到当前页面和数据库的交互过程（sql执行语句）<br>
+断定啊调试：访问页面对应代码进行断点调试（执行过程前后顺序，调用文件列表）<br>
+可使用seay源代码审计系统进行数据库监控，全局搜索关键字等（）<br>
+下载：https://github.com/f1tz/cnseay）<br>
+动态调试|Maccms SQL 注入分析(附注入盲注脚本)：https://www.cnblogs.com/ichunqiu/p/9548754.html<br>
+双重编码绕过：源代码将%5c自动转为\，%25%35%63 转为%5c get出url编码<br>
+二次注入</p>
+<p>原理：绕过转义注入 魔术引号<br>
+满足条件： 有insert update （必须是有插入到数据库中的操作） 、可控变量</p>
+<pre><code>注册用户：insert xiaodi union select'
+过滤： xiaodi union select\'
+进入数据库： xiaodi union select'
+修改用户：update xiaodi union select' 条件=用户名是谁 xiaodi' union select update注入
+</code></pre>
+<figure data-type="image" tabindex="126"><img src="https://jinqipiaopiao.github.io//post-images/1636335928041.jpg" alt="" loading="lazy"></figure>
+<h1 id="五十一代码审计-php框架mvc类上传断点调试挖掘">五十一：代码审计-PHP框架MVC类上传断点调试挖掘</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636336173988.png" alt="" loading="lazy"><br>
+知识点 1：<br>
+#关键字搜索：(函数，键字，全局变量等)<br>
+文件上传，$_FILES，move_uploaded_file 等<br>
+#应用功能抓包：（任何可能存在上传的应用功能点）<br>
+前台会员中心，后台新闻添加等可能存在上传的地方</p>
+<p>知识点 2：<br>
+MVC 开发框架类：https://www.cnblogs.com/wsybky/p/8638876.html</p>
+<p>知识点 3：<br>
+Thinkphp 框架：https://sites.thinkphp.cn/1556331<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636336146388.png" alt="" loading="lazy"></p>
+<h1 id="52-php项目类rcea及文件包含下载删除">52. PHP项目类RCEA及文件包含下载删除</h1>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636336249038.png" alt="" loading="lazy"><br>
+漏洞关键字：</p>
+<p>**    SQL 注入：**</p>
+<pre><code>select insert update mysql_query mysqli 等
+</code></pre>
+<p>**    文件上传：**</p>
+<pre><code>$_FILES，type=&quot;file&quot;，上传，move_uploaded_file()等
+</code></pre>
+<p>**    XSS 跨站：**</p>
+<pre><code>print print_r echo sprintf die var_dump var_export 等
+</code></pre>
+<p>**    文件包含：**</p>
+<pre><code>include include_once require require_once 等
+</code></pre>
+<p>**    代码执行：**</p>
+<pre><code>eval assert preg_replace call_user_func call_user_func_array 等
+</code></pre>
+<p>**    命令执行：**</p>
+<pre><code>system exec shell_exec `` passthru pcntl_exec popen proc_open
+</code></pre>
+<p>**    变量覆盖：**</p>
+<pre><code>extract() parse_str() importrequestvariables() $$等
+</code></pre>
+<p>**    反序列化：**</p>
+<pre><code>serialize() unserialize() __construct __destruct 等
+</code></pre>
+<p>**    其他漏洞：**</p>
+<pre><code>unlink() file_get_contents() show_source() file() fopen()等
+</code></pre>
+<p>**    通用关键字：**<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>G</mi></msub><mi>E</mi><mi>T</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">_GET,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mpunct">,</span></span></span></span>_POST,<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mrow></mrow><mi>R</mi></msub><mi>E</mi><mi>Q</mi><mi>U</mi><mi>E</mi><mi>S</mi><mi>T</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">_REQUEST,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mpunct">,</span></span></span></span>_FILES,$_SERVER 等<br>
+功能点或关键字分析可能存在漏洞<br>
+抓包或搜索关键字找到代码出处及对应文件<br>
+追踪过滤或接受的数据函数，寻找触发此函数或代码的地方进行触发测试</p>
+<pre><code>http://192.168.0.102:91/?r=../../index.txt%00
+http://192.168.0.102:94/admin/save.php?act=delfile
+path=/upload/../install/install.lock
+</code></pre>
+<p>演示案例：<br>
+xhcms-无框架-文件包含跨站-搜索或应用-include<br>
+通过应用及 URL 地址等分析可能存在 xss 及包含安全<br>
+抓包找到 XSS 无过滤代码块及文件包含有后缀需绕过代码块</p>
+<p>earmusic-无框架-文件下载-搜索或应用功能-down<br>
+通过应用分析或搜索判断可能存在文件下载操作<br>
+抓包分析下载地址找到对应代码块，文件下载地址由<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>i</mi><mi>l</mi><mi>e</mi><mi mathvariant="normal">控</mi><mi mathvariant="normal">制</mi></mrow><annotation encoding="application/x-tex">file 控制
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mord cjk_fallback">控</span><span class="mord cjk_fallback">制</span></span></span></span>file 从数据库查询语句得知，追踪那里可更新或更改此类数据<br>
+尝试修改发现过滤，追踪过滤机制分析绕过，采用全路径地址绕过</p>
+<h1 id="53代码审计-tp5框架及无框架变量覆盖反序列化">53:代码审计-TP5框架及无框架变量覆盖反序列化</h1>
+<p><strong>案例1：metinfo-无框架-变量覆盖-自动审计或搜索</strong></p>
+<p>变量覆盖配合文件包含实现任意文件包含</p>
+<p>自动审计或搜索关键字找到文件及代码块，全局配置文件</p>
+<p>变量覆盖漏洞关键字：extract()、parse_str()、importrequestvariables()、$$等<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370469321.jpg" alt="" loading="lazy"><br>
+如下代码，表示从get post cookie接收数据，进行变量覆盖<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370474402.jpg" alt="" loading="lazy"><br>
+<strong>搜索或访问触发全局变量配置文件配合手写代码测试变量覆盖</strong></p>
+<p>原理如下图所示<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370479421.jpg" alt="" loading="lazy"><br>
+<strong>配合文件包含漏洞覆盖指定文件实现文件包含攻击获取权限</strong></p>
+<p>追踪$module变量出处文件，然后分析如何覆盖它达到目的</p>
+<pre><code>payload：/about/index.php?fmodule-7&amp;module-1.txt
+</code></pre>
+<figure data-type="image" tabindex="127"><img src="https://jinqipiaopiao.github.io//post-images/1636370484006.jpg" alt="" loading="lazy"></figure>
+<p><strong>附：代码审计-MetInfo CMS变量覆盖漏洞</strong></p>
+<p>https://www.cnblogs.com/-qing-/p/10889100.html</p>
+<p>DeDecms变量覆盖之SQL语句分析报告+修复方案</p>
+<p>https://www.cnblogs.com/y0umer/archive/2013/06/08/3125647.html</p>
+<p><strong>案例2：phpmyadmin-无框架-反序列化-自动审计或搜索</strong></p>
+<p>#反序列化--&gt;自动审计或搜索关键字找到文件及代码段</p>
+<pre><code>_wakeup() //使用unserialize时触发
+_sleep() //使用serialize时触发
+_destruct() //对象被销毁时触发
+_call() //在对象上下文中调用不可访问的方法时触发
+_callStatic() //在静态上下文中调用不可访问的方法时触发
+_get() //用于从不可访问的属性读取数据
+_set() //用于将数据写入不可访问的属性
+_isset() //在不可访问的属性上调用isset()或empty()触发
+_unset() //在不可访问的属性上使用unset()时触发
+_toString() //把类当做字符串使用时触发
+_invoke() //当脚本尝试将对象调用为函数时触发
+</code></pre>
+<p>payload：/about/index.php?fmodule-7&amp;module-1.txt<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370490126.jpg" alt="" loading="lazy"><br>
+首先全局搜索unserialize<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370494264.jpg" alt="" loading="lazy"><br>
+全局搜索PMA_Config()找到_wakeup()代码段，代码段调用函数中存在eval等函数操作，可调试load<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370503000.jpg" alt="" loading="lazy"><br>
+构造getSource()利用payload，实现file_get_contents函数配合eval执行<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370507972.jpg" alt="" loading="lazy"></p>
+<pre><code>payload：action=test&amp;configuration=O:10:&quot;PMA_Config&quot;:1:{s:6:&quot;source&quot;,s:11:&quot;d:/test.txt&quot;;}
+</code></pre>
+<p><img src="https://jinqipiaopiao.github.io//post-images/1636370512955.jpg" alt="" loading="lazy"><br>
+<strong>案例3：Thinkphp5-有框架-搭建使用入口访问调试sql等</strong></p>
+<p>Thinkphp5简要知识点</p>
+<p>入口文件，调试模式，访问路由，访问对应，内置安全等<br>
+测试访问不同方法名，不同文件不同方法名（https://www.kancloud.cn/thinkphp/thinkphp5_quickstart/478279）<br>
+其他参考：ThinkPHP5快速入门:https://www.kancloud.cn/thinkphp/thinkphp5_quickstart<br>
+<strong>测试常规写法SQL注入</strong></p>
+<p>源代码-查询数据库常规写法<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370517844.jpg" alt="" loading="lazy"><br>
+测试，有sql注入<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370522653.jpg" alt="" loading="lazy"><br>
+测试TP5规定写法SQL注入</p>
+<p>源代码-使用框架定义写法查询数据库<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370535448.png" alt="" loading="lazy"><br>
+打开调试模式<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370539565.jpg" alt="" loading="lazy"><br>
+测试，尝试sql注入，发现注入语句并未执行，说明thinkphp框架有内置的注入安全过滤。<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370544838.jpg" alt="" loading="lazy"><br>
+此时，如果我们想挖sql注入漏洞，那就相当于挖框架漏洞而不是系统漏洞。</p>
+<p>thinkphp历史漏洞集合：https://github.com/Mochazz/ThinkPHP-Vuln</p>
+<p>从中我们找到了该版本存在SQL注入漏洞，使用payload测试<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1636370555691.jpg" alt="" loading="lazy"></p>
 
             </div>
           </article>
@@ -3693,7 +3855,7 @@ RCE<br>
 
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1636253538702" class="no-responsive avatar">
+    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1638358535496" class="no-responsive avatar">
     <div class="text-muted">温故而知新</div>
     <div class="social-container">
       
@@ -3715,6 +3877,24 @@ RCE<br>
     </div>
     <div class="row">
       <ul>
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/mian-shi/">面试</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">永恒之蓝利用</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://jinqipiaopiao.github.io/post/owasp/">OWASP</a>
+            </li>
+          
         
           
             <li>
@@ -3759,21 +3939,9 @@ RCE<br>
           
         
           
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
-            </li>
-          
         
           
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/md5-xiang-guan-bi-jiao/">md5相关比较</a>
-            </li>
-          
         
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/buuctf/">BUUCTF</a>
-            </li>
           
         
           
@@ -3885,7 +4053,7 @@ RCE<br>
     </div>
     <div class="row">
       
-        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge warning">
+        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge secondary">
           Gridea
         </a>
       
