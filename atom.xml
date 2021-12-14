@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jinqipiaopiao.github.io/</id>
     <title>Gridea</title>
-    <updated>2021-12-01T12:08:25.414Z</updated>
+    <updated>2021-12-14T03:27:37.760Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jinqipiaopiao.github.io/"/>
     <link rel="self" href="https://jinqipiaopiao.github.io/atom.xml"/>
@@ -10,24 +10,6 @@
     <logo>https://jinqipiaopiao.github.io/images/avatar.png</logo>
     <icon>https://jinqipiaopiao.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
-    <entry>
-        <title type="html"><![CDATA[面试]]></title>
-        <id>https://jinqipiaopiao.github.io/post/mian-shi/</id>
-        <link href="https://jinqipiaopiao.github.io/post/mian-shi/">
-        </link>
-        <updated>2021-12-01T09:56:17.000Z</updated>
-        <content type="html"><![CDATA[<p>如何识别安全设备中的无效告警?<br>
-常见的端口有哪些?这些端口对应的服务是什么?针对这些服务，红队攻击方式有哪些?常用的威胁情报平台有哪些?有没有做过关于情报输出的工作?<br>
-木马驻留系统的方式有哪些?<br>
-当收到钓鱼邮件的时候，说说处置思路?如何判断设备资产是否已经失陷?<br>
-如何针对攻击事件进行溯源?常见的反制思路是什么?<br>
-描述下场景的安全设备有哪些?它们的主要功能是什么?常见的部署方式和位置?如何快速检测定位网站目录下的WebShell<br>
-Windows、Linux应急响应的流程<br>
-告警日志分析的思路<br>
-如何还原「失陷路径」<br>
-如何在「信息收集」上与红队做对抗?</p>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[永恒之蓝利用]]></title>
         <id>https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/</id>
@@ -8898,6 +8880,277 @@ Web 应用系统中，使用数据库时，可能发生数据的一致性和完�
 静态sql ：静态SQL语句一般用于嵌入式sql应用中，在程序运行前，sql 语句必须是确定的例如sql语句中涉及的列名和表名必须是存在的，静态sql语句的编译是在应用程序执行前进行的，编译的结果会存储在数据库内部，而后程序运行的时候，数据库将直接执行比那一号的SQL语句，从而降低与形式的开销</p>
 <p>静态SQL在编译的时候就已经生成好了执行计划，所以执行效率会更高</p>
 <p>动态sql ：动态SQL语句是在应用程序执行时被编译和执行的，例如使用DB2的交互式工具CLP访问数据库时，用户输入的SQL语句时不确定的，因此SQL语句只能被动态的编译，动态SQL的应用比较多，常见的CLI和JDBC应用程序都使用动态SQL</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SQL注入过滤字符的Fuzz脚本测试]]></title>
+        <id>https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/</id>
+        <link href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">
+        </link>
+        <updated>2021-06-22T04:34:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Get.php</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Sql Waf Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;GET&quot; action=&quot;&quot;&gt;
+	&lt;h1&gt;Insert Data&lt;/h1&gt;
+	&lt;input type=&quot;text&quot; name=&quot;username&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your username&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;password&quot; name=&quot;password&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your password&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;submit&quot; name=&quot;submit1&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+$black_list=&quot;/select|sleep|and|or|union|\&quot;|'|--|#|where|from|limit/i&quot;;
+$con = mysqli_connect(&quot;127.0.0.1:3306&quot;,&quot;root&quot;,&quot;root&quot;);
+mysqli_query($con,&quot;create database test&quot;);
+mysqli_select_db($con,&quot;test&quot;);
+mysqli_query($con,&quot;create table tb_user
+	(
+	uid int(11) primary key auto_increment not null,
+	username varchar(50) not null,
+	password varchar(50) not null,
+	UNIQUE(username)
+	)&quot;);
+if(isset($_GET['submit1'])){
+	$username = $_GET['username'];
+	$password = md5($_GET['password']);
+	if(preg_match($black_list,$username)){
+		echo &quot;&lt;h2&gt;Illegal Char&lt;h2&gt;&quot;;
+	}else{
+		if(empty($username) || empty($password)){
+			echo &quot;&lt;h2&gt;Username or Password can not be empty&lt;/h2&gt;&quot;;
+		}else{
+			$insert_sql = mysqli_query($con,&quot;insert into tb_user value(0,'$username','$password')&quot;);
+			if($insert_sql){
+				echo &quot;&lt;h2&gt;Insert Success&lt;/h2&gt;&quot;;
+			}else{
+				echo &quot;&lt;h2&gt;Insert Fail&lt;/h2&gt;&quot;;
+			}
+		}
+	}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;GET&quot; action=&quot;&quot;&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;h1&gt;Query Data&lt;/h1&gt;
+&lt;input type=&quot;text&quot; name=&quot;query&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Query Username&quot;&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;input type=&quot;submit&quot; name=&quot;submit2&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+if(isset($_GET['submit2'])){
+$query_name = $_GET['query'];
+if(preg_match($black_list,$query_name)){
+die(&quot;&lt;h2&gt;Illegal Char&lt;/h2&gt;&quot;);
+}else{
+if(empty($query_name)){
+echo &quot;&lt;h2&gt;Query data can not be empty&lt;/h2&gt;&quot;;
+}else{
+$query_data = mysqli_query($con,&quot;select * from tb_user where username='$query_name'&quot;);
+if($query_data){
+$sql_data = mysqli_fetch_assoc($query_data);
+echo &quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&quot;;
+var_dump($sql_data);
+}else{
+echo &quot;&lt;h2&gt;Query Fail&lt;/h2&gt;&quot;;
+}
+}
+}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>sql_waf_test.py</p>
+<pre><code>import requests
+
+sql_char = ['select',
+		'union',
+		'and',
+		'or',
+		'sleep',
+		'where',
+		'from',
+		'limit',
+		'group',
+		'by',
+		'like',
+		'prepare',
+		'as',
+		'if',
+		'char',
+		'ascii',
+		'mid',
+		'left',
+		'right',
+		'substring',
+		'handler',
+		'updatexml',
+		'extractvalue',
+		'benchmark',
+		'insert',
+		'update',
+		'all',
+		'@',
+		'#',
+		'^',
+		'&amp;',
+		'*',
+		'\'',
+		'&quot;',
+		'~',
+		'`',
+		'(',
+		')',
+		'--',
+		'=',
+		'/',
+		'\\',
+		' ']
+
+for char in sql_char:
+res = requests.get(&quot;http://127.0.0.1/get.php?query=&quot;+char+&quot;&amp;submit2=sbumit&quot;)
+if 'Illegal Char' in res.text:
+	print(&quot;该字符是非法字符: {0}&quot;.format(char))
+else:
+	print(&quot;通过: {0}&quot;.format(char))
+</code></pre>
+<p>PS C:\Users\Administrator\Desktop&gt; python .\sql_waf_test.py<br>
+该字符是非法字符: select<br>
+该字符是非法字符: union<br>
+该字符是非法字符: and<br>
+该字符是非法字符: or<br>
+该字符是非法字符: sleep<br>
+该字符是非法字符: where<br>
+该字符是非法字符: from<br>
+该字符是非法字符: limit<br>
+通过: group<br>
+通过: by<br>
+通过: like<br>
+通过: prepare<br>
+通过: as<br>
+通过: if<br>
+通过: char<br>
+通过: ascii<br>
+通过: mid<br>
+通过: left<br>
+通过: right<br>
+通过: substring<br>
+该字符是非法字符: handler<br>
+通过: updatexml<br>
+通过: extractvalue<br>
+通过: benchmark<br>
+通过: insert<br>
+通过: update<br>
+通过: all<br>
+通过: @<br>
+通过: #<br>
+通过: ^<br>
+通过: &amp;<br>
+通过: *<br>
+该字符是非法字符: '<br>
+该字符是非法字符: &quot;<br>
+通过: ~<br>
+通过: `<br>
+通过: (<br>
+通过: )<br>
+该字符是非法字符: --<br>
+通过: =<br>
+通过: /<br>
+通过: <br>
+通过:</p>
+<p>Post.php</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Sql Waf Test&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;POST&quot; action=&quot;&quot;&gt;
+	&lt;h1&gt;Insert Data&lt;/h1&gt;
+	&lt;input type=&quot;text&quot; name=&quot;username&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your username&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;password&quot; name=&quot;password&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Please input your password&quot;&gt;
+	&lt;br&gt;&lt;br&gt;
+	&lt;input type=&quot;submit&quot; name=&quot;submit1&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+$black_list=&quot;/select|and|or|union|limit/i&quot;;
+$con = mysqli_connect(&quot;127.0.0.1:3306&quot;,&quot;root&quot;,&quot;root&quot;);
+mysqli_query($con,&quot;create database test&quot;);
+mysqli_select_db($con,&quot;test&quot;);
+mysqli_query($con,&quot;create table tb_user
+	(
+	uid int(11) primary key auto_increment not null,
+	username varchar(50) not null,
+	password varchar(50) not null,
+	UNIQUE(username)
+	)&quot;);
+if(isset($_POST['submit1'])){
+	$username = $_POST['username'];
+	$password = md5($_POST['password']);
+	if(preg_match($black_list,$username)){
+		echo &quot;&lt;h2&gt;Illegal Char&lt;h2&gt;&quot;;
+	}else{
+		if(empty($username) || empty($password)){
+			echo &quot;&lt;h2&gt;Username or Password can not be empty&lt;/h2&gt;&quot;;
+		}else{
+			$insert_sql = mysqli_query($con,&quot;insert into tb_user value(0,'$username','$password')&quot;);
+			if($insert_sql){
+				echo &quot;&lt;h2&gt;Insert Success&lt;/h2&gt;&quot;;
+			}else{
+				echo &quot;&lt;h2&gt;Insert Fail&lt;/h2&gt;&quot;;
+			}
+		}
+	}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;form method=&quot;POST&quot; action=&quot;&quot;&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;h1&gt;Query Data&lt;/h1&gt;
+&lt;input type=&quot;text&quot; name=&quot;query&quot; style=&quot;height:25px;width:250px;&quot; placeholder=&quot;Query Username&quot;&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;input type=&quot;submit&quot; name=&quot;submit2&quot; style=&quot;height:31px;color:#7d7d7d;&quot; value=&quot;sbumit&quot;&gt;
+&lt;?php 
+if(isset($_POST['submit2'])){
+$query_name = $_POST['query'];
+if(preg_match($black_list,$query_name)){
+die(&quot;&lt;h2&gt;Illegal Char&lt;/h2&gt;&quot;);
+}else{
+if(empty($query_name)){
+echo &quot;&lt;h2&gt;Query data can not be empty&lt;/h2&gt;&quot;;
+}else{
+$query_data = mysqli_query($con,&quot;select * from tb_user where username='$query_name'&quot;);
+if($query_data){
+$sql_data = mysqli_fetch_assoc($query_data);
+echo &quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&quot;;
+var_dump($sql_data);
+}else{
+echo &quot;&lt;h2&gt;Query Fail&lt;/h2&gt;&quot;;
+}
+}
+}
+}
+?&gt;
+&lt;/form&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>————————————————<br>
+版权声明：本文为CSDN博主「末 初」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
+原文链接：https://blog.csdn.net/mochu7777777/article/details/108073359</p>
 ]]></content>
     </entry>
 </feed>
