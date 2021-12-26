@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>SSRF漏洞 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1640508783037">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jinqipiaopiao.github.io/">
+        <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1640508783037" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jinqipiaopiao.github.io/">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">SSRF漏洞</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-12-16</span>
+            
+          </div>
+          <div class="post-content">
+            <p><strong>ssrf介绍：</strong><br>
+ssrf漏洞（服务器端请求伪造）：是一种有攻击者构造形成由服务器端发起请求的一个安全漏洞。一般情况下，ssrf攻击的目标是从外网无法访问的内部系统。（正是因为它是由服务器端请求到与他相连而与外网隔离的内部系统）</p>
+<p><strong>ssrf漏洞原理：</strong><br>
+ssrf形成的原因都是由于服务器端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。比如从指定url地址获取网页文本内容，加载指定地址的图片，下载，等等。利用的是服务器端的请求伪造。ssrf是利用存在缺陷的web应用作为代理攻击远程和本地的服务器。</p>
+<p><strong>ssrf利用手段：</strong><br>
+1.可以对外网，内网，本地进行端口扫描，某些情况下端口的banner会回显出来（比如3306）<br>
+2.攻击运行在内网或本地的有漏洞程序（比如溢出）<br>
+3.可以对内网web应用进行指纹识别，原理是通过请求默认的文件得到指定的指纹<br>
+4.攻击内网或外网有漏洞的web应用<br>
+5.使用file：//协议读取本地协议（或者其他协议）<br>
+http://www.xingkonglangzi.com/ssrf.php?url=192.168.1.10:3306<br>
+http://www.xingkonglangzi.com/ssrf.php?url=file:///c:/windows/win.ini</p>
+<p><strong>漏洞出现点：</strong><br>
+1.分享：通过url地址分享网页内容<br>
+2.转码服务（通过url地址把原地址的网页内容调优，使其适合手机屏幕的浏览）<br>
+3.在线翻译<br>
+4.图片加载与下载：铜鼓ourl地址加载或下载图片<br>
+5.图片，文章收藏功能<br>
+6.未公开的api实现及调用url的功能<br>
+7.从url关键字中寻找<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1639621798026.png" alt="" loading="lazy"></p>
+<p><strong>ssrf漏洞绕过方法：</strong><br>
+　　1.@　　　　　　　　　　http://abc.com@127.0.0.1</p>
+<p>2.添加端口号　　　　　　http://127.0.0.1:8080</p>
+<p>3.短地址　　　　　　　　https://0x9.me/cuGfD</p>
+<p>4.可以指向任意ip的域名　 xip.io</p>
+<p>5.ip地址转换成进制来访问 192.168.0.1=3232235521（十进制）</p>
+<p>6.非HTTP协议</p>
+<p>7.DNS Rebinding（ 域名重新绑定攻击技术）<br>
+<strong>SSRF漏洞绕过方法：</strong></p>
+<p>1.基本判断（排除法）</p>
+<p>如：http://www.douban.com/***/service?image=http://www.baidu.com/img/bd_logo1.png</p>
+<p>排除法一：直接右键图片，在新窗口打开图片，如果是浏览器上URL地址栏是http://www.baidu.com/img/bd_logo1.png，说明不存在SSRF漏洞。</p>
+<p>排除法二：使用burpsuite等抓包工具来判断是否不是SSRF，首先SSRF是由服务端发起的请求，因此在加载图片的时候，是由服务端发起的，所以在我们本地浏览器的请求中就不应该存在图片的请求，如果刷新当前页面，有如下请求，则可判断不是SSRF。（前提设置burpsuite截断图片的请求，默认是放行的）<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1639622332133.png" alt="" loading="lazy"><br>
+SSRF漏洞图片分享:<br>
+<img src="https://jinqipiaopiao.github.io//post-images/1639622358377.png" alt="" loading="lazy"><br>
+<img src="https://jinqipiaopiao.github.io//post-images/1639622337008.png" alt="" loading="lazy"><br>
+SSRF漏洞的修复建议：</p>
+<p>1.限制请求的端口只能为web端口，只允许访问HTTP和HTTPS请求。</p>
+<p>2.限制不能访问内网的IP，以防止对内网进行攻击。</p>
+<p>3.屏蔽返回的详细信息。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jinqipiaopiao.github.io/post/shen-tou-ce-shi-de-bu-zou/">
+              <h3 class="post-title">
+                下一篇：渗透测试的步骤
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">温故而知新</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>渗透测试的步骤 | Gridea</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1640508783037">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jinqipiaopiao.github.io/">
+        <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1640508783037" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jinqipiaopiao.github.io/">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">渗透测试的步骤</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-12-15</span>
+            
+          </div>
+          <div class="post-content">
+            <p>先说说渗透测试相关名词含义：<br>
+一些前置知识（包含但不限于）</p>
+<p>脚本（asp、php、jsp）<br>
+html（css、js、html）<br>
+HTTP协议<br>
+CMS（B/S）<br>
+Webshell：通过Web入侵的一种脚本工具，可以据此对网站服务进行一定程度的控制。<br>
+木马：通过向服务端提交一句简短代码，配合本地客户端实现weshell功能的木马<br>
+&lt;%eval request(“pass”)%&gt;<br>
+&lt;%execute(request(“pass”))%&gt;<br>
+request(“pass”)接收客户端提交的数据，pass为执行命令的参数值。<br>
+eval/execute 函数执行客户端命令的内容</p>
+<p>提权：操作系统底权限的账户将自己提升为管理员权限使用的方法<br>
+漏洞：硬件、软件、协议等可利用安全缺陷，可能被攻击者利用，对数据进行篡改、控制等<br>
+肉鸡：被黑客入侵并被长期驻扎的计算机或服务器。可以随意控制，可以是任意系统的设备，对象可以是企业、个人、政府等所有单位。<br>
+抓鸡：利用使用量大的程序的漏洞，使用自动化方式获取肉鸡的行为<br>
+后门：黑客为了对主机进行长期的控制，在机器上种植的一段程序或留下的一个“入口”。<br>
+跳板：使用肉鸡IP来实施攻击其他目标，以便更好的隐藏自己的身份信息。<br>
+旁站入侵：即同服务器下的网站入侵，入侵之后可以通过提权跨目录等手段拿到目标网站的权限。<br>
+C段入侵：即同c段下服务器入侵。如目标ip为192.168.180.253 入侵192.168.180.*的任意一台机器，然后利用一些黑客工具嗅探获取在网络上传输的各种信息。<br>
+黑盒入侵：在未授权的情况下，模拟黑客的攻击方法和思维方式，来评估计算机网络系统可能存在的安全风险。<br>
+白盒测试：相对黑盒测试，白盒测试基本是从内部发起。白盒测试与黑盒测试恰恰相反，测试者可以通过正常渠道向被测单位取得各种资料，包括网络拓扑、员工资料甚至网站或其它程序的代码片断，也能够与单位的其它员工进行面对面的沟通。<br>
+黑白盒的另一种说法：知道源代码和不知道源代码的渗透测试。这时，黑盒测试还是传统的渗透测试，而白盒测试偏向于代码审计。<br>
+APT攻击：Advanced Persistent Threat，高级可持续性攻击，是指组织(特别是政府)或者小团体利用先进的攻击手段对特定目标进行长期持续性网络攻击的攻击形式。</p>
+<p>1.极强的隐蔽性<br>
+2.潜伏期长，持续性强<br>
+3.目标性强<br>
+一般渗透测试的流程：<br>
+明确目标-》信息收集-》漏洞探测-》漏洞验证-》信息分析-》获取所需-》信息整理-》形成报告</p>
+<h1 id="1明确目标">1.明确目标</h1>
+<p>确定范围：测试目标的范围，ip，域名，内外网，测试账户<br>
+确定规则：能测试到什么程度，所需要的时间，能否修改上传，能否提权等等<br>
+确定需求：web应用的漏洞，业务逻辑漏洞，人员权限管理漏洞等等</p>
+<h1 id="2信息收集">2.信息收集</h1>
+<p>方式：主动扫描，开放搜索等<br>
+开放搜索：利用搜索引擎获得：后台，未授权页面，敏感url等等<br>
+基础信息：ip，网段，域名，端口<br>
+应用信息：各端口的应用。例如web应用，邮件应用等等<br>
+系统信息：操作系统版本<br>
+版本信息：所有这些能探测到的东西的版本<br>
+服务信息：中间件的各类信息，插件信息<br>
+人员信息：域名注册人员信息，web应用中发帖人的id，管理员姓名等<br>
+防护信息：试着看能否探测到防护设备</p>
+<h1 id="3漏洞探测">3.漏洞探测</h1>
+<p>利用上一步列出的个各种系统，应用等使用相应的漏洞<br>
+方法：<br>
+1）漏扫，awvs，ibm appscan等<br>
+2）结合漏洞去exploit-db等位置找利用<br>
+3）在网上寻找验证poc</p>
+<h1 id="4漏洞验证">4.漏洞验证</h1>
+<p>将上一步中发现的有可能可以成功利用的全部漏洞都验证一遍。结合实际情况，搭建模拟环境进行试验成功后再应用于目标中。<br>
+自动化验证：结合自动化扫描工具提供的结果<br>
+手工验证：根据公开资源进行验证<br>
+试验验证：自己搭建模拟环境进行验证<br>
+登陆才接：有时可以尝试一下登录口的账号密码等信息<br>
+业务漏洞验证：如发现业务漏洞，要进行验证<br>
+公开资源的利用<br>
+exploit-db/wooyun/<br>
+google hacking<br>
+渗透代码网站<br>
+通用，缺省口令<br>
+产商的漏洞警告等等</p>
+<h1 id="5信息分析">5.信息分析</h1>
+<p>为下一步实施渗透做好准备<br>
+精准打击：准备好上一步探测到的漏洞的exp，用来精准打击<br>
+绕过防御机制：是否有防火墙等设备，如何绕过<br>
+定制攻击路径：最佳工具路径，流量监控，杀毒软件，恶意代码检测等<br>
+攻击代码：经过试验得来的代码，包括不限于xss代码，sql注入语句等</p>
+<h1 id="6获取所需">6.获取所需</h1>
+<p>实施攻击：根据前几步的结果，进行攻击<br>
+获取内部信息：基础设施（网络连接，vpn，路由，拓扑）<br>
+进一步渗透：内网入侵，敏感目标<br>
+持续性存在：一般我们对客户做渗透不需要。rookit，后门，添加管理站好，驻扎手法等<br>
+清理痕迹：清理先骨干日志（访问，操作）上传文件</p>
+<h1 id="7信息整理">7.信息整理</h1>
+<p>整理渗透工具：整理渗透过程中用到的代码，poc，exp等<br>
+整理收集信息：整理渗透过程中收集到的一切信息<br>
+整理漏洞信息：整理渗透过程中遇到的个汇总漏洞，各种脆弱位置i西南西</p>
+<h1 id="8形成报告">8.形成报告</h1>
+<p>按需整理：按照之前第一步跟客户去定好的范围，需求来整理资料，并将资料形成报告<br>
+补充介绍：要对漏洞成因，验证过程和带来危害进行分析</p>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1639535297913.png" alt="" loading="lazy"></figure>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">
+              <h3 class="post-title">
+                下一篇：永恒之蓝利用
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">温故而知新</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

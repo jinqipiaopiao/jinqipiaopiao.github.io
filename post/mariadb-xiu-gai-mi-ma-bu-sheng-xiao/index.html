@@ -1,94 +1,92 @@
+
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" >
+    
+<meta charset="utf-8" >
 
 <title>MariaDB修改密码不生效 | Gridea</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1639452426348">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="shortcut icon" href="https://jinqipiaopiao.github.io//favicon.ico?v=1640508783037">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jinqipiaopiao.github.io//styles/main.css">
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
-
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
-  
-    <nav class="navbar border fixed split-nav">
-  <div class="nav-brand">
-    <h3><a href="https://jinqipiaopiao.github.io/">Gridea</a></h3>
-  </div>
-  <div class="collapsible">
-    <input id="collapsible1" type="checkbox" name="collapsible1">
-    <button>
-      <label for="collapsible1">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-      </label>
-    </button>
-    <div class="collapsible-body">
-      <ul class="inline">
-        
-          <li>
-            
-              <a href="/" class="menu">
-                首页
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/archives" class="menu">
-                归档
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/tags" class="menu">
-                标签
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/post/about" class="menu">
-                关于
-              </a>
-            
-          </li>
-        
-      </ul>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jinqipiaopiao.github.io/">
+        <img class="avatar" src="https://jinqipiaopiao.github.io//images/avatar.png?v=1640508783037" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jinqipiaopiao.github.io/">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
     </div>
   </div>
-</nav>
+</div>
 
-    <div id="top" class="row site">
-      <div class="sm-12 md-8 col">
-        <div class="paper">
-          <article class="article">
-            <h1>MariaDB修改密码不生效</h1>
-            <p class="article-meta">
-              2021-04-12
-              
-            </p>
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">MariaDB修改密码不生效</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-04-12</span>
             
-            <div class="post-content">
-              <p>MariaDB数据库管理系统是 MySQL 的一个分支，主要由开源社区在维护，采用GPL授权许可 MariaDB的目的是完全兼容MySQL，包括API和命令行，使之能轻松成为MySQL的代替品。</p>
+          </div>
+          <div class="post-content">
+            <p>MariaDB数据库管理系统是 MySQL 的一个分支，主要由开源社区在维护，采用GPL授权许可 MariaDB的目的是完全兼容MySQL，包括API和命令行，使之能轻松成为MySQL的代替品。</p>
 <p>在新版的Mariadb安装过程中没有设置密码的过程了，而用mysql_secure_installation命令设置Root密码，然后用phpmyadmin登录发现提示 Access denied for user ‘root’@‘localhost’</p>
 <p>而在命令行你发现直接用mysql就可以登录数据库，完全不用密码，然而你用其他的mysql管理工具使用密码无论如何都会提示 Access denied for user ‘root’@‘localhost’ 。搜索了一下，原来不是我们安装或者操作除了问题，是Mariadb<br>
 在5.2.0以后的版本默认不再使用密码认证了，改用Authentication Plugin - Unix Socket插件认证。具体参考https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/</p>
@@ -102,245 +100,52 @@ update mysql.user set plugin='mysql_native_password' where User='root';
 flush privileges;
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('新的密码')</code></pre>
 
-            </div>
-          </article>
+          </div>
         </div>
-        <div class="paper" data-aos="fade-in">
-          
-            <div class="next-post">
-              <div class="next">
-                下一篇
-              </div>
-              <a href="https://jinqipiaopiao.github.io/post/mysql-group_concat-han-shu-jie-shao/">
-                <h3 class="post-title">
-                  MySQL GROUP_CONCAT函数介绍
-                </h3>
-              </a>
-            </div>
-          
-        </div>
+
         
+          <div class="next-post">
+            <a class="purple-link" href="https://jinqipiaopiao.github.io/post/mysql-group_concat-han-shu-jie-shao/">
+              <h3 class="post-title">
+                下一篇：MySQL GROUP_CONCAT函数介绍
+              </h3>
+            </a>
+          </div>
+          
       </div>
 
-      <div class="sm-12 md-4 col sidebar">
-  <div class="paper info-container">
-    <img src="https://jinqipiaopiao.github.io//images/avatar.png?v=1639452426348" class="no-responsive avatar">
-    <div class="text-muted">温故而知新</div>
-    <div class="social-container">
       
-        
+
+      <div class="site-footer">
+  <div class="slogan">温故而知新</div>
+  <div class="social-container">
+    
       
-        
+    
       
-        
+    
       
-        
+    
       
-        
+    
       
-    </div>
+    
   </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      最新文章
-    </div>
-    <div class="row">
-      <ul>
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/yong-heng-zhi-lan-li-yong/">永恒之蓝利用</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/owasp/">OWASP</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/php-yuan-cheng-rce-lou-dong-fu-xian-yi-ji-lun-xian-zhu-ji-ru-qin-su-yuan-fen-xi/">PHP远程RCE漏洞复现以及沦陷主机入侵溯源分析</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/wpscan/">wpscan</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/hui-bian-yu-yan/">汇编语言</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/qian-tan-wen-jian-shang-chuan-lou-dong/">浅谈文件上传漏洞</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/chang-jian-de-jie-xi-lou-dong-zong-jie/">常见的解析漏洞总结</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/2021-9-4-kai-xue-bi-ji/">2021-9-4开学笔记</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/shu-jia-xue-xi-bi-ji-ji-lu/">暑假学习笔记记录</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://jinqipiaopiao.github.io/post/sql-zhu-ru-guo-lu-zi-fu-de-fuzz-jiao-ben-ce-shi/">SQL注入过滤字符的Fuzz脚本测试</a>
-            </li>
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-      </ul>
-    </div>
-  </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      标签列表
-    </div>
-    <div class="row">
-      
-        <a href="https://jinqipiaopiao.github.io/tag/I-a6dyp2Q/" class="badge ">
-          Gridea
-        </a>
-      
-    </div>
-  </div>
-  <div class="paper">
-    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
-  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jinqipiaopiao.github.io//atom.xml" target="_blank">RSS</a>
 </div>
 
 
     </div>
-
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-
-<script type="application/javascript">
-
-AOS.init();
+    <script type="application/javascript">
 
 hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
