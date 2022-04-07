@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>MariaDB修改密码不生效 | Gridea</title>
+<title>我的宝贝薛逸敏 | Gridea</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,34 +80,25 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">MariaDB修改密码不生效</h2>
+          <h2 class="post-title">我的宝贝薛逸敏</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-04-12</span>
+            <span><i class="icon-calendar-outline"></i> 2022-04-07</span>
             
           </div>
           <div class="post-content">
-            <p>MariaDB数据库管理系统是 MySQL 的一个分支，主要由开源社区在维护，采用GPL授权许可 MariaDB的目的是完全兼容MySQL，包括API和命令行，使之能轻松成为MySQL的代替品。</p>
-<p>在新版的Mariadb安装过程中没有设置密码的过程了，而用mysql_secure_installation命令设置Root密码，然后用phpmyadmin登录发现提示 Access denied for user ‘root’@‘localhost’</p>
-<p>而在命令行你发现直接用mysql就可以登录数据库，完全不用密码，然而你用其他的mysql管理工具使用密码无论如何都会提示 Access denied for user ‘root’@‘localhost’ 。搜索了一下，原来不是我们安装或者操作除了问题，是Mariadb<br>
-在5.2.0以后的版本默认不再使用密码认证了，改用Authentication Plugin - Unix Socket插件认证。具体参考https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/</p>
-<p>使用service mysql status查看mysql服务状态你会发现有这样一条警告。</p>
-<p>[Warning] ‘user’ entry root@localhost’ has both a password and an authentication plugin specified. The password will be ignored.</p>
-<p>也就是使用Unix Socke插件认证直接忽略密码，自然使用密码也就无效了。</p>
-<p>##解决方法</p>
-<p>虽然这是为了提高安全性，但有的地方我们必须使用密码认证登录，因此我们就要修改验证为密码的方式。直接在命令行输入 mysql 登录数据库。使用以下命令修改</p>
-<pre><code>use mysql;
-update mysql.user set plugin='mysql_native_password' where User='root';
-flush privileges;
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('新的密码')</code></pre>
+            <p><strong>美丽篇</strong></p>
+<pre><code>    你是那么美丽，总感觉有无数的魅力，也有无数的美丽之处，要说最漂亮的还得是你的眼睛，那卡姿兰大眼睛让人一看就难以忘怀
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://jinqipiaopiao.github.io//post-images/1649323278110.jpg" alt="" loading="lazy"></figure>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://jinqipiaopiao.github.io/post/mysql-group_concat-han-shu-jie-shao/">
+            <a class="purple-link" href="https://jinqipiaopiao.github.io/post/ssrf-lou-dong/">
               <h3 class="post-title">
-                下一篇：MySQL GROUP_CONCAT函数介绍
+                下一篇：SSRF漏洞
               </h3>
             </a>
           </div>
